@@ -1,6 +1,7 @@
 import React from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { FunZoneSection } from './FunZoneSection';
+import { HeroAnimationSandbox } from './HeroAnimationSandbox';
 import {
   Shield,
   ArrowRight,
@@ -16,6 +17,7 @@ import {
   TrendingUp,
   Code,
   Briefcase,
+  Trophy,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -36,11 +38,11 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
       {/* ============================================================ */}
-      {/* 1. HERO SECTION (Section 2 - Exact Specification Copy)        */}
+      {/* 1. HERO SECTION (2-Column Responsive with Live Sandbox)       */}
       {/* ============================================================ */}
       <section
         style={{
-          padding: '64px 24px 56px',
+          padding: '48px 24px 56px',
           maxWidth: '1240px',
           margin: '0 auto',
           width: '100%',
@@ -48,95 +50,129 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       >
         <div
           style={{
-            maxWidth: '780px',
-            margin: '0 auto',
-            textAlign: 'center',
-            display: 'flex',
-            flexDirection: 'column',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+            gap: '40px',
             alignItems: 'center',
-            gap: '20px',
           }}
         >
-          {/* Status Badge */}
+          {/* Left Column: Mission, Value Prop, CTAs */}
           <div
             style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 14px',
-              borderRadius: 'var(--radius-full)',
-              backgroundColor: 'var(--brand-surface)',
-              border: '1px solid var(--brand-border)',
-              color: 'var(--brand-primary)',
-              fontSize: 'var(--text-meta)',
-              fontWeight: 700,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: '20px',
             }}
           >
-            <Shield size={14} />
-            <span>Geniusphere Learning Platform</span>
+            {/* Status Badge */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 14px',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--brand-surface)',
+                border: '1px solid var(--brand-border)',
+                color: 'var(--brand-primary)',
+                fontSize: 'var(--text-meta)',
+                fontWeight: 700,
+              }}
+            >
+              <Shield size={14} />
+              <span>Evidence-Backed Education Platform • Pilot Cohort</span>
+            </div>
+
+            {/* Headline with Mikado Black Font */}
+            <h1
+              style={{
+                fontSize: 'clamp(2.4rem, 4.2vw, 3.4rem)',
+                fontWeight: 800,
+                lineHeight: 1.15,
+                letterSpacing: '-0.03em',
+                color: 'var(--text-primary)',
+                margin: 0,
+              }}
+            >
+              Learn what school doesn't always teach you.
+            </h1>
+
+            {/* Supporting summary */}
+            <p
+              style={{
+                fontSize: '1.05rem',
+                lineHeight: 1.6,
+                color: 'var(--text-secondary)',
+                margin: 0,
+                maxWidth: '560px',
+              }}
+            >
+              Master modern technology, applied finance, professional skills, and programming logic through structured coursework, real parameter simulations, and isolated sandboxes.
+            </p>
+
+            {/* Gamification Ribbon */}
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div className="streak-pill">
+                <Flame size={14} />
+                <span>{userProgress.streak_days}-Day Streak</span>
+              </div>
+              <div className="xp-pill">
+                <Zap size={14} />
+                <span>{userProgress.xp.toLocaleString()} XP Points</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate('leaderboard')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--brand-primary)',
+                  cursor: 'pointer',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: 0,
+                }}
+              >
+                <Trophy size={14} />
+                <span>Leaderboard</span>
+                <ArrowRight size={13} />
+              </button>
+            </div>
+
+            {/* Primary Action Buttons */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '4px' }}>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => onNavigate('catalogue')}
+                style={{ height: '44px', padding: '0 22px', fontSize: 'var(--text-body)' }}
+              >
+                <BookOpen size={16} />
+                <span>Explore 27 Courses</span>
+                <ArrowRight size={16} />
+              </button>
+
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => onNavigate('labs')}
+                style={{ height: '44px', padding: '0 20px', fontSize: 'var(--text-body)' }}
+              >
+                <Terminal size={16} />
+                <span>Explore 12 Labs</span>
+              </button>
+            </div>
           </div>
 
-          {/* Headline (Exact specification copy) */}
-          <h1
-            style={{
-              fontSize: 'var(--text-display)',
-              fontWeight: 800,
-              lineHeight: 1.15,
-              letterSpacing: '-0.03em',
-              color: 'var(--text-primary)',
-              margin: 0,
-            }}
-          >
-            Learn by doing. Build real skills.
-          </h1>
-
-          {/* Supporting sentence (Exact specification copy) */}
-          <p
-            style={{
-              fontSize: 'clamp(1rem, 2vw, 1.15rem)',
-              lineHeight: 1.6,
-              color: 'var(--text-secondary)',
-              margin: 0,
-              maxWidth: '640px',
-            }}
-          >
-            Explore technology, finance, professional skills, and programming through practical lessons and interactive experiences.
-          </p>
-
-          {/* Actions (Exact specification actions) */}
-          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '8px' }}>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => onNavigate('catalogue')}
-              style={{ height: '44px', padding: '0 22px', fontSize: 'var(--text-body)' }}
-            >
-              <BookOpen size={16} />
-              <span>Explore Courses</span>
-              <ArrowRight size={16} />
-            </button>
-
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => onNavigate('labs')}
-              style={{ height: '44px', padding: '0 22px', fontSize: 'var(--text-body)' }}
-            >
-              <Terminal size={16} />
-              <span>Explore Labs</span>
-            </button>
-          </div>
-
-          {/* Streak & XP Ribbon */}
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <div className="streak-pill">
-              <Flame size={14} />
-              <span>{userProgress.streak_days}-Day Streak</span>
-            </div>
-            <div className="xp-pill">
-              <Zap size={14} />
-              <span>{userProgress.xp.toLocaleString()} XP Points</span>
-            </div>
+          {/* Right Column: Live Hero Animation Sandbox */}
+          <div>
+            <HeroAnimationSandbox
+              onLaunchLab={(slug) => onNavigate('lab-workspace', slug)}
+            />
           </div>
         </div>
       </section>
