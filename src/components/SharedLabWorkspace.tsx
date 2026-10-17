@@ -16,6 +16,16 @@ import {
 } from 'lucide-react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { LabAttemptRecord, LabLifecycleState } from '../types';
+import {
+  NeuralNetworkSvg,
+  BlockchainChainLinkSvg,
+  IotSensorDialSvg,
+  PrivacyRadarSvg,
+  SecurityPipelineSvg,
+  MarketTrendSvg,
+  CompoundGrowthSvg,
+  SettlementLifecycleSvg,
+} from './LabSvgVisualizers';
 
 export interface SharedLabWorkspaceProps {
   db: InMemoryDatabase;
@@ -767,8 +777,17 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           {lab.id === 'lab-t1-ai-classifier' && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                Classification Model Feature Inputs
+                Neural Network Classifier & Bounded Decision Weights
               </div>
+
+              {/* Real-time SVG Neural Network Architecture */}
+              <NeuralNetworkSvg
+                keywordDensity={aiKeywordDensity}
+                urgencyScore={aiUrgencyScore}
+                senderReputation={aiSenderReputation}
+                predictedLabel={aiClassificationResult.label}
+                confidenceScore={aiClassificationResult.confidence}
+              />
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -893,20 +912,26 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {chainBlocks.map((blk, idx) => (
-                  <div
-                    key={blk.index}
-                    style={{
-                      padding: '16px',
-                      borderRadius: '8px',
-                      border: blk.valid ? '1px solid var(--border-subtle)' : '2px solid var(--danger)',
-                      backgroundColor: blk.valid ? 'var(--bg-surface)' : 'var(--danger-bg)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px',
-                    }}
-                  >
+                  <React.Fragment key={blk.index}>
+                    {idx > 0 && (
+                      <BlockchainChainLinkSvg
+                        isValid={blk.valid && chainBlocks[idx - 1].valid}
+                        prevHashPreview={blk.prevHash.slice(0, 16)}
+                      />
+                    )}
+                    <div
+                      style={{
+                        padding: '16px',
+                        borderRadius: '8px',
+                        border: blk.valid ? '1px solid var(--border-subtle)' : '2px solid var(--danger)',
+                        backgroundColor: blk.valid ? 'var(--bg-surface)' : 'var(--danger-bg)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                      }}
+                    >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
                         BLOCK #{blk.index}
@@ -947,7 +972,8 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                       </button>
                     </div>
                   </div>
-                ))}
+                </React.Fragment>
+              ))}
               </div>
             </div>
           )}
@@ -960,6 +986,13 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
                 Live Telemetry Controls & Actuator State
               </div>
+
+              {/* Real-time SVG Sensor Thermometer Dial & Actuator Fan */}
+              <IotSensorDialSvg
+                currentTemp={iotTemp}
+                threshold={iotThreshold}
+                humidity={iotHumidity}
+              />
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1059,8 +1092,17 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           {lab.id === 'lab-t4-privacy-decision' && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                Application Permissions & Data Sharing
+                Application Permissions & Data Sharing Radar
               </div>
+
+              {/* Real-time SVG Privacy Exposure Radar */}
+              <PrivacyRadarSvg
+                location={privacyLocation}
+                contacts={privacyContacts}
+                mic={privacyMic}
+                adTracking={privacyAdTracking}
+                exposureScore={privacyScore}
+              />
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px', borderRadius: '8px', border: '1px solid var(--border-subtle)', cursor: 'pointer' }}>
@@ -1149,8 +1191,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           {lab.id === 'lab-t5-web-defense' && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                Web Security Defense Test Runner
+                Web Security Defense Interception Pipeline
               </div>
+
+              {/* Real-time SVG Security Pipeline */}
+              <SecurityPipelineSvg
+                paramQueries={secParamQueries}
+                outputEncoding={secOutputEncoding}
+                strictCsp={secCsp}
+              />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
@@ -1364,6 +1413,9 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 </div>
               </div>
 
+              {/* Real-time SVG Financial Market Trendline & Volatility */}
+              <MarketTrendSvg scenario={finScenario} beta={finBeta} />
+
               {/* Metrics Output */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
                 <div style={{ padding: '16px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subdued)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
@@ -1454,6 +1506,14 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 </div>
               </div>
 
+              {/* Real-time SVG Exponential Compounding Breakdown */}
+              <CompoundGrowthSvg
+                principal={compPrincipal}
+                monthly={compMonthly}
+                rate={compRate}
+                years={compYears}
+              />
+
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
                 <div style={{ padding: '18px', borderRadius: '8px', backgroundColor: 'var(--brand-surface)', border: '1px solid var(--brand-border)' }}>
                   <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--brand-primary)' }}>PROJECTED FUTURE VALUE</div>
@@ -1491,6 +1551,9 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                   <span>Advance Stage ({flowStep}/5)</span>
                 </button>
               </div>
+
+              {/* Real-time SVG Settlement Pathway */}
+              <SettlementLifecycleSvg currentStep={flowStep} />
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px', textAlign: 'center' }}>
                 {['1. Gateway', '2. Card Network', '3. Issuing Bank', '4. Clearing House', '5. Merchant Bank'].map((title, i) => (
