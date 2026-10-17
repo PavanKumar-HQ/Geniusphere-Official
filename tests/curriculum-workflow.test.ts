@@ -10,43 +10,64 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
   });
 
   describe('Curriculum Inventory & Discovery', () => {
-    it('contains all 26 curricular subjects across Technology, Cybersecurity, Finance, and Professional Skills', () => {
-      expect(ALL_COURSES.length).toBe(26);
+    it('contains exactly 27 curricular subjects strictly mapped to the 4 authorized categories', () => {
+      expect(ALL_COURSES.length).toBe(27);
 
       const techCourses = ALL_COURSES.filter((c) => c.domain === 'technology');
-      const cyberCourses = ALL_COURSES.filter((c) => c.domain === 'cybersecurity');
+      const codingCourses = ALL_COURSES.filter((c) => c.domain === 'coding');
       const financeCourses = ALL_COURSES.filter((c) => c.domain === 'finance');
       const profCourses = ALL_COURSES.filter((c) => c.domain === 'professional');
 
-      // Combined Tech (10) & Cyber (2) = 12 curricular subjects
-      expect(techCourses.length).toBe(10);
-      expect(cyberCourses.length).toBe(2);
-      expect(techCourses.length + cyberCourses.length).toBe(12);
-
+      // Category A: Technology (8 subjects)
+      expect(techCourses.length).toBe(8);
+      // Category B: Coding & Programming (7 subjects)
+      expect(codingCourses.length).toBe(7);
+      // Category C: Finance (7 subjects)
       expect(financeCourses.length).toBe(7);
-      expect(profCourses.length).toBe(7);
+      // Category D: Professional Skills (5 subjects)
+      expect(profCourses.length).toBe(5);
+
+      expect(techCourses.length + codingCourses.length + financeCourses.length + profCourses.length).toBe(27);
+
+      // Verify ZERO unrequested subject categories exist
+      const unrequested = ALL_COURSES.filter((c) =>
+        ['business', 'sales', 'marketing', 'entrepreneurship', 'accounting'].includes(c.domain as string)
+      );
+      expect(unrequested.length).toBe(0);
 
       // Verify all 5 Learning Paths
       expect(LEARNING_PATHS.length).toBe(5);
       const pathSlugs = LEARNING_PATHS.map((p) => p.slug);
       expect(pathSlugs).toContain('ai-responsible-technology');
-      expect(pathSlugs).toContain('programming-foundations');
-      expect(pathSlugs).toContain('cybersecurity-defense');
+      expect(pathSlugs).toContain('coding-programming');
+      expect(pathSlugs).toContain('tech-cyber-defense');
       expect(pathSlugs).toContain('finance-literacy');
       expect(pathSlugs).toContain('professional-identity');
     });
 
     it('filters courses by domain, level, and published status through database querying', () => {
       const all = db.getCourses();
-      expect(all.length).toBe(26);
+      expect(all.length).toBe(27);
 
       const published = db.getCourses({ publishedOnly: true });
-      expect(published.length).toBeGreaterThanOrEqual(4);
+      expect(published.length).toBeGreaterThanOrEqual(5);
       published.forEach((c) => expect(c.is_published).toBe(true));
 
       const financeOnly = db.getCourses({ domain: 'finance' });
       expect(financeOnly.length).toBe(7);
       financeOnly.forEach((c) => expect(c.domain).toBe('finance'));
+
+      const codingOnly = db.getCourses({ domain: 'coding' });
+      expect(codingOnly.length).toBe(7);
+      codingOnly.forEach((c) => expect(c.domain).toBe('coding'));
+
+      const techOnly = db.getCourses({ domain: 'technology' });
+      expect(techOnly.length).toBe(8);
+      techOnly.forEach((c) => expect(c.domain).toBe('technology'));
+
+      const profOnly = db.getCourses({ domain: 'professional' });
+      expect(profOnly.length).toBe(5);
+      profOnly.forEach((c) => expect(c.domain).toBe('professional'));
 
       const searchResult = db.getCourses({ search: 'SQL' });
       expect(searchResult.length).toBeGreaterThanOrEqual(1);

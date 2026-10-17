@@ -377,48 +377,48 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             <div
               className="card"
               style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
-              onClick={() => onNavigate('catalogue')}
+              onClick={() => onNavigate('catalogue', 'technology')}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Terminal size={24} color="var(--brand-primary)" />
+                <Shield size={24} color="var(--brand-primary)" />
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Technology & Computing</h3>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Technology</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Programming logic, AI mechanics, relational databases, cloud infrastructure, and computational systems.
+                Artificial intelligence, responsible AI, blockchain, IoT, Microsoft technologies, digital privacy, cybersecurity, and computing fundamentals.
               </p>
               <span style={{ color: 'var(--brand-primary)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Explore 12 Subject Areas <ChevronRight size={14} />
+                Explore 8 Technology Subjects <ChevronRight size={14} />
               </span>
             </div>
 
             <div
               className="card"
               style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
-              onClick={() => onNavigate('catalogue')}
+              onClick={() => onNavigate('catalogue', 'coding')}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Shield size={24} color="var(--success)" />
+                <Terminal size={24} color="var(--success)" />
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Cybersecurity & Defense</h3>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Coding & Programming</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Injection defense, network threat modeling, privacy footprints, and defensive parameterization.
+                Programming fundamentals, data types, variables, conditions, loops, problem-solving, relational SQL databases, web dev, and debugging.
               </p>
               <span style={{ color: 'var(--success)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Interactive Defense Labs <ChevronRight size={14} />
+                Explore 7 Coding Subjects <ChevronRight size={14} />
               </span>
             </div>
 
             <div
               className="card"
               style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
-              onClick={() => onNavigate('catalogue')}
+              onClick={() => onNavigate('catalogue', 'finance')}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
                 <Coins size={24} color="var(--warning)" />
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Finance & Financial Literacy</h3>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Finance</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Compound growth math, central banking, capital markets, UPI payment infrastructure, and risk awareness.
+                Introduction to finance, global economic events, financial markets, banking institutions, crypto risks, stock market, and fintech.
               </p>
               <span style={{ color: 'var(--warning)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 Explore 7 Finance Subjects <ChevronRight size={14} />
@@ -428,17 +428,17 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             <div
               className="card"
               style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
-              onClick={() => onNavigate('catalogue')}
+              onClick={() => onNavigate('catalogue', 'professional')}
             >
               <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
                 <Briefcase size={24} color="#4F46E5" />
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Professional & Career Skills</h3>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Professional Skills</h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Technical communication, time-blocking, evidence-based portfolios, and technical resume engineering.
+                Time management, workplace professional skills, soft skills development, social profiles and professional identity, and portfolio building.
               </p>
               <span style={{ color: '#4F46E5', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Explore 7 Career Subjects <ChevronRight size={14} />
+                Explore 5 Professional Subjects <ChevronRight size={14} />
               </span>
             </div>
           </div>
@@ -513,7 +513,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               className="btn-outline"
               onClick={() => onNavigate('catalogue')}
             >
-              <span>View Full 26-Subject Catalogue</span>
+              <span>View Full 27-Subject Catalogue</span>
               <ChevronRight size={16} />
             </button>
           </div>
@@ -523,8 +523,16 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               <div key={course.id} className="card-elevated" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                    <span className="badge badge-brand">{course.domain.toUpperCase()}</span>
-                    <span className="badge badge-success">PUBLISHED</span>
+                    <span className="badge badge-brand">
+                      {course.domain === 'coding' ? 'CODING & PROGRAMMING' : course.domain.toUpperCase()}
+                    </span>
+                    {course.availability_status === 'verified_functional' ? (
+                      <span className="badge badge-success">VERIFIED & USABLE</span>
+                    ) : course.availability_status === 'implemented_in_build' ? (
+                      <span className="badge badge-brand">IMPLEMENTED IN BUILD</span>
+                    ) : (
+                      <span className="badge badge-neutral">IN DEVELOPMENT</span>
+                    )}
                   </div>
 
                   <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>{course.title}</h3>
@@ -942,12 +950,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           </div>
 
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '0.9rem', marginBottom: '12px' }}>Curriculum</h4>
+            <h4 style={{ color: '#FFF', fontSize: '0.9rem', marginBottom: '12px' }}>Curriculum (4 Categories)</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue'); }} style={{ color: '#A1A1AA' }}>Technology & Computing</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue'); }} style={{ color: '#A1A1AA' }}>Cyber Defense & Security</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue'); }} style={{ color: '#A1A1AA' }}>Finance & Wealth Literacy</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue'); }} style={{ color: '#A1A1AA' }}>Professional Career Skills</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'technology'); }} style={{ color: '#A1A1AA' }}>Technology (8 Subjects)</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'coding'); }} style={{ color: '#A1A1AA' }}>Coding & Programming (7 Subjects)</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'finance'); }} style={{ color: '#A1A1AA' }}>Finance (7 Subjects)</a>
+              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'professional'); }} style={{ color: '#A1A1AA' }}>Professional Skills (5 Subjects)</a>
             </div>
           </div>
 

@@ -272,7 +272,7 @@ export const App: React.FC = () => {
             }}
           >
             <BookOpen size={17} />
-            <span>Courses (26)</span>
+            <span>Courses (27)</span>
           </button>
 
           <button
