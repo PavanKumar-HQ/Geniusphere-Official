@@ -20,12 +20,12 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
 
       // Category A: Technology (8 subjects)
       expect(techCourses.length).toBe(8);
-      // Category B: Coding & Programming (7 subjects)
-      expect(codingCourses.length).toBe(7);
+      // Category B: Coding & Programming (8 subjects)
+      expect(codingCourses.length).toBe(8);
       // Category C: Finance (7 subjects)
       expect(financeCourses.length).toBe(7);
-      // Category D: Professional Skills (5 subjects)
-      expect(profCourses.length).toBe(5);
+      // Category D: Professional Skills (4 subjects)
+      expect(profCourses.length).toBe(4);
 
       expect(techCourses.length + codingCourses.length + financeCourses.length + profCourses.length).toBe(27);
 
@@ -35,14 +35,13 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       );
       expect(unrequested.length).toBe(0);
 
-      // Verify all 5 Learning Paths
-      expect(LEARNING_PATHS.length).toBe(5);
+      // Verify all 4 approved Learning Paths
+      expect(LEARNING_PATHS.length).toBe(4);
       const pathSlugs = LEARNING_PATHS.map((p) => p.slug);
-      expect(pathSlugs).toContain('ai-responsible-technology');
+      expect(pathSlugs).toContain('technology-cybersecurity');
       expect(pathSlugs).toContain('coding-programming');
-      expect(pathSlugs).toContain('tech-cyber-defense');
       expect(pathSlugs).toContain('finance-literacy');
-      expect(pathSlugs).toContain('professional-identity');
+      expect(pathSlugs).toContain('professional-skills-identity');
     });
 
     it('filters courses by domain, level, and published status through database querying', () => {
@@ -50,7 +49,7 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       expect(all.length).toBe(27);
 
       const published = db.getCourses({ publishedOnly: true });
-      expect(published.length).toBeGreaterThanOrEqual(5);
+      expect(published.length).toBeGreaterThanOrEqual(4);
       published.forEach((c) => expect(c.is_published).toBe(true));
 
       const financeOnly = db.getCourses({ domain: 'finance' });
@@ -58,7 +57,7 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       financeOnly.forEach((c) => expect(c.domain).toBe('finance'));
 
       const codingOnly = db.getCourses({ domain: 'coding' });
-      expect(codingOnly.length).toBe(7);
+      expect(codingOnly.length).toBe(8);
       codingOnly.forEach((c) => expect(c.domain).toBe('coding'));
 
       const techOnly = db.getCourses({ domain: 'technology' });
@@ -66,20 +65,20 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       techOnly.forEach((c) => expect(c.domain).toBe('technology'));
 
       const profOnly = db.getCourses({ domain: 'professional' });
-      expect(profOnly.length).toBe(5);
+      expect(profOnly.length).toBe(4);
       profOnly.forEach((c) => expect(c.domain).toBe('professional'));
 
-      const searchResult = db.getCourses({ search: 'SQL' });
+      const searchResult = db.getCourses({ search: 'Cybersecurity' });
       expect(searchResult.length).toBeGreaterThanOrEqual(1);
       expect(
         searchResult.some(
-          (c) => c.title.toLowerCase().includes('sql') || c.summary.toLowerCase().includes('sql')
+          (c) => c.title.toLowerCase().includes('cybersecurity') || c.summary.toLowerCase().includes('cybersecurity')
         )
       ).toBe(true);
     });
 
     it('retrieves detailed course structure, learning objectives, and quiz definitions', () => {
-      const course = db.getCourseBySlug('web-defense-101');
+      const course = db.getCourseBySlug('cybersecurity-defensive-web');
       expect(course).toBeDefined();
       expect(course!.id).toBe('course-web-sec');
       expect(course!.learning_objectives.length).toBeGreaterThan(0);
@@ -93,7 +92,7 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       expect(firstLesson.quiz).toBeDefined();
       expect(firstLesson.quiz!.questions.length).toBe(2);
       expect(firstLesson.quiz!.questions[0].options.length).toBe(4);
-      expect(firstLesson.quiz!.questions[0].correct_option_index).toBe(1);
+      expect(firstLesson.quiz!.questions[0].correct_option_index).toBe(0);
     });
   });
 
@@ -215,14 +214,14 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
         full_name: 'Aarav Patel',
         email: 'student1@dpts.edu',
         headline: 'Aspiring Cybersecurity Defender & Full Stack Engineer',
-        summary: 'Focused on secure SQL templating and web application security architectures.',
-        skills: ['SQL Parameterization', 'TypeScript', 'Prepared Statements', 'PostgreSQL RLS'],
+        summary: 'Focused on application security and defensive software architectures.',
+        skills: ['Web Security', 'TypeScript', 'Defensive Parameterization', 'PostgreSQL RLS'],
         projects: [
           {
             id: 'proj-def-1',
-            title: 'Database Parameterization Defense Engine',
-            description: 'Implemented positional placeholders preventing SQL injection with 5 authoritative server assertions.',
-            technologies: ['SQLite-WASM', 'TypeScript'],
+            title: 'Defensive Web Application Architecture',
+            description: 'Implemented defensive parameterization and token integrity validation with authoritative server assertions.',
+            technologies: ['TypeScript', 'Node.js', 'PostgreSQL'],
           },
         ],
       });
@@ -230,7 +229,7 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       const updated = db.getResume(studentId);
       expect(updated!.skills).toContain('PostgreSQL RLS');
       expect(updated!.projects.length).toBe(1);
-      expect(updated!.projects[0].title).toBe('Database Parameterization Defense Engine');
+      expect(updated!.projects[0].title).toBe('Defensive Web Application Architecture');
     });
 
     it('reflects verified database credentials from authoritative lab submissions', () => {
@@ -240,7 +239,7 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       const draft = db.createSubmissionDraft(
         studentId,
         'assign-lab-101',
-        `SELECT id, username, role FROM challenge_users WHERE username = ? AND account_status = 'active';`
+        `defensive_input_sanitizer_and_token_validator`
       );
 
       const graded = db.persistServerGrade(

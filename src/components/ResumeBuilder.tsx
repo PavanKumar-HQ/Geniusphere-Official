@@ -17,7 +17,7 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ db, currentUserId 
   for (const s of db.submissions.values()) {
     if (s.student_id === currentUserId && s.passed) {
       verifiedAchievements.push(
-        `Lab 101: SQL Parameterization & Injection Defense (Score: ${s.score}/100 • Integrity Hash: ${s.submission_hash.slice(0, 16)}...)`
+        `Assessment: Web Application Defense & Architecture (Score: ${s.score}/100 • Integrity Hash: ${s.submission_hash.slice(0, 16)}...)`
       );
     }
   }

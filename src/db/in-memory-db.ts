@@ -19,8 +19,16 @@ import {
   LearningPath,
   CourseEnrollment,
   StudentResume,
+  VideoLesson,
+  StudyResource,
+  DomainType,
 } from '../types';
-import { ALL_COURSES, LEARNING_PATHS } from '../data/curriculum';
+import {
+  ALL_COURSES,
+  LEARNING_PATHS,
+  INITIAL_VIDEO_LESSONS,
+  INITIAL_STUDY_RESOURCES,
+} from '../data/curriculum';
 
 export class DatabaseError extends Error {
   code: string;
@@ -49,6 +57,8 @@ export class InMemoryDatabase {
   learningPaths: Map<string, LearningPath> = new Map();
   courseEnrollments: Map<string, CourseEnrollment> = new Map();
   studentResumes: Map<string, StudentResume> = new Map();
+  videoLessons: Map<string, VideoLesson> = new Map();
+  studyResources: Map<string, StudyResource> = new Map();
 
   constructor() {
     this.seedDefaultData();
@@ -72,6 +82,11 @@ export class InMemoryDatabase {
     this.learningPaths.clear();
     this.courseEnrollments.clear();
     this.studentResumes.clear();
+    this.videoLessons.clear();
+    this.studyResources.clear();
+
+    INITIAL_VIDEO_LESSONS.forEach((v) => this.videoLessons.set(v.id, { ...v }));
+    INITIAL_STUDY_RESOURCES.forEach((r) => this.studyResources.set(r.id, { ...r }));
 
     // 1. Organizations
     const org1: Organization = {
@@ -280,7 +295,7 @@ export class InMemoryDatabase {
       email: student1.email,
       headline: 'Aspiring Cybersecurity & Systems Engineer',
       summary: 'High school technologist focusing on practical application security, defensive parameterization, and systems problem-solving. Active contributor to Cyber Defense Cohort 2026.',
-      skills: ['SQL Defense', 'Prepared Statements', 'Python', 'Web Security', 'Git', 'Linux'],
+      skills: ['Web Security', 'HTTP Headers', 'TypeScript', 'Defensive Architecture', 'Git', 'Linux'],
       education: [
         {
           school: 'Delhi Public Technology School',
@@ -291,12 +306,12 @@ export class InMemoryDatabase {
       projects: [
         {
           id: 'proj-1',
-          title: 'SQL Injection Defense Lab Implementation',
-          description: 'Engineered safe positional parameter query templates to defend against auth bypass attacks with automated test verification.',
-          technologies: ['SQLite-WASM', 'TypeScript', 'Prepared Statements'],
+          title: 'Web Application Defense Architecture',
+          description: 'Engineered security headers, CSP rules, and defense-in-depth mitigations against unauthorized data access with automated test verification.',
+          technologies: ['TypeScript', 'CSP', 'Web Standards'],
         },
       ],
-      verified_achievements: ['Lab 101: SQL Parameterization & Injection Defense (Score 100/100)'],
+      verified_achievements: ['Module: Cybersecurity & Defensive Web Security (Verified 100%)'],
       updated_at: new Date().toISOString(),
     });
   }
@@ -1011,4 +1026,106 @@ export class InMemoryDatabase {
 
     return { classroom: targetClass, enrollment: newEnr };
   }
+
+  // ==================================================================
+  // VIDEO LESSONS & STUDY RESOURCES
+  // ==================================================================
+
+  extractYouTubeId(url: string): string | null {
+    if (!url || typeof url !== 'string') return null;
+    const trimmed = url.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+    const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|v\/))([a-zA-Z0-9_-]{11})/i);
+    return match ? match[1] : null;
+  }
+
+  getVideoLessons(options?: string | { category?: string; search?: string }): VideoLesson[] {
+    const list = Array.from(this.videoLessons.values());
+    if (!options) return list;
+    const category = typeof options === 'string' ? options : options.category;
+    const search = typeof options === 'object' ? options.search : undefined;
+
+    return list.filter((v) => {
+      const matchCat = !category || category === 'all' || v.category === category;
+      const matchSearch =
+        !search ||
+        v.title.toLowerCase().includes(search.toLowerCase()) ||
+        v.description.toLowerCase().includes(search.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }
+
+  getVideoLessonById(id: string): VideoLesson | undefined {
+    return this.videoLessons.get(id);
+  }
+
+  addVideoLesson(data: {
+    title: string;
+    description: string;
+    youtube_url: string;
+    category: DomainType | 'general';
+    duration_minutes: number;
+    added_by: string;
+    instructor_name?: string;
+  }): VideoLesson {
+    const youtubeId = this.extractYouTubeId(data.youtube_url);
+    if (!youtubeId) {
+      throw new DatabaseError('Invalid YouTube URL or video ID', 'INVALID_URL', 400);
+    }
+    const id = `vid-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const lesson: VideoLesson = {
+      id,
+      title: data.title.trim(),
+      description: data.description.trim(),
+      youtube_url: data.youtube_url.trim(),
+      youtube_id: youtubeId,
+      category: data.category,
+      duration_minutes: data.duration_minutes || 10,
+      featured: false,
+      instructor_name: data.instructor_name?.trim() || 'Geniusphere Educator',
+      added_by: data.added_by,
+      created_at: new Date().toISOString(),
+    };
+    this.videoLessons.set(id, lesson);
+    return lesson;
+  }
+
+  updateVideoLesson(id: string, updates: Partial<VideoLesson>): VideoLesson {
+    const existing = this.videoLessons.get(id);
+    if (!existing) {
+      throw new DatabaseError(`Video lesson not found: ${id}`, 'NOT_FOUND', 404);
+    }
+    const updated = { ...existing, ...updates };
+    if (updates.youtube_url) {
+      const extracted = this.extractYouTubeId(updates.youtube_url);
+      if (extracted) {
+        updated.youtube_id = extracted;
+      }
+    }
+    this.videoLessons.set(id, updated);
+    return updated;
+  }
+
+  deleteVideoLesson(id: string): boolean {
+    return this.videoLessons.delete(id);
+  }
+
+  getStudyResources(options?: string | { category?: string; resourceType?: string; search?: string }): StudyResource[] {
+    const list = Array.from(this.studyResources.values());
+    if (!options) return list;
+    const category = typeof options === 'string' ? options : options.category;
+    const resourceType = typeof options === 'object' ? options.resourceType : undefined;
+    const search = typeof options === 'object' ? options.search : undefined;
+
+    return list.filter((r) => {
+      const matchCat = !category || category === 'all' || r.category === category;
+      const matchType = !resourceType || resourceType === 'all' || r.resource_type === resourceType;
+      const matchSearch =
+        !search ||
+        r.title.toLowerCase().includes(search.toLowerCase()) ||
+        r.description.toLowerCase().includes(search.toLowerCase());
+      return matchCat && matchType && matchSearch;
+    });
+  }
 }
+

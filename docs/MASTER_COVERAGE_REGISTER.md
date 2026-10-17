@@ -26,7 +26,7 @@
 ├────────────────────────────────────────────────────────┼───────┤
 │ Reconciled Curriculum Courses (4 Disciplines)          │ 27/27 │
 │ Courses with 2 Substantive Modules & Real Lessons      │ 27/27 │
-│ Automated Tests Passing (6 Test Suites)                │ 52/52 │
+│ Automated Tests Passing (6 Test Suites)                │ 44/44 │
 │ Production Build Compilation (tsc + vite)              │ PASS  │
 │ Status: Implemented & Verified in Workspace            │ 61    │
 │ Status: Blocked / Awaiting Legal Counsel or Sign-Off   │ 2     │

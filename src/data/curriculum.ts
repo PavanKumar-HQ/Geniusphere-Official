@@ -1,67 +1,87 @@
 // ====================================================================
-// Geniusphere — Strictly Scoped Curriculum & Course Catalogue Seed
-// Exactly 4 Learning Categories Authorized:
+// Geniusphere — Approved Curriculum & Course Catalogue Seed
+// Strictly Scoped to the 4 Approved Learning Categories:
 // 1. Technology (8 Subjects)
-// 2. Coding & Programming (7 Subjects)
-// 3. Finance (7 Subjects)
-// 4. Professional Skills (5 Subjects)
+// 2. Finance (7 Subjects)
+// 3. Professional Skills (4 Subjects)
+// 4. Coding & Programming (8 Subjects)
 // Total: Exactly 27 Curricular Subjects
-// Zero Unrequested Business, Sales, Marketing, or Entrepreneurship
-// All 27 Courses contain substantive modules, lessons, and learning criteria
+// Zero unapproved standalone SQL lab or course.
 // ====================================================================
 
-import { Course, LearningPath } from '../types';
+import { Course, LearningPath, VideoLesson, StudyResource } from '../types';
 
 export const LEARNING_PATHS: LearningPath[] = [
   {
-    id: 'path-tech-cyber',
+    id: 'path-technology',
     title: 'Technology & Cybersecurity Defense',
-    slug: 'tech-cyber-defense',
+    slug: 'technology-cybersecurity',
     domain: 'technology',
-    description: 'Master application defense, defensive parameterization, IoT, blockchain, and computing architecture.',
-    target_audience: 'Students, independent learners, and defenders building secure systems',
+    description: 'Master application defense, AI systems, cloud architecture, IoT, blockchain, and computing fundamentals.',
+    target_audience: 'Students and independent learners building secure, modern technology systems',
     prerequisites: ['Basic computing literacy'],
-    course_ids: ['course-web-sec', 'course-ai-fund', 'course-privacy-footprint', 'course-comp-fund'],
+    course_ids: [
+      'course-ai-fund',
+      'course-ai-resp',
+      'course-blockchain-fund',
+      'course-iot-fund',
+      'course-ms-tech',
+      'course-privacy-footprint',
+      'course-web-sec',
+      'course-comp-fund',
+    ],
   },
   {
     id: 'path-coding',
-    title: 'Coding, Algorithms & Databases',
+    title: 'Coding, Logic & Software Engineering',
     slug: 'coding-programming',
     domain: 'coding',
-    description: 'Learn computational logic, algorithmic loops, relational SQL databases, web development, and debugging.',
-    target_audience: 'Aspiring software engineers and technical problem solvers',
+    description: 'Learn computational logic, syntax structures, condition branching, loops, web development, and practical debugging.',
+    target_audience: 'Aspiring software engineers, students, and technical problem solvers',
     prerequisites: ['None'],
-    course_ids: ['course-prog-fund', 'course-prog-variables-loops', 'course-prog-db-sql', 'course-prog-exercises'],
+    course_ids: [
+      'course-prog-fund',
+      'course-prog-variables',
+      'course-prog-loops',
+      'course-prog-comp-thinking',
+      'course-prog-exercises',
+      'course-prog-web-fund',
+      'course-prog-debugging',
+      'course-prog-projects',
+    ],
   },
   {
-    id: 'path-ai-tech',
-    title: 'AI & Responsible Technology',
-    slug: 'ai-responsible-technology',
-    domain: 'technology',
-    description: 'Understand how modern machine learning models function, their systemic limitations, ethical safety, and practical tools.',
-    target_audience: 'Learners navigating artificial intelligence tools and ethics',
-    prerequisites: ['Foundational logic'],
-    course_ids: ['course-ai-fund', 'course-ai-resp'],
-  },
-  {
-    id: 'path-financial-literacy',
-    title: 'Finance & Financial Literacy',
+    id: 'path-finance',
+    title: 'Finance, Markets & FinTech',
     slug: 'finance-literacy',
     domain: 'finance',
-    description: 'Build grounded financial literacy covering central banking, markets, fintech, digital payments, and risk management.',
-    target_audience: 'Learners preparing for financial independence and career economics',
+    description: 'Build grounded financial literacy covering central banking, public markets, institutions, digital payments, and risk analysis.',
+    target_audience: 'Learners preparing for financial independence, investments, and economic fluency',
     prerequisites: ['Basic arithmetic'],
-    course_ids: ['course-fin-intro', 'course-fin-markets', 'course-fintech-payments', 'course-crypto-eval'],
+    course_ids: [
+      'course-fin-intro',
+      'course-fin-events',
+      'course-fin-markets',
+      'course-fin-institutions',
+      'course-crypto-eval',
+      'course-stock-market',
+      'course-fintech-payments',
+    ],
   },
   {
-    id: 'path-professional-identity',
-    title: 'Professional Skills & Portfolio Building',
-    slug: 'professional-identity',
+    id: 'path-professional',
+    title: 'Professional Skills & Career Identity',
+    slug: 'professional-skills-identity',
     domain: 'professional',
-    description: 'Develop high-performance time management, workplace soft skills, social identity, and evidence-backed portfolios.',
-    target_audience: 'Students preparing for internships, college admissions, and careers',
+    description: 'Develop time management, workplace soft skills, asynchronous communication, and credible professional profiles.',
+    target_audience: 'Students preparing for internships, college admissions, and modern professional environments',
     prerequisites: ['None'],
-    course_ids: ['course-prof-time', 'course-prof-workplace', 'course-prof-portfolio'],
+    course_ids: [
+      'course-prof-time',
+      'course-prof-workplace',
+      'course-prof-softskills',
+      'course-prof-identity',
+    ],
   },
 ];
 
@@ -70,91 +90,489 @@ export const ALL_COURSES: Course[] = [
   // CATEGORY 1: TECHNOLOGY (8 SUBJECTS)
   // ==================================================================
   {
-    id: 'course-web-sec',
-    title: 'Web Application Defense Fundamentals',
-    slug: 'web-defense-101',
+    id: 'course-ai-fund',
+    title: 'Artificial Intelligence and Practical AI Tools',
+    slug: 'ai-tools',
     domain: 'technology',
-    subject: 'Cybersecurity and defensive web security',
-    level: 'foundational' as any,
-    summary: 'Understand web architecture vulnerabilities, SQL injection attack vectors, and authoritative parameter binding defenses.',
-    description: 'This flagship course explores web application security by analyzing how untrusted inputs alter database query execution trees. Students learn the distinction between vulnerable string interpolation and native prepared statements through hands-on laboratory exercises.',
+    subject: 'Artificial Intelligence and practical AI tools',
+    level: 'beginner',
+    summary: 'Machine learning fundamentals, neural networks, prompting heuristics, generative tooling, and cognitive workflow automation.',
+    description: 'Deconstruct how modern AI models operate from first principles. Students evaluate transformer architectures, implement practical prompting patterns, and explore real-world AI applications.',
     learning_objectives: [
-      'Analyze how HTTP requests pass data to backend database drivers',
-      'Identify classic SQL injection syntax modification patterns',
-      'Write safe parameterized queries using positional parameter placeholders (?)',
-      'Defeat SQL injection attacks using SQLite parameter binding in an isolated sandbox',
+      'Understand training data, weights, inference, and probabilistic token generation',
+      'Construct deterministic prompts using few-shot heuristics and system constraints',
+      'Integrate AI productivity tools into software engineering and research workflows',
     ],
-    prerequisites: ['Basic understanding of web browsers and relational tables'],
+    prerequisites: ['Basic computing literacy'],
     duration_hours: 6,
     is_published: true,
     availability_status: 'verified_functional',
-    learning_path_id: 'path-tech-cyber',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-02').toISOString(),
+    modules: [
+      {
+        id: 'mod-ai-1',
+        course_id: 'course-ai-fund',
+        title: 'Module 1: Machine Learning Core Mechanics',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-ai-101',
+            module_id: 'mod-ai-1',
+            title: 'Lesson 1: Vectors, Embeddings & Probabilistic Tokens',
+            order_index: 1,
+            summary: 'How text is tokenized, mapped into multi-dimensional vector space, and processed by attention heads.',
+            duration_minutes: 25,
+            content_markdown: `### How Modern Language Models Process Text
+
+At its foundation, an AI language model does not "understand" language in the biological sense; it performs **next-token probability estimation** across high-dimensional semantic spaces.
+
+\`\`\`
+Text -> Tokenizer -> Input Tokens -> High-Dimensional Embedding -> Transformer Layers -> Output Logits -> Next Token
+\`\`\`
+
+1. **Tokenization:** Sentences are decomposed into sub-word tokens (~4 characters per token in English).
+2. **Vector Embeddings:** Each token is projected into a dense semantic vector (often 4,096 to 12,288 dimensions).
+3. **Self-Attention:** The transformer measures relational relevance between tokens across the entire input sequence.`,
+            quiz: {
+              id: 'quiz-ai-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'What mathematical entity represents a word or concept in modern transformer models?',
+                  options: [
+                    'A scalar integer counter',
+                    'A high-dimensional numerical vector (embedding)',
+                    'An alphabetical index pointer',
+                    'A single relational database table key',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Tokens are mapped into high-dimensional geometric spaces where proximity corresponds to semantic relationship.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-ai-2',
+        course_id: 'course-ai-fund',
+        title: 'Module 2: Practical Engineering with AI Tools',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-ai-102',
+            module_id: 'mod-ai-2',
+            title: 'Lesson 2: Few-Shot Prompting, Constraints & Tool Calling',
+            order_index: 1,
+            summary: 'Structuring prompts with explicit constraints, negative examples, and structured JSON output formats.',
+            duration_minutes: 25,
+            content_markdown: `### Structuring High-Reliability AI Prompts
+When integrating AI assistants into production workflows, vague natural language yields non-deterministic results. High-reliability prompting relies on three core tenets:
+1. **Explicit Role & Boundary Constraints**
+2. **Few-Shot Exemplars (Demonstrating Target Transformations)**
+3. **Structured Output Schemas (e.g. JSON or Markdown Tables)**`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-ai-resp',
+    title: 'Responsible AI',
+    slug: 'responsible-ai',
+    domain: 'technology',
+    subject: 'Responsible AI',
+    level: 'intermediate',
+    summary: 'Algorithmic bias, hallucination mitigation, intellectual property, safety guardrails, and transparency in automated decision systems.',
+    description: 'Examine the ethical, societal, and security implications of deploying artificial intelligence at scale. Learn to detect training set skew, evaluate fairness metrics, and construct robust human-in-the-loop validation checkpoints.',
+    learning_objectives: [
+      'Identify dataset distribution skew and systemic algorithmic bias',
+      'Implement prompt injection defenses and automated safety guardrails',
+      'Design human-in-the-loop workflows for high-stakes decision domains',
+    ],
+    prerequisites: ['Artificial Intelligence and practical AI tools'],
+    duration_hours: 5,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-05').toISOString(),
+    modules: [
+      {
+        id: 'mod-air-1',
+        course_id: 'course-ai-resp',
+        title: 'Module 1: Bias, Skew & Representation',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-air-101',
+            module_id: 'mod-air-1',
+            title: 'Lesson 1: Measuring Bias in Training Corpus Distributions',
+            order_index: 1,
+            summary: 'How historical inequalities are encoded into web-scale text corpora and amplified during fine-tuning.',
+            duration_minutes: 25,
+            content_markdown: `### Training Corpus Skew
+Machine learning models reflect the statistical distribution of their training datasets. If historical data encodes biases or underrepresents specific populations, the unconstrained model will reproduce and amplify those patterns in automated scoring.`,
+            quiz: {
+              id: 'quiz-air-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'Why do automated machine learning models frequently replicate historical bias?',
+                  options: [
+                    'Because computers inherently hold personal preferences',
+                    'Because models learn the statistical patterns of historical training corpora without moral judgment',
+                    'Because of hardware overheating during training loops',
+                    'Because of network latency in API calls',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Models minimize statistical loss against training data; if that data reflects historical disparities, the model reproduces them.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-air-2',
+        course_id: 'course-ai-resp',
+        title: 'Module 2: Hallucination & Prompt Injection',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-air-102',
+            module_id: 'mod-air-2',
+            title: 'Lesson 2: Indirect Prompt Injections & Jailbreak Vectors',
+            order_index: 1,
+            summary: 'Understanding adversarial input payloads that subvert system instructions and model alignment.',
+            duration_minutes: 25,
+            content_markdown: `### Adversarial Attacks on LLMs
+Indirect prompt injection occurs when an untrusted external text (such as an email, PDF, or scraped website) contains instructions designed to hijack the agentic model execution loop.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-blockchain-fund',
+    title: 'Blockchain',
+    slug: 'blockchain-fundamentals',
+    domain: 'technology',
+    subject: 'Blockchain',
+    level: 'intermediate',
+    summary: 'Cryptographic hashing, Merkle trees, distributed consensus, immutability, smart contract architectures, and security trade-offs.',
+    description: 'Demystify distributed ledger technology by dissecting its core computer science components: cryptographic hashes, asymmetric signatures, peer-to-peer gossip networks, and consensus protocols.',
+    learning_objectives: [
+      'Calculate SHA-256 block hashes and construct verified Merkle proof trees',
+      'Compare Proof-of-Work, Proof-of-Stake, and BFT consensus models',
+      'Analyze smart contract vulnerabilities and state transition constraints',
+    ],
+    prerequisites: ['Computing fundamentals'],
+    duration_hours: 5,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-12').toISOString(),
+    modules: [
+      {
+        id: 'mod-bc-1',
+        course_id: 'course-blockchain-fund',
+        title: 'Module 1: Cryptographic Primitives',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-bc-101',
+            module_id: 'mod-bc-1',
+            title: 'Lesson 1: SHA-256, Merkle Trees & Cryptographic Linking',
+            order_index: 1,
+            summary: 'How linked cryptographic hashes create tamper-evident sequential chains.',
+            duration_minutes: 25,
+            content_markdown: `### Hash Pointer Immutability
+Each block in a blockchain contains a cryptographic hash of the entire preceding block. Altering a historical transaction changes its hash, invalidating every subsequent block in the chain.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-bc-2',
+        course_id: 'course-blockchain-fund',
+        title: 'Module 2: Consensus Protocols',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-bc-102',
+            module_id: 'mod-bc-2',
+            title: 'Lesson 2: Byzantine Fault Tolerance & Sybil Resistance',
+            order_index: 1,
+            summary: 'Reaching distributed agreement across untrusted network participants without central authorities.',
+            duration_minutes: 25,
+            content_markdown: `### Distributed Consensus
+Solving the Byzantine Generals Problem allows independent nodes to achieve absolute state consensus across unreliable internet networks.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-iot-fund',
+    title: 'Internet of Things (IoT)',
+    slug: 'iot-fundamentals',
+    domain: 'technology',
+    subject: 'Internet of Things (IoT)',
+    level: 'intermediate',
+    summary: 'Microcontrollers, sensor telemetry, MQTT publish-subscribe protocols, edge processing, and hardware security.',
+    description: 'Explore how physical computing bridges digital software with physical reality. Analyze embedded architectures (ESP32, Raspberry Pi), telemetry pipelines, low-latency protocols, and device authentication.',
+    learning_objectives: [
+      'Configure lightweight MQTT publish/subscribe messaging topologies',
+      'Process analog and digital sensor telemetry with noise filtering',
+      'Implement device authentication and secure over-the-air (OTA) updates',
+    ],
+    prerequisites: ['Computing fundamentals'],
+    duration_hours: 5,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-14').toISOString(),
+    modules: [
+      {
+        id: 'mod-iot-1',
+        course_id: 'course-iot-fund',
+        title: 'Module 1: Telemetry & Protocol Stacks',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-iot-101',
+            module_id: 'mod-iot-1',
+            title: 'Lesson 1: MQTT Architecture vs HTTP for Low-Power Devices',
+            order_index: 1,
+            summary: 'Why pub/sub socket architectures outperform request/response on battery-constrained microcontrollers.',
+            duration_minutes: 25,
+            content_markdown: `### MQTT Protocol Efficiency
+MQTT uses an extremely lightweight 2-byte fixed header, making it orders of magnitude more bandwidth-efficient than HTTP for sensor bursts.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-iot-2',
+        course_id: 'course-iot-fund',
+        title: 'Module 2: Edge Computing & Hardware Security',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-iot-102',
+            module_id: 'mod-iot-2',
+            title: 'Lesson 2: Hardware Root of Trust & Secure Device Boot',
+            order_index: 1,
+            summary: 'Protecting connected smart devices against unauthorized firmware flashing and physical bus sniffing.',
+            duration_minutes: 25,
+            content_markdown: `### Securing Edge Devices
+Embedded devices deployed in public environments must encrypt flash memory and verify cryptographic signatures during boot cycles.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-ms-tech',
+    title: 'Microsoft technologies',
+    slug: 'microsoft-technologies',
+    domain: 'technology',
+    subject: 'Microsoft technologies',
+    level: 'intermediate',
+    summary: 'Azure cloud architecture, Active Directory, C# and .NET runtime, PowerShell automation, and enterprise governance.',
+    description: 'Analyze enterprise technology foundations powered by Microsoft ecosystems. Learn cloud compute scaling on Azure, role-based access control with Entra ID, and scalable backend services.',
+    learning_objectives: [
+      'Design cloud topologies using Azure App Services, Blob Storage, and Virtual Networks',
+      'Manage enterprise identities and zero-trust policies in Microsoft Entra ID',
+      'Automate administrative workflows using structured PowerShell scripting',
+    ],
+    prerequisites: ['Computing fundamentals'],
+    duration_hours: 5,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-15').toISOString(),
+    modules: [
+      {
+        id: 'mod-ms-1',
+        course_id: 'course-ms-tech',
+        title: 'Module 1: Enterprise Cloud & Identity',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-ms-101',
+            module_id: 'mod-ms-1',
+            title: 'Lesson 1: Azure Resource Hierarchies & Entra ID Zero-Trust',
+            order_index: 1,
+            summary: 'Subscriptions, resource groups, managed identities, and conditional access policies.',
+            duration_minutes: 25,
+            content_markdown: `### Azure Enterprise Governance
+Azure organizes assets into Management Groups -> Subscriptions -> Resource Groups -> Resources, applying RBAC policies deterministically down the hierarchy.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-ms-2',
+        course_id: 'course-ms-tech',
+        title: 'Module 2: Modern .NET Runtime & Automation',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-ms-102',
+            module_id: 'mod-ms-2',
+            title: 'Lesson 2: Cross-Platform .NET Core & PowerShell Automation',
+            order_index: 1,
+            summary: 'High-performance CLR runtime compilation and object-pipeline administrative automation.',
+            duration_minutes: 25,
+            content_markdown: `### Object-Oriented Scripting
+Unlike Bash which pipes unstructured plain text, PowerShell passes rich typed .NET objects down its pipeline.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-privacy-footprint',
+    title: 'Digital Privacy and Digital Footprint',
+    slug: 'digital-privacy-footprint',
+    domain: 'technology',
+    subject: 'Digital Privacy and Digital Footprint',
+    level: 'beginner',
+    summary: 'Browser fingerprinting, telemetry collection, third-party cookies, data broker ecosystems, DPDP Act 2023, and defensive posture.',
+    description: 'Understand how personal data is harvested across web platforms, and learn actionable methods to audit, restrict, and safeguard your online footprint in accordance with Indian and global privacy regulations.',
+    learning_objectives: [
+      'Inspect canvas fingerprinting, WebRTC IP leakage, and HTTP tracking headers',
+      'Exercise rights under India\'s Digital Personal Data Protection (DPDP) Act 2023',
+      'Deploy password managers, multi-factor authentication, and encrypted communications',
+    ],
+    prerequisites: ['None'],
+    duration_hours: 4,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-07').toISOString(),
+    modules: [
+      {
+        id: 'mod-dp-1',
+        course_id: 'course-privacy-footprint',
+        title: 'Module 1: Passive Web Telemetry & Tracking',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-dp-101',
+            module_id: 'mod-dp-1',
+            title: 'Lesson 1: Device Fingerprinting Beyond Cookies',
+            order_index: 1,
+            summary: 'How fonts, screen resolution, audio context, and GPU renderer create unique tracking hashes.',
+            duration_minutes: 20,
+            content_markdown: `### Modern Passive Fingerprinting
+Even when cookies and local storage are cleared, websites can compute a unique entropy hash from your browser environment.`,
+            quiz: {
+              id: 'quiz-dp-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'Why is device fingerprinting more invasive than standard HTTP cookies?',
+                  options: [
+                    'It consumes more battery power on mobile phones',
+                    'It operates statelessly without storing files on the user machine, making simple cookie clearing ineffective',
+                    'It only works when connected to public Wi-Fi networks',
+                    'It requires root administrative access to your computer',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Fingerprinting uses inherent device characteristics rather than client-stored state, making it resilient to cookie clearing.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-dp-2',
+        course_id: 'course-privacy-footprint',
+        title: 'Module 2: Indian DPDP Act 2023 & Defensive Posture',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-dp-102',
+            module_id: 'mod-dp-2',
+            title: 'Lesson 2: Citizen Rights, Consent Managers & Minor Safeguards',
+            order_index: 1,
+            summary: 'Navigating statutory rights: right to access, right to correction, and mandatory verifiable parental consent.',
+            duration_minutes: 20,
+            content_markdown: `### Digital Personal Data Protection Act 2023
+The DPDP Act establishes strict obligations on Data Fiduciaries in India, including verifiable parental consent for individuals under 18 years of age.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-web-sec',
+    title: 'Cybersecurity and Defensive Web Security',
+    slug: 'cybersecurity-defensive-web',
+    domain: 'technology',
+    subject: 'Cybersecurity and Defensive Web Security',
+    level: 'beginner',
+    summary: 'Defensive web security, HTTP security headers, authentication protocols, XSS and CSRF mitigations, and defense-in-depth architecture.',
+    description: 'Explore modern web application defense mechanisms. Students learn to implement Content Security Policy (CSP), secure session authentication, Cross-Origin Resource Sharing (CORS) rules, and rigorous server-side input validation.',
+    learning_objectives: [
+      'Analyze how HTTP requests and response headers protect client-server communication',
+      'Identify and remediate Cross-Site Scripting (XSS) and Cross-Site Request Forgery (CSRF)',
+      'Implement robust password hashing with modern algorithms like Argon2 and bcrypt',
+      'Apply defense-in-depth principles across frontend, API gateway, and database layers',
+    ],
+    prerequisites: ['Basic understanding of web browsers and HTTP fundamentals'],
+    duration_hours: 6,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-technology',
     created_at: new Date('2026-09-01').toISOString(),
     modules: [
       {
         id: 'mod-sec-1',
         course_id: 'course-web-sec',
-        title: 'Module 1: Injection Anatomy & Threat Modeling',
+        title: 'Module 1: Web Threat Modeling & Browser Security Controls',
         order_index: 1,
         lessons: [
           {
             id: 'les-sec-101',
             module_id: 'mod-sec-1',
-            title: 'Lesson 1: The Boundary Between Data and Code',
+            title: 'Lesson 1: Same-Origin Policy & HTTP Defense Headers',
             order_index: 1,
-            summary: 'Why string concatenation creates dangerous ambiguity in interpreted languages and relational engines.',
-            duration_minutes: 20,
-            content_markdown: `### The Core Vulnerability: Mixing Code and Data
+            summary: 'How modern browsers enforce origin isolation and how headers like CSP and HSTS mitigate attacks.',
+            duration_minutes: 25,
+            content_markdown: `### The Same-Origin Policy & Defense in Depth
 
-In computer security, almost every injection vulnerability stems from a single fundamental flaw: **treating untrusted input as executable instruction syntax rather than literal data**.
+In web security, the **Same-Origin Policy (SOP)** is the fundamental security model of web browsers:
+- Two URLs have the same origin if the **protocol**, **host**, and **port** are identical.
+- Without SOP, any malicious website you visit could issue authenticated background requests to your bank or email!
 
-When a software developer concatenates an untrusted input string into an SQL query string:
-
-\`\`\`python
-# Vulnerable pattern
-user_query = f"SELECT * FROM users WHERE username = '{user_input}' AND account_status = 'active'"
-\`\`\`
-
-The relational database engine has no intrinsic way of knowing where the programmer's instructions end and the user's data begins. If an adversary submits:
-
-\`\`\`sql
-' OR '1'='1
-\`\`\`
-
-The query string is transformed into:
-
-\`\`\`sql
-SELECT * FROM users WHERE username = '' OR '1'='1' AND account_status = 'active'
-\`\`\`
-
-Because \`'1'='1'\` evaluates to true for every single row in the table, the database returns all user records, bypassing authentication entirely!
-
-#### The Defense: Parameterized Prepared Statements
-When using **parameter binding**, the database driver separates query compilation from data binding:
-1. The SQL query template (\`SELECT id, username, role FROM challenge_users WHERE username = ? AND account_status = 'active'\`) is compiled into an execution bytecode plan **first**.
-2. The user's input is bound to the placeholder slot as a **scalar literal string value**.
-3. Even if the user enters \`' OR '1'='1\`, SQLite treats the entire string as a literal username value to search for, rather than altering the relational logic.`,
+#### Essential HTTP Defense Headers:
+1. **Content-Security-Policy (CSP):** Restricts the sources of scripts, styles, and images that the browser is permitted to execute.
+2. **Strict-Transport-Security (HSTS):** Enforces HTTPS encrypted transport exclusively.
+3. **X-Content-Type-Options:** Prevents MIME-type sniffing attacks.
+4. **X-Frame-Options / frame-ancestors:** Prevents clickjacking by forbidding unauthorized framing.`,
             quiz: {
               id: 'quiz-sec-101',
               questions: [
                 {
                   id: 'q1',
-                  prompt: 'Why does parameterized query execution defeat SQL injection?',
+                  prompt: 'What three components must match for two web URLs to share the Same Origin?',
                   options: [
-                    'It escapes single quotes by doubling them up before query execution',
-                    'The SQL statement is compiled into bytecode before input values are bound to parameter slots',
-                    'It converts the SQL database into an encrypted key-value store',
-                    'It blocks all users whose names contain special characters',
+                    'Protocol, Host, and Port',
+                    'Domain, Top-Level Domain, and Path',
+                    'IP Address, MAC Address, and Browser',
+                    'User Agent, Operating System, and Cookie',
                   ],
-                  correct_option_index: 1,
-                  explanation: 'Prepared statements compile the SQL command structure into an execution plan first, ensuring untrusted input is treated exclusively as literal scalar data.',
+                  correct_option_index: 0,
+                  explanation: 'Same-Origin Policy requires the exact same protocol (e.g. https), hostname (e.g. geniusphere.tech), and port (e.g. 443).',
                 },
                 {
                   id: 'q2',
-                  prompt: 'In SQL parameterization, what character is typically used as a positional placeholder in SQLite?',
-                  options: ['#', '$', '?', '%'],
-                  correct_option_index: 2,
-                  explanation: 'SQLite uses the question mark (?) as the standard positional parameter placeholder.',
+                  prompt: 'Which HTTP response header actively prevents clickjacking attacks?',
+                  options: ['X-Frame-Options', 'Accept-Encoding', 'Content-Encoding', 'User-Agent'],
+                  correct_option_index: 0,
+                  explanation: 'X-Frame-Options (or CSP frame-ancestors) instructs the browser whether the page can be embedded in an iframe.',
                 },
               ],
             },
@@ -164,390 +582,26 @@ When using **parameter binding**, the database driver separates query compilatio
       {
         id: 'mod-sec-2',
         course_id: 'course-web-sec',
-        title: 'Module 2: Defensive Parameterization & Lab Execution',
+        title: 'Module 2: Authentication & Input Sanitization',
         order_index: 2,
         lessons: [
           {
             id: 'les-sec-102',
             module_id: 'mod-sec-2',
-            title: 'Lesson 2: Interactive Parameterization Lab',
+            title: 'Lesson 2: Token-Based Authentication & Defense Against Attacks',
             order_index: 1,
-            summary: 'Defeat SQL injection by implementing native parameter placeholders and testing against 5 attack payloads.',
-            duration_minutes: 30,
-            content_markdown: `### Hands-On Challenge: SQL Parameterization & Injection Defense
+            summary: 'Secure session tokens, HTTP-only cookies, password hashing with salt, and strict input validation schemas.',
+            duration_minutes: 25,
+            content_markdown: `### Secure Session Management & Input Validation
 
-You have arrived at the interactive laboratory. In this exercise, you must defeat an authentication bypass attempt on the \`challenge_users\` table.
+Storing passwords in plaintext or using outdated hash algorithms (like MD5 or SHA1) is fatal. Modern applications use **slow, memory-hard key derivation functions**:
+- **Argon2id** (current gold standard)
+- **bcrypt** (battle-tested with adaptive cost work factors)
 
-#### Challenge Specifications:
-- Select only the required columns: \`id, username, role\`
-- Target table: \`challenge_users\`
-- Filter condition: \`username = ?\`
-- Security constraint: Ensure only active accounts are queried using \`account_status = 'active'\`
-
-Launch the interactive laboratory below to test your query in the local SQLite-WASM sandbox and submit it for authoritative grading.`,
-            linked_lab_id: 'lab-sec-101',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-ai-resp',
-    title: 'Responsible AI, Limits & Ethical Verification',
-    slug: 'responsible-ai-ethics',
-    domain: 'technology',
-    subject: 'Responsible AI',
-    level: 'intermediate',
-    summary: 'Explore neural network limitations, hallucinations, training biases, and techniques for responsible verification of AI outputs.',
-    description: 'This course provides students with a foundational understanding of how large language models and generative AI systems function. Rather than viewing AI as infallible intelligence, students learn the probabilistic nature of token generation, copyright considerations, privacy leakage, and rigorous fact-verification techniques.',
-    learning_objectives: [
-      'Understand probabilistic token prediction vs deterministic reasoning',
-      'Detect automated hallucinations and algorithmic bias',
-      'Protect personal and institutional privacy when interacting with AI systems',
-      'Implement structured verification workflows for AI-generated code and content',
-    ],
-    prerequisites: ['Basic computing literacy'],
-    duration_hours: 5,
-    is_published: true,
-    availability_status: 'implemented_in_build',
-    learning_path_id: 'path-ai-tech',
-    created_at: new Date('2026-09-10').toISOString(),
-    modules: [
-      {
-        id: 'mod-ai-1',
-        course_id: 'course-ai-resp',
-        title: 'Module 1: The Anatomy of Generative Models',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-ai-101',
-            module_id: 'mod-ai-1',
-            title: 'Lesson 1: Probabilistic Next-Token Prediction',
-            order_index: 1,
-            summary: 'Why AI models sound confident even when stating complete falsehoods.',
-            duration_minutes: 25,
-            content_markdown: `### Understanding the Stochastic Nature of AI
-
-Large language models (LLMs) do not possess consciousness, intent, or a verified ground-truth database. They are sophisticated statistical prediction engines trained to calculate the most plausible next token given a preceding context window.
-
-#### What Causes Hallucinations?
-Because language models optimize for plausibility rather than truth, they can assemble grammatically flawless, highly persuasive explanations that are completely fabricated. When an AI generates a fake legal citation or a non-existent software API, it is simply matching grammatical patterns.
-
-#### Rule of Responsible AI:
-*Never treat an LLM as an authoritative oracle. Always treat AI output as an unverified draft requiring independent verification.*`,
-            quiz: {
-              id: 'quiz-ai-101',
-              questions: [
-                {
-                  id: 'q1',
-                  prompt: 'What primary task are autoregressive large language models trained to perform?',
-                  options: [
-                    'Searching verified academic databases for true facts',
-                    'Predicting the most statistically probable next token given context',
-                    'Executing code securely on server clusters',
-                    'Proving mathematical theorems through symbolic logic',
-                  ],
-                  correct_option_index: 1,
-                  explanation: 'LLMs are statistical engines trained to minimize cross-entropy loss by predicting the next token in a sequence.',
-                },
-              ],
-            },
-          },
-        ],
-      },
-      {
-        id: 'mod-ai-2',
-        course_id: 'course-ai-resp',
-        title: 'Module 2: Ethical Verification & Bias Mitigation',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-ai-102',
-            module_id: 'mod-ai-2',
-            title: 'Lesson 2: Systematic Output Auditing & Privacy Leakage',
-            order_index: 1,
-            summary: 'Practical verification steps for AI code, text, and preventing data leakage.',
-            duration_minutes: 25,
-            content_markdown: `### Verifying AI Outputs
-When working with AI-assisted software generation:
-1. Always run automated unit test suites.
-2. Inspect for deprecated APIs or non-existent methods.
-3. Never input confidential student data, passwords, or private keys into external prompt windows.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-ai-fund',
-    title: 'Artificial Intelligence & Modern AI Tools',
-    slug: 'ai-fundamentals-tools',
-    domain: 'technology',
-    subject: 'Artificial intelligence and practical AI tools',
-    level: 'beginner',
-    summary: 'Core concepts of machine learning, classification, neural networks, and practical generative tools.',
-    description: 'Foundational introduction to modern artificial intelligence, machine learning pipelines, prompt engineering, and productivity integration.',
-    learning_objectives: ['Define supervised, unsupervised, and reinforcement learning', 'Use AI tools responsibly for research and development'],
-    prerequisites: ['Basic computing literacy'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-ai-tech',
-    created_at: new Date('2026-09-12').toISOString(),
-    modules: [
-      {
-        id: 'mod-aif-1',
-        course_id: 'course-ai-fund',
-        title: 'Module 1: Machine Learning Core Paradigms',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-aif-101',
-            module_id: 'mod-aif-1',
-            title: 'Lesson 1: Supervised vs Unsupervised Classification',
-            order_index: 1,
-            summary: 'How machines learn patterns from labeled training data vs cluster discovery.',
-            duration_minutes: 20,
-            content_markdown: `### Machine Learning Core Concepts
-Machine learning shifts programming from writing explicit rules to training statistical models on existing data.
-- **Supervised Learning:** Training with labeled inputs and known targets (e.g., spam vs non-spam).
-- **Unsupervised Learning:** Finding latent clusters in unlabeled datasets.
-- **Neural Networks:** Layered mathematical weights inspired by biological neural connections.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-aif-2',
-        course_id: 'course-ai-fund',
-        title: 'Module 2: Practical AI Tools & Workflows',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-aif-102',
-            module_id: 'mod-aif-2',
-            title: 'Lesson 2: Prompt Engineering & Automated Assistance',
-            order_index: 1,
-            summary: 'Structured prompting techniques, few-shot examples, and workflow integration.',
-            duration_minutes: 25,
-            content_markdown: `### Effective AI Prompting
-Learn how to frame context, provide few-shot examples, and establish negative constraints to elicit precise AI outputs.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-blockchain-fund',
-    title: 'Blockchain & Distributed Ledger Fundamentals',
-    slug: 'blockchain-fundamentals',
-    domain: 'technology',
-    subject: 'Blockchain',
-    level: 'intermediate',
-    summary: 'Cryptographic hashing, distributed state machines, consensus protocols, and smart contract principles.',
-    description: 'Learn the architectural foundations of decentralized computing without financial speculation or hype.',
-    learning_objectives: ['Explain Merkle trees and cryptographic verification', 'Differentiate PoW and PoS consensus mechanisms'],
-    prerequisites: ['Computing fundamentals'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-15').toISOString(),
-    modules: [
-      {
-        id: 'mod-bc-1',
-        course_id: 'course-blockchain-fund',
-        title: 'Module 1: Cryptographic Foundations & Immutability',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-bc-101',
-            module_id: 'mod-bc-1',
-            title: 'Lesson 1: SHA-256 Hashing & Merkle Trees',
-            order_index: 1,
-            summary: 'How one-way hash functions guarantee data integrity across distributed nodes.',
-            duration_minutes: 25,
-            content_markdown: `### Cryptographic Hash Functions
-A cryptographic hash function maps arbitrary data to a fixed-size 256-bit hash. Any modification to a block alters its hash, breaking the sequential chain.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-bc-2',
-        course_id: 'course-blockchain-fund',
-        title: 'Module 2: Consensus & Distributed Networks',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-bc-102',
-            module_id: 'mod-bc-2',
-            title: 'Lesson 2: Byzantine Fault Tolerance & Proof Mechanisms',
-            order_index: 1,
-            summary: 'How peer-to-peer networks agree on canonical ledger state without a central authority.',
-            duration_minutes: 25,
-            content_markdown: `### Network Consensus
-Explore how distributed nodes achieve consensus under network delays and adversarial participants.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-iot-fund',
-    title: 'Internet of Things (IoT) & Sensor Architectures',
-    slug: 'iot-fundamentals',
-    domain: 'technology',
-    subject: 'Internet of Things (IoT)',
-    level: 'intermediate',
-    summary: 'Embedded microcontrollers, sensor telemetry, edge networking, MQTT, and IoT security models.',
-    description: 'Understand how physical devices collect and transmit data to networked server applications.',
-    learning_objectives: ['Understand sensor reading cycles and analog-to-digital conversion', 'Analyze MQTT lightweight pub/sub protocols'],
-    prerequisites: ['Basic networking concepts'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-18').toISOString(),
-    modules: [
-      {
-        id: 'mod-iot-1',
-        course_id: 'course-iot-fund',
-        title: 'Module 1: Embedded Hardware & Sensors',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-iot-101',
-            module_id: 'mod-iot-1',
-            title: 'Lesson 1: Microcontrollers, GPIO & Telemetry Sampling',
-            order_index: 1,
-            summary: 'Analog-to-digital conversion and physical world sampling.',
-            duration_minutes: 20,
-            content_markdown: `### Embedded Telemetry
-Sensors read physical phenomena (temperature, light, pressure) and convert them to digital signals via GPIO pins.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-iot-2',
-        course_id: 'course-iot-fund',
-        title: 'Module 2: IoT Networking Protocols',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-iot-102',
-            module_id: 'mod-iot-2',
-            title: 'Lesson 2: Lightweight MQTT Messaging & Edge Security',
-            order_index: 1,
-            summary: 'Publish/subscribe architectures over constrained mobile data connections.',
-            duration_minutes: 25,
-            content_markdown: `### MQTT Architecture
-MQTT provides low-overhead packet headers suitable for unreliable sensor connections.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-ms-tech',
-    title: 'Microsoft Technologies & Productivity Architecture',
-    slug: 'microsoft-technologies',
-    domain: 'technology',
-    subject: 'Microsoft technologies',
-    level: 'beginner',
-    summary: 'Enterprise cloud services, Azure basics, PowerShell scripting, Active Directory concepts, and Microsoft 365 administration.',
-    description: 'Master practical industry standards across modern enterprise software environments and cloud infrastructure.',
-    learning_objectives: ['Navigate enterprise directory structures', 'Automate file and system workflows with PowerShell'],
-    prerequisites: ['None'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-20').toISOString(),
-    modules: [
-      {
-        id: 'mod-ms-1',
-        course_id: 'course-ms-tech',
-        title: 'Module 1: Enterprise Directory & Cloud Identity',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-ms-101',
-            module_id: 'mod-ms-1',
-            title: 'Lesson 1: Active Directory & Azure Cloud Identity',
-            order_index: 1,
-            summary: 'Identity federation, role-based access, and organizational units.',
-            duration_minutes: 20,
-            content_markdown: `### Cloud Identity
-Enterprise security relies on centralized identity providers to manage permissions across hundreds of systems.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-ms-2',
-        course_id: 'course-ms-tech',
-        title: 'Module 2: Automation & Office Systems',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-ms-102',
-            module_id: 'mod-ms-2',
-            title: 'Lesson 2: PowerShell Automation & M365 Administration',
-            order_index: 1,
-            summary: 'Scripting repetitive administrative tasks and policy deployment.',
-            duration_minutes: 25,
-            content_markdown: `### PowerShell Automation
-Object-oriented scripting in PowerShell enables automated account provisioning and configuration auditing.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-privacy-footprint',
-    title: 'Digital Privacy & Digital Footprint Protection',
-    slug: 'digital-privacy-footprint',
-    domain: 'technology',
-    subject: 'Digital privacy and digital footprints',
-    level: 'beginner',
-    summary: 'Telemetry tracking, browser fingerprinting, data broker harvesting, and practical defensive personal security.',
-    description: 'Learn how modern digital platforms monitor user behavior and how to defend personal and student data under DPDP standards.',
-    learning_objectives: ['Audit personal digital footprints', 'Configure browser isolation and cookie defenses'],
-    prerequisites: ['None'],
-    duration_hours: 3,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-tech-cyber',
-    created_at: new Date('2026-09-22').toISOString(),
-    modules: [
-      {
-        id: 'mod-priv-1',
-        course_id: 'course-privacy-footprint',
-        title: 'Module 1: Web Tracking Mechanics',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-priv-101',
-            module_id: 'mod-priv-1',
-            title: 'Lesson 1: Browser Fingerprinting & Telemetry',
-            order_index: 1,
-            summary: 'How canvas rendering, fonts, and screen dimensions uniquely identify devices.',
-            duration_minutes: 20,
-            content_markdown: `### Device Fingerprinting
-Even with cookies disabled, combinations of browser extensions, graphics rendering quirks, and headers identify users across websites.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-priv-2',
-        course_id: 'course-privacy-footprint',
-        title: 'Module 2: Defensive Personal Security',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-priv-102',
-            module_id: 'mod-priv-2',
-            title: 'Lesson 2: Telemetry Isolation & Data Minimization',
-            order_index: 1,
-            summary: 'Configuring DNS filtering, container tabs, and minimal permissions.',
-            duration_minutes: 20,
-            content_markdown: `### Practical Privacy Hardening
-Adopt the principle of data minimization: never provide unnecessary phone numbers, birthdays, or address details to web services.`,
+#### Securing Session Tokens:
+1. Store session identifiers in **HttpOnly, Secure, SameSite=Strict** cookies.
+2. HttpOnly prevents client-side JavaScript from reading the cookie, mitigating credential theft via Cross-Site Scripting (XSS).
+3. Always validate untrusted input strictly on the server against an explicit allowlist schema.`,
           },
         ],
       },
@@ -555,54 +609,76 @@ Adopt the principle of data minimization: never provide unnecessary phone number
   },
   {
     id: 'course-comp-fund',
-    title: 'Computing Fundamentals & Hardware Architecture',
+    title: 'Computing Fundamentals',
     slug: 'computing-fundamentals',
     domain: 'technology',
-    subject: 'Computing fundamentals',
+    subject: 'Computing Fundamentals',
     level: 'beginner',
-    summary: 'Binary arithmetic, logic gates, memory hierarchies, processor cycles, and operating system kernels.',
-    description: 'A ground-up journey through computer engineering, explaining how silicon switches execute machine instructions.',
-    learning_objectives: ['Convert between binary, decimal, and hexadecimal', 'Trace CPU fetch-decode-execute cycles'],
+    summary: 'Von Neumann architecture, binary logic gates, CPU fetch-decode-execute cycles, memory hierarchies, and OS fundamentals.',
+    description: 'Ground your technical education in the bedrock of computer science. Dissect binary representations, CPU registers, cache tiers (L1/L2/L3), RAM, storage persistence, and operating system process scheduling.',
+    learning_objectives: [
+      'Translate numerical and character data into binary, octal, and hexadecimal encodings',
+      'Trace the CPU instruction fetch-decode-execute cycle and register state updates',
+      'Compare memory hierarchy latencies from L1 CPU cache to NVMe storage',
+    ],
     prerequisites: ['None'],
     duration_hours: 5,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-tech-cyber',
-    created_at: new Date('2026-09-25').toISOString(),
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-technology',
+    created_at: new Date('2026-09-08').toISOString(),
     modules: [
       {
         id: 'mod-cf-1',
         course_id: 'course-comp-fund',
-        title: 'Module 1: Silicon & Machine Architecture',
+        title: 'Module 1: Binary Representation & Logic',
         order_index: 1,
         lessons: [
           {
             id: 'les-cf-101',
             module_id: 'mod-cf-1',
-            title: 'Lesson 1: Binary Logic, Transistors & ALU Operations',
+            title: 'Lesson 1: Bits, Bytes, Two\'s Complement & Boolean Gates',
             order_index: 1,
-            summary: 'How Boolean algebra is physically realized in silicon chips.',
+            summary: 'How microscopic transistors implement AND, OR, NOT, and XOR gates to perform integer arithmetic.',
             duration_minutes: 25,
-            content_markdown: `### The Arithmetic Logic Unit
-At the physical layer, computers manipulate electrical voltages across billions of microscopic transistors representing 0s and 1s.`,
+            content_markdown: `### The Transistor as a Binary Switch
+All modern digital computing emerges from billions of microscopic field-effect transistors acting as electrical switches:
+- **Voltage High (1)** represents True.
+- **Voltage Low (0)** represents False.
+
+Combining transistors creates boolean logic gates: AND, OR, NOT, and XOR. Chaining these gates creates full adders that perform arithmetic.`,
+            quiz: {
+              id: 'quiz-cf-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'How many distinct values can be represented by a single standard 8-bit byte?',
+                  options: ['128', '256', '512', '1024'],
+                  correct_option_index: 1,
+                  explanation: '2 raised to the 8th power equals 256 distinct combinations (0 through 255 in unsigned integer notation).',
+                },
+              ],
+            },
           },
         ],
       },
       {
         id: 'mod-cf-2',
         course_id: 'course-comp-fund',
-        title: 'Module 2: Memory & Execution Cycles',
+        title: 'Module 2: CPU Execution & Memory Hierarchy',
         order_index: 2,
         lessons: [
           {
             id: 'les-cf-102',
             module_id: 'mod-cf-2',
-            title: 'Lesson 2: Fetch-Decode-Execute Cycles & OS Kernels',
+            title: 'Lesson 2: The Fetch-Decode-Execute Cycle & Cache Latencies',
             order_index: 1,
-            summary: 'How the CPU steps through instructions stored in volatile RAM.',
+            summary: 'How instruction pointers retrieve opcodes from memory and execute operations in arithmetic logic units.',
             duration_minutes: 25,
-            content_markdown: `### The Instruction Cycle
-The CPU continuously fetches instruction opcodes from memory, decodes their operands, and executes computational state changes.`,
+            content_markdown: `### The Von Neumann Cycle
+1. **Fetch:** CPU retrieves the instruction at the memory address stored in the Program Counter (PC).
+2. **Decode:** Control unit decodes opcode and registers.
+3. **Execute:** Arithmetic Logic Unit (ALU) performs computation and stores result.`,
           },
         ],
       },
@@ -610,22 +686,770 @@ The CPU continuously fetches instruction opcodes from memory, decodes their oper
   },
 
   // ==================================================================
-  // CATEGORY 2: CODING & PROGRAMMING (7 SUBJECTS)
+  // CATEGORY 2: FINANCE (7 SUBJECTS)
+  // ==================================================================
+  {
+    id: 'course-fin-intro',
+    title: 'Introduction to Finance',
+    slug: 'intro-to-finance',
+    domain: 'finance',
+    subject: 'Introduction to Finance',
+    level: 'beginner',
+    summary: 'Time value of money, compound growth, inflation metrics, budgeting frameworks, debt mechanics, and financial sovereignty.',
+    description: 'Learn the foundational laws of economics and personal financial security. Dissect the mathematical power of compound interest, understand how inflation diminishes purchasing power, and implement resilient zero-based budgeting.',
+    learning_objectives: [
+      'Calculate compound interest and analyze nominal vs. real returns adjusted for inflation',
+      'Implement the 50/30/20 budget framework adapted for Indian household expenditures',
+      'Compare high-interest debt amortization schedules to minimize financing costs',
+    ],
+    prerequisites: ['Basic arithmetic'],
+    duration_hours: 5,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-02').toISOString(),
+    modules: [
+      {
+        id: 'mod-fi-1',
+        course_id: 'course-fin-intro',
+        title: 'Module 1: The Mathematics of Compounding',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-fi-101',
+            module_id: 'mod-fi-1',
+            title: 'Lesson 1: Compound Interest, Inflation & Purchasing Power',
+            order_index: 1,
+            summary: 'How exponential compounding builds long-term wealth, and how inflation silently erodes idle cash.',
+            duration_minutes: 25,
+            content_markdown: `### Compound Interest: The Exponential Multiplier
+
+The formula for compound interest demonstrates why early savings yield disproportionate financial outcomes:
+
+$$A = P \\times (1 + r/n)^{nt}$$
+
+- **A:** Final accrued balance
+- **P:** Initial principal investment
+- **r:** Annual interest rate
+- **n:** Compounding periods per year
+- **t:** Number of years invested
+
+#### The Destructive Impact of Inflation:
+If inflation averages 6% annually in India, your money loses half its purchasing power in approximately 12 years (Rule of 72). Money parked in low-interest accounts loses purchasing power every single day!`,
+            quiz: {
+              id: 'quiz-fi-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'According to the Rule of 72, approximately how many years does it take for money to double at an 8% annual return?',
+                  options: ['4 years', '9 years', '12 years', '16 years'],
+                  correct_option_index: 1,
+                  explanation: '72 divided by 8 equals 9 years.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-fi-2',
+        course_id: 'course-fin-intro',
+        title: 'Module 2: Practical Budgeting & Liquidity Reserves',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-fi-102',
+            module_id: 'mod-fi-2',
+            title: 'Lesson 2: Emergency Funds, Debt Elimination & Liquid Reserves',
+            order_index: 1,
+            summary: 'Constructing 6-month living expense buffers and deploying the avalanche debt reduction method.',
+            duration_minutes: 25,
+            content_markdown: `### The Emergency Reserve
+Before allocating capital to speculative assets, a prudent individual establishes a 6-month liquid buffer in high-liquidity instruments to weather unexpected disruptions.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-fin-events',
+    title: 'Global Events and Finance',
+    slug: 'global-events-finance',
+    domain: 'finance',
+    subject: 'Global Events and Finance',
+    level: 'intermediate',
+    summary: 'Geopolitics, supply chain disruptions, energy crises, trade tariffs, central bank interest rate shocks, and currency swings.',
+    description: 'Explore how international conflicts, trade sanctions, shipping chokepoint closures, and pandemic shocks ripple across global bond, equity, and commodity markets.',
+    learning_objectives: [
+      'Trace macroeconomic feedback loops from supply shocks to domestic inflation',
+      'Analyze the impact of Federal Reserve and Reserve Bank of India policy shifts',
+      'Understand currency exchange rate fluctuations and foreign reserve dynamics',
+    ],
+    prerequisites: ['Introduction to Finance'],
+    duration_hours: 5,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-11').toISOString(),
+    modules: [
+      {
+        id: 'mod-fe-1',
+        course_id: 'course-fin-events',
+        title: 'Module 1: Macro Shocks & Commodity Cycles',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-fe-101',
+            module_id: 'mod-fe-1',
+            title: 'Lesson 1: Oil Shocks, Maritime Bottlenecks & Cost-Push Inflation',
+            order_index: 1,
+            summary: 'How crude oil price spikes increase transport costs across every segment of consumer goods.',
+            duration_minutes: 25,
+            content_markdown: `### Supply-Side Macro Shocks
+Because energy is an input cost for manufacturing, agriculture, and logistics, an energy shock quickly transmits into aggregate consumer price indices.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-fe-2',
+        course_id: 'course-fin-events',
+        title: 'Module 2: Central Bank Contagion',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-fe-102',
+            module_id: 'mod-fe-2',
+            title: 'Lesson 2: Interest Rate Differentials & Emerging Market Capital Flows',
+            order_index: 1,
+            summary: 'Why rising interest rates in developed markets pull capital out of developing economies.',
+            duration_minutes: 25,
+            content_markdown: `### Global Capital Flight
+When central banks in reserve currency nations raise rates, global capital flows toward safe sovereign yields, putting pressure on emerging market currencies.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-fin-markets',
+    title: 'Financial Markets',
+    slug: 'financial-markets',
+    domain: 'finance',
+    subject: 'Financial Markets',
+    level: 'intermediate',
+    summary: 'Primary and secondary markets, bond markets, equity indices, liquidity order books, bid-ask spreads, and clearing houses.',
+    description: 'Uncover the infrastructure that powers global capital exchange. Learn how companies raise equity and debt, how order matching engines execute trades in microseconds, and the role of clearing institutions.',
+    learning_objectives: [
+      'Explain the difference between primary capital issuance (IPOs) and secondary market trading',
+      'Read depth-of-market order books and calculate bid-ask spread friction',
+      'Understand bond yields, coupon payments, and inverse price relationships',
+    ],
+    prerequisites: ['Introduction to Finance'],
+    duration_hours: 6,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-04').toISOString(),
+    modules: [
+      {
+        id: 'mod-fm-1',
+        course_id: 'course-fin-markets',
+        title: 'Module 1: Market Structure & Order Mechanics',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-fm-101',
+            module_id: 'mod-fm-1',
+            title: 'Lesson 1: Limit Orders, Market Orders & Clearing Houses',
+            order_index: 1,
+            summary: 'How central limit order books (CLOB) pair buyers with sellers and settle trades safely.',
+            duration_minutes: 25,
+            content_markdown: `### Market Microstructure
+1. **Limit Orders:** Specify a price and wait for matching volume.
+2. **Market Orders:** Cross the spread immediately to execute at current prices.
+3. **Clearing Corporations:** Act as the central counterparty to eliminate bilateral default risk.`,
+            quiz: {
+              id: 'quiz-fm-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'What role does a central clearing corporation play in financial exchanges like NSE or BSE?',
+                  options: [
+                    'It guarantees settlement of trades by acting as buyer to every seller and seller to every buyer',
+                    'It determines the daily share price of all stocks arbitrarily',
+                    'It lends money directly to retail day traders',
+                    'It prevents foreign investors from purchasing shares',
+                  ],
+                  correct_option_index: 0,
+                  explanation: 'Clearing corporations remove counterparty risk by guaranteeing that trades settle even if one participant defaults.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-fm-2',
+        course_id: 'course-fin-markets',
+        title: 'Module 2: Fixed Income & Debt Instruments',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-fm-102',
+            module_id: 'mod-fm-2',
+            title: 'Lesson 2: Sovereign Bonds, Yield Curves & Duration Risk',
+            order_index: 1,
+            summary: 'Why bond prices move inversely to interest rates and what an inverted yield curve signals.',
+            duration_minutes: 25,
+            content_markdown: `### The Bond Mathematics
+When prevailing interest rates rise, newly issued bonds pay higher yields. Consequently, older existing bonds with lower fixed coupons become less attractive, driving their market prices down.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-fin-institutions',
+    title: 'Financial Institutions',
+    slug: 'financial-institutions',
+    domain: 'finance',
+    subject: 'Financial Institutions',
+    level: 'intermediate',
+    summary: 'Commercial banks, central banks (RBI/Fed), fractional reserve banking, monetary transmission, insurance, and NBFCs.',
+    description: 'Explore the institutional architecture of financial stability. Analyze how the Reserve Bank of India modulates liquidity via the repo rate, how commercial banks create deposits through lending, and how NBFCs expand credit.',
+    learning_objectives: [
+      'Trace the money creation process under fractional reserve banking systems',
+      'Explain RBI policy levers: Cash Reserve Ratio (CRR), Statutory Liquidity Ratio (SLR), and Repo Rate',
+      'Analyze the systemic risks of shadow banking and non-banking financial companies (NBFCs)',
+    ],
+    prerequisites: ['Introduction to Finance'],
+    duration_hours: 5,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-07').toISOString(),
+    modules: [
+      {
+        id: 'mod-finst-1',
+        course_id: 'course-fin-institutions',
+        title: 'Module 1: The Central Banking Mandate',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-finst-101',
+            module_id: 'mod-finst-1',
+            title: 'Lesson 1: The Repo Rate & Liquidity Adjustment Facility',
+            order_index: 1,
+            summary: 'How central bank overnight lending rates dictate the cost of capital across the commercial economy.',
+            duration_minutes: 25,
+            content_markdown: `### Monetary Policy Levers
+When inflation exceeds target tolerance bands (e.g. 4% +/- 2% in India), the central bank raises the repo rate. Commercial banks raise loan interest rates, cooling demand and inflation.`,
+            quiz: {
+              id: 'quiz-finst-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'What happens to commercial borrowing rates when the central bank increases its policy repo rate?',
+                  options: [
+                    'Loan interest rates typically rise across the banking system',
+                    'Loan interest rates drop to zero automatically',
+                    'All outstanding bank loans are forgiven',
+                    'Commercial banks cease taking savings deposits',
+                  ],
+                  correct_option_index: 0,
+                  explanation: 'A higher repo rate increases borrowing costs for banks, which pass the higher rates onto consumer and corporate borrowers.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-finst-2',
+        course_id: 'course-fin-institutions',
+        title: 'Module 2: Fractional Reserves & Bank Runs',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-finst-102',
+            module_id: 'mod-finst-2',
+            title: 'Lesson 2: Liquidity Coverage Ratios & Deposit Insurance (DICGC)',
+            order_index: 1,
+            summary: 'How deposit insurance schemes protect retail savers against commercial bank insolvency.',
+            duration_minutes: 25,
+            content_markdown: `### Deposit Insurance
+In India, the Deposit Insurance and Credit Guarantee Corporation (DICGC) insures bank deposits up to Rs 5 lakh per depositor per bank, maintaining retail trust.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-crypto-eval',
+    title: 'Cryptocurrency Education and Risks',
+    slug: 'cryptocurrency-education-risks',
+    domain: 'finance',
+    subject: 'Cryptocurrency Education and Risks',
+    level: 'intermediate',
+    summary: 'Decentralized assets, cryptographic keys, market volatility, liquidity risks, regulatory status, and scam recognition.',
+    description: 'An evidence-based, critical evaluation of cryptocurrencies and decentralized finance. Learn the underlying cryptographic mechanics while objectively analyzing extreme volatility, lack of sovereign backing, liquidity traps, and predatory fraud vectors.',
+    learning_objectives: [
+      'Contrast custodial centralized exchanges with non-custodial cryptographic hardware wallets',
+      'Analyze liquidity concentration, wash trading, and market manipulation in crypto markets',
+      'Recognize high-yield Ponzi mechanisms, phishing schemes, and rug-pull smart contracts',
+    ],
+    prerequisites: ['Introduction to Finance'],
+    duration_hours: 4,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-10').toISOString(),
+    modules: [
+      {
+        id: 'mod-cr-1',
+        course_id: 'course-crypto-eval',
+        title: 'Module 1: Decentralized Ledgers',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-cr-101',
+            module_id: 'mod-cr-1',
+            title: 'Lesson 1: Cryptographic Validation vs Traditional Banking',
+            order_index: 1,
+            summary: 'Public address cryptography, private keys, and transaction broadcasting.',
+            duration_minutes: 25,
+            content_markdown: `### Public Key Cryptography
+Transactions are signed using asymmetric private keys and verified publicly across distributed node networks without sovereign backing.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-cr-2',
+        course_id: 'course-crypto-eval',
+        title: 'Module 2: Risk Analysis & Scam Prevention',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-cr-102',
+            module_id: 'mod-cr-2',
+            title: 'Lesson 2: Market Volatility, Liquidity Traps & Fraud Vectors',
+            order_index: 1,
+            summary: 'Spotting wash-trading, unregulated exchange insolvencies, and phishing vectors.',
+            duration_minutes: 25,
+            content_markdown: `### Severe Market Risks
+Cryptocurrencies lack sovereign guarantees, exhibit extreme volatility, and expose retail participants to predatory liquidity schemes and irreversible transaction losses.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-stock-market',
+    title: 'Stock Market',
+    slug: 'stock-market',
+    domain: 'finance',
+    subject: 'Stock Market',
+    level: 'beginner',
+    summary: 'Company ownership, shares, IPOs, index funds, dividends, balance sheet reading, and long-term index investing.',
+    description: 'Demystify public equity markets through evidence-based valuation principles rather than speculative day-trading.',
+    learning_objectives: ['Read a basic corporate balance sheet', 'Explain diversification through broad-market index funds'],
+    prerequisites: ['Introduction to Finance'],
+    duration_hours: 5,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-17').toISOString(),
+    modules: [
+      {
+        id: 'mod-sm-1',
+        course_id: 'course-stock-market',
+        title: 'Module 1: Equity Ownership & Valuations',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-sm-101',
+            module_id: 'mod-sm-1',
+            title: 'Lesson 1: Shares, Market Capitalization & P/E Ratios',
+            order_index: 1,
+            summary: 'Understanding fractional ownership of corporations and basic valuation multiples.',
+            duration_minutes: 25,
+            content_markdown: `### What is a Share?
+A share represents fractional ownership of a public corporation, entitling the owner to proportional earnings and voting rights.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-sm-2',
+        course_id: 'course-stock-market',
+        title: 'Module 2: Long-Term Index Investing',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-sm-102',
+            module_id: 'mod-sm-2',
+            title: 'Lesson 2: Diversification, Broad-Market Funds & Compounding',
+            order_index: 1,
+            summary: 'Why passive low-cost index funds consistently outperform speculative stock pickers.',
+            duration_minutes: 25,
+            content_markdown: `### The Power of Low-Cost Indexing
+Holding hundreds of companies across the entire economy reduces individual company bankruptcy risk while capturing aggregate economic expansion.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-fintech-payments',
+    title: 'FinTech',
+    slug: 'fintech',
+    domain: 'finance',
+    subject: 'FinTech',
+    level: 'beginner',
+    summary: 'UPI protocol architecture, payment gateways, tokenization, mobile wallets, and financial data encryption.',
+    description: 'Analyze how India revolutionized global digital transactions through the Unified Payments Interface (UPI) and open banking protocols.',
+    learning_objectives: ['Trace the lifecycle of a 2-factor UPI transaction', 'Understand tokenization and card-on-file safety'],
+    prerequisites: ['Introduction to Finance'],
+    duration_hours: 4,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-finance',
+    created_at: new Date('2026-09-21').toISOString(),
+    modules: [
+      {
+        id: 'mod-ft-1',
+        course_id: 'course-fintech-payments',
+        title: 'Module 1: UPI & Instant Settlement Protocols',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-ft-101',
+            module_id: 'mod-ft-1',
+            title: 'Lesson 1: Virtual Payment Addresses & 2-Factor Auth',
+            order_index: 1,
+            summary: 'How NPCI orchestrates real-time interbank funds transfer via mobile apps.',
+            duration_minutes: 25,
+            content_markdown: `### UPI Protocol Lifecycle
+Learn how National Payments Corporation of India (NPCI) connects issuing banks and acquiring banks in sub-second round-trips.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-ft-2',
+        course_id: 'course-fintech-payments',
+        title: 'Module 2: Payment Gateways & Tokenization',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-ft-102',
+            module_id: 'mod-ft-2',
+            title: 'Lesson 2: Card Tokenization, Encryption & Fraud Defenses',
+            order_index: 1,
+            summary: 'Replacing sensitive 16-digit card numbers with device-specific cryptographic tokens.',
+            duration_minutes: 25,
+            content_markdown: `### Payment Tokenization
+Tokenization prevents merchants from storing actual credit or debit card numbers, dramatically reducing data breach impacts.`,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ==================================================================
+  // CATEGORY 3: PROFESSIONAL SKILLS (4 SUBJECTS)
+  // ==================================================================
+  {
+    id: 'course-prof-time',
+    title: 'Time Management',
+    slug: 'time-management',
+    domain: 'professional',
+    subject: 'Time Management',
+    level: 'beginner',
+    summary: 'Eisenhower matrix, deep work cycles, calendar blocking, task batching, and sustainable digital boundary setting.',
+    description: 'Build intentional, disciplined daily operating systems designed to eliminate digital distraction and sustain high focus.',
+    learning_objectives: ['Apply the Eisenhower decision matrix to daily tasks', 'Structure 90-minute uninterrupted deep work blocks'],
+    prerequisites: ['None'],
+    duration_hours: 3,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-professional',
+    created_at: new Date('2026-09-03').toISOString(),
+    modules: [
+      {
+        id: 'mod-pt-1',
+        course_id: 'course-prof-time',
+        title: 'Module 1: Priority Frameworks',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-pt-101',
+            module_id: 'mod-pt-1',
+            title: 'Lesson 1: Eisenhower Matrix & The Urgent vs Important Paradox',
+            order_index: 1,
+            summary: 'Distinguishing between reactive urgent noise and proactive high-leverage activities.',
+            duration_minutes: 20,
+            content_markdown: `### The Eisenhower Framework
+Classify tasks into 4 quadrants:
+1. **Urgent & Important:** Handle immediately.
+2. **Non-Urgent but Important:** Schedule proactively — where highest career value is created.
+3. **Urgent but Unimportant:** Delegate or automate.
+4. **Neither:** Eliminate.`,
+            quiz: {
+              id: 'quiz-pt-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'In which quadrant of the Eisenhower Matrix is the highest long-term professional value created?',
+                  options: [
+                    'Urgent & Unimportant',
+                    'Non-Urgent but Important (Quadrant 2)',
+                    'Neither Urgent nor Important',
+                    'Crisis Management only',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Quadrant 2 contains high-leverage proactive activities: skill acquisition, architecture planning, and relationship building.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-pt-2',
+        course_id: 'course-prof-time',
+        title: 'Module 2: Deep Work Routines',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-pt-102',
+            module_id: 'mod-pt-2',
+            title: 'Lesson 2: Uninterrupted Focus Blocks & Minimizing Context Switching',
+            order_index: 1,
+            summary: 'Techniques for guarding 90-minute programming blocks against notification clutter.',
+            duration_minutes: 20,
+            content_markdown: `### Focus Hygiene
+Cognitive switching penalties cost up to 23 minutes after each interruption. Batch emails and messages into defined daily slots.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-prof-workplace',
+    title: 'Professional Skills',
+    slug: 'professional-skills',
+    domain: 'professional',
+    subject: 'Professional Skills',
+    level: 'beginner',
+    summary: 'Workplace etiquette, project accountability, meeting hygiene, asynchronous documentation, and conflict resolution.',
+    description: 'Transition smoothly from academic environments to high-performing professional engineering and business teams.',
+    learning_objectives: ['Write clear, concise technical and status updates', 'Navigate team disagreements constructively'],
+    prerequisites: ['None'],
+    duration_hours: 4,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-professional',
+    created_at: new Date('2026-09-06').toISOString(),
+    modules: [
+      {
+        id: 'mod-pw-1',
+        course_id: 'course-prof-workplace',
+        title: 'Module 1: Team Accountability & Etiquette',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-pw-101',
+            module_id: 'mod-pw-1',
+            title: 'Lesson 1: Clear Asynchronous Communication & Updates',
+            order_index: 1,
+            summary: 'Writing stand-up updates, documenting decisions, and taking ownership of bugs.',
+            duration_minutes: 20,
+            content_markdown: `### High-Impact Status Updates
+Every engineering update should communicate: what was delivered, what is in progress, and any blocking obstacles.`,
+            quiz: {
+              id: 'quiz-pw-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'What are the three essential components of an effective engineering standup update?',
+                  options: [
+                    'Personal opinions, lunch plans, and complaints',
+                    'Completed deliverables, current work in progress, and active blockers',
+                    'Code lines written, keyboard typing speed, and CPU temperature',
+                    'Marketing summaries and company stock valuations',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Clear team communication focuses on what was shipped, what is actively progressing, and any blockers.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-pw-2',
+        course_id: 'course-prof-workplace',
+        title: 'Module 2: Workplace Problem Solving',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-pw-102',
+            module_id: 'mod-pw-2',
+            title: 'Lesson 2: Constructive Feedback & Collaborative Alignment',
+            order_index: 1,
+            summary: 'Code review etiquette and separating personal pride from objective software quality.',
+            duration_minutes: 20,
+            content_markdown: `### Giving and Receiving Code Feedback
+Frame review comments around code behavior, maintainability, and test coverage rather than personal preferences.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-prof-softskills',
+    title: 'Soft Skills Development',
+    slug: 'soft-skills-development',
+    domain: 'professional',
+    subject: 'Soft Skills Development',
+    level: 'beginner',
+    summary: 'Active listening, empathy in leadership, constructive feedback delivery, and high-impact presentation delivery.',
+    description: 'Master the interpersonal competencies that distinguish exceptional engineers and team leaders.',
+    learning_objectives: ['Practice non-defensive reception of critical feedback', 'Structure persuasive verbal presentations'],
+    prerequisites: ['None'],
+    duration_hours: 3,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-professional',
+    created_at: new Date('2026-09-09').toISOString(),
+    modules: [
+      {
+        id: 'mod-pss-1',
+        course_id: 'course-prof-softskills',
+        title: 'Module 1: Empathetic Communication',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-pss-101',
+            module_id: 'mod-pss-1',
+            title: 'Lesson 1: Active Listening & Non-Defensive Dialogue',
+            order_index: 1,
+            summary: 'Hearing requirements fully before rushing to implement technical solutions.',
+            duration_minutes: 20,
+            content_markdown: `### Active Listening in Engineering
+Repeat back requirements to ensure mutual understanding before architecting code.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-pss-2',
+        course_id: 'course-prof-softskills',
+        title: 'Module 2: Presentation & Persuasion',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-pss-102',
+            module_id: 'mod-pss-2',
+            title: 'Lesson 2: Structuring Technical Ideas for Diverse Audiences',
+            order_index: 1,
+            summary: 'Explaining complex systems to non-technical stakeholders and educators.',
+            duration_minutes: 20,
+            content_markdown: `### Communicating Across Domains
+Translate technical trade-offs into clear outcomes that students, parents, and school administrators understand.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-prof-identity',
+    title: 'Social Profiles and Professional Identity',
+    slug: 'social-profiles-identity',
+    domain: 'professional',
+    subject: 'Social Profiles and Professional Identity',
+    level: 'beginner',
+    summary: 'Engineering authentic GitHub profiles, LinkedIn presence, technical writing, and public credibility.',
+    description: 'Craft a coherent, credible digital presence that showcases authentic code contributions and technical thinking.',
+    learning_objectives: ['Optimize a technical GitHub profile and project READMEs', 'Write substantive technical summaries'],
+    prerequisites: ['None'],
+    duration_hours: 3,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-professional',
+    created_at: new Date('2026-09-13').toISOString(),
+    modules: [
+      {
+        id: 'mod-pi-1',
+        course_id: 'course-prof-identity',
+        title: 'Module 1: Technical Presence',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-pi-101',
+            module_id: 'mod-pi-1',
+            title: 'Lesson 1: Crafting an Impactful GitHub & Portfolio Architecture',
+            order_index: 1,
+            summary: 'Documenting repositories with clear installation guides, architectures, and tests.',
+            duration_minutes: 20,
+            content_markdown: `### The GitHub Profile as Technical Portfolio
+A clean README with working badges, reproduction instructions, and clear commit messages proves authentic capability.`,
+            quiz: {
+              id: 'quiz-pi-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'What is the most effective element in a student technical project README on GitHub?',
+                  options: [
+                    'A 500-word autobiography of the author',
+                    'A concise architecture overview, setup instructions, and reproducible automated test commands',
+                    'A collection of colorful animated GIFs without explanation',
+                    'An unedited copy of a tutorial with no attribution',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Technical evaluators look for architectural clarity, clear setup steps, and testable code.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-pi-2',
+        course_id: 'course-prof-identity',
+        title: 'Module 2: Professional Networks',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-pi-102',
+            module_id: 'mod-pi-2',
+            title: 'Lesson 2: Authentic LinkedIn Engagement & Industry Networking',
+            order_index: 1,
+            summary: 'Connecting with engineering mentors and participating in technical discussions.',
+            duration_minutes: 20,
+            content_markdown: `### Constructive Networking
+Share genuine learning breakthroughs and challenges openly rather than posting hollow marketing buzzwords.`,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ==================================================================
+  // CATEGORY 4: CODING AND PROGRAMMING (8 SUBJECTS)
   // ==================================================================
   {
     id: 'course-prog-fund',
-    title: 'Programming Fundamentals & Computational Logic',
+    title: 'Programming Fundamentals',
     slug: 'programming-fundamentals',
     domain: 'coding',
-    subject: 'Programming fundamentals',
+    subject: 'Programming Fundamentals',
     level: 'beginner',
     summary: 'Algorithms, pseudocode, flowchart modeling, execution stacks, memory pointers, and problem decomposition.',
     description: 'Learn computational thinking and algorithmic problem solving from first principles before syntax memorization.',
     learning_objectives: ['Deconstruct complex real-world problems into discrete algorithmic steps', 'Trace program state transitions manually'],
     prerequisites: ['None'],
     duration_hours: 5,
-    is_published: false,
-    availability_status: 'in_development',
+    is_published: true,
+    availability_status: 'verified_functional',
     learning_path_id: 'path-coding',
     created_at: new Date('2026-09-08').toISOString(),
     modules: [
@@ -644,6 +1468,23 @@ The CPU continuously fetches instruction opcodes from memory, decodes their oper
             duration_minutes: 25,
             content_markdown: `### Computational Thinking
 Before writing syntax, an engineer designs the algorithm: determining inputs, transformations, and output contracts.`,
+            quiz: {
+              id: 'quiz-pf-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'What is the primary objective of writing pseudocode before typing executable code?',
+                  options: [
+                    'To satisfy compiler optimization flags',
+                    'To validate logical steps and problem decomposition independently of language syntax quirks',
+                    'To test CPU clock frequency',
+                    'To encrypt the program logic',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Pseudocode allows engineers to rigorously design and debug algorithms before implementing concrete syntax.',
+                },
+              ],
+            },
           },
         ],
       },
@@ -668,29 +1509,108 @@ Understand the difference between values stored on the execution stack and dynam
     ],
   },
   {
-    id: 'course-prog-variables-loops',
-    title: 'Variables, Data Types, Conditions, and Loops',
-    slug: 'variables-conditions-loops',
+    id: 'course-prog-variables',
+    title: 'Variables and Data Types',
+    slug: 'variables-data-types',
     domain: 'coding',
-    subject: 'Variables, data types, conditions, and loops',
+    subject: 'Variables and Data Types',
     level: 'beginner',
-    summary: 'Scalar and compound types, boolean logic, branching, while/for loops, and algorithmic complexity.',
-    description: 'Master the core building blocks of computer programs through hands-on coding exercises, tracing variable states and iterating across data collections.',
+    summary: 'Scalar types, strings, numbers, booleans, arrays, type coercion, immutability, and memory representations.',
+    description: 'Master the fundamental units of information in software systems. Explore static versus dynamic typing, memory layouts, primitives, references, and type conversion traps.',
     learning_objectives: [
-      'Master scalar types (integers, floats, strings, booleans) and memory representation',
-      'Construct compound logical expressions using AND, OR, NOT gates',
-      'Write optimized iterative loops and prevent infinite loops',
+      'Differentiate primitive value types from reference types and understand pointer mutation',
+      'Prevent common type-coercion bugs and precision truncation in floating-point math',
+      'Design clean, readable variable naming conventions that reflect domain semantics',
     ],
-    prerequisites: ['Programming fundamentals'],
-    duration_hours: 6,
+    prerequisites: ['Programming Fundamentals'],
+    duration_hours: 4,
     is_published: true,
-    availability_status: 'implemented_in_build',
+    availability_status: 'verified_functional',
     learning_path_id: 'path-coding',
     created_at: new Date('2026-09-09').toISOString(),
     modules: [
       {
+        id: 'mod-pv-1',
+        course_id: 'course-prog-variables',
+        title: 'Module 1: Primitives & Memory Representation',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-pv-101',
+            module_id: 'mod-pv-1',
+            title: 'Lesson 1: Integers, Floats, Strings, and Booleans',
+            order_index: 1,
+            summary: 'How computer memories store numbers and characters in IEEE 754 and UTF-8 encodings.',
+            duration_minutes: 25,
+            content_markdown: `### Primitive Data Types in Memory
+1. **Integers:** Fixed bit-width whole numbers (8, 16, 32, 64-bit signed/unsigned).
+2. **Floats:** IEEE 754 representations prone to rounding quirks (e.g. 0.1 + 0.2 != 0.3).
+3. **Strings:** Byte sequences encoded in UTF-8.
+4. **Booleans:** Single-bit logic flags (stored as a byte for address alignment).`,
+            quiz: {
+              id: 'quiz-pv-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'Why does 0.1 + 0.2 not always equal 0.3 exactly in standard floating-point arithmetic?',
+                  options: [
+                    'Because computer processors make frequent arithmetic mistakes',
+                    'Because fractional base-10 decimals like 0.1 become recurring fractions in base-2 binary floating point representation',
+                    'Because the internet connection causes packet loss',
+                    'Because variables are converted to strings automatically',
+                  ],
+                  correct_option_index: 1,
+                  explanation: 'Just as 1/3 cannot be represented finitely in base 10, 1/10 cannot be represented finitely in base 2 floating point notation.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-pv-2',
+        course_id: 'course-prog-variables',
+        title: 'Module 2: References & Immutability',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-pv-102',
+            module_id: 'mod-pv-2',
+            title: 'Lesson 2: Value vs Reference Semantics',
+            order_index: 1,
+            summary: 'Why modifying an array or object through a reference updates the original data structure.',
+            duration_minutes: 25,
+            content_markdown: `### References and Mutability
+When you pass an object or array to a function, the reference pointer is passed, not a full deep copy. Mutating the object alters it everywhere that reference is held!`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-prog-loops',
+    title: 'Conditions and Loops',
+    slug: 'conditions-and-loops',
+    domain: 'coding',
+    subject: 'Conditions and Loops',
+    level: 'beginner',
+    summary: 'Branching logic, boolean truth tables, short-circuit evaluation, while loops, for loops, and loop invariants.',
+    description: 'Master the flow of execution in computer programs. Learn to write precise conditional branches, avoid nested if-else anti-patterns, and construct provably terminating loops.',
+    learning_objectives: [
+      'Evaluate complex boolean expressions with AND, OR, NOT and short-circuit evaluation',
+      'Construct deterministic loops and establish loop invariants that guarantee termination',
+      'Refactor deep nested conditional pyramids into clean guard clauses',
+    ],
+    prerequisites: ['Variables and Data Types'],
+    duration_hours: 5,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-coding',
+    created_at: new Date('2026-09-10').toISOString(),
+    modules: [
+      {
         id: 'mod-loop-1',
-        course_id: 'course-prog-variables-loops',
+        course_id: 'course-prog-loops',
         title: 'Module 1: Flow of Control & Iteration',
         order_index: 1,
         lessons: [
@@ -749,19 +1669,94 @@ while (attempts < maxAttempts) {
       },
       {
         id: 'mod-loop-2',
-        course_id: 'course-prog-variables-loops',
-        title: 'Module 2: Compound Types & Collections',
+        course_id: 'course-prog-loops',
+        title: 'Module 2: Iteration Across Data Structures',
         order_index: 2,
         lessons: [
           {
             id: 'les-loop-102',
             module_id: 'mod-loop-2',
-            title: 'Lesson 2: Arrays, Slices & Iteration Mechanics',
+            title: 'Lesson 2: Traversal, Early Exits & Break/Continue',
             order_index: 1,
-            summary: 'Linear data structures, zero-indexed arrays, and traversal complexity.',
+            summary: 'Linear scans, finding matches, early termination with break, and skipping iterations with continue.',
             duration_minutes: 25,
-            content_markdown: `### Array Memory Layout
-Arrays store homogeneous elements in contiguous memory blocks, enabling O(1) constant-time indexing by offset math.`,
+            content_markdown: `### Loop Optimization & Guard Clauses
+When searching for a needle in a haystack array of 10,000 items, break out of the loop the instant the target is found to avoid unnecessary iterations.`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-prog-comp-thinking',
+    title: 'Computational Thinking and Problem Solving',
+    slug: 'computational-thinking',
+    domain: 'coding',
+    subject: 'Computational Thinking and Problem Solving',
+    level: 'intermediate',
+    summary: 'Decomposition, pattern recognition, abstraction, algorithm design, edge-case analysis, and algorithmic complexity.',
+    description: 'Cultivate the fundamental mental models that top software engineers use to transform ambiguous real-world requirements into elegant, efficient, and resilient computational solutions.',
+    learning_objectives: [
+      'Apply the four pillars of computational thinking: decomposition, pattern recognition, abstraction, algorithms',
+      'Analyze asymptotic time and space complexity using Big-O notation',
+      'Identify edge cases including empty inputs, boundary values, and integer overflows',
+    ],
+    prerequisites: ['Conditions and Loops'],
+    duration_hours: 6,
+    is_published: true,
+    availability_status: 'verified_functional',
+    learning_path_id: 'path-coding',
+    created_at: new Date('2026-09-12').toISOString(),
+    modules: [
+      {
+        id: 'mod-ct-1',
+        course_id: 'course-prog-comp-thinking',
+        title: 'Module 1: The Four Pillars of Computational Thinking',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-ct-101',
+            module_id: 'mod-ct-1',
+            title: 'Lesson 1: Decomposition & Pattern Abstraction',
+            order_index: 1,
+            summary: 'Isolating independent sub-problems and building reusable abstractions.',
+            duration_minutes: 25,
+            content_markdown: `### The Four Pillars
+
+1. **Decomposition:** Breaking a complex system into manageable sub-components.
+2. **Pattern Recognition:** Observing recurring similarities across problems.
+3. **Abstraction:** Focusing on essential properties while ignoring irrelevant details.
+4. **Algorithm Design:** Formulating step-by-step instructions to solve any instance of the problem.`,
+            quiz: {
+              id: 'quiz-ct-101',
+              questions: [
+                {
+                  id: 'q1',
+                  prompt: 'Which pillar of computational thinking involves filtering out specific details to create a generalized model?',
+                  options: ['Decomposition', 'Pattern Recognition', 'Abstraction', 'Algorithm Design'],
+                  correct_option_index: 2,
+                  explanation: 'Abstraction removes non-essential details so the core logic can apply across multiple scenarios.',
+                },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        id: 'mod-ct-2',
+        course_id: 'course-prog-comp-thinking',
+        title: 'Module 2: Big-O Complexity & Efficiency',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-ct-102',
+            module_id: 'mod-ct-2',
+            title: 'Lesson 2: Evaluating Time & Space Complexity',
+            order_index: 1,
+            summary: 'Understanding O(1), O(log n), O(n), and O(n²) scaling as inputs grow.',
+            duration_minutes: 25,
+            content_markdown: `### Asymptotic Analysis
+Big-O measures how computational steps grow as input size N increases toward infinity. An algorithm that runs in O(n^2) will grind to a halt on large datasets, while an O(n log n) algorithm completes effortlessly.`,
           },
         ],
       },
@@ -769,15 +1764,15 @@ Arrays store homogeneous elements in contiguous memory blocks, enabling O(1) con
   },
   {
     id: 'course-prog-exercises',
-    title: 'Programming Exercises & Problem-Solving',
-    slug: 'programming-exercises-problem-solving',
+    title: 'Programming Exercises',
+    slug: 'programming-exercises',
     domain: 'coding',
-    subject: 'Programming exercises and problem-solving',
+    subject: 'Programming Exercises',
     level: 'intermediate',
     summary: 'Practical algorithmic challenges: string manipulation, array transformations, recursion, and search algorithms.',
     description: 'Build coding fluency and problem-solving resilience by tackling real-world programming challenges with automated unit test suites.',
     learning_objectives: ['Implement classic searching and sorting routines', 'Debug edge cases including null inputs and off-by-one errors'],
-    prerequisites: ['Variables, data types, conditions, and loops'],
+    prerequisites: ['Conditions and Loops'],
     duration_hours: 6,
     is_published: false,
     availability_status: 'in_development',
@@ -823,68 +1818,55 @@ Dividing search spaces in half reduces a million elements to just 20 comparisons
     ],
   },
   {
-    id: 'course-prog-db-sql',
-    title: 'Relational Databases & SQL Foundations',
-    slug: 'databases-and-sql',
+    id: 'course-prog-web-fund',
+    title: 'Web Development Fundamentals',
+    slug: 'web-development-fundamentals',
     domain: 'coding',
-    subject: 'Databases and SQL',
+    subject: 'Web Development Fundamentals',
     level: 'beginner',
-    summary: 'Relational tables, primary & foreign keys, normalization, SELECT queries, JOINs, aggregations, and ACID properties.',
-    description: 'Learn how modern enterprise systems organize, query, and preserve structured data safely across relational databases like PostgreSQL and SQLite.',
+    summary: 'HTML5 semantic architecture, CSS flexbox/grid layouts, responsive design, JavaScript DOM manipulation, and HTTP clients.',
+    description: 'Build modern, accessible, and fast web interfaces from scratch. Master semantic markup, responsive CSS architectures, event bubbling, and fetch API asynchronous networking.',
     learning_objectives: [
-      'Design normalized relational table schemas with foreign key integrity',
-      'Execute multi-table INNER and LEFT JOIN queries',
-      'Aggregate metrics using GROUP BY, COUNT, SUM, and HAVING clauses',
+      'Author accessible HTML5 layouts adhering to WCAG 2.2 AA standards',
+      'Create responsive flexbox and CSS grid layouts with fluid typography',
+      'Manipulate browser DOM nodes and handle asynchronous fetch responses',
     ],
-    prerequisites: ['Basic computing literacy'],
+    prerequisites: ['Programming Fundamentals'],
     duration_hours: 6,
     is_published: true,
-    availability_status: 'implemented_in_build',
+    availability_status: 'verified_functional',
     learning_path_id: 'path-coding',
-    created_at: new Date('2026-09-10').toISOString(),
+    created_at: new Date('2026-09-11').toISOString(),
     modules: [
       {
-        id: 'mod-sql-1',
-        course_id: 'course-prog-db-sql',
-        title: 'Module 1: Relational Architecture & Projections',
+        id: 'mod-wdf-1',
+        course_id: 'course-prog-web-fund',
+        title: 'Module 1: Semantic HTML & Responsive CSS',
         order_index: 1,
         lessons: [
           {
-            id: 'les-sql-101',
-            module_id: 'mod-sql-1',
-            title: 'Lesson 1: The Structure of Relational Tables',
+            id: 'les-wdf-101',
+            module_id: 'mod-wdf-1',
+            title: 'Lesson 1: Document Trees, Semantic Tags & Flexbox Models',
             order_index: 1,
-            summary: 'How relational engines store rows and columns with strict schema types and primary keys.',
+            summary: 'Constructing robust semantic page outlines with proper heading levels and responsive CSS.',
             duration_minutes: 25,
-            content_markdown: `### Relational Foundations: Tables, Rows & Columns
-
-In relational database management systems (RDBMS) such as PostgreSQL and SQLite, data is organized into structured **tables**:
-- **Columns (Attributes):** Predefined fields with strict types (\`UUID\`, \`TEXT\`, \`INTEGER\`, \`BOOLEAN\`, \`TIMESTAMPTZ\`).
-- **Rows (Tuples):** Individual records conforming to the table schema.
-- **Primary Key:** A column (or set of columns) that uniquely identifies every single row in the table.
-
-#### Writing Clean SQL Projections:
-Avoid querying \`SELECT *\` in production environments because it wastes network bandwidth and breaks application contracts when columns change. Always specify exact projections:
-
-\`\`\`sql
-SELECT id, username, role
-FROM challenge_users
-WHERE account_status = 'active';
-\`\`\``,
+            content_markdown: `### The Semantic Web & CSS Layouts
+Semantic elements (<main>, <nav>, <article>, <header>) communicate document hierarchy to screen readers and search crawlers.`,
             quiz: {
-              id: 'quiz-sql-101',
+              id: 'quiz-wdf-101',
               questions: [
                 {
                   id: 'q1',
-                  prompt: 'Why is explicit column selection (e.g. SELECT id, username) preferred over SELECT *?',
+                  prompt: 'Why should a web developer prefer semantic tags like <nav> or <button> over generic <div> tags?',
                   options: [
-                    'It prevents returning unintended confidential fields and preserves stable data contracts',
-                    'SELECT * is forbidden by all SQL database engines',
-                    'It doubles the speed of hard drives',
-                    'It automatically converts all queries to prepared statements',
+                    'They make web pages download faster from the server',
+                    'They provide native accessibility, keyboard navigation, and screen-reader semantics out of the box',
+                    'They are required by the CSS compiler to display color',
+                    'They prevent users from copying text',
                   ],
-                  correct_option_index: 0,
-                  explanation: 'Explicit projections ensure minimum data transfer and protect against accidental leakage of sensitive columns (e.g. password hashes).',
+                  correct_option_index: 1,
+                  explanation: 'Semantic elements provide built-in keyboard accessibility, ARIA role mappings, and screen-reader tree integration.',
                 },
               ],
             },
@@ -892,128 +1874,20 @@ WHERE account_status = 'active';
         ],
       },
       {
-        id: 'mod-sql-2',
-        course_id: 'course-prog-db-sql',
-        title: 'Module 2: Relational Queries & Joins',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-sql-102',
-            module_id: 'mod-sql-2',
-            title: 'Lesson 2: Multi-Table Joins & Filter Conditions',
-            order_index: 1,
-            summary: 'Combining related records across tables using foreign key relationships.',
-            duration_minutes: 25,
-            content_markdown: `### SQL Joins
-INNER JOIN retrieves records that have matching values in both tables, preserving data relational integrity.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-prog-web-fund',
-    title: 'Web Development Fundamentals',
-    slug: 'web-development-fundamentals',
-    domain: 'coding',
-    subject: 'Web development fundamentals',
-    level: 'beginner',
-    summary: 'HTML5 semantic markup, CSS responsive layouts, DOM tree manipulation, events, and fetch API.',
-    description: 'Build modern, accessible, and fast web applications using foundational standards without heavy framework abstractions.',
-    learning_objectives: ['Structure accessible semantic HTML documents', 'Implement CSS flexbox and grid layouts', 'Handle browser user events'],
-    prerequisites: ['None'],
-    duration_hours: 6,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-19').toISOString(),
-    modules: [
-      {
-        id: 'mod-web-1',
+        id: 'mod-wdf-2',
         course_id: 'course-prog-web-fund',
-        title: 'Module 1: Structural Markup & Styling',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-web-101',
-            module_id: 'mod-web-1',
-            title: 'Lesson 1: Semantic HTML5 & CSS Box Model Architecture',
-            order_index: 1,
-            summary: 'Accessible document structure, screen-reader landmarks, and box calculations.',
-            duration_minutes: 25,
-            content_markdown: `### Semantic Web
-Using proper tags (\`<header>\`, \`<main>\`, \`<nav>\`) provides accessibility for assistive technologies and search engines.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-web-2',
-        course_id: 'course-prog-web-fund',
-        title: 'Module 2: Dynamic Browser Execution',
+        title: 'Module 2: Client-Side Logic & Event Listeners',
         order_index: 2,
         lessons: [
           {
-            id: 'les-web-102',
-            module_id: 'mod-web-2',
-            title: 'Lesson 2: The Document Object Model (DOM) & Event Handlers',
+            id: 'les-wdf-102',
+            module_id: 'mod-wdf-2',
+            title: 'Lesson 2: Event Delegation, Forms & Async Fetch Requests',
             order_index: 1,
-            summary: 'Manipulating elements, listening for clicks, and async API requests.',
+            summary: 'Handling user input, preventing default form submissions, and fetching JSON from APIs.',
             duration_minutes: 25,
-            content_markdown: `### Interactive DOM
-JavaScript interacts with the browser's parsed HTML tree, enabling dynamic UI updates without full page reloads.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-prog-projects',
-    title: 'Applied Coding Projects',
-    slug: 'coding-projects',
-    domain: 'coding',
-    subject: 'Coding projects',
-    level: 'intermediate',
-    summary: 'Full-cycle project construction: requirement decomposition, Git version control, testing, and deployment.',
-    description: 'Synthesize algorithms, databases, and user interfaces into robust standalone software projects with full documentation.',
-    learning_objectives: ['Manage feature branches with Git', 'Package software projects with automated test coverage'],
-    prerequisites: ['Programming fundamentals', 'Databases and SQL'],
-    duration_hours: 8,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-23').toISOString(),
-    modules: [
-      {
-        id: 'mod-cp-1',
-        course_id: 'course-prog-projects',
-        title: 'Module 1: Project Scaffolding & Git Lifecycle',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-cp-101',
-            module_id: 'mod-cp-1',
-            title: 'Lesson 1: Repository Architecture, Commits & Branches',
-            order_index: 1,
-            summary: 'Setting up clean project structures, linting configurations, and branch workflows.',
-            duration_minutes: 25,
-            content_markdown: `### Software Repository Hygiene
-Maintain clean directory structures separating source code, test suites, and documentation.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-cp-2',
-        course_id: 'course-prog-projects',
-        title: 'Module 2: End-to-End Build & Verification',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-cp-102',
-            module_id: 'mod-cp-2',
-            title: 'Lesson 2: Modular Architecture & Automated Unit Testing',
-            order_index: 1,
-            summary: 'Writing test assertions that verify business logic boundaries.',
-            duration_minutes: 25,
-            content_markdown: `### Automated Verification
-A project is not complete until automated tests demonstrate its error handling and happy-path execution.`,
+            content_markdown: `### Asynchronous Web Communication
+The Fetch API allows web pages to request data from REST servers without requiring a disruptive full-page browser refresh.`,
           },
         ],
       },
@@ -1021,792 +1895,408 @@ A project is not complete until automated tests demonstrate its error handling a
   },
   {
     id: 'course-prog-debugging',
-    title: 'Practical Coding & Debugging Exercises',
+    title: 'Practical Coding and Debugging',
     slug: 'practical-coding-debugging',
     domain: 'coding',
-    subject: 'Practical coding and debugging exercises',
+    subject: 'Practical Coding and Debugging',
     level: 'intermediate',
-    summary: 'Breakpoints, stack trace reading, memory leak identification, defensive exceptions, and static linting.',
-    description: 'Learn the systematic methodology of modern software debugging: isolating reproductions, inspecting state, and fixing root causes.',
-    learning_objectives: ['Read and interpret browser and server runtime stack traces', 'Write reproducible unit tests for bug regressions'],
-    prerequisites: ['Variables, data types, conditions, and loops'],
+    summary: 'Chrome DevTools, breakpoints, stack trace inspection, memory leak diagnostics, unit testing with Vitest, and regression isolation.',
+    description: 'Learn the diagnostic discipline that defines senior software engineers. Master browser breakpoints, conditional logpoints, stack unwinding, git bisect, and automated regression testing.',
+    learning_objectives: [
+      'Set interactive breakpoints and inspect scope chains and call stacks',
+      'Diagnose and resolve common runtime exceptions (null pointer, off-by-one, race condition)',
+      'Write repeatable unit tests in Vitest that isolate regressions',
+    ],
+    prerequisites: ['Web Development Fundamentals'],
     duration_hours: 5,
     is_published: false,
     availability_status: 'in_development',
+    learning_path_id: 'path-coding',
+    created_at: new Date('2026-09-18').toISOString(),
+    modules: [
+      {
+        id: 'mod-debug-1',
+        course_id: 'course-prog-debugging',
+        title: 'Module 1: Diagnostic Breakpoints & DevTools',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-debug-101',
+            module_id: 'mod-debug-1',
+            title: 'Lesson 1: Call Stack Unwinding & Scope Inspection',
+            order_index: 1,
+            summary: 'Pausing JavaScript execution to inspect lexical closures and variable values.',
+            duration_minutes: 25,
+            content_markdown: `### Professional Debugging vs console.log
+Using interactive debugger breakpoints allows step-into, step-over, and step-out navigation across the live execution stack.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-debug-2',
+        course_id: 'course-prog-debugging',
+        title: 'Module 2: Automated Regression Testing',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-debug-102',
+            module_id: 'mod-debug-2',
+            title: 'Lesson 2: Test-Driven Bug Fixing & Regression Proofs',
+            order_index: 1,
+            summary: 'Writing a failing test that reproduces a defect before applying the fix.',
+            duration_minutes: 25,
+            content_markdown: `### The Regression Test Cycle
+1. Write a test asserting desired behavior (it fails).
+2. Fix the underlying bug (it passes).
+3. The test remains in CI forever to guarantee the bug never returns!`,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'course-prog-projects',
+    title: 'Coding Projects',
+    slug: 'coding-projects',
+    domain: 'coding',
+    subject: 'Coding Projects',
+    level: 'advanced',
+    summary: 'End-to-end full stack architecture, API contracts, local persistence, build tools (Vite/Rollup), and deploy pipelines.',
+    description: 'Synthesize your programming skills by building comprehensive, production-grade applications with clean modular architecture, rigorous testing, and deployable builds.',
+    learning_objectives: [
+      'Architect full-stack web applications with clear domain layer separation',
+      'Implement multi-tenant data isolation and client-side caching',
+      'Bundle and optimize assets for low latency and zero layout shifts',
+    ],
+    prerequisites: ['Practical Coding and Debugging'],
+    duration_hours: 8,
+    is_published: false,
+    availability_status: 'in_development',
+    learning_path_id: 'path-coding',
+    created_at: new Date('2026-09-20').toISOString(),
+    modules: [
+      {
+        id: 'mod-cp-1',
+        course_id: 'course-prog-projects',
+        title: 'Module 1: Architecture & Domain Modeling',
+        order_index: 1,
+        lessons: [
+          {
+            id: 'les-cp-101',
+            module_id: 'mod-cp-1',
+            title: 'Lesson 1: Separation of Concerns & Clean Code Patterns',
+            order_index: 1,
+            summary: 'Decoupling database access, business rules, and UI presentations.',
+            duration_minutes: 25,
+            content_markdown: `### Clean Architectural Separation
+Keeping business logic independent from UI frameworks ensures your core software remains testable and durable over decades.`,
+          },
+        ],
+      },
+      {
+        id: 'mod-cp-2',
+        course_id: 'course-prog-projects',
+        title: 'Module 2: Production Readiness & Deployment',
+        order_index: 2,
+        lessons: [
+          {
+            id: 'les-cp-102',
+            module_id: 'mod-cp-2',
+            title: 'Lesson 2: CI/CD Pipelines, Linting & Production Bundles',
+            order_index: 1,
+            summary: 'Automating linting, type checks, and static asset minification.',
+            duration_minutes: 25,
+            content_markdown: `### Automated Continuous Integration
+Production deployments must pass automated tests, linting gates, and type checks before shipping to users.`,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+export const INITIAL_VIDEO_LESSONS: VideoLesson[] = [
+  {
+    id: 'vid-comp-1',
+    title: 'How Computers Work: Binary & Data Representation',
+    description: 'Discover how electrical switches and logic gates represent text, images, and numbers inside modern microprocessors.',
+    youtube_url: 'https://www.youtube.com/watch?v=mCq8-xTH7jA',
+    youtube_id: 'mCq8-xTH7jA',
+    category: 'technology',
+    duration_minutes: 6,
+    featured: true,
+    instructor_name: 'Khan Academy & Code.org',
+    added_by: 'user-superadmin-1',
+    created_at: new Date('2026-09-15').toISOString(),
+  },
+  {
+    id: 'vid-ai-1',
+    title: 'Artificial Intelligence Explained Simply in 5 Minutes',
+    description: 'Understand the difference between machine learning algorithms, deep neural networks, and generative language models.',
+    youtube_url: 'https://www.youtube.com/watch?v=ad79nYk2keg',
+    youtube_id: 'ad79nYk2keg',
+    category: 'technology',
+    duration_minutes: 7,
+    featured: true,
+    instructor_name: 'Simplilearn Engineering',
+    added_by: 'user-superadmin-1',
+    created_at: new Date('2026-09-18').toISOString(),
+  },
+  {
+    id: 'vid-internet-1',
+    title: 'How the Internet & Web Actually Work',
+    description: 'Trace the path of packets, routers, DNS lookups, and TCP handshakes from your browser to remote servers.',
+    youtube_url: 'https://www.youtube.com/watch?v=7_LPdttKXPc',
+    youtube_id: '7_LPdttKXPc',
+    category: 'technology',
+    duration_minutes: 5,
+    featured: false,
+    instructor_name: 'Aaron CS Explorations',
+    added_by: 'user-teacher-1',
+    created_at: new Date('2026-09-20').toISOString(),
+  },
+  {
+    id: 'vid-cyber-1',
+    title: 'Web Application Security & OWASP Top 10 Defenses',
+    description: 'Comprehensive overview of web security controls: Content Security Policy, XSS prevention, and secure authentication.',
+    youtube_url: 'https://www.youtube.com/watch?v=0pmfD8Nsz8c',
+    youtube_id: '0pmfD8Nsz8c',
+    category: 'technology',
+    duration_minutes: 18,
+    featured: true,
+    instructor_name: 'freeCodeCamp Security',
+    added_by: 'user-teacher-1',
+    created_at: new Date('2026-09-22').toISOString(),
+  },
+  {
+    id: 'vid-ct-1',
+    title: 'Introduction to Computational Thinking',
+    description: 'Learn the core problem-solving framework: decomposition, pattern recognition, abstraction, and algorithms.',
+    youtube_url: 'https://www.youtube.com/watch?v=qYZF6qVvQW0',
+    youtube_id: 'qYZF6qVvQW0',
+    category: 'coding',
+    duration_minutes: 8,
+    featured: true,
+    instructor_name: 'BBC Learning & MIT Media Lab',
+    added_by: 'user-superadmin-1',
+    created_at: new Date('2026-09-16').toISOString(),
+  },
+  {
+    id: 'vid-vars-1',
+    title: 'Variables, Data Types and Memory Allocation',
+    description: 'A deep dive into how variables reference values in memory and how different data types behave in code.',
+    youtube_url: 'https://www.youtube.com/watch?v=kqtD5dpn9C8',
+    youtube_id: 'kqtD5dpn9C8',
+    category: 'coding',
+    duration_minutes: 12,
+    featured: false,
+    instructor_name: 'freeCodeCamp Engineering',
+    added_by: 'user-teacher-1',
     created_at: new Date('2026-09-24').toISOString(),
-    modules: [
-      {
-        id: 'mod-cd-1',
-        course_id: 'course-prog-debugging',
-        title: 'Module 1: Error Taxonomy & Stack Traces',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-cd-101',
-            module_id: 'mod-cd-1',
-            title: 'Lesson 1: Syntax vs Runtime vs Logical Software Defects',
-            order_index: 1,
-            summary: 'Categorizing defects and tracing execution back to root cause lines.',
-            duration_minutes: 25,
-            content_markdown: `### Reading Stack Traces
-Learn how to read stack traces from bottom to top to identify the exact origin of runtime exceptions.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-cd-2',
-        course_id: 'course-prog-debugging',
-        title: 'Module 2: Systematic Debugging Tools',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-cd-102',
-            module_id: 'mod-cd-2',
-            title: 'Lesson 2: Breakpoints, Variable Watches & Regression Testing',
-            order_index: 1,
-            summary: 'Using debuggers to pause execution and inspect memory state interactively.',
-            duration_minutes: 25,
-            content_markdown: `### Interactive Debugging
-Stop relying on console.log alone. Use debugger breakpoints to inspect scope variables at runtime.`,
-          },
-        ],
-      },
-    ],
-  },
-
-  // ==================================================================
-  // CATEGORY 3: FINANCE & FINANCIAL LITERACY (7 SUBJECTS)
-  // ==================================================================
-  {
-    id: 'course-fin-intro',
-    title: 'Introduction to Finance & Economic Foundations',
-    slug: 'intro-to-finance',
-    domain: 'finance',
-    subject: 'Introduction to Finance',
-    level: 'beginner',
-    summary: 'Core principles of money, compounding interest, inflation, budgeting, and financial risk evaluation.',
-    description: 'A grounded, educational exploration of how money functions in society. Learn to evaluate the true time-value of money, budgeting fundamentals, and debt management without speculative promises.',
-    learning_objectives: [
-      'Calculate compound interest and the impact of inflation over time',
-      'Construct a resilient, balanced personal emergency budget',
-      'Distinguish between productive asset ownership and predatory liabilities',
-    ],
-    prerequisites: ['Basic arithmetic'],
-    duration_hours: 4,
-    is_published: true,
-    availability_status: 'implemented_in_build',
-    learning_path_id: 'path-financial-literacy',
-    created_at: new Date('2026-09-02').toISOString(),
-    modules: [
-      {
-        id: 'mod-fin-1',
-        course_id: 'course-fin-intro',
-        title: 'Module 1: Money, Purchasing Power & Time',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-fin-101',
-            module_id: 'mod-fin-1',
-            title: 'Lesson 1: The Purchasing Power of Money',
-            order_index: 1,
-            summary: 'Why cash held in zero-interest accounts silently decays over time due to macroeconomic inflation.',
-            duration_minutes: 20,
-            content_markdown: `### The Time Value of Money & Inflation
-
-One of the most essential rules in financial literacy is that **a rupee today is worth more than a rupee ten years in the future**.
-
-#### The Hidden Friction: Inflation
-Inflation represents the systemic increase in the price of goods and services over time. If a basket of groceries costs ₹1,000 today and annual inflation is 6%, that same basket will cost ₹1,060 next year.
-
-If your savings account earns 3% interest while inflation runs at 6%, your **real purchasing power is decreasing by 3% every year**.
-
-#### Compounding: The Math of Patience
-When interest earns interest, growth transitions from linear to exponential:
-
-$$A = P \\left(1 + \\frac{r}{n}\\right)^{nt}$$
-
-Understanding compounding early allows students to build long-term financial security rather than chasing dangerous, speculative short-term schemes.`,
-            quiz: {
-              id: 'quiz-fin-101',
-              questions: [
-                {
-                  id: 'q1',
-                  prompt: 'If inflation averages 6% and your savings account yields 2.5%, what happens to your purchasing power?',
-                  options: [
-                    'It increases by 3.5% annually',
-                    'It decreases by approximately 3.5% annually in real terms',
-                    'It stays completely identical',
-                    'It doubles every 10 years',
-                  ],
-                  correct_option_index: 1,
-                  explanation: 'Real return equals nominal return minus inflation. 2.5% minus 6% equals a -3.5% loss in purchasing power.',
-                },
-              ],
-            },
-          },
-        ],
-      },
-      {
-        id: 'mod-fin-2',
-        course_id: 'course-fin-intro',
-        title: 'Module 2: Compounding Interest & Inflation Defense',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-fin-102',
-            module_id: 'mod-fin-2',
-            title: 'Lesson 2: Constructing a Resilient Budget',
-            order_index: 1,
-            summary: 'Practical principles for managing emergency funds, debt avoidance, and intentional saving.',
-            duration_minutes: 20,
-            content_markdown: `### Principles of Personal Budgeting
-Build sustainable habits early: allocating fixed needs, funding emergency reserves, and avoiding high-interest consumer credit.`,
-          },
-        ],
-      },
-    ],
   },
   {
-    id: 'course-fin-events',
-    title: 'Global Events & Financial Effects',
-    slug: 'global-events-finance',
-    domain: 'finance',
-    subject: 'Global Events and Finance',
-    level: 'intermediate',
-    summary: 'How supply shocks, central bank interest rate shifts, commodity cycles, and geopolitical crises alter domestic economies.',
-    description: 'Learn to analyze international macroeconomic trends, currency fluctuations, and trade policy impacts.',
-    learning_objectives: ['Analyze global trade disruptions', 'Understand central bank monetary policy tightening and easing'],
-    prerequisites: ['Introduction to Finance'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-05').toISOString(),
-    modules: [
-      {
-        id: 'mod-fe-1',
-        course_id: 'course-fin-events',
-        title: 'Module 1: Macroeconomic Shocks & Supply Chains',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-fe-101',
-            module_id: 'mod-fe-1',
-            title: 'Lesson 1: Geopolitics, Energy Crises & Inflationary Spirals',
-            order_index: 1,
-            summary: 'How international supply bottlenecks directly translate into consumer goods inflation.',
-            duration_minutes: 25,
-            content_markdown: `### Global Supply Shocks
-When oil or fertilizer prices surge globally, transportation and food costs increase worldwide, prompting domestic price inflation.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-fe-2',
-        course_id: 'course-fin-events',
-        title: 'Module 2: Central Bank Policy Responses',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-fe-102',
-            module_id: 'mod-fe-2',
-            title: 'Lesson 2: Interest Rate Hikes & Currency Valuations',
-            order_index: 1,
-            summary: 'How the US Federal Reserve and RBI raise rates to cool inflation.',
-            duration_minutes: 25,
-            content_markdown: `### Monetary Policy Tightening
-Central banks raise benchmark interest rates to increase the cost of borrowing, slowing down aggregate demand.`,
-          },
-        ],
-      },
-    ],
+    id: 'vid-loops-1',
+    title: 'Conditions, Boolean Logic and Control Flow',
+    description: 'Master if-else conditional branches and learn to prevent infinite while loops with invariant termination conditions.',
+    youtube_url: 'https://www.youtube.com/watch?v=IsG4Xd6LlsM',
+    youtube_id: 'IsG4Xd6LlsM',
+    category: 'coding',
+    duration_minutes: 15,
+    featured: false,
+    instructor_name: 'CS Dojo Programming',
+    added_by: 'user-teacher-1',
+    created_at: new Date('2026-09-25').toISOString(),
   },
   {
-    id: 'course-fin-markets',
-    title: 'Financial Markets & Asset Classes',
-    slug: 'financial-markets',
-    domain: 'finance',
-    subject: 'Financial Markets',
-    level: 'intermediate',
-    summary: 'Equity markets, sovereign bond yields, money markets, commodities, and derivatives mechanics.',
-    description: 'An objective structural analysis of primary and secondary capital markets, clearing corporations, and price discovery.',
-    learning_objectives: ['Understand how exchanges match buyers and sellers', 'Analyze debt market yields vs equity valuations'],
-    prerequisites: ['Introduction to Finance'],
-    duration_hours: 5,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-financial-literacy',
-    created_at: new Date('2026-09-07').toISOString(),
-    modules: [
-      {
-        id: 'mod-fm-1',
-        course_id: 'course-fin-markets',
-        title: 'Module 1: Capital Market Architecture',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-fm-101',
-            module_id: 'mod-fm-1',
-            title: 'Lesson 1: Primary IPOs, Secondary Exchanges & Liquidity',
-            order_index: 1,
-            summary: 'How companies raise capital and how clearinghouses settle trades.',
-            duration_minutes: 25,
-            content_markdown: `### Primary vs Secondary Markets
-Primary markets allow enterprises to issue new shares to raise funding; secondary exchanges allow investors to trade existing securities.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-fm-2',
-        course_id: 'course-fin-markets',
-        title: 'Module 2: Debt, Equity & Commodities',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-fm-102',
-            module_id: 'mod-fm-2',
-            title: 'Lesson 2: Risk-Reward Profiles Across Asset Classes',
-            order_index: 1,
-            summary: 'Government treasury bills vs corporate bonds vs public equities.',
-            duration_minutes: 25,
-            content_markdown: `### Asset Allocation
-Balancing fixed-income stability with long-term equity growth potential according to time horizons.`,
-          },
-        ],
-      },
-    ],
+    id: 'vid-debug-1',
+    title: 'How to Debug Code Like a Professional Engineer',
+    description: 'Learn how to use Chrome DevTools breakpoints, inspect call stacks, and systematically isolate software bugs.',
+    youtube_url: 'https://www.youtube.com/watch?v=j_25vLqB35Q',
+    youtube_id: 'j_25vLqB35Q',
+    category: 'coding',
+    duration_minutes: 14,
+    featured: true,
+    instructor_name: 'Fireship Tech Insights',
+    added_by: 'user-superadmin-1',
+    created_at: new Date('2026-09-26').toISOString(),
   },
   {
-    id: 'course-fin-institutions',
-    title: 'Financial Institutions & Central Banking',
-    slug: 'financial-institutions',
-    domain: 'finance',
-    subject: 'Financial Institutions',
-    level: 'intermediate',
-    summary: 'Commercial banking operations, reserve requirements, RBI regulations, deposit insurance, and non-banking lenders.',
-    description: 'Explore the mechanics of institutional banking, credit creation, and regulatory solvency safeguards.',
-    learning_objectives: ['Explain fractional reserve banking and credit multipliers', 'Understand central bank regulatory oversight'],
-    prerequisites: ['Introduction to Finance'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-11').toISOString(),
-    modules: [
-      {
-        id: 'mod-fi-1',
-        course_id: 'course-fin-institutions',
-        title: 'Module 1: Commercial Banking Systems',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-fi-101',
-            module_id: 'mod-fi-1',
-            title: 'Lesson 1: Fractional Reserves, Credit Creation & Solvency',
-            order_index: 1,
-            summary: 'How banks take customer deposits and originate loans.',
-            duration_minutes: 25,
-            content_markdown: `### Fractional Reserve Banking
-Banks maintain a fraction of deposits in liquid reserve while lending the remainder to stimulate productive enterprise.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-fi-2',
-        course_id: 'course-fin-institutions',
-        title: 'Module 2: Central Bank Oversight',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-fi-102',
-            module_id: 'mod-fi-2',
-            title: 'Lesson 2: Monetary Policy, Reserve Ratios & Deposit Insurance',
-            order_index: 1,
-            summary: 'How the Reserve Bank of India audits capital adequacy and protects depositor wealth.',
-            duration_minutes: 25,
-            content_markdown: `### Depositor Protection
-Regulatory frameworks mandate capital buffers and deposit insurance to prevent bank runs.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-crypto-eval',
-    title: 'Cryptocurrency Education, Risks & Awareness',
-    slug: 'crypto-fundamentals-risks',
-    domain: 'finance',
-    subject: 'Cryptocurrency education and risks',
-    level: 'intermediate',
-    summary: 'Cryptographic ledger mechanics, volatility analysis, smart contract exploits, regulatory frameworks, and scam prevention.',
-    description: 'Balanced, responsible education examining the technology behind cryptocurrencies while explicitly dissecting severe market risks, liquidity manipulation, and fraud vectors.',
-    learning_objectives: ['Recognize common crypto fraud and rug-pull signatures', 'Understand custodial vs non-custodial risk profiles'],
-    prerequisites: ['Introduction to Finance'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-financial-literacy',
-    created_at: new Date('2026-09-14').toISOString(),
-    modules: [
-      {
-        id: 'mod-cr-1',
-        course_id: 'course-crypto-eval',
-        title: 'Module 1: Decentralized Ledgers',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-cr-101',
-            module_id: 'mod-cr-1',
-            title: 'Lesson 1: Cryptographic Validation vs Traditional Banking',
-            order_index: 1,
-            summary: 'Public address cryptography, private keys, and transaction broadcasting.',
-            duration_minutes: 25,
-            content_markdown: `### Public Key Cryptography
-Transactions are signed using asymmetric private keys and verified publicly across distributed node networks.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-cr-2',
-        course_id: 'course-crypto-eval',
-        title: 'Module 2: Risk Analysis & Scam Prevention',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-cr-102',
-            module_id: 'mod-cr-2',
-            title: 'Lesson 2: Market Volatility, Liquidity Traps & Fraud Vectors',
-            order_index: 1,
-            summary: 'Spotting wash-trading, unregulated exchange insolvencies, and phishing vectors.',
-            duration_minutes: 25,
-            content_markdown: `### Severe Market Risks
-Cryptocurrencies lack sovereign guarantees, exhibit extreme volatility, and expose retail participants to predatory liquidity schemes.`,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'course-stock-market',
-    title: 'Stock Market Fundamentals & Equity Analysis',
-    slug: 'stock-market-fundamentals',
-    domain: 'finance',
-    subject: 'Stock Market',
-    level: 'beginner',
-    summary: 'Company ownership, shares, IPOs, index funds, dividends, balance sheet reading, and long-term index investing.',
-    description: 'Demystify public equity markets through evidence-based valuation principles rather than speculative day-trading.',
-    learning_objectives: ['Read a basic corporate balance sheet', 'Explain diversification through broad-market index funds'],
-    prerequisites: ['Introduction to Finance'],
-    duration_hours: 5,
-    is_published: false,
-    availability_status: 'in_development',
+    id: 'vid-fin-1',
+    title: 'Introduction to Financial Markets and Banking Systems',
+    description: 'An intuitive breakdown of fractional reserve banking, central bank interest rates, and liquidity flows.',
+    youtube_url: 'https://www.youtube.com/watch?v=p7HKvqRI_Bo',
+    youtube_id: 'p7HKvqRI_Bo',
+    category: 'finance',
+    duration_minutes: 10,
+    featured: true,
+    instructor_name: 'Khan Academy Finance',
+    added_by: 'user-superadmin-1',
     created_at: new Date('2026-09-17').toISOString(),
-    modules: [
-      {
-        id: 'mod-sm-1',
-        course_id: 'course-stock-market',
-        title: 'Module 1: Equity Ownership & Valuations',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-sm-101',
-            module_id: 'mod-sm-1',
-            title: 'Lesson 1: Shares, Market Capitalization & P/E Ratios',
-            order_index: 1,
-            summary: 'Understanding fractional ownership of corporations and basic valuation multiples.',
-            duration_minutes: 25,
-            content_markdown: `### What is a Share?
-A share represents fractional ownership of a public corporation, entitling the owner to proportional earnings and voting rights.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-sm-2',
-        course_id: 'course-stock-market',
-        title: 'Module 2: Long-Term Index Investing',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-sm-102',
-            module_id: 'mod-sm-2',
-            title: 'Lesson 2: Diversification, Broad-Market Funds & Compounding',
-            order_index: 1,
-            summary: 'Why passive low-cost index funds consistently outperform speculative stock pickers.',
-            duration_minutes: 25,
-            content_markdown: `### The Power of Low-Cost Indexing
-Holding hundreds of companies across the entire economy reduces individual company bankruptcy risk while capturing aggregate economic expansion.`,
-          },
-        ],
-      },
-    ],
   },
   {
-    id: 'course-fintech-payments',
-    title: 'FinTech & Modern Digital Payment Architectures',
-    slug: 'fintech-digital-payments',
-    domain: 'finance',
-    subject: 'FinTech',
-    level: 'beginner',
-    summary: 'UPI protocol architecture, payment gateways, tokenization, mobile wallets, and financial data encryption.',
-    description: 'Analyze how India revolutionized global digital transactions through the Unified Payments Interface (UPI) and open banking protocols.',
-    learning_objectives: ['Trace the lifecycle of a 2-factor UPI transaction', 'Understand tokenization and card-on-file safety'],
-    prerequisites: ['Introduction to Finance'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-financial-literacy',
-    created_at: new Date('2026-09-21').toISOString(),
-    modules: [
-      {
-        id: 'mod-ft-1',
-        course_id: 'course-fintech-payments',
-        title: 'Module 1: UPI & Instant Settlement Protocols',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-ft-101',
-            module_id: 'mod-ft-1',
-            title: 'Lesson 1: Virtual Payment Addresses & 2-Factor Auth',
-            order_index: 1,
-            summary: 'How NPCI orchestrates real-time interbank funds transfer via mobile apps.',
-            duration_minutes: 25,
-            content_markdown: `### UPI Protocol Lifecycle
-Learn how National Payments Corporation of India (NPCI) connects issuing banks and acquiring banks in sub-second round-trips.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-ft-2',
-        course_id: 'course-fintech-payments',
-        title: 'Module 2: Payment Gateways & Tokenization',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-ft-102',
-            module_id: 'mod-ft-2',
-            title: 'Lesson 2: Card Tokenization, Encryption & Fraud Defenses',
-            order_index: 1,
-            summary: 'Replacing sensitive 16-digit card numbers with device-specific cryptographic tokens.',
-            duration_minutes: 25,
-            content_markdown: `### Payment Tokenization
-Tokenization prevents merchants from storing actual credit or debit card numbers, dramatically reducing data breach impacts.`,
-          },
-        ],
-      },
-    ],
+    id: 'vid-stock-1',
+    title: 'Understanding the Stock Market & Long-Term Index Investing',
+    description: 'Why broad-market index funds outperform speculative stock picking through the mathematical power of diversification.',
+    youtube_url: 'https://www.youtube.com/watch?v=fwe_PbrP7e8',
+    youtube_id: 'fwe_PbrP7e8',
+    category: 'finance',
+    duration_minutes: 12,
+    featured: false,
+    instructor_name: 'PBS Two Cents',
+    added_by: 'user-teacher-1',
+    created_at: new Date('2026-09-28').toISOString(),
   },
+  {
+    id: 'vid-upi-1',
+    title: 'FinTech & Digital Payments: The Architecture of UPI',
+    description: 'How India built the world\'s fastest real-time payment protocol connecting millions of daily transactions.',
+    youtube_url: 'https://www.youtube.com/watch?v=h07H2h5J9t8',
+    youtube_id: 'h07H2h5J9t8',
+    category: 'finance',
+    duration_minutes: 9,
+    featured: true,
+    instructor_name: 'FinTech Insights India',
+    added_by: 'user-superadmin-1',
+    created_at: new Date('2026-09-29').toISOString(),
+  },
+  {
+    id: 'vid-time-1',
+    title: 'Time Management & The Eisenhower Decision Matrix',
+    description: 'Eliminate reactive noise and protect your deep focus hours for high-impact creative and technical work.',
+    youtube_url: 'https://www.youtube.com/watch?v=VUk6LZEHN3w',
+    youtube_id: 'VUk6LZEHN3w',
+    category: 'professional',
+    duration_minutes: 8,
+    featured: true,
+    instructor_name: 'LifeCraft Leadership',
+    added_by: 'user-superadmin-1',
+    created_at: new Date('2026-09-19').toISOString(),
+  },
+  {
+    id: 'vid-comm-1',
+    title: 'Clear Technical Communication & Async Team Etiquette',
+    description: 'Techniques for writing concise status updates, documenting engineering decisions, and handling constructive code reviews.',
+    youtube_url: 'https://www.youtube.com/watch?v=F6Zg65erDsk',
+    youtube_id: 'F6Zg65erDsk',
+    category: 'professional',
+    duration_minutes: 11,
+    featured: false,
+    instructor_name: 'Google TechTalks',
+    added_by: 'user-teacher-1',
+    created_at: new Date('2026-09-27').toISOString(),
+  },
+  {
+    id: 'vid-git-1',
+    title: 'Building an Authentic Technical Profile & GitHub Presence',
+    description: 'How to structure project READMEs, commit histories, and code repositories to demonstrate genuine problem solving.',
+    youtube_url: 'https://www.youtube.com/watch?v=javbYOFj1b0',
+    youtube_id: 'javbYOFj1b0',
+    category: 'professional',
+    duration_minutes: 13,
+    featured: false,
+    instructor_name: 'Traversy Media',
+    added_by: 'user-teacher-1',
+    created_at: new Date('2026-09-30').toISOString(),
+  },
+];
 
-  // ==================================================================
-  // CATEGORY 4: PROFESSIONAL SKILLS (5 SUBJECTS)
-  // ==================================================================
+export const INITIAL_STUDY_RESOURCES: StudyResource[] = [
   {
-    id: 'course-prof-time',
-    title: 'Time Management & Cognitive Prioritization',
-    slug: 'time-management',
-    domain: 'professional',
-    subject: 'Time Management',
-    level: 'beginner',
-    summary: 'Eisenhower matrix, deep work cycles, calendar blocking, task batching, and sustainable digital boundary setting.',
-    description: 'Build intentional, disciplined daily operating systems designed to eliminate digital distraction and sustain high focus.',
-    learning_objectives: ['Apply the Eisenhower decision matrix to daily tasks', 'Structure 90-minute uninterrupted deep work blocks'],
-    prerequisites: ['None'],
-    duration_hours: 3,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-professional-identity',
-    created_at: new Date('2026-09-03').toISOString(),
-    modules: [
-      {
-        id: 'mod-pt-1',
-        course_id: 'course-prof-time',
-        title: 'Module 1: Priority Frameworks',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-pt-101',
-            module_id: 'mod-pt-1',
-            title: 'Lesson 1: Eisenhower Matrix & The Urgent vs Important Paradox',
-            order_index: 1,
-            summary: 'Distinguishing between reactive urgent noise and proactive high-leverage activities.',
-            duration_minutes: 20,
-            content_markdown: `### The Eisenhower Framework
-Classify tasks into 4 quadrants:
-1. Urgent & Important (Handle immediately).
-2. Non-Urgent but Important (Schedule proactively — where highest career value is created).
-3. Urgent but Unimportant (Delegate or automate).
-4. Neither (Eliminate).`,
-          },
-        ],
-      },
-      {
-        id: 'mod-pt-2',
-        course_id: 'course-prof-time',
-        title: 'Module 2: Deep Work Routines',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-pt-102',
-            module_id: 'mod-pt-2',
-            title: 'Lesson 2: Uninterrupted Focus Blocks & Minimizing Context Switching',
-            order_index: 1,
-            summary: 'Techniques for guarding 90-minute programming blocks against notification clutter.',
-            duration_minutes: 20,
-            content_markdown: `### Focus Hygiene
-Cognitive switching penalties cost up to 23 minutes after each interruption. Batch emails and messages into defined daily slots.`,
-          },
-        ],
-      },
-    ],
+    id: 'res-comp-guide',
+    title: 'Computing Fundamentals & Computer Architecture Reference Manual',
+    description: 'A comprehensive study guide explaining CPU instruction cycles, memory hierarchies, binary logic, and operating system scheduling.',
+    category: 'technology',
+    resource_type: 'guide',
+    format: 'PDF',
+    duration_or_pages: '24 pages',
+    action_label: 'View Guide',
+    action_type: 'view_guide',
+    is_verified: true,
   },
   {
-    id: 'course-prof-workplace',
-    title: 'Professional Skills & Workplace Readiness',
-    slug: 'professional-skills',
-    domain: 'professional',
-    subject: 'Professional Skills',
-    level: 'beginner',
-    summary: 'Workplace etiquette, project accountability, meeting hygiene, asynchronous documentation, and conflict resolution.',
-    description: 'Transition smoothly from academic environments to high-performing professional engineering and business teams.',
-    learning_objectives: ['Write clear, concise technical and status updates', 'Navigate team disagreements constructively'],
-    prerequisites: ['None'],
-    duration_hours: 4,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-professional-identity',
-    created_at: new Date('2026-09-06').toISOString(),
-    modules: [
-      {
-        id: 'mod-pw-1',
-        course_id: 'course-prof-workplace',
-        title: 'Module 1: Team Accountability & Etiquette',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-pw-101',
-            module_id: 'mod-pw-1',
-            title: 'Lesson 1: Clear Asynchronous Communication & Updates',
-            order_index: 1,
-            summary: 'Writing stand-up updates, documenting decisions, and taking ownership of bugs.',
-            duration_minutes: 20,
-            content_markdown: `### High-Impact Status Updates
-Every engineering update should communicate: what was delivered, what is in progress, and any blocking obstacles.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-pw-2',
-        course_id: 'course-prof-workplace',
-        title: 'Module 2: Workplace Problem Solving',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-pw-102',
-            module_id: 'mod-pw-2',
-            title: 'Lesson 2: Constructive Feedback & Collaborative Alignment',
-            order_index: 1,
-            summary: 'Code review etiquette and separating personal pride from objective software quality.',
-            duration_minutes: 20,
-            content_markdown: `### Giving and Receiving Code Feedback
-Frame review comments around code behavior, maintainability, and test coverage rather than personal preferences.`,
-          },
-        ],
-      },
-    ],
+    id: 'res-web-sec-checklist',
+    title: 'Defensive Web Security Checklist (OWASP Defense-in-Depth)',
+    description: 'Actionable audit checklist covering Content Security Policy, secure session tokens, CORS rules, and input validation schemas.',
+    category: 'technology',
+    resource_type: 'cheatsheet',
+    format: 'Markdown',
+    duration_or_pages: '12 pages',
+    action_label: 'View Checklist',
+    action_type: 'view_guide',
+    is_verified: true,
   },
   {
-    id: 'course-prof-softskills',
-    title: 'Soft Skills Development & Interpersonal Dynamics',
-    slug: 'soft-skills-development',
-    domain: 'professional',
-    subject: 'Soft Skills Development',
-    level: 'beginner',
-    summary: 'Active listening, empathy in leadership, constructive feedback delivery, and high-impact presentation delivery.',
-    description: 'Master the interpersonal competencies that distinguish exceptional engineers and team leaders.',
-    learning_objectives: ['Practice non-defensive reception of critical feedback', 'Structure persuasive verbal presentations'],
-    prerequisites: ['None'],
-    duration_hours: 3,
-    is_published: false,
-    availability_status: 'in_development',
-    created_at: new Date('2026-09-09').toISOString(),
-    modules: [
-      {
-        id: 'mod-pss-1',
-        course_id: 'course-prof-softskills',
-        title: 'Module 1: Empathetic Communication',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-pss-101',
-            module_id: 'mod-pss-1',
-            title: 'Lesson 1: Active Listening & Non-Defensive Dialogue',
-            order_index: 1,
-            summary: 'Hearing requirements fully before rushing to implement technical solutions.',
-            duration_minutes: 20,
-            content_markdown: `### Active Listening in Engineering
-Repeat back requirements to ensure mutual understanding before architecting code.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-pss-2',
-        course_id: 'course-prof-softskills',
-        title: 'Module 2: Presentation & Persuasion',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-pss-102',
-            module_id: 'mod-pss-2',
-            title: 'Lesson 2: Structuring Technical Ideas for Diverse Audiences',
-            order_index: 1,
-            summary: 'Explaining complex systems to non-technical stakeholders and educators.',
-            duration_minutes: 20,
-            content_markdown: `### Communicating Across Domains
-Translate technical trade-offs into clear outcomes that students, parents, and school administrators understand.`,
-          },
-        ],
-      },
-    ],
+    id: 'res-comp-thinking-wb',
+    title: 'Computational Thinking & Algorithm Design Workbook',
+    description: 'Structured exercises in problem decomposition, pattern recognition, and Big-O efficiency calculations for software students.',
+    category: 'coding',
+    resource_type: 'toolkit',
+    format: 'Interactive',
+    duration_or_pages: '18 pages',
+    action_label: 'Explore Workbook',
+    action_type: 'view_guide',
+    is_verified: true,
   },
   {
-    id: 'course-prof-identity',
-    title: 'Social Profiles & Professional Identity',
-    slug: 'social-profiles-identity',
-    domain: 'professional',
-    subject: 'Social Profiles and Professional Identity',
-    level: 'beginner',
-    summary: 'Engineering authentic GitHub profiles, LinkedIn presence, technical writing, and public credibility.',
-    description: 'Craft a coherent, credible digital presence that showcases authentic code contributions and technical thinking.',
-    learning_objectives: ['Optimize a technical GitHub profile and project READMEs', 'Write substantive technical summaries'],
-    prerequisites: ['None'],
-    duration_hours: 3,
-    is_published: false,
-    availability_status: 'in_development',
-    learning_path_id: 'path-professional-identity',
-    created_at: new Date('2026-09-13').toISOString(),
-    modules: [
-      {
-        id: 'mod-pi-1',
-        course_id: 'course-prof-identity',
-        title: 'Module 1: Technical Presence',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-pi-101',
-            module_id: 'mod-pi-1',
-            title: 'Lesson 1: Crafting an Impactful GitHub & Portfolio Architecture',
-            order_index: 1,
-            summary: 'Documenting repositories with clear installation guides, architectures, and tests.',
-            duration_minutes: 20,
-            content_markdown: `### The GitHub Profile as Technical Portfolio
-A clean README with working badges, reproduction instructions, and clear commit messages proves authentic capability.`,
-          },
-        ],
-      },
-      {
-        id: 'mod-pi-2',
-        course_id: 'course-prof-identity',
-        title: 'Module 2: Professional Networks',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-pi-102',
-            module_id: 'mod-pi-2',
-            title: 'Lesson 2: Authentic LinkedIn Engagement & Industry Networking',
-            order_index: 1,
-            summary: 'Connecting with engineering mentors and participating in technical discussions.',
-            duration_minutes: 20,
-            content_markdown: `### Constructive Networking
-Share genuine learning breakthroughs and challenges openly rather than posting hollow marketing buzzwords.`,
-          },
-        ],
-      },
-    ],
+    id: 'res-web-dev-primer',
+    title: 'Modern Web Development Primer (HTML5, CSS & JS)',
+    description: 'Syntax and layout reference guide covering accessible semantic tags, CSS flexbox/grid models, and DOM event listeners.',
+    category: 'coding',
+    resource_type: 'guide',
+    format: 'PDF',
+    duration_or_pages: '15 pages',
+    action_label: 'View Primer',
+    action_type: 'view_guide',
+    is_verified: true,
   },
   {
-    id: 'course-prof-portfolio',
-    title: 'Evidence-Backed Portfolio Building',
-    slug: 'evidence-backed-portfolio',
-    domain: 'professional',
-    subject: 'Portfolio Building',
-    level: 'intermediate',
-    summary: 'Transform completed labs, bug bounties, and software builds into verifiable, employer-ready portfolio artifacts.',
-    description: 'Move beyond empty buzzwords. Learn to document engineering architecture, provide cryptographic verification hashes, and present working software as indisputable evidence of skill.',
-    learning_objectives: [
-      'Document software architecture with diagrams and threat models',
-      'Integrate automated testing proof and build badges into case studies',
-      'Host and maintain live, reproducible interactive project demos',
-    ],
-    prerequisites: ['Completion of at least one technical course or project'],
-    duration_hours: 5,
-    is_published: true,
-    availability_status: 'implemented_in_build',
-    learning_path_id: 'path-professional-identity',
-    created_at: new Date('2026-09-04').toISOString(),
-    modules: [
-      {
-        id: 'mod-port-1',
-        course_id: 'course-prof-portfolio',
-        title: 'Module 1: The Artifact-Driven Portfolio',
-        order_index: 1,
-        lessons: [
-          {
-            id: 'les-port-101',
-            module_id: 'mod-port-1',
-            title: 'Lesson 1: Evidence vs. Assertion in Technical Portfolios',
-            order_index: 1,
-            summary: 'Why hiring managers ignore skill lists and how to showcase verifiable technical achievements.',
-            duration_minutes: 25,
-            content_markdown: `### Proving What You Can Build
-
-Most student resumes list generic keywords: *"Python, SQL, Cybersecurity, Teamwork"*. Technical interviewers and admissions officers see hundreds of these identical resumes every day.
-
-#### The Hierarchy of Credibility:
-1. **Assertion (Lowest):** *"I know SQL injection defense."* (Anyone can write this).
-2. **Certification:** *"I watched a 4-hour video course."* (Shows passive attendance, not mastery).
-3. **Evidence (Highest):** *"Here is the repository where I defeated 5 injection attack payloads using positional SQLite parameters, backed by 15 passing Vitest tests and an anti-tamper server hash."*
-
-#### The Case Study Structure:
-Every portfolio project in Geniusphere should answer four core engineering questions:
-1. **What was the challenge or threat model?**
-2. **What architectural approach was chosen and why?**
-3. **What trade-offs were made?**
-4. **How did you prove correctness through automated tests?**`,
-            quiz: {
-              id: 'quiz-port-101',
-              questions: [
-                {
-                  id: 'q1',
-                  prompt: 'What constitutes the highest level of credibility in a technical student portfolio?',
-                  options: [
-                    'A list of 20 programming language keywords',
-                    'A certificate proving video watch time',
-                    'Working code with reproducible automated tests and architecture documentation',
-                    'A glowing recommendation letter without project links',
-                  ],
-                  correct_option_index: 2,
-                  explanation: 'Technical evaluators value verifiable evidence of problem solving: working code, automated test proof, and architectural rationale.',
-                },
-              ],
-            },
-          },
-        ],
-      },
-      {
-        id: 'mod-port-2',
-        course_id: 'course-prof-portfolio',
-        title: 'Module 2: Case Study Architecture',
-        order_index: 2,
-        lessons: [
-          {
-            id: 'les-port-102',
-            module_id: 'mod-port-2',
-            title: 'Lesson 2: Threat Models, Engineering Trade-offs & Test Proof',
-            order_index: 1,
-            summary: 'Writing professional project retrospectives that prove technical depth.',
-            duration_minutes: 25,
-            content_markdown: `### Documenting Engineering Trade-Offs
-Discuss what did not work initially, why specific frameworks were chosen, and how your test suite prevents regressions.`,
-          },
-        ],
-      },
-    ],
+    id: 'res-fin-framework',
+    title: 'Personal Financial Literacy & Budgeting Framework',
+    description: 'Step-by-step framework for calculating inflation-adjusted compounding, emergency reserves, and the 50/30/20 budget method.',
+    category: 'finance',
+    resource_type: 'guide',
+    format: 'PDF',
+    duration_or_pages: '16 pages',
+    action_label: 'View Framework',
+    action_type: 'view_guide',
+    is_verified: true,
+  },
+  {
+    id: 'res-upi-whitepaper',
+    title: 'Indian FinTech & UPI Architectural Breakdown',
+    description: 'Technical whitepaper analyzing how National Payments Corporation of India (NPCI) processes sub-second real-time settlements.',
+    category: 'finance',
+    resource_type: 'guide',
+    format: 'PDF',
+    duration_or_pages: '14 pages',
+    action_label: 'Read Whitepaper',
+    action_type: 'view_guide',
+    is_verified: true,
+  },
+  {
+    id: 'res-schoolkit-tool',
+    title: 'Educator SchoolKit: Syllabi, Lesson Plans & Rubrics',
+    description: 'Comprehensive pedagogical tools for teachers, including curriculum mapping, assessment rubrics, and DPDP compliance templates.',
+    category: 'educator',
+    resource_type: 'toolkit',
+    format: 'Interactive',
+    duration_or_pages: 'Verified Hub',
+    action_label: 'Launch SchoolKit',
+    action_type: 'open_tool',
+    target_view: 'schoolkit',
+    is_verified: true,
+  },
+  {
+    id: 'res-resume-builder-tool',
+    title: 'Student Resume & Evidence-Backed Portfolio Builder',
+    description: 'Interactive portfolio engineering tool allowing learners to compile verified course achievements and projects into professional resumes.',
+    category: 'career',
+    resource_type: 'toolkit',
+    format: 'Interactive',
+    duration_or_pages: 'Verified Tool',
+    action_label: 'Open Resume Builder',
+    action_type: 'open_tool',
+    target_view: 'resume-builder',
+    is_verified: true,
   },
 ];

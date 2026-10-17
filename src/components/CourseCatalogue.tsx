@@ -27,12 +27,18 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
     publishedOnly: showPublishedOnly,
   });
 
+  const allList = db.getCourses();
+  const techCount = allList.filter((c) => c.domain === 'technology').length;
+  const codingCount = allList.filter((c) => c.domain === 'coding').length;
+  const finCount = allList.filter((c) => c.domain === 'finance').length;
+  const profCount = allList.filter((c) => c.domain === 'professional').length;
+
   const domains: { id: string; label: string }[] = [
-    { id: 'all', label: 'All Subjects (27)' },
-    { id: 'technology', label: 'Technology (8)' },
-    { id: 'coding', label: 'Coding & Programming (7)' },
-    { id: 'finance', label: 'Finance (7)' },
-    { id: 'professional', label: 'Professional Skills (5)' },
+    { id: 'all', label: `All Subjects (${allList.length})` },
+    { id: 'technology', label: `Technology (${techCount})` },
+    { id: 'coding', label: `Coding & Programming (${codingCount})` },
+    { id: 'finance', label: `Finance (${finCount})` },
+    { id: 'professional', label: `Professional Skills (${profCount})` },
   ];
 
   return (
@@ -42,12 +48,12 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-brand">STRICTLY AUTHORIZED 27-SUBJECT CURRICULUM</span>
-              <span className="badge badge-neutral">Technology • Finance • Professional • Coding</span>
+              <span className="badge badge-brand">APPROVED 27-COURSE CURRICULUM</span>
+              <span className="badge badge-neutral">Technology • Coding • Finance • Professional</span>
             </div>
             <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Explore Course Catalogue</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-              Browse the strictly verified curriculum across Technology, Coding & Programming, Finance, and Professional Skills.
+              Browse the approved curriculum across Technology, Coding & Programming, Finance, and Professional Skills.
             </p>
           </div>
           <button
@@ -67,7 +73,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses, subjects, or keywords (e.g. SQL, AI, Finance, Resume)..."
+              placeholder="Search courses, subjects, or keywords (e.g. AI, Algorithms, Security, Markets)..."
               style={{
                 width: '100%',
                 padding: '10px 14px 10px 38px',

@@ -67,7 +67,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     achievements.push({
       id: 'ach-defense-initiate',
       title: 'Defense Initiate',
-      desc: 'Passed all 5 server assertions in SQL Lab 101 with 100% score.',
+      desc: 'Passed web application defense evaluation with 100% score.',
       icon: Shield,
       date: 'Verified Server Evaluation',
     });
@@ -86,7 +86,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const pendingAssignments = [
     {
       id: 'assign-lab-101',
-      title: 'Lab 101: SQL Parameterization & Injection Defense',
+      title: 'Course Assessment: Web Defense & Security Controls',
       course: 'Cybersecurity & Defensive Web Security',
       due: '14 days remaining',
       status: hasPassedLab ? 'Completed (100/100)' : 'Pending Submission',
@@ -296,7 +296,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
           {allSubmissions.length === 0 ? (
             <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              No lab evaluations submitted yet. Complete SQL Lab 101 to generate your first server evaluation result.
+              No evaluations submitted yet. Complete course assessments to generate verified evaluation results.
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -314,7 +314,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.88rem' }}>SQL Lab 101 Challenge Evaluation</span>
+                    <span style={{ fontWeight: 600, fontSize: '0.88rem' }}>Web Security Defense Evaluation</span>
                     <span className={sub.passed ? 'badge badge-success' : 'badge badge-danger'}>
                       {sub.score}/100 PTS
                     </span>

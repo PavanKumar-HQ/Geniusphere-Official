@@ -255,3 +255,32 @@ export interface GraderResult {
   details: string;
   test_results: TestCaseResult[];
 }
+
+export interface VideoLesson {
+  id: string;
+  title: string;
+  description: string;
+  youtube_url: string;
+  youtube_id: string;
+  category: DomainType | 'general';
+  duration_minutes: number;
+  featured?: boolean;
+  instructor_name?: string;
+  added_by: string;
+  created_at: string;
+}
+
+export interface StudyResource {
+  id: string;
+  title: string;
+  description: string;
+  category: DomainType | 'educator' | 'career';
+  resource_type: 'guide' | 'cheatsheet' | 'toolkit' | 'curriculum';
+  format: 'PDF' | 'Interactive' | 'Markdown';
+  duration_or_pages: string;
+  action_label: string;
+  action_type: 'view_guide' | 'open_tool' | 'download';
+  target_view?: string;
+  is_verified: boolean;
+}
+
