@@ -17,6 +17,8 @@ import { SchoolKit } from './components/SchoolKit';
 import { StudentDashboard } from './components/StudentDashboard';
 import { InstitutionAdminWorkspace } from './components/InstitutionAdminWorkspace';
 import { PlatformAdminWorkspace } from './components/PlatformAdminWorkspace';
+import { LabCatalogue } from './components/LabCatalogue';
+import { SharedLabWorkspace } from './components/SharedLabWorkspace';
 import {
   ShieldCheck,
   BookOpen,
@@ -29,6 +31,7 @@ import {
   Shield,
   Video,
   Info,
+  Terminal,
 } from 'lucide-react';
 
 export type AppView =
@@ -36,6 +39,8 @@ export type AppView =
   | 'catalogue'
   | 'course-detail'
   | 'lesson-player'
+  | 'labs'
+  | 'lab-workspace'
   | 'resources'
   | 'leaderboard'
   | 'about'
@@ -68,6 +73,7 @@ export const App: React.FC = () => {
   const [selectedCourseId, setSelectedCourseId] = useState<string>('course-web-sec');
   const [selectedLessonId, setSelectedLessonId] = useState<string>('les-sec-101');
   const [selectedDomain, setSelectedDomain] = useState<string>('all');
+  const [selectedLabSlug, setSelectedLabSlug] = useState<string>('ai-classification-playground');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -87,6 +93,11 @@ export const App: React.FC = () => {
     if (view === 'course-detail' && slug) {
       setSelectedCourseSlug(slug);
       setCurrentView('course-detail');
+    } else if (view === 'lab-workspace') {
+      setSelectedLabSlug(slug || 'ai-classification-playground');
+      setCurrentView('lab-workspace');
+    } else if (view === 'labs') {
+      setCurrentView('labs');
     } else if (view === 'catalogue') {
       if (slug) {
         setSelectedDomain(slug);
@@ -266,6 +277,23 @@ export const App: React.FC = () => {
                 }}
               >
                 Courses
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('labs')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '8px 14px',
+                  color: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 700 : 500,
+                  borderBottom: currentView === 'labs' || currentView === 'lab-workspace' ? '2.5px solid var(--brand-primary)' : '2.5px solid transparent',
+                  borderRadius: 0,
+                  fontSize: '0.9rem',
+                }}
+              >
+                Labs
               </button>
 
               <button
@@ -492,6 +520,16 @@ export const App: React.FC = () => {
           <button
             type="button"
             className="btn-secondary"
+            onClick={() => handleNavigate('labs')}
+            style={{ justifyContent: 'flex-start', height: '40px' }}
+          >
+            <Terminal size={16} />
+            <span>Interactive Labs ({db.getLabDefinitions().length})</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn-secondary"
             onClick={() => handleNavigate('resources')}
             style={{ justifyContent: 'flex-start', height: '40px' }}
           >
@@ -598,8 +636,8 @@ export const App: React.FC = () => {
       <main
         style={{
           flex: 1,
-          padding: currentView === 'home' ? '0' : '28px 24px',
-          maxWidth: currentView === 'home' ? '100%' : '1280px',
+          padding: currentView === 'home' || currentView === 'lab-workspace' ? '0' : '28px 24px',
+          maxWidth: currentView === 'home' || currentView === 'lab-workspace' ? '100%' : '1280px',
           margin: '0 auto',
           width: '100%',
         }}
@@ -620,6 +658,30 @@ export const App: React.FC = () => {
             onSelectCourse={handleSelectCourse}
             onNavigateHome={() => handleNavigate('home')}
             initialDomain={selectedDomain}
+          />
+        )}
+
+        {currentView === 'labs' && (
+          <LabCatalogue
+            key={`labs-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            currentUserId={currentUserId}
+            onSelectLab={(slug) => {
+              setSelectedLabSlug(slug);
+              setCurrentView('lab-workspace');
+            }}
+            onNavigateHome={() => handleNavigate('home')}
+          />
+        )}
+
+        {currentView === 'lab-workspace' && (
+          <SharedLabWorkspace
+            key={`lab-workspace-${selectedLabSlug}-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            labSlug={selectedLabSlug}
+            currentUserId={currentUserId}
+            onNavigateBack={() => handleNavigate('labs')}
+            onSelectCourse={handleSelectCourse}
           />
         )}
 

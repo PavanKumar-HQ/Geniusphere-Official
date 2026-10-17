@@ -224,6 +224,52 @@ export interface StudentResume {
   updated_at: string;
 }
 
+export type LabInteractionType = 'simulation' | 'sandbox' | 'exercise';
+export type LabLifecycleState =
+  | 'initial'
+  | 'ready'
+  | 'running'
+  | 'success'
+  | 'incorrect'
+  | 'error'
+  | 'reset'
+  | 'saved'
+  | 'offline_pending';
+
+export interface LabDefinition {
+  id: string;
+  slug: string;
+  title: string;
+  category: DomainType;
+  interaction_type: LabInteractionType;
+  difficulty: DifficultyLevel;
+  duration_minutes: number;
+  summary: string;
+  learning_objective: string;
+  instructions: string[];
+  initial_state: Record<string, any>;
+  validation_criteria: string[];
+  completion_threshold: number;
+  course_slug?: string;
+  is_published: boolean;
+  version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LabAttemptRecord {
+  id: string;
+  lab_id: string;
+  user_id: string;
+  attempt_number: number;
+  passed: boolean;
+  score: number;
+  diagnostics: string;
+  saved_state?: Record<string, any>;
+  sync_status: SyncStatus;
+  created_at: string;
+}
+
 export interface Lab {
   id: string;
   course_id: string;

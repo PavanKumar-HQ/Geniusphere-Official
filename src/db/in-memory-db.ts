@@ -24,6 +24,8 @@ import {
   DomainType,
   Certificate,
   UserProgressState,
+  LabDefinition,
+  LabAttemptRecord,
 } from '../types';
 import {
   ALL_COURSES,
@@ -31,6 +33,7 @@ import {
   INITIAL_VIDEO_LESSONS,
   INITIAL_STUDY_RESOURCES,
 } from '../data/curriculum';
+import { APPROVED_LABS } from '../data/approved-labs';
 
 export class DatabaseError extends Error {
   code: string;
@@ -53,6 +56,8 @@ export class InMemoryDatabase {
   enrollments: Map<string, ClassroomEnrollment> = new Map();
   courses: Map<string, Course> = new Map();
   labs: Map<string, Lab> = new Map();
+  labDefinitions: Map<string, LabDefinition> = new Map();
+  labAttempts: Map<string, LabAttemptRecord> = new Map();
   assignments: Map<string, Assignment> = new Map();
   submissions: Map<string, Submission> = new Map();
   auditEvents: Map<string, AuditEvent> = new Map();
@@ -88,7 +93,10 @@ export class InMemoryDatabase {
     this.studentResumes.clear();
     this.videoLessons.clear();
     this.studyResources.clear();
+    this.labDefinitions.clear();
+    this.labAttempts.clear();
 
+    APPROVED_LABS.forEach((l) => this.labDefinitions.set(l.id, { ...l }));
     INITIAL_VIDEO_LESSONS.forEach((v) => this.videoLessons.set(v.id, { ...v }));
     INITIAL_STUDY_RESOURCES.forEach((r) => this.studyResources.set(r.id, { ...r }));
 
@@ -1213,6 +1221,99 @@ export class InMemoryDatabase {
 
   getCertificates(userId: string): Certificate[] {
     return Array.from(this.certificates.values()).filter((c) => c.user_id === userId);
+  }
+
+  // ==================================================================
+  // LAB & SIMULATION METHODS (Section 3 & 5)
+  // ==================================================================
+
+  getLabDefinitions(filters?: { category?: string; interaction_type?: string; search?: string }): LabDefinition[] {
+    let list = Array.from(this.labDefinitions.values()).filter((l) => l.is_published);
+    if (filters?.category && filters.category !== 'all') {
+      list = list.filter((l) => l.category === filters.category);
+    }
+    if (filters?.interaction_type && filters.interaction_type !== 'all') {
+      list = list.filter((l) => l.interaction_type === filters.interaction_type);
+    }
+    if (filters?.search) {
+      const q = filters.search.toLowerCase();
+      list = list.filter(
+        (l) => l.title.toLowerCase().includes(q) || l.summary.toLowerCase().includes(q) || l.learning_objective.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }
+
+  getLabBySlug(slug: string): LabDefinition | undefined {
+    return Array.from(this.labDefinitions.values()).find((l) => l.slug === slug);
+  }
+
+  getLabById(id: string): LabDefinition | undefined {
+    return this.labDefinitions.get(id);
+  }
+
+  recordLabAttempt(
+    userId: string,
+    labId: string,
+    result: { passed: boolean; score: number; diagnostics: string; savedState?: any }
+  ): LabAttemptRecord {
+    const lab = this.labDefinitions.get(labId);
+    if (!lab) {
+      throw new DatabaseError('Lab definition not found', '23503', 404);
+    }
+
+    const user = this.users.get(userId);
+    if (!user) {
+      throw new DatabaseError('User not found', '23503', 404);
+    }
+
+    let existingAttempts = 0;
+    for (const att of this.labAttempts.values()) {
+      if (att.lab_id === labId && att.user_id === userId) {
+        existingAttempts++;
+      }
+    }
+
+    const record: LabAttemptRecord = {
+      id: crypto.randomUUID(),
+      lab_id: labId,
+      user_id: userId,
+      attempt_number: existingAttempts + 1,
+      passed: result.passed,
+      score: result.score,
+      diagnostics: result.diagnostics,
+      saved_state: result.savedState,
+      sync_status: 'SERVER_CONFIRMED',
+      created_at: new Date().toISOString(),
+    };
+
+    this.labAttempts.set(record.id, record);
+
+    // If passed, award XP (only once per lab to prevent duplicate inflation)
+    if (result.passed) {
+      const progress = this.getUserProgress(userId);
+      const previouslyPassed = Array.from(this.labAttempts.values()).some(
+        (a) => a.lab_id === labId && a.user_id === userId && a.passed && a.id !== record.id
+      );
+      if (!previouslyPassed) {
+        progress.xp += 100;
+        this.userProgress.set(userId, progress);
+      }
+    }
+
+    return record;
+  }
+
+  getLabAttempts(userId: string, labId?: string): LabAttemptRecord[] {
+    return Array.from(this.labAttempts.values()).filter(
+      (a) => a.user_id === userId && (!labId || a.lab_id === labId)
+    );
+  }
+
+  isLabCompleted(userId: string, labId: string): boolean {
+    return Array.from(this.labAttempts.values()).some(
+      (a) => a.user_id === userId && a.lab_id === labId && a.passed
+    );
   }
 }
 

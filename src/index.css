@@ -1,7 +1,6 @@
 /* ====================================================================
-   Geniusphere Design System — Restrained Blue & Green Educational Theme
-   Built with Inter typography, clean light contrast (WCAG 2.2 AA),
-   and specialized standout course cards matching reference UI
+   Geniusphere Design System — Unified Light-First Visual Language
+   Coherent, accessible, restrained palette strictly matching Section 1
    ==================================================================== */
 
 :root {
@@ -10,52 +9,73 @@
   --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
 
-  /* Blue & Green Restrained Educational Light Palette */
-  --bg-canvas: #F8FAFC;         /* Neutral light canvas */
-  --bg-surface: #FFFFFF;        /* Clean card surface */
-  --bg-surface-subdued: #F1F5F9;/* Subdued background */
+  /* Typography Sizing Tokens (Section 1.3) */
+  --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
+  --text-page-title: clamp(1.5rem, 2.5vw, 2rem);    /* 24-28px mobile, 28-32px desktop */
+  --text-section-title: 1.375rem;                   /* 20-24px */
+  --text-card-title: 1.0625rem;                     /* 16-18px */
+  --text-body: 0.9375rem;                           /* 14-16px */
+  --text-meta: 0.8125rem;                           /* 12-13px */
+
+  /* Section 1.1 Baseline Design Tokens */
+  --bg-canvas: #F7F9FC;         /* Page background */
+  --bg-surface: #FFFFFF;        /* Main surfaces / White cards */
+  --bg-surface-subdued: #F1F5F9;/* Subdued neutral surface */
   --bg-surface-elevated: #FFFFFF;
 
-  --text-primary: #0F172A;      /* Slate 900: High contrast (> 14:1) */
-  --text-secondary: #475569;    /* Slate 600: Contrast (> 5.5:1) */
-  --text-muted: #64748B;        /* Slate 500: Auxiliary text */
+  --text-primary: #172B4D;      /* Primary text (Atlassian/slate high contrast) */
+  --text-secondary: #64748B;    /* Secondary text */
+  --text-muted: #94A3B8;        /* Supporting metadata */
   --text-inverse: #FFFFFF;
 
-  /* Educational Royal Blue (Primary Brand) */
-  --brand-primary: #1D4ED8;     /* Blue 700 */
-  --brand-primary-hover: #1E40AF;/* Blue 800 */
-  --brand-surface: #EFF6FF;     /* Blue 50 */
-  --brand-border: #BFDBFE;      /* Blue 200 */
+  /* Primary Brand Action: #2563EB */
+  --brand-primary: #2563EB;
+  --brand-primary-hover: #1D4ED8;
+  --brand-surface: #EFF6FF;     /* Subtle selected background */
+  --brand-border: #BFDBFE;
 
-  /* Academic Emerald Green (Secondary Accent) */
-  --brand-accent: #059669;      /* Emerald 600 */
-  --brand-accent-hover: #047857;/* Emerald 700 */
-  --brand-accent-surface: #ECFDF5; /* Emerald 50 */
-  --brand-accent-border: #A7F3D0;  /* Emerald 200 */
+  /* Secondary Brand Accent: #0F766E */
+  --brand-accent: #0F766E;
+  --brand-accent-hover: #0D9488;
+  --brand-accent-surface: #F0FDFA;
+  --brand-accent-border: #99F6E4;
 
-  /* Cyan & Mint Accents */
-  --brand-cyan: #0284C7;
-  --brand-cyan-light: #00F5A0;
-  --brand-cyan-surface: #F0F9FF;
+  /* Selected State */
+  --selected-bg: #EFF6FF;
 
-  /* Semantic Feedback Colors */
-  --success: #059669;
-  --success-bg: #ECFDF5;
-  --success-border: #A7F3D0;
-  --success-text: #065F46;
+  /* Semantic State Colors */
+  --success: #15803D;
+  --success-bg: #F0FDF4;
+  --success-border: #BBF7D0;
+  --success-text: #15803D;
 
-  --warning: #D97706;
+  --warning: #B45309;
   --warning-bg: #FFFBEB;
   --warning-border: #FDE68A;
-  --warning-text: #92400E;
+  --warning-text: #B45309;
 
-  --danger: #DC2626;
+  --error: #B91C1C;
+  --danger: #B91C1C;
   --danger-bg: #FEF2F2;
   --danger-border: #FECACA;
-  --danger-text: #991B1B;
+  --danger-text: #B91C1C;
 
-  --border-subtle: #E2E8F0;     /* Slate 200 */
-  --border-strong: #CBD5E1;     /* Slate 300 */
+  /* Code & Editor Surfaces */
+  --editor-bg: #F8FAFC;
+  --border-subtle: #E2E8F0;     /* Borders */
+  --border-strong: #CBD5E1;
+
+  /* Spacing Rhythm (8px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
 
   /* Component Radii */
   --radius-sm: 6px;
@@ -64,11 +84,11 @@
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* Elevation Shadows */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+  /* Subtle Clean Elevations (No heavy drop shadows) */
+  --shadow-xs: 0 1px 2px rgba(23, 43, 77, 0.04);
+  --shadow-sm: 0 1px 3px rgba(23, 43, 77, 0.06), 0 1px 2px rgba(23, 43, 77, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(23, 43, 77, 0.07), 0 2px 4px -2px rgba(23, 43, 77, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(23, 43, 77, 0.08), 0 4px 6px -4px rgba(23, 43, 77, 0.03);
 
   /* Touch Targets */
   --min-touch-target: 44px;
@@ -121,7 +141,7 @@ a:hover {
 /* Interactive elements: touch-safe */
 button, input, select, textarea {
   font-family: inherit;
-  font-size: 0.9375rem;
+  font-size: var(--text-body);
 }
 
 button {
@@ -169,7 +189,7 @@ button {
 }
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--bg-surface-subdued);
-  border-color: var(--text-muted);
+  border-color: var(--text-secondary);
 }
 .btn-secondary:disabled {
   opacity: 0.55;
@@ -194,14 +214,16 @@ button {
   background-color: #FEE2E2;
 }
 
-/* Cards & Surfaces (Clean Light Theme) */
+/* ====================================================================
+   White Cards against Light Neutral Canvas (Section 1.2)
+   ==================================================================== */
 .card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 24px;
   box-shadow: var(--shadow-xs);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .card:hover {
@@ -210,116 +232,76 @@ button {
 }
 
 .card-elevated {
-  background-color: var(--bg-surface-elevated);
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-sm);
 }
 
-/* ====================================================================
-   STANDOUT LIQUID GLASS COURSE CARDS (Reference Image 1)
-   Deep translucent lucid glass with cyan top glowing rim & buttons
-   ==================================================================== */
+/* Course Cards: Cohesive White Card Design */
 .course-card {
-  background: linear-gradient(135deg, rgba(11, 19, 43, 0.78) 0%, rgba(6, 12, 28, 0.90) 100%);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: 1px solid rgba(0, 240, 255, 0.22);
-  border-top: 1.5px solid rgba(0, 245, 220, 0.75);
-  border-radius: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 0 25px -4px rgba(0, 240, 255, 0.16), inset 0 1px 2px 0 rgba(0, 255, 230, 0.4), 0 16px 36px rgba(2, 6, 23, 0.6);
-  color: #FFFFFF;
-  position: relative;
-  overflow: hidden;
+  gap: 16px;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+  color: var(--text-primary);
   cursor: pointer;
 }
 
-.course-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 20%;
-  right: 20%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #00F0FF, #00F5A0, transparent);
-  filter: blur(0.5px);
-  pointer-events: none;
-}
-
 .course-card:hover {
-  border-color: rgba(0, 240, 255, 0.55);
-  box-shadow: 0 0 35px 2px rgba(0, 240, 255, 0.28), inset 0 1.5px 3px 0 rgba(0, 255, 230, 0.7), 0 24px 48px rgba(2, 6, 23, 0.8);
-  transform: translateY(-4px);
+  border-color: var(--brand-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .course-card h3 {
-  color: #00F0FF !important;
-  font-size: 1.35rem;
-  font-weight: 800;
+  color: var(--text-primary) !important;
+  font-size: var(--text-card-title);
+  font-weight: 700;
   line-height: 1.35;
   margin: 0;
-  letter-spacing: -0.01em;
 }
 
 .course-card p {
-  color: #94A3B8 !important;
-  font-size: 0.88rem;
+  color: var(--text-secondary) !important;
+  font-size: var(--text-body);
   line-height: 1.55;
   margin: 0;
 }
 
 .course-card .category-tag-pill {
-  background: rgba(30, 58, 138, 0.45);
-  color: #60A5FA;
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  font-weight: 800;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  padding: 4px 12px;
-  border-radius: 6px;
+  background: var(--brand-surface);
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-border);
+  font-weight: 700;
+  font-size: var(--text-meta);
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
   text-transform: uppercase;
-}
-
-.course-card .syllabus-circle-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #38BDF8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.course-card .syllabus-circle-btn:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: #38BDF8;
-  color: #FFFFFF;
+  width: fit-content;
 }
 
 .course-card .topic-hashtag-pill {
-  background: rgba(30, 41, 59, 0.6);
-  color: #94A3B8;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.75rem;
-  padding: 3px 10px;
-  border-radius: 12px;
+  background: var(--bg-surface-subdued);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--text-meta);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
   font-weight: 500;
 }
 
 .course-card .course-card-footer {
   padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -329,145 +311,106 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.85rem;
+  font-size: var(--text-meta);
   font-weight: 600;
-  color: #94A3B8;
+  color: var(--text-muted);
 }
 
 .course-card .play-sim-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(30, 58, 138, 0.5);
-  border: 1px solid rgba(59, 130, 246, 0.45);
-  color: #60A5FA;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  color: var(--brand-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  min-height: auto;
+  padding: 0;
 }
 
 .course-card .play-sim-btn:hover {
-  background: #3B82F6;
-  border-color: #60A5FA;
+  background: var(--brand-primary);
   color: #FFFFFF;
-  transform: scale(1.08);
-  box-shadow: 0 0 14px rgba(59, 130, 246, 0.6);
 }
 
 .course-card .arrow-action-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: transparent;
-  color: #00F0FF;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-subdued);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-weight: 700;
+  transition: all 0.15s ease;
+  min-height: auto;
+  padding: 0;
 }
 
 .course-card .arrow-action-btn:hover {
-  color: #00F5A0;
-  transform: translateX(4px);
-  filter: drop-shadow(0 0 8px #00F5A0);
-}
-
-/* Filter Pills for Light Theme */
-.filter-pill {
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
-  font-size: 0.85rem;
-  font-weight: 600;
-  background-color: var(--bg-surface);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.filter-pill:hover {
-  background-color: var(--bg-surface-subdued);
-  border-color: var(--border-strong);
+  background: var(--border-strong);
   color: var(--text-primary);
 }
 
-.filter-pill.active {
-  background-color: var(--brand-primary);
-  border-color: var(--brand-primary);
-  color: #FFFFFF;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Badges */
+/* Clean Badges */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 9px;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  gap: 5px;
+  font-size: var(--text-meta);
   font-weight: 600;
-  letter-spacing: 0.01em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
 }
 
 .badge-brand {
   background-color: var(--brand-surface);
   color: var(--brand-primary);
-  border: 1px solid var(--brand-border);
+  border-color: var(--brand-border);
 }
 
 .badge-accent {
   background-color: var(--brand-accent-surface);
   color: var(--brand-accent);
-  border: 1px solid var(--brand-accent-border);
-}
-
-.badge-cyan {
-  background-color: var(--brand-cyan-surface);
-  color: var(--brand-cyan);
-  border: 1px solid #BAE6FD;
+  border-color: var(--brand-accent-border);
 }
 
 .badge-success {
   background-color: var(--success-bg);
-  color: var(--success-text);
-  border: 1px solid var(--success-border);
+  color: var(--success);
+  border-color: var(--success-border);
 }
 
 .badge-warning {
   background-color: var(--warning-bg);
-  color: var(--warning-text);
-  border: 1px solid var(--warning-border);
-}
-
-.badge-danger {
-  background-color: var(--danger-bg);
-  color: var(--danger-text);
-  border: 1px solid var(--danger-border);
+  color: var(--warning);
+  border-color: var(--warning-border);
 }
 
 .badge-neutral {
   background-color: var(--bg-surface-subdued);
   color: var(--text-secondary);
-  border: 1px solid var(--border-subtle);
+  border-color: var(--border-subtle);
 }
 
-/* Gamification Widgets (Clean Light Theme) */
+/* Gamification Badges (Restrained) */
 .streak-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid var(--warning-border);
+  padding: 4px 12px;
   border-radius: var(--radius-full);
-  background-color: #FFF7ED;
-  border: 1px solid #FED7AA;
-  color: #C2410C;
-  font-size: 0.8rem;
+  font-size: var(--text-meta);
   font-weight: 700;
 }
 
@@ -475,43 +418,80 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
+  background-color: var(--brand-surface);
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-border);
+  padding: 4px 12px;
   border-radius: var(--radius-full);
-  background-color: #ECFDF5;
-  border: 1px solid #A7F3D0;
-  color: #047857;
-  font-size: 0.8rem;
+  font-size: var(--text-meta);
   font-weight: 700;
 }
 
-/* Responsive 16:9 Video Container */
-.video-responsive-wrapper {
-  position: relative;
+/* Clean Tables */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-surface);
+}
+
+table {
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
-  overflow: hidden;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--text-body);
+}
+
+th {
+  background-color: var(--bg-surface-subdued);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: var(--text-meta);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  letter-spacing: 0.03em;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background-color: var(--bg-surface-subdued);
+}
+
+/* Forms */
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
-  background-color: #0F172A;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: var(--text-body);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.video-responsive-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
+.form-input:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* Modal Dialog Styles */
+/* Modal Dialogs */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: rgba(23, 43, 77, 0.55);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -533,188 +513,105 @@ button {
   padding: 32px;
 }
 
-/* Clean Form Controls */
-.form-input {
-  width: 100%;
-  padding: 10px 14px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
-  background-color: var(--bg-surface);
-  color: var(--text-primary);
-  font-size: 0.9375rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
-}
-
 /* Certificate Styles */
 .certificate-container {
-  background: radial-gradient(circle at 50% 50%, #0F172A 0%, #030712 100%);
-  border: 4px solid #F59E0B;
-  border-radius: 20px;
+  background: var(--bg-surface);
+  border: 3px solid var(--warning);
+  border-radius: var(--radius-xl);
   padding: 48px;
   position: relative;
-  box-shadow: 0 0 50px rgba(245, 158, 11, 0.25), inset 0 0 30px rgba(245, 158, 11, 0.1);
+  box-shadow: var(--shadow-md);
   text-align: center;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 .certificate-border-inner {
-  border: 1px dashed rgba(245, 158, 11, 0.4);
-  border-radius: 14px;
+  border: 1px dashed var(--warning-border);
+  border-radius: var(--radius-lg);
   padding: 32px;
 }
 
-/* Scrollbar refinement */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-surface-subdued);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
-}
-
-/* ============================================================ */
-/* Reference Showcase Sections: Fun Zone, Events, Ambassador, Social */
-/* ============================================================ */
-
-/* Fun Zone & Interactive Cards — Unified Light Canvas with Screenshot-Matching Deep Navy Cards */
-.cosmic-section {
-  background: var(--bg-surface-subdued);
-  color: var(--text-primary);
-  position: relative;
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.funzone-card {
-  background: linear-gradient(135deg, rgba(17, 27, 49, 0.96) 0%, rgba(11, 19, 43, 0.98) 100%);
-  border: 1px solid rgba(0, 240, 255, 0.22);
-  border-top: 2px solid #00F0FF;
-  border-radius: 18px;
+/* Light-Themed Interactive Showcase Cards */
+.funzone-card, .event-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
   padding: 24px;
   display: flex;
   flex-direction: column;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 0 15px rgba(0, 240, 255, 0.08);
-  color: #FFFFFF;
+  gap: 14px;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.2s ease;
+  color: var(--text-primary);
 }
 
-.funzone-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(0, 240, 255, 0.55);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), 0 0 25px rgba(0, 240, 255, 0.18);
+.funzone-card:hover, .event-card:hover {
+  border-color: var(--brand-primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
 }
 
 .funzone-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
   width: fit-content;
 }
 
-/* Event & Hackathon Cards */
-.event-card {
-  background: linear-gradient(135deg, rgba(17, 27, 49, 0.96) 0%, rgba(11, 19, 43, 0.98) 100%);
-  border: 1px solid rgba(0, 240, 255, 0.22);
-  border-top: 2px solid #00F0FF;
-  border-radius: 18px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  transition: all 0.25s ease;
-  min-width: 280px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 0 15px rgba(0, 240, 255, 0.08);
-  color: #FFFFFF;
-}
-
-.event-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(0, 240, 255, 0.55);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), 0 0 25px rgba(0, 240, 255, 0.18);
-}
-
-/* Ambassador Program Banner */
 .ambassador-container {
-  background: linear-gradient(135deg, rgba(17, 27, 49, 0.98) 0%, rgba(11, 19, 43, 0.99) 100%);
-  border: 1px solid rgba(0, 240, 255, 0.35);
-  border-top: 2.5px solid #00F0FF;
-  border-radius: 24px;
-  padding: 40px;
-  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.2), 0 0 30px rgba(0, 240, 255, 0.12);
-  position: relative;
-  overflow: hidden;
-  color: #FFFFFF;
-}
-
-.ambassador-container::after {
-  content: '';
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
-  pointer-events: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
 }
 
 .perk-tile {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 18px 20px;
+  background: var(--bg-surface-subdued);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: all 0.2s ease;
+  gap: 6px;
 }
 
-.perk-tile:hover {
-  background: rgba(0, 240, 255, 0.06);
-  border-color: rgba(0, 240, 255, 0.3);
-}
-
-/* Social Channel Tiles */
 .social-tile {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 20px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  color: #FFFFFF;
+  gap: 8px;
+  color: var(--text-primary);
   text-decoration: none;
-  transition: all 0.2s ease;
-  min-width: 110px;
+  box-shadow: var(--shadow-xs);
+  transition: all 0.15s ease;
+  min-width: 100px;
 }
 
 .social-tile:hover {
-  transform: translateY(-4px);
-  background: rgba(0, 240, 255, 0.1);
-  border-color: #00F0FF;
-  box-shadow: 0 8px 20px rgba(0, 240, 255, 0.2);
+  border-color: var(--brand-primary);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+/* Reduced Motion Support (Section 7) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
