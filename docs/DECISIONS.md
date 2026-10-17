@@ -68,3 +68,20 @@
   3. **Tamper-Resistance Reality:** In-database RLS policies (`FOR INSERT WITH CHECK (false)`) prevent standard application users from altering or deleting logs. However, an in-database table does **NOT** provide WORM hardware tamper-proofing against privileged superuser or service-role direct database access.
   4. **Cost Transparency:** Costs are documented as planning estimates based on October 2026 pricing, subject to measured usage validation.
 - **Status:** **Approved for Implementation**.
+
+---
+
+### ADR-13: Reconciliation of `GS-ENG-2026-V1` Baseline & Deferred Technologies
+- **Context:** The `GS-ENG-2026-V1` specification proposes a multi-database, microservice, API-gateway architecture (PostgreSQL + MongoDB + Redis + Kong + gRPC + Monaco + Ed25519 W3C VC). Implementing all technologies at once creates immense operational tax, cloud cost overruns, and mobile device crashes before pilot demand is proven.
+- **Decision:**
+  1. **PostgreSQL 16 (Keep P0):** Sole authoritative transactional database. Handles multi-tenancy, RLS, assessments, progress, and audit logs cleanly.
+  2. **MongoDB (Deferred):** Curriculum modules and quizzes are stored directly in PostgreSQL with JSONB columns. Eliminates dual-database synchronization drift and saves ~$30/mo.
+  3. **Redis (Deferred to Post-Pilot):** Pilot concurrency (50–250 users) is handled efficiently by PostgreSQL. Redis will be introduced if post-pilot demand requires high-volume caching.
+  4. **Kong API Gateway (Deferred):** Routing, edge rate limiting (60 req/min), and SSL termination are handled by Cloudflare Pages and Edge WAF at $0 extra cost.
+  5. **gRPC & Service Mesh (Deferred):** Adds serialization and proxy overhead without improving student learning. Standard REST / RPC over HTTP is maintained.
+  6. **CodeMirror 6 over Monaco:** Monaco (~4MB) breaks on budget Android mobile browsers with Low-Memory Killers (LMK). CodeMirror 6 (~250KB) is touch-native, accessible, and fast.
+  7. **Ed25519 W3C Verifiable Credentials (Staged for Phase 4):** Deterministic SHA-256 verification hash and public certificate modal are implemented now; formal W3C VC JSON-LD signing with Ed25519 keys will be connected once pilot completion requirements are validated.
+  8. **Targeted Offline Sync:** Built incrementally using IndexedDB mutation queues and Service Worker CacheStorage (`LOCAL_UNSYNCED` -> `SYNCING` -> `SERVER_CONFIRMED`). Acknowledges iOS Safari lacks Background Sync.
+  9. **Zero Mascots / Heavy WebGL:** All visual animations are accessible SVG components respecting `prefers-reduced-motion` and loading in <10ms.
+- **Status:** **Approved & Reconciled**.
+
