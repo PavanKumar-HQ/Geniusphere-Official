@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geniusphere</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            midnight: '#000000',
+            electric: '#0047FF',
+            cyanGlow: '#00FFFF',
+            neonPurple: '#BD00FF',
+            softMint: '#00FF94',
+            warmYellow: '#FFD600',
+            charcoal: '#111111',
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'scroll': 'scroll 30s linear infinite',
+            'scroll-slow': 'scroll 80s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-15px)' },
+            },
+            scroll: {
+              '0%': { transform: 'translateX(0)' },
+              '100%': { transform: 'translateX(-50%)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #000000;
+      color: #F8FAFC;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #000000;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1E293B;
+      border-radius: 4px;
+      border: 1px solid #3B82F6;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3B82F6;
+    }
+
+    /* Apple-Style Liquid Glass Utilities */
+    .liquid-glass {
+      background: rgba(20, 30, 48, 0.6);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        0 8px 32px 0 rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Interactive Glass Card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 4px 24px -1px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow:
+        0 20px 40px -5px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+        0 0 20px rgba(59, 130, 246, 0.2);
+      transform: translateY(-6px) scale(1.01);
+    }
+
+    .text-glow {
+      text-shadow: 0 0 20px rgba(103, 232, 249, 0.5);
+    }
+
+    .iso-grid-bg {
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: radial-gradient(circle at center, black 40%, transparent 90%);
+    }
+
+    /* Mobile Lab Optimizations */
+    @media (max-width: 768px) {
+
+      /* Make lab content scrollable horizontally on mobile */
+      .lab-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Ensure minimum width for lab content */
+      .lab-content {
+        min-width: 100%;
+      }
+
+      /* Hide or minimize sidebars on very small screens */
+      @media (max-width: 640px) {
+
+        /* Allow horizontal scrolling for wide lab layouts */
+        body {
+          overflow-x: auto !important;
+        }
+      }
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+        "recharts": "https://aistudiocdn.com/recharts@^3.4.1",
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+        "framer-motion": "https://aistudiocdn.com/framer-motion@^11.0.24",
+        "react-player": "https://aistudiocdn.com/react-player@^2.16.0",
+        "react-player/": "https://aistudiocdn.com/react-player@^2.16.0/"
+      }
+    }
+    </script>
+  <link rel="stylesheet" href="/index.css">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="/logo-192.png">
+  <link rel="manifest" href="/manifest.json">
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

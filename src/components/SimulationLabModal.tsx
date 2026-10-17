@@ -15,6 +15,7 @@ import {
   LogOut,
   Terminal,
 } from 'lucide-react';
+import { WorkableSandboxLab } from './WorkableSandboxLab';
 
 export interface SimulationItem {
   id: string;

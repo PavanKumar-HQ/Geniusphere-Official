@@ -1,0 +1,8 @@
+{
+  "name": "Geniusphere AI Lab",
+  "description": "A high-fidelity practical simulation platform for AI ethics, safety, and security. Explore 15 interactive modules including prompt injection, hallucination detection, and bias auditing in a cyber-lab environment.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
