@@ -6,6 +6,7 @@ import { CourseDetailView } from './components/CourseDetailView';
 import { LessonPlayer } from './components/LessonPlayer';
 import { ResourcesHub } from './components/ResourcesHub';
 import { AboutPage } from './components/AboutPage';
+import { LeaderboardPage } from './components/LeaderboardPage';
 import { AuthModal } from './components/AuthModal';
 import { TeacherGradebook } from './components/TeacherGradebook';
 import { ClassroomManager } from './components/ClassroomManager';
@@ -28,6 +29,9 @@ import {
   Shield,
   Video,
   Info,
+  Trophy,
+  Flame,
+  Zap,
 } from 'lucide-react';
 
 export type AppView =
@@ -36,6 +40,7 @@ export type AppView =
   | 'course-detail'
   | 'lesson-player'
   | 'resources'
+  | 'leaderboard'
   | 'about'
   | 'student-dashboard'
   | 'gradebook'
@@ -74,6 +79,7 @@ export const App: React.FC = () => {
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'getstarted'>('signin');
 
   const currentUser = users.find((u) => u.id === currentUserId) || users[0];
+  const userProgress = db.getUserProgress(currentUserId);
   const isTeacher = currentUser.role === 'teacher';
   const isInstAdmin = currentUser.role === 'institution_admin';
   const isSuperadmin = currentUser.role === 'superadmin';
@@ -95,6 +101,7 @@ export const App: React.FC = () => {
     } else if (
       view === 'home' ||
       view === 'resources' ||
+      view === 'leaderboard' ||
       view === 'about' ||
       view === 'classrooms' ||
       view === 'gradebook' ||
@@ -284,6 +291,23 @@ export const App: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => handleNavigate('leaderboard')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '8px 14px',
+                  color: currentView === 'leaderboard' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  fontWeight: currentView === 'leaderboard' ? 700 : 500,
+                  borderBottom: currentView === 'leaderboard' ? '2.5px solid var(--brand-primary)' : '2.5px solid transparent',
+                  borderRadius: 0,
+                  fontSize: '0.9rem',
+                }}
+              >
+                Leaderboard
+              </button>
+
+              <button
+                type="button"
                 onClick={() => handleNavigate('about')}
                 style={{
                   background: 'none',
@@ -299,6 +323,18 @@ export const App: React.FC = () => {
                 About
               </button>
             </nav>
+
+            {/* Gamification Streak & XP Pills */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginRight: '6px' }}>
+              <div className="streak-pill" title="Active Learning Streak">
+                <Flame size={13} color="#F97316" />
+                <span>{userProgress.streak_days}d Streak</span>
+              </div>
+              <div className="xp-pill" title="Total Experience Points">
+                <Zap size={13} color="#00F5A0" />
+                <span>{userProgress.xp} XP</span>
+              </div>
+            </div>
 
             {/* Authenticated Role Workspace Button */}
             {isLearner && (
@@ -499,6 +535,16 @@ export const App: React.FC = () => {
           <button
             type="button"
             className="btn-secondary"
+            onClick={() => handleNavigate('leaderboard')}
+            style={{ justifyContent: 'flex-start', height: '40px' }}
+          >
+            <Trophy size={16} />
+            <span>Leaderboard & Rankings</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn-secondary"
             onClick={() => handleNavigate('about')}
             style={{ justifyContent: 'flex-start', height: '40px' }}
           >
@@ -625,6 +671,14 @@ export const App: React.FC = () => {
             key={`resources-${currentUserId}-${refreshTrigger}`}
             db={db}
             onNavigate={handleNavigate}
+            currentUserId={currentUserId}
+          />
+        )}
+
+        {currentView === 'leaderboard' && (
+          <LeaderboardPage
+            key={`leaderboard-${currentUserId}-${refreshTrigger}`}
+            db={db}
             currentUserId={currentUserId}
           />
         )}

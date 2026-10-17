@@ -88,86 +88,138 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
     }
   };
 
+  const userProgress = db.getUserProgress(_currentUserId);
+  const totalResources = videoLessons.length + studyResources.length;
+  const completedCount = userProgress.completed_lessons.length;
+
   return (
-    <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 24px 64px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      {/* Header Banner */}
+    <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px 64px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+      {/* Header Banner with Gamification XP Widget from Reference Image */}
       <div
         className="card-elevated"
         style={{
-          borderLeft: '5px solid var(--brand-accent)',
-          padding: '32px',
-          backgroundColor: 'var(--bg-surface)',
+          padding: '28px 32px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '24px',
+          background: 'linear-gradient(135deg, rgba(11, 15, 25, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)',
+          border: '1px solid rgba(0, 245, 160, 0.25)',
         }}
       >
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '20px', backgroundColor: 'var(--brand-accent-surface)', color: 'var(--brand-accent)', fontSize: '0.75rem', fontWeight: 700, marginBottom: '12px' }}>
-          <Sparkles size={14} />
-          <span>VERIFIED GENIUSPHERE REPOSITORY</span>
+        <div style={{ flex: '1', minWidth: '300px' }}>
+          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, marginBottom: '8px', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+            Educational Resources
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '680px', lineHeight: 1.6 }}>
+            Explore our comprehensive library of videos, blogs, and learning materials designed to expand your knowledge.
+          </p>
         </div>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)' }}>
-          Learning Resources Hub
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '780px', lineHeight: 1.6 }}>
-          Explore verified educational YouTube video lessons managed by educators, downloadable reference study manuals, interactive worksheets, the SchoolKit for teachers, and the Resume Builder for students.
-        </p>
+
+        {/* Reference Image XP Widget */}
+        <div
+          style={{
+            padding: '16px 20px',
+            borderRadius: '12px',
+            backgroundColor: 'rgba(4, 8, 20, 0.8)',
+            border: '1px solid rgba(0, 245, 160, 0.3)',
+            minWidth: '220px',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#00F5A0', fontWeight: 800, fontSize: '0.9rem' }}>
+              <Sparkles size={16} />
+              <span>{userProgress.xp} XP</span>
+            </div>
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+              PROGRESS {completedCount}/{totalResources}
+            </span>
+          </div>
+          <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+            <div
+              style={{
+                width: `${Math.min(100, Math.round((completedCount / totalResources) * 100))}%`,
+                height: '100%',
+                backgroundColor: 'var(--brand-primary)',
+              }}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Control Bar: Search & Category Filter Pills */}
+      {/* Control Bar: Tab Switcher & Search from Reference Image */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-          {/* Main Tab Switcher */}
-          <div style={{ display: 'flex', gap: '8px', backgroundColor: 'var(--bg-surface)', padding: '4px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+          {/* Main Tab Switcher (Videos / Blogs & Guides / Tools) */}
+          <div style={{ display: 'flex', gap: '10px' }}>
             <button
               type="button"
               onClick={() => setActiveTab('videos')}
               style={{
-                height: '38px',
-                padding: '0 16px',
+                height: '42px',
+                padding: '0 20px',
                 borderRadius: '8px',
-                backgroundColor: activeTab === 'videos' ? 'var(--brand-primary)' : 'transparent',
-                color: activeTab === 'videos' ? '#FFFFFF' : 'var(--text-secondary)',
-                fontSize: '0.88rem',
-                fontWeight: 600,
+                backgroundColor: activeTab === 'videos' ? '#EF4444' : 'rgba(15, 23, 42, 0.6)',
+                color: '#FFFFFF',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                border: activeTab === 'videos' ? 'none' : '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
               }}
             >
-              <Video size={16} />
-              <span>Video Lessons ({videoLessons.length})</span>
+              <Video size={17} />
+              <span>Videos</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('materials')}
               style={{
-                height: '38px',
-                padding: '0 16px',
+                height: '42px',
+                padding: '0 20px',
                 borderRadius: '8px',
-                backgroundColor: activeTab === 'materials' ? 'var(--brand-primary)' : 'transparent',
-                color: activeTab === 'materials' ? '#FFFFFF' : 'var(--text-secondary)',
-                fontSize: '0.88rem',
-                fontWeight: 600,
+                backgroundColor: activeTab === 'materials' ? '#3B82F6' : 'rgba(15, 23, 42, 0.6)',
+                color: '#FFFFFF',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                border: activeTab === 'materials' ? 'none' : '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
               }}
             >
-              <FileText size={16} />
-              <span>Study Guides ({studyResources.filter((s) => s.resource_type !== 'toolkit').length})</span>
+              <FileText size={17} />
+              <span>Blogs & Guides</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('tools')}
               style={{
-                height: '38px',
-                padding: '0 16px',
+                height: '42px',
+                padding: '0 20px',
                 borderRadius: '8px',
-                backgroundColor: activeTab === 'tools' ? 'var(--brand-primary)' : 'transparent',
-                color: activeTab === 'tools' ? '#FFFFFF' : 'var(--text-secondary)',
-                fontSize: '0.88rem',
-                fontWeight: 600,
+                backgroundColor: activeTab === 'tools' ? 'var(--brand-primary)' : 'rgba(15, 23, 42, 0.6)',
+                color: activeTab === 'tools' ? '#040814' : '#FFFFFF',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                border: activeTab === 'tools' ? 'none' : '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
               }}
             >
-              <Layers size={16} />
-              <span>Educator & Career Tools (2)</span>
+              <Layers size={17} />
+              <span>Educator Tools</span>
             </button>
           </div>
 
           {/* Search Box */}
-          <div style={{ position: 'relative', minWidth: '280px', flex: '1', maxWidth: '400px' }}>
+          <div style={{ position: 'relative', minWidth: '280px', flex: '1', maxWidth: '360px' }}>
             <Search
               size={18}
               style={{
@@ -180,7 +232,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
             />
             <input
               type="text"
-              placeholder="Search resources, topics, instructors..."
+              placeholder="Search resources..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="form-input"
@@ -212,15 +264,12 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
 
         {/* Category Filter Pills */}
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginRight: '4px' }}>
-            Domain:
-          </span>
           {[
-            { id: 'all', label: 'All Disciplines' },
+            { id: 'all', label: 'All' },
             { id: 'technology', label: 'Technology' },
-            { id: 'coding', label: 'Coding & Programming' },
+            { id: 'coding', label: 'Coding' },
             { id: 'finance', label: 'Finance' },
-            { id: 'professional', label: 'Professional Skills' },
+            { id: 'professional', label: 'Personal Growth' },
           ].map((cat) => (
             <button
               key={cat.id}
@@ -228,13 +277,14 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
               onClick={() => setSelectedCategory(cat.id)}
               style={{
                 height: '32px',
-                padding: '0 12px',
+                padding: '0 14px',
                 borderRadius: '20px',
-                fontSize: '0.8rem',
+                fontSize: '0.82rem',
                 fontWeight: selectedCategory === cat.id ? 700 : 500,
-                backgroundColor: selectedCategory === cat.id ? 'var(--brand-primary)' : 'var(--bg-surface)',
-                color: selectedCategory === cat.id ? '#FFFFFF' : 'var(--text-secondary)',
-                border: '1px solid ' + (selectedCategory === cat.id ? 'var(--brand-primary)' : 'var(--border-strong)'),
+                backgroundColor: selectedCategory === cat.id ? 'var(--brand-primary)' : 'rgba(15, 23, 42, 0.6)',
+                color: selectedCategory === cat.id ? '#040814' : 'var(--text-secondary)',
+                border: '1px solid ' + (selectedCategory === cat.id ? 'var(--brand-primary)' : 'var(--border-subtle)'),
+                cursor: 'pointer',
               }}
             >
               {cat.label}

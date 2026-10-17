@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
-import { Lesson, CourseEnrollment } from '../types';
+import { Lesson, CourseEnrollment, Certificate } from '../types';
+import { ConceptSvgAnimation } from './ConceptSvgAnimation';
+import { InteractiveSandbox } from './InteractiveSandbox';
+import { CertificateModal } from './CertificateModal';
 import {
   ArrowLeft,
   CheckCircle2,
   ChevronRight,
   HelpCircle,
-  Terminal,
   Clock,
+  Play,
+  Zap,
+  Flame,
+  Award,
+  Video as VideoIcon,
+  Cpu,
+  Terminal as TerminalIcon,
+  BookOpen,
 } from 'lucide-react';
 
 interface LessonPlayerProps {
@@ -25,13 +35,15 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   initialLessonId,
   currentUserId,
   onBackToCourse,
-  onLaunchLab,
+  onLaunchLab: _onLaunchLab,
 }) => {
   const course = db.getCourseById(courseId);
   const [currentLessonId, setCurrentLessonId] = useState<string>(initialLessonId);
+  const [activeTab, setActiveTab] = useState<'video' | 'animation' | 'sandbox'>('video');
   const [enrollment, setEnrollment] = useState<CourseEnrollment>(
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
+  const [earnedCertificate, setEarnedCertificate] = useState<Certificate | null>(null);
 
   // Quiz submission state for current lesson
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
@@ -70,6 +82,14 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
     setEnrollment({ ...updated });
 
+    if (updated.progress_percent >= 100) {
+      const certs = db.getCertificates(currentUserId);
+      const match = certs.find((c) => c.course_id === courseId);
+      if (match) {
+        setEarnedCertificate(match);
+      }
+    }
+
     if (nextLesson) {
       setCurrentLessonId(nextLesson.id);
       setSelectedAnswers({});
@@ -96,34 +116,62 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     if (pct >= 50) {
       const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
       setEnrollment({ ...updated });
+      if (updated.progress_percent >= 100) {
+        const certs = db.getCertificates(currentUserId);
+        const match = certs.find((c) => c.course_id === courseId);
+        if (match) setEarnedCertificate(match);
+      }
     }
   };
 
+  const userProgress = db.getUserProgress(currentUserId);
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 320px) 1fr', gap: '24px', alignItems: 'start' }}>
       {/* Sidebar: Course Outline & Progress */}
-      <div className="card" style={{ padding: '16px', position: 'sticky', top: '70px' }}>
+      <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
         <button
           type="button"
           className="btn-secondary"
           onClick={onBackToCourse}
-          style={{ width: '100%', height: '36px', fontSize: '0.8rem', marginBottom: '14px' }}
+          style={{ width: '100%', height: '38px', fontSize: '0.82rem', marginBottom: '14px' }}
         >
           <ArrowLeft size={14} /> Back to Course Syllabus
         </button>
 
-        <h3 style={{ fontSize: '1.05rem', marginBottom: '4px' }}>{course.title}</h3>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+          <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>
+            {course.domain.toUpperCase()}
+          </span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>10 Modules</span>
+        </div>
+
+        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '4px', lineHeight: 1.3 }}>
+          {course.title}
+        </h3>
+        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
           {course.subject}
         </div>
 
-        {/* Course Progress */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '4px', fontWeight: 600 }}>
-            <span>Progress</span>
-            <span>{enrollment.progress_percent}%</span>
+        {/* Gamification Pills */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <div className="streak-pill" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>
+            <Flame size={13} color="#F97316" />
+            <span>{userProgress.streak_days}-Day Streak</span>
           </div>
-          <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '3px', overflow: 'hidden' }}>
+          <div className="xp-pill" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>
+            <Zap size={13} color="#00F5A0" />
+            <span>{userProgress.xp} XP</span>
+          </div>
+        </div>
+
+        {/* Course Progress */}
+        <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'rgba(15, 23, 42, 0.6)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '6px', fontWeight: 700 }}>
+            <span>Course Progress</span>
+            <span style={{ color: 'var(--brand-primary)' }}>{enrollment.progress_percent}%</span>
+          </div>
+          <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-canvas)', borderRadius: '3px', overflow: 'hidden' }}>
             <div
               style={{
                 width: `${enrollment.progress_percent}%`,
@@ -133,17 +181,36 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               }}
             />
           </div>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+            {enrollment.completed_lessons.length} of {allLessons.length} modules completed
+          </div>
         </div>
 
+        {/* Claim Certificate Button if Completed */}
+        {enrollment.progress_percent >= 100 && (
+          <button
+            type="button"
+            className="btn-accent"
+            onClick={() => {
+              const certs = db.getCertificates(currentUserId);
+              const match = certs.find((c) => c.course_id === courseId);
+              if (match) setEarnedCertificate(match);
+            }}
+            style={{ width: '100%', height: '40px', fontSize: '0.82rem', marginBottom: '16px', fontWeight: 700 }}
+          >
+            <Award size={16} /> View Verified Certificate
+          </button>
+        )}
+
         {/* Modules & Lessons List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {course.modules.map((mod) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '480px', overflowY: 'auto', paddingRight: '4px' }}>
+          {course.modules.map((mod, mIdx) => (
             <div key={mod.id}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
-                {mod.title}
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.05em' }}>
+                Module {mIdx + 1}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {mod.lessons.map((l) => {
+                {mod.lessons.map((l, lIdx) => {
                   const isActive = l.id === activeLesson?.id;
                   const isDone = enrollment.completed_lessons.includes(l.id);
 
@@ -160,22 +227,31 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       style={{
                         padding: '8px 10px',
                         borderRadius: '6px',
-                        backgroundColor: isActive ? 'var(--brand-surface)' : 'transparent',
+                        backgroundColor: isActive ? 'rgba(0, 245, 160, 0.12)' : 'transparent',
                         color: isActive ? 'var(--brand-primary)' : 'var(--text-primary)',
-                        border: 'none',
+                        border: isActive ? '1px solid rgba(0, 245, 160, 0.3)' : '1px solid transparent',
                         textAlign: 'left',
-                        fontSize: '0.825rem',
+                        fontSize: '0.8rem',
                         fontWeight: isActive ? 700 : 500,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        minHeight: '36px',
+                        gap: '8px',
                       }}
                     >
-                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {l.title}
-                      </span>
-                      {isDone && <CheckCircle2 size={14} color="var(--success)" />}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', minWidth: '16px' }}>
+                          {lIdx + 1}.
+                        </span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {l.title}
+                        </span>
+                      </div>
+                      {isDone ? (
+                        <CheckCircle2 size={14} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
+                      ) : (
+                        <Clock size={12} color="var(--text-muted)" style={{ flexShrink: 0 }} />
+                      )}
                     </button>
                   );
                 })}
@@ -186,173 +262,303 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
       </div>
 
       {/* Main Lesson Content Area */}
-      <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {activeLesson && (
           <>
-            <div className="card-elevated">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--brand-primary)', fontWeight: 600 }}>
+            {/* Header with Title & Modality Switcher */}
+            <div className="card-elevated" style={{ padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                <span style={{ fontSize: '0.78rem', color: 'var(--brand-primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   {activeModuleTitle}
                 </span>
-                <span className="badge badge-neutral">
-                  <Clock size={12} /> {activeLesson.duration_minutes} min read
-                </span>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+                    <Clock size={12} /> {activeLesson.duration_minutes} min duration
+                  </span>
+                  {isCompleted && (
+                    <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
+                      <CheckCircle2 size={12} /> Completed
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '12px' }}>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
                 {activeLesson.title}
               </h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '24px', fontStyle: 'italic', borderLeft: '3px solid var(--border-strong)', paddingLeft: '12px' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>
                 {activeLesson.summary}
               </p>
 
-              {/* Lesson Text Body */}
-              <div
-                style={{
-                  fontSize: '0.95rem',
-                  lineHeight: 1.7,
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '14px',
-                }}
-              >
-                {activeLesson.content_markdown.split('\n\n').map((paragraph, pIdx) => {
-                  if (paragraph.startsWith('### ')) {
-                    return <h3 key={pIdx} style={{ fontSize: '1.3rem', marginTop: '12px' }}>{paragraph.replace('### ', '')}</h3>;
-                  }
-                  if (paragraph.startsWith('#### ')) {
-                    return <h4 key={pIdx} style={{ fontSize: '1.1rem', marginTop: '8px' }}>{paragraph.replace('#### ', '')}</h4>;
-                  }
-                  if (paragraph.startsWith('```')) {
-                    const cleanCode = paragraph.replace(/```[a-z]*\n?/g, '');
-                    return (
-                      <pre key={pIdx} style={{ backgroundColor: '#18181B', color: '#F4F4F5', padding: '14px', borderRadius: '8px', overflowX: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
-                        <code>{cleanCode}</code>
-                      </pre>
-                    );
-                  }
-                  return <p key={pIdx}>{paragraph}</p>;
-                })}
+              {/* 3-MODALITY LEARNING TABS */}
+              <div style={{ display: 'flex', gap: '8px', padding: '4px', backgroundColor: 'var(--bg-canvas)', borderRadius: '10px', border: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('video')}
+                  style={{
+                    height: '38px',
+                    padding: '0 16px',
+                    borderRadius: '8px',
+                    backgroundColor: activeTab === 'video' ? 'var(--brand-primary)' : 'transparent',
+                    color: activeTab === 'video' ? '#040814' : 'var(--text-secondary)',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <VideoIcon size={15} />
+                  <span>1. Video & Theory</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('animation')}
+                  style={{
+                    height: '38px',
+                    padding: '0 16px',
+                    borderRadius: '8px',
+                    backgroundColor: activeTab === 'animation' ? 'var(--brand-primary)' : 'transparent',
+                    color: activeTab === 'animation' ? '#040814' : 'var(--text-secondary)',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Cpu size={15} />
+                  <span>2. Interactive SVG Visualizer</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('sandbox')}
+                  style={{
+                    height: '38px',
+                    padding: '0 16px',
+                    borderRadius: '8px',
+                    backgroundColor: activeTab === 'sandbox' ? 'var(--brand-primary)' : 'transparent',
+                    color: activeTab === 'sandbox' ? '#040814' : 'var(--text-secondary)',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <TerminalIcon size={15} />
+                  <span>3. Sandbox Simulation (+100 XP)</span>
+                </button>
               </div>
             </div>
 
-            {/* Linked Lab Callout Card */}
-            {activeLesson.linked_lab_id && (
-              <div className="card" style={{ borderLeft: '4px solid var(--brand-primary)', backgroundColor: 'var(--brand-surface)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Terminal size={22} color="var(--brand-primary)" />
+            {/* TAB 1: VIDEO LESSON & NOTES */}
+            {activeTab === 'video' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* 16:9 YouTube Video Embed */}
+                <div className="card" style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Play size={18} color="var(--brand-primary)" />
+                      <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Curated Educational Video</span>
                     </div>
-                    <div>
-                      <h4 style={{ fontSize: '1.1rem' }}>Hands-On Interactive Laboratory Linked</h4>
-                      <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                        Launch the isolated SQLite-WASM laboratory to apply parameter binding directly against attack payloads.
-                      </p>
-                    </div>
+                    <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
+                      High Definition 1080p
+                    </span>
                   </div>
-                  <button
-                    type="button"
-                    className="btn-primary"
-                    onClick={() => onLaunchLab(activeLesson.linked_lab_id!)}
-                    style={{ height: '40px', padding: '0 16px' }}
+                  <div className="video-responsive-wrapper">
+                    <iframe
+                      src={`https://www.youtube-nocookie.com/embed/${activeLesson.video_id || 'dQw4w9WgXcQ'}?rel=0`}
+                      title={activeLesson.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+
+                {/* Lesson Markdown Notes */}
+                <div className="card" style={{ padding: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <BookOpen size={18} color="var(--brand-primary)" />
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Lesson Reading Notes</h3>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: '0.95rem',
+                      lineHeight: 1.7,
+                      color: 'var(--text-primary)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '14px',
+                    }}
                   >
-                    <Terminal size={16} />
-                    <span>Launch SQL Sandbox</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Interactive Lesson Quiz */}
-            {activeLesson.quiz && (
-              <div className="card">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                  <HelpCircle size={20} color="var(--brand-primary)" />
-                  <h3 style={{ fontSize: '1.2rem' }}>Knowledge Check Quiz</h3>
-                </div>
-
-                <form onSubmit={handleQuizSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                  {activeLesson.quiz.questions.map((q, qIdx) => (
-                    <div key={q.id} style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '14px' }}>
-                      <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '10px' }}>
-                        {qIdx + 1}. {q.prompt}
-                      </p>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {q.options.map((opt, optIdx) => (
-                          <label
-                            key={optIdx}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '10px',
-                              padding: '8px 12px',
-                              borderRadius: '6px',
-                              backgroundColor: selectedAnswers[q.id] === optIdx ? 'var(--brand-surface)' : 'var(--bg-surface-subdued)',
-                              border: `1px solid ${selectedAnswers[q.id] === optIdx ? 'var(--brand-border)' : 'var(--border-subtle)'}`,
-                              cursor: 'pointer',
-                              fontSize: '0.9rem',
-                            }}
-                          >
-                            <input
-                              type="radio"
-                              name={q.id}
-                              value={optIdx}
-                              checked={selectedAnswers[q.id] === optIdx}
-                              onChange={() => setSelectedAnswers({ ...selectedAnswers, [q.id]: optIdx })}
-                              disabled={quizSubmitted}
-                            />
-                            <span>{opt}</span>
-                          </label>
-                        ))}
-                      </div>
-
-                      {quizSubmitted && (
-                        <div style={{ marginTop: '10px', fontSize: '0.85rem', color: selectedAnswers[q.id] === q.correct_option_index ? 'var(--success-text)' : 'var(--danger-text)' }}>
-                          <strong>Explanation:</strong> {q.explanation}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-                    <button
-                      type="submit"
-                      className="btn-primary"
-                      disabled={quizSubmitted}
-                      style={{ height: '38px', padding: '0 16px' }}
-                    >
-                      Submit Answers
-                    </button>
-
-                    {quizSubmitted && quizScore !== null && (
-                      <span className={`badge ${quizScore >= 50 ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '0.85rem', padding: '6px 12px' }}>
-                        Quiz Result: {quizScore}%
-                      </span>
-                    )}
+                    {activeLesson.content_markdown.split('\n\n').map((paragraph, pIdx) => {
+                      if (paragraph.startsWith('### ')) {
+                        return <h3 key={pIdx} style={{ fontSize: '1.25rem', marginTop: '12px', fontWeight: 700, color: '#FFFFFF' }}>{paragraph.replace('### ', '')}</h3>;
+                      }
+                      if (paragraph.startsWith('#### ')) {
+                        return <h4 key={pIdx} style={{ fontSize: '1.05rem', marginTop: '8px', fontWeight: 600, color: 'var(--text-secondary)' }}>{paragraph.replace('#### ', '')}</h4>;
+                      }
+                      if (paragraph.startsWith('```')) {
+                        const cleanCode = paragraph.replace(/```[a-z]*\n?/g, '');
+                        return (
+                          <pre key={pIdx} style={{ backgroundColor: '#02040A', color: '#00F5A0', padding: '14px', borderRadius: '8px', overflowX: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', border: '1px solid rgba(0, 245, 160, 0.2)' }}>
+                            <code>{cleanCode}</code>
+                          </pre>
+                        );
+                      }
+                      return <p key={pIdx}>{paragraph}</p>;
+                    })}
                   </div>
-                </form>
+                </div>
+
+                {/* Knowledge Check Quiz */}
+                {activeLesson.quiz && (
+                  <div className="card" style={{ padding: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                      <HelpCircle size={20} color="var(--brand-primary)" />
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Module Knowledge Check</h3>
+                    </div>
+
+                    <form onSubmit={handleQuizSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                      {activeLesson.quiz.questions.map((q, qIdx) => (
+                        <div key={q.id} style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '14px' }}>
+                          <p style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: '10px' }}>
+                            {qIdx + 1}. {q.prompt}
+                          </p>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {q.options.map((opt, optIdx) => (
+                              <label
+                                key={optIdx}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                  padding: '8px 12px',
+                                  borderRadius: '6px',
+                                  backgroundColor: selectedAnswers[q.id] === optIdx ? 'rgba(0, 245, 160, 0.12)' : 'var(--bg-canvas)',
+                                  border: `1px solid ${selectedAnswers[q.id] === optIdx ? 'var(--brand-primary)' : 'var(--border-subtle)'}`,
+                                  cursor: 'pointer',
+                                  fontSize: '0.9rem',
+                                }}
+                              >
+                                <input
+                                  type="radio"
+                                  name={q.id}
+                                  value={optIdx}
+                                  checked={selectedAnswers[q.id] === optIdx}
+                                  onChange={() => setSelectedAnswers({ ...selectedAnswers, [q.id]: optIdx })}
+                                  disabled={quizSubmitted}
+                                />
+                                <span>{opt}</span>
+                              </label>
+                            ))}
+                          </div>
+
+                          {quizSubmitted && (
+                            <div style={{ marginTop: '10px', fontSize: '0.85rem', color: selectedAnswers[q.id] === q.correct_option_index ? 'var(--brand-primary)' : 'var(--danger-text)' }}>
+                              <strong>Explanation:</strong> {q.explanation}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                        <button
+                          type="submit"
+                          className="btn-primary"
+                          disabled={quizSubmitted}
+                          style={{ height: '40px', padding: '0 20px' }}
+                        >
+                          Submit Answers
+                        </button>
+
+                        {quizSubmitted && quizScore !== null && (
+                          <span className={`badge ${quizScore >= 50 ? 'badge-success' : 'badge-danger'}`} style={{ fontSize: '0.85rem', padding: '6px 14px' }}>
+                            Quiz Result: {quizScore}% {quizScore >= 50 ? '✓ Passed (+50 XP)' : 'Needs Review'}
+                          </span>
+                        )}
+                      </div>
+                    </form>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Next / Completion Bar */}
-            <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+            {/* TAB 2: INTERACTIVE SVG VISUALIZER */}
+            {activeTab === 'animation' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <ConceptSvgAnimation
+                  type={activeLesson.svg_animation_type || 'logic_gates'}
+                  title={activeLesson.title}
+                />
+              </div>
+            )}
+
+            {/* TAB 3: INTERACTIVE SANDBOX SIMULATION */}
+            {activeTab === 'sandbox' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {activeLesson.sandbox_config ? (
+                  <InteractiveSandbox
+                    config={activeLesson.sandbox_config}
+                    onComplete={() => {
+                      db.awardXp(currentUserId, 100);
+                      const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
+                      setEnrollment({ ...updated });
+                    }}
+                  />
+                ) : (
+                  <div className="card" style={{ padding: '32px', textAlign: 'center' }}>
+                    <TerminalIcon size={36} color="var(--brand-primary)" style={{ margin: '0 auto 12px' }} />
+                    <h3>Sandbox Simulator Initialized</h3>
+                    <p style={{ color: 'var(--text-muted)' }}>Default sandbox environment active for this lesson.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Next / Completion Action Bar */}
+            <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', padding: '16px 20px' }}>
               <div>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Status: <strong>{isCompleted ? 'Completed' : 'In Progress'}</strong>
+                <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                  Current Status: <strong style={{ color: isCompleted ? 'var(--brand-primary)' : '#FFFFFF' }}>{isCompleted ? '✓ Completed' : 'In Progress'}</strong>
                 </span>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                {enrollment.progress_percent >= 100 && (
+                  <button
+                    type="button"
+                    className="btn-accent"
+                    onClick={() => {
+                      const certs = db.getCertificates(currentUserId);
+                      const match = certs.find((c) => c.course_id === courseId);
+                      if (match) setEarnedCertificate(match);
+                    }}
+                    style={{ height: '42px', padding: '0 16px' }}
+                  >
+                    <Award size={16} />
+                    <span>View Certificate</span>
+                  </button>
+                )}
+
                 <button
                   type="button"
                   className="btn-primary"
                   onClick={handleCompleteAndNext}
-                  style={{ height: '42px', padding: '0 20px' }}
+                  style={{ height: '42px', padding: '0 22px' }}
                 >
                   <CheckCircle2 size={16} />
-                  <span>{nextLesson ? 'Complete & Continue Next' : 'Complete Course'}</span>
+                  <span>{nextLesson ? 'Complete & Continue Next' : 'Finish Course'}</span>
                   {nextLesson && <ChevronRight size={16} />}
                 </button>
               </div>
@@ -360,6 +566,13 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
           </>
         )}
       </div>
+
+      {/* Certificate Modal */}
+      <CertificateModal
+        certificate={earnedCertificate}
+        onClose={() => setEarnedCertificate(null)}
+      />
     </div>
   );
 };
+

@@ -112,21 +112,24 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       expect(enrollment.progress_percent).toBe(0);
       expect(enrollment.completed_lessons).toEqual([]);
 
-      // Complete first lesson (course has 2 lessons)
+      // Complete first lesson (course has 10 lessons -> 10% progress)
       const updated1 = db.completeLesson(studentId, courseId, 'les-sec-101');
       expect(updated1.completed_lessons).toContain('les-sec-101');
-      expect(updated1.progress_percent).toBe(50);
+      expect(updated1.progress_percent).toBe(10);
 
       // Re-completing the same lesson does not duplicate or artificially inflate progress
       const duplicateComplete = db.completeLesson(studentId, courseId, 'les-sec-101');
       expect(duplicateComplete.completed_lessons.length).toBe(1);
-      expect(duplicateComplete.progress_percent).toBe(50);
+      expect(duplicateComplete.progress_percent).toBe(10);
 
-      // Complete second lesson -> 100% progress
-      const updated2 = db.completeLesson(studentId, courseId, 'les-sec-102');
-      expect(updated2.completed_lessons).toContain('les-sec-102');
-      expect(updated2.progress_percent).toBe(100);
-      expect(updated2.completed_at).toBeDefined();
+      // Complete all remaining lessons in the 10-module course -> 100% progress
+      for (let i = 2; i <= 10; i++) {
+        db.completeLesson(studentId, courseId, `les-course-web-sec-${i}`);
+      }
+      const allDone = db.getCourseEnrollment(studentId, courseId);
+      expect(allDone!.completed_lessons.length).toBe(10);
+      expect(allDone!.progress_percent).toBe(100);
+      expect(allDone!.completed_at).toBeDefined();
     });
   });
 

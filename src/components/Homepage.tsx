@@ -12,6 +12,11 @@ import {
   ChevronRight,
   TrendingUp,
   Cpu,
+  BookOpen,
+  Play,
+  Flame,
+  Zap,
+  Trophy,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -20,13 +25,14 @@ interface HomepageProps {
   currentUserId: string;
 }
 
-export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
+export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId }) => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const allPublishedCourses = db.getCourses({ publishedOnly: true });
   const allCourses = db.getCourses();
   const videoLessons = db.getVideoLessons();
   const studyResources = db.getStudyResources();
+  const userProgress = db.getUserProgress(currentUserId);
 
   const toggleFaq = (idx: number) => {
     setActiveFaq(activeFaq === idx ? null : idx);
@@ -104,28 +110,30 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 gap: '8px',
                 padding: '6px 14px',
                 borderRadius: '20px',
-                backgroundColor: 'var(--brand-surface)',
-                color: 'var(--brand-primary)',
+                backgroundColor: 'rgba(6, 182, 212, 0.12)',
+                border: '1px solid rgba(6, 182, 212, 0.35)',
+                color: 'var(--brand-cyan-light)',
                 fontSize: '0.8rem',
                 fontWeight: 700,
                 marginBottom: '20px',
               }}
             >
-              <Sparkles size={15} />
-              <span>EVIDENCE-BACKED EDUCATION PLATFORM</span>
+              <Shield size={15} />
+              <span>VERIFIED EDUCATIONAL PLATFORM</span>
             </div>
 
             <h1
               style={{
-                fontSize: 'clamp(2.4rem, 4.2vw, 3.2rem)',
-                fontWeight: 800,
+                fontSize: 'clamp(2.5rem, 5vw, 3.8rem)',
+                fontWeight: 900,
                 lineHeight: 1.15,
                 letterSpacing: '-0.03em',
                 marginBottom: '20px',
-                color: 'var(--text-primary)',
+                color: '#FFFFFF',
               }}
             >
-              Learn what school doesn't always teach you.
+              Unlock Your <br />
+              <span className="text-gradient-cyan-green">Digital Potential</span>
             </h1>
 
             <p
@@ -133,32 +141,65 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 fontSize: '1.1rem',
                 lineHeight: 1.65,
                 color: 'var(--text-secondary)',
-                marginBottom: '32px',
-                maxWidth: '540px',
+                marginBottom: '28px',
+                maxWidth: '560px',
               }}
             >
-              Explore practical technology, understand how money works, build professional skills, and strengthen your coding abilities through structured, hands-on learning.
+              Geniusphere is your gateway to future-ready skills. Master AI, Finance, and Professional Development in a verified, immersive ecosystem with 10 modules, interactive SVG animations, and live sandbox simulations for every course.
             </p>
+
+            {/* Quick Gamification Ribbon */}
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '32px', flexWrap: 'wrap' }}>
+              <div className="streak-pill">
+                <Flame size={16} />
+                <span>{userProgress.streak_days}-Day Streak</span>
+              </div>
+              <div className="xp-pill">
+                <Zap size={16} />
+                <span>{userProgress.xp.toLocaleString()} XP Points</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate('leaderboard')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--brand-cyan-light)',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: 0,
+                  minHeight: 'auto',
+                }}
+              >
+                <Trophy size={15} />
+                <span>Leaderboard</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
 
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
               <button
                 type="button"
                 className="btn-primary"
                 onClick={() => onNavigate('catalogue')}
-                style={{ height: '48px', padding: '0 24px', fontSize: '0.95rem' }}
+                style={{ height: '48px', padding: '0 26px', fontSize: '0.95rem' }}
               >
-                <span>Explore Courses</span>
-                <ArrowRight size={18} />
+                <span>Start Learning</span>
+                <Sparkles size={16} />
               </button>
 
               <button
                 type="button"
                 className="btn-secondary"
                 onClick={() => onNavigate('resources')}
-                style={{ height: '48px', padding: '0 20px', fontSize: '0.95rem' }}
+                style={{ height: '48px', padding: '0 22px', fontSize: '0.95rem' }}
               >
                 <Video size={18} />
-                <span>Browse Resources</span>
+                <span>Resource Hub</span>
               </button>
 
               <button
@@ -427,12 +468,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 <span className={`badge ${course.domain === 'technology' ? 'badge-brand' : course.domain === 'coding' ? 'badge-accent' : course.domain === 'finance' ? 'badge-warning' : 'badge-neutral'}`}>
                   {course.domain.toUpperCase()}
                 </span>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  {course.duration_hours}h • {course.level}
+                <span style={{ color: 'var(--text-muted)' }}>
+                  <BookOpen size={16} />
                 </span>
               </div>
 
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, lineHeight: 1.35, color: 'var(--text-primary)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, lineHeight: 1.35, color: '#FFFFFF' }}>
                 {course.title}
               </h3>
 
@@ -440,18 +481,35 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 {course.summary}
               </p>
 
-              <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  {course.modules.length} {course.modules.length === 1 ? 'module' : 'modules'}
+              {/* Tags */}
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #{course.domain}
+                </span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #{course.level}
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#34D399', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #10Videos
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#22D3EE', backgroundColor: 'rgba(6, 182, 212, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #Sandbox
+                </span>
+              </div>
+
+              <div style={{ paddingTop: '14px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Play size={14} style={{ color: 'var(--brand-cyan-light)' }} />
+                  <span>{course.modules.length} Modules</span>
                 </span>
                 <button
                   type="button"
-                  className="btn-secondary"
+                  className="btn-outline"
                   onClick={() => onNavigate('course-detail', course.slug)}
                   style={{ height: '34px', fontSize: '0.82rem', padding: '0 12px' }}
                 >
-                  <span>Explore</span>
-                  <ChevronRight size={14} />
+                  <span>Start Course</span>
+                  <ArrowRight size={14} />
                 </button>
               </div>
             </div>

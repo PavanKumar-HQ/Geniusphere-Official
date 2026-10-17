@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
-import { CourseEnrollment } from '../types';
+import { CourseEnrollment, Certificate } from '../types';
+import { CertificateModal } from './CertificateModal';
 import {
   ArrowLeft,
   BookOpen,
@@ -9,7 +10,9 @@ import {
   ListChecks,
   Play,
   Terminal,
-  HelpCircle,
+  Award,
+  Video,
+  Cpu,
 } from 'lucide-react';
 
 interface CourseDetailViewProps {
@@ -31,6 +34,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   const [enrollment, setEnrollment] = useState<CourseEnrollment | null>(
     course ? db.getCourseEnrollment(currentUserId, course.id) : null
   );
+  const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
 
   if (!course) {
     return (
@@ -103,51 +107,69 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
         </p>
 
         {/* Enrollment / Progress Action Banner */}
-        <div style={{ padding: '16px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ padding: '20px', backgroundColor: 'rgba(15, 23, 42, 0.7)', borderRadius: '12px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           {enrollment ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--brand-primary)' }}>
+              <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'rgba(0, 245, 160, 0.15)', border: '2px solid var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--brand-primary)', fontSize: '1.1rem' }}>
                 {enrollment.progress_percent}%
               </div>
               <div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>
-                  {enrollment.progress_percent === 100 ? 'Course Completed!' : 'Enrolled & In Progress'}
+                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#FFFFFF' }}>
+                  {enrollment.progress_percent >= 100 ? 'Course 100% Completed! 🎉' : 'Course In Progress'}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Completed {enrollment.completed_lessons.length} lessons
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                  Completed {enrollment.completed_lessons.length} of {course.modules.flatMap(m => m.lessons).length} modules
                 </div>
               </div>
             </div>
           ) : (
             <div>
-              <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>Ready to begin?</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Duration: ~{course.duration_hours} hours • Hands-on challenges included
+              <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#FFFFFF' }}>Ready to begin?</div>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                10 Comprehensive Modules • 10 Videos • 10 SVG Visualizers • 10 Sandbox Labs • Certificate
               </div>
             </div>
           )}
 
-          {course.is_published ? (
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => {
-                if (!enrollment) {
-                  handleEnroll();
-                } else if (firstLessonId) {
-                  onStartLesson(course.id, firstLessonId);
-                }
-              }}
-              style={{ height: '44px', padding: '0 20px', fontSize: '0.95rem' }}
-            >
-              <Play size={18} />
-              <span>{enrollment ? 'Continue Course Player' : 'Enroll & Start Learning'}</span>
-            </button>
-          ) : (
-            <div className="badge badge-warning" style={{ padding: '8px 12px' }}>
-              Course Syllabus Planned for Pilot Expansion
-            </div>
-          )}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {enrollment && enrollment.progress_percent >= 100 && (
+              <button
+                type="button"
+                className="btn-accent"
+                onClick={() => {
+                  const certs = db.getCertificates(currentUserId);
+                  const match = certs.find((c) => c.course_id === course.id);
+                  if (match) setActiveCertificate(match);
+                }}
+                style={{ height: '44px', padding: '0 20px', fontSize: '0.9rem' }}
+              >
+                <Award size={18} />
+                <span>View Verified Certificate</span>
+              </button>
+            )}
+
+            {course.is_published ? (
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => {
+                  if (!enrollment) {
+                    handleEnroll();
+                  } else if (firstLessonId) {
+                    onStartLesson(course.id, firstLessonId);
+                  }
+                }}
+                style={{ height: '44px', padding: '0 22px', fontSize: '0.95rem' }}
+              >
+                <Play size={18} />
+                <span>{enrollment ? 'Continue Course Player' : 'Enroll & Start Learning'}</span>
+              </button>
+            ) : (
+              <div className="badge badge-warning" style={{ padding: '8px 12px' }}>
+                Course Syllabus Planned for Pilot Expansion
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -180,69 +202,73 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
 
       {/* Module & Lesson Syllabus */}
       <div className="card">
-        <h3 style={{ fontSize: '1.25rem', marginBottom: '16px' }}>Course Syllabus & Lesson Breakdown</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+          <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>Complete 10-Module Syllabus</h3>
+          <span className="badge badge-accent">10 Videos • 10 SVG Animations • 10 Sandboxes</span>
+        </div>
+
         {course.modules.length === 0 ? (
           <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '24px 0' }}>
             Detailed lesson modules for this syllabus are currently in curriculum review.
           </p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {course.modules.map((mod) => (
-              <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '8px', overflow: 'hidden' }}>
-                <div style={{ backgroundColor: 'var(--bg-surface-subdued)', padding: '12px 16px', fontWeight: 700, fontSize: '0.95rem' }}>
-                  {mod.title}
+            {course.modules.map((mod, mIdx) => (
+              <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.4)' }}>
+                <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.8)', padding: '12px 18px', fontWeight: 700, fontSize: '0.95rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>Module {mIdx + 1}: {mod.title}</span>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{mod.lessons.length} Lessons</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {mod.lessons.map((les) => {
+                  {mod.lessons.map((les, lIdx) => {
                     const isCompleted = enrollment?.completed_lessons.includes(les.id);
 
                     return (
                       <div
                         key={les.id}
                         style={{
-                          padding: '12px 16px',
-                          borderTop: '1px solid var(--border-subtle)',
+                          padding: '14px 18px',
+                          borderTop: lIdx > 0 ? '1px solid var(--border-subtle)' : 'none',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           flexWrap: 'wrap',
-                          gap: '10px',
+                          gap: '12px',
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1', minWidth: '240px' }}>
                           {isCompleted ? (
-                            <CheckCircle2 size={18} color="var(--success)" />
+                            <CheckCircle2 size={20} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
                           ) : (
-                            <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: '2px solid var(--border-strong)' }} />
+                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid var(--border-strong)', flexShrink: 0 }} />
                           )}
                           <div>
-                            <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{les.title}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{les.summary}</div>
+                            <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#FFFFFF' }}>{les.title}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{les.summary}</div>
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                            <Clock size={12} style={{ display: 'inline', marginRight: '3px' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                          <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+                            <Clock size={11} style={{ marginRight: '3px' }} />
                             {les.duration_minutes}m
                           </span>
-                          {les.linked_lab_id && (
-                            <span className="badge badge-brand">
-                              <Terminal size={12} /> Interactive Lab
-                            </span>
-                          )}
-                          {les.quiz && (
-                            <span className="badge badge-neutral">
-                              <HelpCircle size={12} /> Quiz
-                            </span>
-                          )}
+                          <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
+                            <Video size={11} style={{ marginRight: '3px' }} /> Video
+                          </span>
+                          <span className="badge badge-accent" style={{ fontSize: '0.72rem' }}>
+                            <Cpu size={11} style={{ marginRight: '3px' }} /> SVG
+                          </span>
+                          <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
+                            <Terminal size={11} style={{ marginRight: '3px' }} /> Sandbox
+                          </span>
                           <button
                             type="button"
                             className="btn-outline"
                             onClick={() => onStartLesson(course.id, les.id)}
-                            style={{ height: '32px', padding: '0 10px', fontSize: '0.8rem' }}
+                            style={{ height: '34px', padding: '0 12px', fontSize: '0.82rem' }}
                           >
-                            Open
+                            Launch
                           </button>
                         </div>
                       </div>
@@ -254,6 +280,12 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Verified Certificate Modal */}
+      <CertificateModal
+        certificate={activeCertificate}
+        onClose={() => setActiveCertificate(null)}
+      />
     </div>
   );
 };

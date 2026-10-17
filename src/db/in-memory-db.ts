@@ -22,6 +22,8 @@ import {
   VideoLesson,
   StudyResource,
   DomainType,
+  Certificate,
+  UserProgressState,
 } from '../types';
 import {
   ALL_COURSES,
@@ -33,7 +35,7 @@ import {
 export class DatabaseError extends Error {
   code: string;
   statusCode: number;
-
+  
   constructor(message: string, code: string, statusCode: number = 400) {
     super(message);
     this.name = 'DatabaseError';
@@ -59,6 +61,8 @@ export class InMemoryDatabase {
   studentResumes: Map<string, StudentResume> = new Map();
   videoLessons: Map<string, VideoLesson> = new Map();
   studyResources: Map<string, StudyResource> = new Map();
+  certificates: Map<string, Certificate> = new Map();
+  userProgress: Map<string, UserProgressState> = new Map();
 
   constructor() {
     this.seedDefaultData();
@@ -843,6 +847,7 @@ export class InMemoryDatabase {
       }
 
       this.courseEnrollments.set(enrollmentKey, enrollment);
+      this.recordLessonCompletion(userId, courseId, lessonId);
 
       this.logAuditEvent({
         organization_id: null,
@@ -1126,6 +1131,88 @@ export class InMemoryDatabase {
         r.description.toLowerCase().includes(search.toLowerCase());
       return matchCat && matchType && matchSearch;
     });
+  }
+
+  // ==================================================================
+  // GAMIFICATION, XP, STREAKS & CERTIFICATIONS
+  // ==================================================================
+
+  getUserProgress(userId: string): UserProgressState {
+    let prog = this.userProgress.get(userId);
+    if (!prog) {
+      prog = {
+        xp: 450,
+        streak_days: 7,
+        last_active_date: new Date().toISOString().split('T')[0],
+        completed_lessons: [],
+        completed_courses: [],
+        certificates: [],
+      };
+      this.userProgress.set(userId, prog);
+    }
+    return prog;
+  }
+
+  awardXp(userId: string, xpAmount: number, _reason?: string): UserProgressState {
+    const prog = this.getUserProgress(userId);
+    prog.xp += xpAmount;
+    this.userProgress.set(userId, prog);
+    return prog;
+  }
+
+  recordLessonCompletion(
+    userId: string,
+    courseId: string,
+    lessonId: string
+  ): { progress: UserProgressState; completedCourse: boolean; certificate?: Certificate } {
+    const prog = this.getUserProgress(userId);
+    if (!prog.completed_lessons.includes(lessonId)) {
+      prog.completed_lessons.push(lessonId);
+      prog.xp += 50; // +50 XP for completing lesson
+    }
+
+    // Check course completion
+    const course = this.getCourseById(courseId);
+    let completedCourse = false;
+    let certificate: Certificate | undefined = undefined;
+
+    if (course) {
+      const allLessonIds = course.modules.flatMap((m) => m.lessons.map((l) => l.id));
+      const hasCompletedAll = allLessonIds.length > 0 && allLessonIds.every((id) => prog.completed_lessons.includes(id));
+
+      if (hasCompletedAll && !prog.completed_courses.includes(courseId)) {
+        prog.completed_courses.push(courseId);
+        prog.xp += 500; // +500 XP course completion bonus
+        completedCourse = true;
+
+        const user = this.users.get(userId);
+        const certId = `CERT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        const issueDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        const hash = 'sha256:' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+
+        certificate = {
+          id: certId,
+          user_id: userId,
+          course_id: courseId,
+          course_title: course.title,
+          student_name: user?.full_name || 'Geniusphere Student',
+          issue_date: issueDate,
+          verification_hash: hash,
+          grade: 100,
+          skills_acquired: course.learning_objectives.slice(0, 3),
+        };
+
+        this.certificates.set(certificate.id, certificate);
+        prog.certificates.push(certificate);
+      }
+    }
+
+    this.userProgress.set(userId, prog);
+    return { progress: prog, completedCourse, certificate };
+  }
+
+  getCertificates(userId: string): Certificate[] {
+    return Array.from(this.certificates.values()).filter((c) => c.user_id === userId);
   }
 }
 

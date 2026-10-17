@@ -94,6 +94,15 @@ export interface LessonActivity {
   starter_code?: string;
 }
 
+export interface SandboxConfig {
+  title: string;
+  type: string;
+  prompt: string;
+  defaultInput: string;
+  expectedOutput?: string;
+  explanation: string;
+}
+
 export interface Lesson {
   id: string;
   module_id: string;
@@ -105,6 +114,43 @@ export interface Lesson {
   activities?: LessonActivity[];
   quiz?: LessonQuiz;
   linked_lab_id?: string;
+  video_url?: string;
+  video_id?: string;
+  svg_animation_type?: string;
+  sandbox_config?: SandboxConfig;
+}
+
+export interface Certificate {
+  id: string;
+  user_id: string;
+  course_id: string;
+  course_title: string;
+  student_name: string;
+  issue_date: string;
+  verification_hash: string;
+  grade: number;
+  skills_acquired: string[];
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  user_id: string;
+  user_name: string;
+  school_name: string;
+  xp: number;
+  streak: number;
+  courses_completed: number;
+  badge: string;
+  avatar_color: string;
+}
+
+export interface UserProgressState {
+  xp: number;
+  streak_days: number;
+  last_active_date: string;
+  completed_lessons: string[];
+  completed_courses: string[];
+  certificates: Certificate[];
 }
 
 export interface CourseModule {

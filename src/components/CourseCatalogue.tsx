@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
-import { Search, BookOpen, Clock, ChevronRight } from 'lucide-react';
+import {
+  Search,
+  BookOpen,
+  Play,
+  ArrowRight,
+  ArrowLeft,
+} from 'lucide-react';
 
 interface CourseCatalogueProps {
   db: InMemoryDatabase;
@@ -18,13 +24,11 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   const [search, setSearch] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<string>(initialDomain);
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
-  const [showPublishedOnly, setShowPublishedOnly] = useState<boolean>(false);
 
   const courses = db.getCourses({
     search,
     domain: selectedDomain,
     level: selectedLevel,
-    publishedOnly: showPublishedOnly,
   });
 
   const allList = db.getCourses();
@@ -34,174 +38,192 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   const profCount = allList.filter((c) => c.domain === 'professional').length;
 
   const domains: { id: string; label: string }[] = [
-    { id: 'all', label: `All Subjects (${allList.length})` },
+    { id: 'all', label: `All (${allList.length})` },
     { id: 'technology', label: `Technology (${techCount})` },
     { id: 'coding', label: `Coding & Programming (${codingCount})` },
     { id: 'finance', label: `Finance (${finCount})` },
-    { id: 'professional', label: `Professional Skills (${profCount})` },
+    { id: 'professional', label: `Professional Development (${profCount})` },
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      {/* Top Header */}
-      <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-brand">APPROVED 27-COURSE CURRICULUM</span>
-              <span className="badge badge-neutral">Technology • Coding • Finance • Professional</span>
-            </div>
-            <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Explore Course Catalogue</h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-              Browse the approved curriculum across Technology, Coding & Programming, Finance, and Professional Skills.
-            </p>
+    <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 24px 80px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* Top Navigation & Back Link */}
+      <div>
+        <button
+          type="button"
+          onClick={onNavigateHome}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginBottom: '16px',
+            padding: 0,
+            minHeight: 'auto',
+          }}
+        >
+          <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ArrowLeft size={14} />
           </div>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={onNavigateHome}
-          >
-            Back to Home
-          </button>
-        </div>
+          <span>BACK TO HOME</span>
+        </button>
 
-        {/* Search & Filter Bar */}
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ flex: '1 1 280px', position: 'relative' }}>
-            <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+          Course Catalog
+        </h1>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '640px' }}>
+          Explore our approved 27-course curriculum across Technology, Coding & Programming, Finance, and Professional Development.
+        </p>
+      </div>
+
+      {/* Filter Pills & Search Bar matching Image 2 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          {/* Domain Filter Pills */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {domains.map((d) => (
+              <button
+                key={d.id}
+                type="button"
+                onClick={() => setSelectedDomain(d.id)}
+                className={`filter-pill ${selectedDomain === d.id ? 'active' : ''}`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Search Input */}
+          <div style={{ position: 'relative', width: '320px', maxWidth: '100%' }}>
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses, subjects, or keywords (e.g. AI, Algorithms, Security, Markets)..."
-              style={{
-                width: '100%',
-                padding: '10px 14px 10px 38px',
-                borderRadius: '8px',
-                border: '1px solid var(--border-strong)',
-                fontSize: '0.9rem',
-              }}
+              placeholder="Search courses, topics, keywords..."
+              className="form-input"
+              style={{ paddingLeft: '38px', height: '40px' }}
             />
           </div>
-
-          <select
-            value={selectedLevel}
-            onChange={(e) => setSelectedLevel(e.target.value)}
-            style={{
-              padding: '10px 14px',
-              borderRadius: '8px',
-              border: '1px solid var(--border-strong)',
-              backgroundColor: 'var(--bg-surface)',
-              fontSize: '0.9rem',
-            }}
-          >
-            <option value="all">All Difficulty Levels</option>
-            <option value="beginner">Beginner / Foundational</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-
-          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', cursor: 'pointer', userSelect: 'none' }}>
-            <input
-              type="checkbox"
-              checked={showPublishedOnly}
-              onChange={(e) => setShowPublishedOnly(e.target.checked)}
-              style={{ width: '16px', height: '16px', accentColor: 'var(--brand-primary)' }}
-            />
-            <span>Published Only</span>
-          </label>
         </div>
 
-        {/* Domain Tabs */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '16px', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
-          {domains.map((d) => (
+        {/* Level filter row */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <span>Filter by difficulty:</span>
+          {['all', 'beginner', 'intermediate', 'advanced'].map((lvl) => (
             <button
-              key={d.id}
+              key={lvl}
               type="button"
-              onClick={() => setSelectedDomain(d.id)}
-              className={selectedDomain === d.id ? 'btn-primary' : 'btn-secondary'}
-              style={{ height: '36px', padding: '0 12px', fontSize: '0.8rem' }}
+              onClick={() => setSelectedLevel(lvl)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: selectedLevel === lvl ? 'var(--brand-cyan-light)' : 'var(--text-secondary)',
+                fontWeight: selectedLevel === lvl ? 700 : 500,
+                textDecoration: selectedLevel === lvl ? 'underline' : 'none',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                padding: '2px 6px',
+                minHeight: 'auto',
+              }}
             >
-              {d.label}
+              {lvl.toUpperCase()}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Course Grid */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            Showing <strong>{courses.length}</strong> courses
-          </span>
+      {/* Course Cards Grid */}
+      {courses.length === 0 ? (
+        <div className="card" style={{ textAlign: 'center', padding: '64px 20px' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', marginBottom: '16px' }}>
+            No courses matched your search or filters.
+          </p>
+          <button
+            type="button"
+            className="btn-outline"
+            onClick={() => {
+              setSearch('');
+              setSelectedDomain('all');
+              setSelectedLevel('all');
+            }}
+          >
+            Reset Filters
+          </button>
         </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+          {courses.map((course) => (
+            <div
+              key={course.id}
+              className="card"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '14px',
+                padding: '26px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className={`badge ${course.domain === 'technology' ? 'badge-brand' : course.domain === 'coding' ? 'badge-accent' : course.domain === 'finance' ? 'badge-warning' : 'badge-neutral'}`}>
+                  {course.domain.toUpperCase()}
+                </span>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  <BookOpen size={16} />
+                </span>
+              </div>
 
-        {courses.length === 0 ? (
-          <div className="card" style={{ textAlign: 'center', padding: '48px 20px' }}>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
-              No courses matched your search criteria. Try clearing filters.
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '20px' }}>
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="card"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  borderTop: course.is_published ? '3px solid var(--brand-primary)' : '3px solid var(--border-subtle)',
-                }}
-              >
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span className="badge badge-brand">
-                      {course.domain === 'coding' ? 'CODING & PROGRAMMING' : course.domain.toUpperCase()}
-                    </span>
-                    {course.availability_status === 'verified_functional' ? (
-                      <span className="badge badge-success">VERIFIED & USABLE</span>
-                    ) : course.availability_status === 'implemented_in_build' ? (
-                      <span className="badge badge-brand">IMPLEMENTED IN BUILD</span>
-                    ) : (
-                      <span className="badge badge-neutral">IN DEVELOPMENT</span>
-                    )}
-                  </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, lineHeight: 1.35, color: '#FFFFFF' }}>
+                {course.title}
+              </h3>
 
-                  <h3 style={{ fontSize: '1.2rem', marginBottom: '6px' }}>{course.title}</h3>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
-                    Subject: <strong>{course.subject}</strong>
-                  </div>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.55, flex: '1' }}>
+                {course.summary}
+              </p>
 
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                    {course.summary}
-                  </p>
+              {/* Tags */}
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #{course.domain}
+                </span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #{course.level}
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#34D399', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #10Videos
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#22D3EE', backgroundColor: 'rgba(6, 182, 212, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                  #Sandbox
+                </span>
+              </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={14} /> {course.duration_hours} hrs
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <BookOpen size={14} /> {course.modules.length > 0 ? `${course.modules.length} ${course.modules.length === 1 ? 'module' : 'modules'}` : 'Full syllabus'}
-                    </div>
-                  </div>
-                </div>
-
+              {/* Bottom row matching Image 2 */}
+              <div style={{ paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Play size={14} style={{ color: 'var(--brand-cyan-light)' }} />
+                  <span>{course.modules.length} Modules</span>
+                </span>
                 <button
                   type="button"
-                  className={course.is_published ? 'btn-primary' : 'btn-secondary'}
+                  className="btn-outline"
                   onClick={() => onSelectCourse(course.slug)}
-                  style={{ width: '100%', height: '40px', fontSize: '0.85rem' }}
+                  style={{ height: '36px', fontSize: '0.82rem', padding: '0 14px' }}
                 >
-                  <span>{course.is_published ? 'View Course & Enroll' : 'Inspect Syllabus'}</span>
-                  <ChevronRight size={16} />
+                  <span>Start Course</span>
+                  <ArrowRight size={14} />
                 </button>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
