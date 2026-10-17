@@ -78,10 +78,12 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
           <div style={{ display: 'flex', gap: '8px' }}>
             <span className="badge badge-brand">{course.domain.toUpperCase()}</span>
             <span className="badge badge-neutral">{course.level.toUpperCase()}</span>
-            {course.is_published ? (
-              <span className="badge badge-success">PUBLISHED</span>
+            {course.availability_status === 'verified_functional' ? (
+              <span className="badge badge-success">VERIFIED & USABLE</span>
+            ) : course.availability_status === 'implemented_in_build' ? (
+              <span className="badge badge-brand">IMPLEMENTED IN BUILD</span>
             ) : (
-              <span className="badge badge-warning">SYLLABUS SPECIFICATION</span>
+              <span className="badge badge-neutral">IN DEVELOPMENT</span>
             )}
           </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>

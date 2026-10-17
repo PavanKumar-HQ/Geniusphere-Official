@@ -28,11 +28,11 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   });
 
   const domains: { id: string; label: string }[] = [
-    { id: 'all', label: 'All Subjects (26)' },
-    { id: 'technology', label: 'Technology & Computing (12)' },
-    { id: 'cybersecurity', label: 'Cybersecurity (3)' },
+    { id: 'all', label: 'All Subjects (27)' },
+    { id: 'technology', label: 'Technology (8)' },
+    { id: 'coding', label: 'Coding & Programming (7)' },
     { id: 'finance', label: 'Finance (7)' },
-    { id: 'professional', label: 'Professional Skills (7)' },
+    { id: 'professional', label: 'Professional Skills (5)' },
   ];
 
   return (
@@ -42,12 +42,12 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-brand">FULL 26-SUBJECT CURRICULUM</span>
-              <span className="badge badge-neutral">Technology • Finance • Career</span>
+              <span className="badge badge-brand">STRICTLY AUTHORIZED 27-SUBJECT CURRICULUM</span>
+              <span className="badge badge-neutral">Technology • Finance • Professional • Coding</span>
             </div>
             <h1 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Explore Course Catalogue</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-              Browse the complete curriculum syllabus across computing systems, modern finance, application security, and professional skills.
+              Browse the strictly verified curriculum across Technology, Coding & Programming, Finance, and Professional Skills.
             </p>
           </div>
           <button
@@ -151,11 +151,15 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span className="badge badge-brand">{course.domain.toUpperCase()}</span>
-                    {course.is_published ? (
-                      <span className="badge badge-success">PUBLISHED</span>
+                    <span className="badge badge-brand">
+                      {course.domain === 'coding' ? 'CODING & PROGRAMMING' : course.domain.toUpperCase()}
+                    </span>
+                    {course.availability_status === 'verified_functional' ? (
+                      <span className="badge badge-success">VERIFIED & USABLE</span>
+                    ) : course.availability_status === 'implemented_in_build' ? (
+                      <span className="badge badge-brand">IMPLEMENTED IN BUILD</span>
                     ) : (
-                      <span className="badge badge-neutral">SYLLABUS READY</span>
+                      <span className="badge badge-neutral">IN DEVELOPMENT</span>
                     )}
                   </div>
 

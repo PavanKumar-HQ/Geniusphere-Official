@@ -70,8 +70,9 @@ export interface ClassroomEnrollment {
   enrolled_at: string;
 }
 
-export type DomainType = 'technology' | 'cybersecurity' | 'finance' | 'professional';
+export type DomainType = 'technology' | 'coding' | 'finance' | 'professional';
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+export type AvailabilityStatus = 'verified_functional' | 'implemented_in_build' | 'in_development';
 
 export interface QuizQuestion {
   id: string;
@@ -127,6 +128,7 @@ export interface Course {
   prerequisites: string[];
   duration_hours: number;
   is_published: boolean;
+  availability_status: AvailabilityStatus;
   learning_path_id?: string;
   modules: CourseModule[];
   created_at: string;
