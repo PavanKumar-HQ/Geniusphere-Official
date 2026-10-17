@@ -604,6 +604,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
         isOpen={simLabOpen}
         onClose={() => setSimLabOpen(false)}
         courseTitle={course.title}
+        courseSlug={course.slug}
+        domain={course.domain}
       />
     </div>
   );

@@ -547,28 +547,338 @@ export const CYBER_SIMULATIONS: SimulationItem[] = [
   },
 ];
 
-interface SimulationLabModalProps {
+// 2. Artificial Intelligence & Machine Learning Pack
+export const AI_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'ai-nn-backprop',
+    name: 'Neural Network Backpropagation',
+    subtitle: 'How error gradients backpropagate through layer weights to minimize prediction loss.',
+    category: 'AI_AND_ML',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'FORWARD-PASS', description: 'Feature embeddings multiply weight matrices across hidden layers with activation functions.' },
+      { stepNumber: 2, tag: 'LOSS-EVALUATION', description: 'Cross-entropy loss computes the mathematical delta between model logits and ground-truth labels.' },
+      { stepNumber: 3, tag: 'GRADIENT-CALC', description: 'Chain rule backpropagates partial derivatives (dL/dW) backwards through each layer node.' },
+      { stepNumber: 4, tag: 'WEIGHT-UPDATE', description: 'The Adam optimizer updates tensor weights proportionally to learning rate (W = W - lr * dL/dW).' },
+    ],
+    simplified: 'Like taking a practice exam, checking which questions you got wrong, and revising specifically those chapters before the real exam.',
+    defenseProtocols: [
+      { title: 'LEARNING RATE SCHEDULING', description: 'Decay the learning rate over time to prevent oscillation around local error minima.' },
+      { title: 'GRADIENT CLIPPING', description: 'Cap maximum gradient norms to prevent exploding gradients from destabilizing training.' },
+      { title: 'DROPOUT REGULARIZATION', description: 'Randomly deactivate 20-50% of hidden neurons during training to stop over-memorization.' },
+    ],
+    didYouKnow: 'The backpropagation algorithm was popularized by Rumelhart, Hinton, and Williams in 1986, establishing the foundation of modern deep learning.',
+  },
+  {
+    id: 'ai-llm-attention',
+    name: 'Transformer Self-Attention',
+    subtitle: 'How query, key, and value vectors calculate contextual token relevance scores.',
+    category: 'AI_AND_ML',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'QKV-PROJECTION', description: 'Input token vectors project into Query, Key, and Value matrices through learned linear layers.' },
+      { stepNumber: 2, tag: 'SCALED-DOT-PRODUCT', description: 'Dot product between Query and Key divided by sqrt(d_k) measures inter-token relevance.' },
+      { stepNumber: 3, tag: 'SOFTMAX-NORMALIZATION', description: 'Softmax transforms attention logits into normalized probability distributions summing to 1.0.' },
+      { stepNumber: 4, tag: 'CONTEXT-SYNTHESIS', description: 'Values are multiplied by attention probabilities and projected into output token representations.' },
+    ],
+    simplified: 'When reading a sentence, your brain pays attention to the relationship between the subject and verb to comprehend context.',
+    defenseProtocols: [
+      { title: 'CONTEXT ATTENTION MASKING', description: 'Use causal attention masks to prevent earlier tokens from cheating and looking ahead at future tokens.' },
+      { title: 'TEMPERATURE SAMPLING CONSTRAINTS', description: 'Keep temperature <= 0.2 for deterministic code/math and ~0.7 for creative generation.' },
+      { title: 'DELIMITER ISOLATION', description: 'Enforce clear XML delimiters (<user_input>) to prevent prompt injection hijacking.' },
+    ],
+    didYouKnow: 'The landmark 2017 Google paper "Attention Is All You Need" introduced transformers, completely replacing older recurrent architectures.',
+  },
+  {
+    id: 'ai-bias-fairness',
+    name: 'Algorithmic Bias & Fair Credit Evaluation',
+    subtitle: 'Auditing demographic parity and equalized odds in automated decision systems.',
+    category: 'AI_AND_ML',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'FEATURE-CORRELATION', description: 'Audit training data for proxy variables (like zip codes) that encode protected demographic attributes.' },
+      { stepNumber: 2, tag: 'DISPARATE-IMPACT-AUDIT', description: 'Measure false negative rejection rates across demographic subgroups to detect systemic skew.' },
+      { stepNumber: 3, tag: 'COHORT-REWEIGHTING', description: 'Apply cost-sensitive sample reweighting to equalize the decision boundary threshold across cohorts.' },
+      { stepNumber: 4, tag: 'FAIR-INFERENCE-VERIFICATION', description: 'Confirm disparate impact ratio strictly exceeds the legal 80% four-fifths rule threshold.' },
+    ],
+    simplified: 'Ensuring an automated loan evaluation algorithm judges financial capability objectively rather than historical postal code biases.',
+    defenseProtocols: [
+      { title: 'PURGE PROXY ATTRIBUTES', description: 'Remove historical postal and school codes that covertly mirror demographic variables.' },
+      { title: 'EQUALIZED ODDS BENCHMARK', description: 'Verify that true positive rates remain equal across all protected applicant cohorts.' },
+      { title: 'CONTINUOUS DRIFT AUDITING', description: 'Execute weekly automated bias audits on live production model inferences.' },
+    ],
+    didYouKnow: 'The "four-fifths rule" was established in 1978 by the US Equal Employment Opportunity Commission and is now globally used in algorithmic fairness audits.',
+  },
+];
+
+// 3. Blockchain & Cryptography Pack
+export const BLOCKCHAIN_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'bc-pow-mining',
+    name: 'Proof-of-Work SHA-256 Mining',
+    subtitle: 'Iterating cryptographic nonces until the double-SHA-256 block hash meets difficulty zeros.',
+    category: 'BLOCKCHAIN',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'HEADER-SERIALIZE', description: 'Serialize previous block hash, Merkle root, timestamp, and initialize nonce counter to 0.' },
+      { stepNumber: 2, tag: 'DOUBLE-SHA256', description: 'Calculate SHA256(SHA256(BlockHeaderBytes)) using cryptographic hardware accelerators.' },
+      { stepNumber: 3, tag: 'DIFFICULTY-CHECK', description: 'Evaluate if hash integer is below target threshold (e.g. starts with required leading zeros).' },
+      { stepNumber: 4, tag: 'BROADCAST-LEDGER', description: 'Winning nonce and proof are broadcast to peer nodes, who verify in O(1) and commit the block.' },
+    ],
+    simplified: 'Like rolling a billion-sided cryptographic die over and over until you roll a number starting with four zeros.',
+    defenseProtocols: [
+      { title: '51% ATTACK RESISTANCE', description: 'Maintain distributed computational hash rate so no single actor can rewrite historical blocks.' },
+      { title: 'DIFFICULTY ADJUSTMENT', description: 'Automatically recalibrate mining difficulty every 2,016 blocks to enforce predictable block times.' },
+      { title: 'MERKLE PROOF AUDITING', description: 'Verify any single transaction in O(log n) without downloading entire gigabyte ledgers.' },
+    ],
+    didYouKnow: 'The Bitcoin network calculates more than 600 exahashes per second, making it the most powerful distributed computing system on Earth.',
+  },
+  {
+    id: 'bc-consensus',
+    name: 'Distributed Ledger 4-Node Consensus',
+    subtitle: 'How decentralized peer nodes resolve state conflicts and temporary forks.',
+    category: 'BLOCKCHAIN',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'TRANSACTION-GOSSIP', description: 'Unconfirmed transactions propagate through peer-to-peer gossip protocol across all 4 nodes.' },
+      { stepNumber: 2, tag: 'COMPETING-BLOCK-PROPOSAL', description: 'Two geographically separated miners propose valid blocks at the identical height simultaneously.' },
+      { stepNumber: 3, tag: 'TEMPORARY-FORK', description: 'Node network temporarily splits, each tracking their local chain branch awaiting confirmation.' },
+      { stepNumber: 4, tag: 'LONGEST-CHAIN-CONVERGENCE', description: 'Next mined block extends one branch; all nodes adopt the chain with greatest accumulated proof-of-work.' },
+    ],
+    simplified: 'Like four accountants in different offices agreeing on the exact account balance without needing a central head-office manager.',
+    defenseProtocols: [
+      { title: 'SYBIL ATTACK DEFENSE', description: 'Require verifiable cryptographic proof-of-work to make creating fake identities economically useless.' },
+      { title: 'CHECKPOINT COMMITS', description: 'Hardcode deep periodic block checkpoints to prevent historic reorganization attacks.' },
+      { title: 'PEER GOSSIP REPUTATION', description: 'Drop and ban IP addresses of peer nodes that broadcast invalid transaction signatures.' },
+    ],
+    didYouKnow: 'Satoshi Nakamoto solved the decades-old Byzantine Generals Problem in 2008 by pairing proof-of-work with peer-to-peer gossip networks.',
+  },
+];
+
+// 4. Internet of Things (IoT) Pack
+export const IOT_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'iot-telemetry-mqtt',
+    name: 'IoT Telemetry & MQTT Broker',
+    subtitle: 'Sampling analog sensor metrics and routing lightweight telemetry to edge actuators.',
+    category: 'IOT',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'ADC-SAMPLING', description: 'Microcontroller ADC samples analog voltage pins and converts readings to engineering metrics.' },
+      { stepNumber: 2, tag: 'JSON-SERIALIZATION', description: 'Metric payload (Temp: 28°C, Humidity: 45%) is serialized into compact JSON packets.' },
+      { stepNumber: 3, tag: 'MQTTS-PUBLISH', description: 'Edge device publishes packet over TLS 1.3 to topic `/sensors/telemetry/classroom-1`.' },
+      { stepNumber: 4, tag: 'ACTUATOR-ENGAGEMENT', description: 'Subscribed edge controller evaluates threshold rules and clicks cooling fan relay to active state.' },
+    ],
+    simplified: 'A smart thermometer constantly measures room heat and automatically turns on the cooling fan when it gets too hot.',
+    defenseProtocols: [
+      { title: 'MQTTS TLS 1.3', description: 'Wrap all broker communication in TLS certificates to eliminate plaintext packet eavesdropping on campus Wi-Fi.' },
+      { title: 'HARDWARE CRYPTO ELEMENT', description: 'Store MQTT device client certificates inside a dedicated cryptographic element (e.g. ATECC608A).' },
+      { title: 'LOCAL FAILSAFE RULES', description: 'Keep critical thermal shutdown logic directly on the edge microcontroller if Wi-Fi goes down.' },
+    ],
+    didYouKnow: 'MQTT was originally invented in 1999 by Andy Stanford-Clark to monitor oil pipelines across the desert over low-bandwidth satellite links.',
+  },
+];
+
+// 5. Microsoft Technologies Pack
+export const MICROSOFT_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'ms-entra-rbac',
+    name: 'Microsoft Entra ID OAuth2 Token Flow',
+    subtitle: 'Validating cryptographic JWT bearer claims, tenant scopes, and RBAC authorization.',
+    category: 'MICROSOFT',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'CHALLENGE-REQUEST', description: 'Client issues authorization challenge requesting hardware FIDO2 / Authenticator MFA.' },
+      { stepNumber: 2, tag: 'JWT-TOKEN-ISSUANCE', description: 'Entra ID signs RSA-256 JWT access token containing tenant ID, roles, and expiry timestamp.' },
+      { stepNumber: 3, tag: 'BEARER-CLAIM-AUDIT', description: 'Resource server extracts Authorization header and validates cryptographic signature against public keys.' },
+      { stepNumber: 4, tag: 'RBAC-ACCESS-GRANT', description: 'Role-based access control engine permits scoped API operation to authorized institution resource.' },
+    ],
+    simplified: 'Like showing a digital, unforgeable government passport that proves who you are and which gates you are allowed to enter.',
+    defenseProtocols: [
+      { title: 'SHORT TOKEN LIFETIMES', description: 'Enforce access token validity to 15-60 minutes and rotate refresh tokens continuously.' },
+      { title: 'CONDITIONAL ACCESS POLICIES', description: 'Require compliant, encrypted devices and trusted IP boundaries for administrative roles.' },
+      { title: 'STRICT AUDIENCE CHECKS', description: 'Always validate both `iss` (issuer) and `aud` (audience) claims to prevent token forwarding exploits.' },
+    ],
+    didYouKnow: 'Microsoft Entra ID processes more than 30 billion authentications every day across enterprise and educational tenants worldwide.',
+  },
+];
+
+// 6. Digital Privacy Pack
+export const PRIVACY_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'priv-fingerprint-shield',
+    name: 'Browser Fingerprint & Privacy Shield',
+    subtitle: 'Deconstructing canvas rasterization drift and deploying privacy defense shields.',
+    category: 'PRIVACY',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'CANVAS-PROBE', description: 'Third-party tracking script draws hidden 2D gradient text to a background HTML5 canvas.' },
+      { stepNumber: 2, tag: 'GPU-ENTROPY-HARVEST', description: 'Microscopic GPU and driver rendering variances generate a unique, persistent hardware hash.' },
+      { stepNumber: 3, tag: 'CROSS-SITE-LINKING', description: 'Data brokers link the canvas hash to IP and screen resolution to track browsing across sites.' },
+      { stepNumber: 4, tag: 'DPDP-SHIELD-ENGAGED', description: 'Privacy shield injects subtle pseudo-random canvas noise, reducing uniqueness score to anonymous levels.' },
+    ],
+    simplified: 'Like noticing someone recognizes you by your unique shoe tread marks in the mud, and putting smooth slip-on covers over your shoes so you leave no trail.',
+    defenseProtocols: [
+      { title: 'CANVAS NOISE INJECTION', description: 'Alter 1-2 random pixel RGB values during canvas readback to destroy deterministic hash identity.' },
+      { title: 'WEBRTC STUN SHIELD', description: 'Disable WebRTC local IP enumeration to stop scripts from learning your internal private Wi-Fi IP.' },
+      { title: 'DPDP CONSENT COMPLIANCE', description: 'Ensure zero telemetry or profiling scripts are loaded before verifiable parental consent is granted.' },
+    ],
+    didYouKnow: 'India\'s DPDP Act 2023 Section 9 strictly forbids behavioral tracking and targeted profiling directed at minors on educational platforms.',
+  },
+];
+
+// 7. Finance & Markets Pack
+export const FINANCE_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'fin-order-book-sim',
+    name: 'Limit Order Book Matching Engine',
+    subtitle: 'Continuous double auction mechanics, bid/ask depth spread, and clearing settlement.',
+    category: 'FINANCE',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'ORDER-INGESTION', description: 'Traders dispatch Bid and Ask limit orders into exchange memory queues.' },
+      { stepNumber: 2, tag: 'PRICE-TIME-PRIORITY', description: 'The order book sorts orders: best price first, then earliest timestamp.' },
+      { stepNumber: 3, tag: 'SPREAD-MATCHING', description: 'When Bid price >= Ask price, matching engine executes transaction at prevailing price.' },
+      { stepNumber: 4, tag: 'CASH-SETTLEMENT', description: 'Clearing house settles funds, updates custodial share registers, and emits trade tick.' },
+    ],
+    simplified: 'Like an automated marketplace where buyers and sellers state their target prices, and matches happen instantly when prices overlap.',
+    defenseProtocols: [
+      { title: 'PRE-TRADE RISK CONTROLS', description: 'Reject any order that exceeds available margin or violates daily position sizing rules.' },
+      { title: 'SLIPPAGE GUARDS', description: 'Cancel market orders if market volatility moves execution price by more than 1.5% from quote.' },
+      { title: 'AUDIT TRAIL LOGGING', description: 'Maintain microsecond-precision order logs for regulatory compliance and transparency.' },
+    ],
+    didYouKnow: 'Modern electronic financial exchanges match orders in under 15 microseconds, faster than a camera flash.',
+  },
+];
+
+// 8. Coding & Logic Pack
+export const CODING_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'code-sorting-visualizer',
+    name: 'Sorting Algorithm Complexity Visualizer',
+    subtitle: 'Comparing O(n²) quadratic comparisons against O(n log n) divide-and-conquer partitioning.',
+    category: 'CODING',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'ARRAY-LOAD', description: 'Unsorted numerical elements are initialized into contiguous memory indices.' },
+      { stepNumber: 2, tag: 'PIVOT-PARTITION', description: 'QuickSort selects a pivot element and partitions array into smaller and greater sub-segments.' },
+      { stepNumber: 3, tag: 'RECURSIVE-SORT', description: 'Sub-arrays are sorted recursively in logarithmic depth, minimizing comparison operations.' },
+      { stepNumber: 4, tag: 'ORDER-CONFIRMED', description: 'Monotonic ascending order is validated across all indices with zero data loss.' },
+    ],
+    simplified: 'Organizing a messy stack of cards by picking a middle card and placing lower cards on the left and higher cards on the right.',
+    defenseProtocols: [
+      { title: 'RANDOMIZED PIVOTS', description: 'Choose random pivots to prevent worst-case O(n²) degradation on pre-sorted data.' },
+      { title: 'MAX RECURSION DEPTH', description: 'Cap recursion call depth to prevent Call Stack Overflow errors on massive datasets.' },
+      { title: 'BOUNDARY GUARDS', description: 'Check array length before pointer access to eliminate out-of-bounds memory vulnerabilities.' },
+    ],
+    didYouKnow: 'Tony Hoare invented QuickSort in 1959, and it remains one of the fastest general-purpose sorting algorithms used in modern browsers.',
+  },
+];
+
+// 9. Professional Skills Pack
+export const PROFESSIONAL_SIMULATIONS: SimulationItem[] = [
+  {
+    id: 'prof-eisenhower-sim',
+    name: 'Eisenhower Priority Matrix & Velocity',
+    subtitle: 'Triage Urgent interruptions vs High-Impact strategic long-term capabilities.',
+    category: 'PROFESSIONAL',
+    status: 'SIMULATION_ACTIVE',
+    totalSteps: 4,
+    steps: [
+      { stepNumber: 1, tag: 'TASK-CAPTURE', description: 'Log all incoming commitments and project milestones into structured inbox.' },
+      { stepNumber: 2, tag: 'URGENCY-VS-IMPORTANCE', description: 'Evaluate genuine deadline pressure against long-term career capability impact.' },
+      { stepNumber: 3, tag: 'QUADRANT-ALLOCATION', description: 'Sort tasks into Do First, Schedule, Delegate, or Eliminate bins.' },
+      { stepNumber: 4, tag: 'DEEP-WORK-EXECUTION', description: 'Protect 90-minute ultradian focus blocks for Quadrant 2 strategic mastery.' },
+    ],
+    simplified: 'Focusing on the tasks that actually move your capabilities forward, rather than just reacting to whoever shouted loudest today.',
+    defenseProtocols: [
+      { title: 'CALENDAR TIME BLOCKING', description: 'Treat deep study and coding sessions as non-negotiable scheduled calendar commitments.' },
+      { title: 'THE 2-MINUTE RULE', description: 'If an urgent administrative task takes under 2 minutes, complete it immediately rather than deferring.' },
+      { title: 'BATCH PROCESSING', description: 'Inspect notifications and messaging only at dedicated intervals rather than continuously.' },
+    ],
+    didYouKnow: 'General Dwight D. Eisenhower used this exact priority system to coordinate the Allied invasion of Europe in 1944.',
+  },
+];
+
+// Domain to Simulations Selector
+export function getSimulationsForCourse(slug?: string, domain?: string, title?: string): SimulationItem[] {
+  const s = (slug || '').toLowerCase();
+  const d = (domain || '').toLowerCase();
+  const t = (title || '').toLowerCase();
+
+  if (s.includes('ai') || s.includes('artificial') || t.includes('ai') || t.includes('artificial')) {
+    return AI_SIMULATIONS;
+  }
+  if (s.includes('blockchain') || s.includes('crypto') || t.includes('blockchain') || t.includes('crypto')) {
+    return BLOCKCHAIN_SIMULATIONS;
+  }
+  if (s.includes('iot') || t.includes('iot') || s.includes('internet-of-things')) {
+    return IOT_SIMULATIONS;
+  }
+  if (s.includes('microsoft') || t.includes('microsoft')) {
+    return MICROSOFT_SIMULATIONS;
+  }
+  if (s.includes('privacy') || s.includes('footprint') || t.includes('privacy')) {
+    return PRIVACY_SIMULATIONS;
+  }
+  if (d === 'finance' || s.includes('finance') || s.includes('stock') || s.includes('market') || s.includes('fintech')) {
+    return FINANCE_SIMULATIONS;
+  }
+  if (d === 'coding' || s.includes('code') || s.includes('programming') || s.includes('web-dev') || s.includes('logic')) {
+    return CODING_SIMULATIONS;
+  }
+  if (d === 'professional' || s.includes('time') || s.includes('soft') || s.includes('career') || s.includes('identity')) {
+    return PROFESSIONAL_SIMULATIONS;
+  }
+  return CYBER_SIMULATIONS;
+}
+
+export interface SimulationLabModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialSimulationId?: string;
   courseTitle?: string;
+  courseSlug?: string;
+  domain?: string;
   onCompleteSimulation?: (simId: string) => void;
 }
 
 export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
   isOpen,
   onClose,
-  initialSimulationId = 'phishing',
+  initialSimulationId,
   courseTitle = 'Cybersecurity & Defensive Web Security',
+  courseSlug = '',
+  domain = '',
   onCompleteSimulation,
 }) => {
-  const [activeSimId, setActiveSimId] = useState<string>(initialSimulationId);
+  const [modalMode, setModalMode] = useState<'simulation' | 'sandbox'>('simulation');
+  const courseSimulations = getSimulationsForCourse(courseSlug, domain, courseTitle);
+  const [activeSimId, setActiveSimId] = useState<string>(initialSimulationId || courseSimulations[0].id);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [completedSims, setCompletedSims] = useState<string[]>([]);
 
+  // Update active simulation if list changes
+  useEffect(() => {
+    if (!courseSimulations.some((s) => s.id === activeSimId)) {
+      setActiveSimId(courseSimulations[0].id);
+      setCurrentStep(0);
+    }
+  }, [courseSlug, domain, courseTitle, activeSimId, courseSimulations]);
+
   // Find active simulation
-  const activeSim = CYBER_SIMULATIONS.find((s) => s.id === activeSimId) || CYBER_SIMULATIONS[0];
+  const activeSim = courseSimulations.find((s) => s.id === activeSimId) || courseSimulations[0];
 
   // Auto-step ticker when simulation is playing
   useEffect(() => {
@@ -684,8 +994,64 @@ export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
             </div>
           </div>
 
-          {/* Center Badges */}
+          {/* Center Mode Selector & Badges */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Mode Switcher Tabs */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                padding: '4px',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setModalMode('simulation')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  backgroundColor: modalMode === 'simulation' ? '#00F0FF' : 'transparent',
+                  color: modalMode === 'simulation' ? '#070C1E' : '#94A3B8',
+                  border: 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Zap size={13} />
+                <span>Concept Visualizer</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setModalMode('sandbox')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  backgroundColor: modalMode === 'sandbox' ? '#00F0FF' : 'transparent',
+                  color: modalMode === 'sandbox' ? '#070C1E' : '#94A3B8',
+                  border: 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Terminal size={13} />
+                <span>Workable Sandbox</span>
+              </button>
+            </div>
+
             <span
               style={{
                 padding: '4px 12px',
@@ -699,21 +1065,6 @@ export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
               }}
             >
               MODULE: {activeSim.name.toUpperCase()}
-            </span>
-            <span
-              style={{
-                padding: '4px 12px',
-                borderRadius: '6px',
-                backgroundColor: '#451A03',
-                color: '#FBBF24',
-                border: '1px solid rgba(251, 191, 36, 0.3)',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                letterSpacing: '0.05em',
-                fontFamily: 'monospace',
-              }}
-            >
-              &gt;_ SIMULATION_ACTIVE
             </span>
           </div>
 
@@ -745,7 +1096,7 @@ export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
         {/* ============================================================== */}
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
           {/* ========================================================== */}
-          {/* LEFT COLUMN: 11 SIMULATION TOPICS                          */}
+          {/* LEFT COLUMN: SIMULATION TOPICS                             */}
           {/* ========================================================== */}
           <aside
             style={{
@@ -761,10 +1112,10 @@ export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <div style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', padding: '0 8px 8px', letterSpacing: '0.05em' }}>
-                Simulations ({CYBER_SIMULATIONS.length})
+                Simulations ({courseSimulations.length})
               </div>
 
-              {CYBER_SIMULATIONS.map((sim) => {
+              {courseSimulations.map((sim) => {
                 const isActive = sim.id === activeSim.id;
                 const isDone = completedSims.includes(sim.id);
 
@@ -834,24 +1185,45 @@ export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
           </aside>
 
           {/* ========================================================== */}
-          {/* CENTER COLUMN: INTERACTIVE CANVAS & STEP CONTROLS          */}
+          {/* CENTER & RIGHT: WORKABLE SANDBOX OR CONCEPT VISUALIZER     */}
           {/* ========================================================== */}
-          <main
-            style={{
-              flex: 1,
-              padding: '24px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '18px',
-              overflowY: 'auto',
-              backgroundColor: '#070D22',
-            }}
-          >
-            {/* Simulation Title & Description */}
-            <div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
-                {activeSim.name}
-              </h2>
+          {modalMode === 'sandbox' ? (
+            <main
+              style={{
+                flex: 1,
+                padding: '24px 32px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '18px',
+                overflowY: 'auto',
+                backgroundColor: '#070D22',
+              }}
+            >
+              <WorkableSandboxLab
+                courseSlug={courseSlug}
+                domain={domain}
+                courseTitle={courseTitle}
+              />
+            </main>
+          ) : (
+            <>
+              {/* CENTER COLUMN: INTERACTIVE CANVAS & STEP CONTROLS */}
+              <main
+                style={{
+                  flex: 1,
+                  padding: '24px 32px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '18px',
+                  overflowY: 'auto',
+                  backgroundColor: '#070D22',
+                }}
+              >
+                {/* Simulation Title & Description */}
+                <div>
+                  <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
+                    {activeSim.name}
+                  </h2>
               <div
                 style={{
                   borderLeft: '3px solid #3B82F6',
@@ -1291,8 +1663,10 @@ export const SimulationLabModal: React.FC<SimulationLabModalProps> = ({
               </div>
             </div>
           </aside>
-        </div>
-      </div>
+        </>
+      )}
     </div>
-  );
+  </div>
+</div>
+);
 };

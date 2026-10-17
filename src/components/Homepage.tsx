@@ -45,6 +45,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [simLabOpen, setSimLabOpen] = useState(false);
   const [simLabCourseTitle, setSimLabCourseTitle] = useState('Cybersecurity & Defensive Web Security');
+  const [simLabCourseSlug, setSimLabCourseSlug] = useState('cybersecurity-defensive-web');
+  const [simLabDomain, setSimLabDomain] = useState('technology');
   const [selectedEventForRegister, setSelectedEventForRegister] = useState<{
     id: string;
     title: string;
@@ -127,40 +129,24 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
   const faqList = [
     {
-      q: '1. What is Geniusphere?',
-      a: 'Geniusphere is an evidence-backed education platform delivering practical curriculum across technology, coding, finance, and professional skills for independent learners and educational institutions.',
+      q: '1. What makes Geniusphere different from traditional platforms?',
+      a: 'Geniusphere combines evidence-backed curricula with interactive SVG simulations and workable live sandboxes — allowing students to mine real cryptographic hashes, simulate market trades, inspect JWT claims, and run code in real time.',
     },
     {
-      q: '2. Who can use Geniusphere?',
-      a: 'Independent learners, school and college students, teachers, educational institutions, and parents seeking practical, verifiable skills.',
+      q: '2. Are courses self-paced or structured for classrooms?',
+      a: 'Both. Independent learners explore 27 approved courses at their own pace, while teachers can schedule structured classroom cohorts with assignments and join-code enrollment.',
     },
     {
-      q: '3. Which learning disciplines are available?',
-      a: `Geniusphere offers ${allCourses.length} curricular courses strictly organized across four approved domains: Technology (${getDomainCount('technology')} subjects), Finance (${getDomainCount('finance')} subjects), Professional Skills (${getDomainCount('professional')} subjects), and Coding & Programming (${getDomainCount('coding')} subjects).`,
+      q: '3. What learning domains are covered?',
+      a: `Four core areas: Technology (${getDomainCount('technology')} subjects), Coding & Programming (${getDomainCount('coding')} subjects), Finance (${getDomainCount('finance')} subjects), and Professional Skills (${getDomainCount('professional')} subjects).`,
     },
     {
-      q: '4. Are courses self-paced?',
-      a: 'Yes. All courses support self-paced learning for independent students, while teachers can establish structured assignment schedules and due dates for enrolled classroom cohorts.',
+      q: '4. How do schools and teachers use Geniusphere?',
+      a: 'Teachers generate 8-character join codes for their cohorts, review student submissions in row-level gradebooks, and monitor hands-on lab completions in compliance with minor privacy standards.',
     },
     {
-      q: '5. How do video lessons work?',
-      a: 'Video lessons are curated educational YouTube videos directly manageable by educators and administrators. Lessons cover fundamental computer science, web security, algorithm design, finance, and career identity.',
-    },
-    {
-      q: '6. How do classroom join codes work?',
-      a: 'Teachers generate 8-character cryptographic alphanumeric join codes with a 14-day validity window. Students enter the code in their dashboard to enroll directly into their school cohort.',
-    },
-    {
-      q: '7. Can schools and colleges use Geniusphere?',
-      a: 'Yes. Educational institutions can create institutional workspaces with multi-tenant isolation, onboard educators, provision classrooms, and monitor cohort progress.',
-    },
-    {
-      q: '8. How is student progress recorded?',
-      a: 'Progress is tracked per lesson and quiz. Completed lessons, quiz scores, and course completions are persisted in the database.',
-    },
-    {
-      q: '9. Is Geniusphere compliant with minor privacy regulations?',
-      a: 'Yes. Geniusphere operates under strict adherence to the Digital Personal Data Protection (DPDP) Act 2023, mandating verifiable parental consent for learners under 18 years of age.',
+      q: '5. Are certificates verified for resumes and LinkedIn?',
+      a: 'Yes. Every certificate includes an authentic serial ID, verification link, and verifiable skill outcomes ready to export directly into portfolios or resumes.',
     },
   ];
 
@@ -221,13 +207,13 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             <p
               style={{
                 fontSize: '1.1rem',
-                lineHeight: 1.65,
+                lineHeight: 1.6,
                 color: 'var(--text-secondary)',
                 marginBottom: '28px',
                 maxWidth: '560px',
               }}
             >
-              Geniusphere is a student-focused educational platform helping independent learners and school classrooms gain practical competence in modern technology, applied finance, professional skills, and coding logic through structured, hands-on learning.
+              Master modern technology, coding logic, financial markets, and leadership through interactive simulations and workable sandboxes.
             </p>
 
             {/* Quick Gamification Ribbon */}
@@ -393,14 +379,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 <span className="badge badge-brand">{getDomainCount('technology')} Courses</span>
               </div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Technology</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
-                AI & practical AI tools, Responsible AI, Blockchain, IoT, Microsoft technologies, Digital privacy & footprint, Cybersecurity, and Computing fundamentals.
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                AI models, blockchain ledgers, IoT edge compute, and cybersecurity defense.
               </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '4px 0 8px' }}>
+                <span className="topic-hashtag-pill">#AI</span>
+                <span className="topic-hashtag-pill">#Cloud</span>
+                <span className="topic-hashtag-pill">#IoT</span>
+                <span className="topic-hashtag-pill">#Security</span>
+              </div>
               <button
                 type="button"
                 className="btn-outline"
                 onClick={() => onNavigate('catalogue', 'technology')}
-                style={{ height: '36px', fontSize: '0.82rem' }}
+                style={{ height: '36px', fontSize: '0.82rem', marginTop: 'auto' }}
               >
                 <span>Browse Technology</span>
                 <ChevronRight size={14} />
@@ -425,14 +417,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 <span className="badge badge-accent">{getDomainCount('coding')} Courses</span>
               </div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Coding & Programming</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
-                Programming fundamentals, Variables and data types, Conditions and loops, Computational thinking, Exercises, Web development, Debugging, and Projects.
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                From computational logic and algorithms to web apps and live debugging.
               </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '4px 0 8px' }}>
+                <span className="topic-hashtag-pill">#Algorithms</span>
+                <span className="topic-hashtag-pill">#JavaScript</span>
+                <span className="topic-hashtag-pill">#Python</span>
+                <span className="topic-hashtag-pill">#FullStack</span>
+              </div>
               <button
                 type="button"
                 className="btn-outline"
                 onClick={() => onNavigate('catalogue', 'coding')}
-                style={{ height: '36px', fontSize: '0.82rem' }}
+                style={{ height: '36px', fontSize: '0.82rem', marginTop: 'auto' }}
               >
                 <span>Browse Coding</span>
                 <ChevronRight size={14} />
@@ -457,14 +455,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 <span className="badge badge-warning">{getDomainCount('finance')} Courses</span>
               </div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Finance</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
-                Introduction to Finance, Global events & finance, Financial markets, Financial institutions, Cryptocurrency risks, Stock market, and FinTech.
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Financial markets, algorithmic trading, crypto risk, and FinTech systems.
               </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '4px 0 8px' }}>
+                <span className="topic-hashtag-pill">#Trading</span>
+                <span className="topic-hashtag-pill">#Markets</span>
+                <span className="topic-hashtag-pill">#FinTech</span>
+                <span className="topic-hashtag-pill">#Risk</span>
+              </div>
               <button
                 type="button"
                 className="btn-outline"
                 onClick={() => onNavigate('catalogue', 'finance')}
-                style={{ height: '36px', fontSize: '0.82rem' }}
+                style={{ height: '36px', fontSize: '0.82rem', marginTop: 'auto' }}
               >
                 <span>Browse Finance</span>
                 <ChevronRight size={14} />
@@ -489,14 +493,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 <span className="badge badge-neutral">{getDomainCount('professional')} Courses</span>
               </div>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Professional Skills</h3>
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
-                Time management, Professional skills, Soft skills development, and Social profiles and professional identity.
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Executive prioritization, high-impact communication, and career growth.
               </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '4px 0 8px' }}>
+                <span className="topic-hashtag-pill">#Leadership</span>
+                <span className="topic-hashtag-pill">#Productivity</span>
+                <span className="topic-hashtag-pill">#SoftSkills</span>
+                <span className="topic-hashtag-pill">#Career</span>
+              </div>
               <button
                 type="button"
                 className="btn-outline"
                 onClick={() => onNavigate('catalogue', 'professional')}
-                style={{ height: '36px', fontSize: '0.82rem' }}
+                style={{ height: '36px', fontSize: '0.82rem', marginTop: 'auto' }}
               >
                 <span>Browse Skills</span>
                 <ChevronRight size={14} />
@@ -587,6 +597,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     onClick={(e) => {
                       e.stopPropagation();
                       setSimLabCourseTitle(course.title);
+                      setSimLabCourseSlug(course.slug);
+                      setSimLabDomain(course.domain);
                       setSimLabOpen(true);
                     }}
                     title="Launch Interactive Simulation Lab (10 SVG Sims)"
@@ -622,7 +634,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               style={{
                 backgroundColor: 'rgba(0, 240, 255, 0.1)',
                 border: '1px solid rgba(0, 240, 255, 0.3)',
-                color: '#00F0FF',
+                color: '#0284C7',
                 margin: '0 auto 12px',
               }}
             >
@@ -632,7 +644,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               style={{
                 fontSize: 'clamp(2rem, 3.8vw, 2.7rem)',
                 fontWeight: 800,
-                color: '#FFFFFF',
+                color: 'var(--text-primary)',
                 letterSpacing: '-0.02em',
                 marginBottom: '8px',
               }}
@@ -640,7 +652,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               Level Up Your{' '}
               <span
                 style={{
-                  background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+                  background: 'linear-gradient(135deg, #0284C7 0%, #7C3AED 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -648,7 +660,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 Knowledge
               </span>
             </h2>
-            <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: '540px', margin: '0 auto' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '540px', margin: '0 auto' }}>
               Bite-sized daily challenges, historical tech trivia, and real domain concepts to sharpen your skills.
             </p>
           </div>
@@ -1035,10 +1047,10 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
         <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
             <div>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.3rem)', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.3rem)', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
                 Upcoming Events & Hackathons
               </h2>
-              <p style={{ color: '#94A3B8', fontSize: '0.95rem' }}>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
                 Join competitions, workshops, and exclusive webinars.
               </p>
             </div>
@@ -1051,9 +1063,9 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   height: '36px',
                   padding: '0 16px',
                   borderRadius: '20px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  color: '#CBD5E1',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.78rem',
                   fontWeight: 800,
                   letterSpacing: '0.04em',
@@ -1626,7 +1638,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             style={{
               backgroundColor: 'rgba(0, 240, 255, 0.1)',
               border: '1px solid rgba(0, 240, 255, 0.3)',
-              color: '#00F0FF',
+              color: '#0284C7',
               margin: '0 auto 12px',
             }}
           >
@@ -1636,7 +1648,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             style={{
               fontSize: 'clamp(2rem, 3.8vw, 2.7rem)',
               fontWeight: 800,
-              color: '#FFFFFF',
+              color: 'var(--text-primary)',
               letterSpacing: '-0.02em',
               marginBottom: '36px',
             }}
@@ -1644,7 +1656,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             Join Our{' '}
             <span
               style={{
-                background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
+                background: 'linear-gradient(135deg, #0284C7 0%, #7C3AED 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -1945,6 +1957,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
         isOpen={simLabOpen}
         onClose={() => setSimLabOpen(false)}
         courseTitle={simLabCourseTitle}
+        courseSlug={simLabCourseSlug}
+        domain={simLabDomain}
       />
 
       {/* Interactive Event Registration Modal (Hackathons Reference Image 4) */}

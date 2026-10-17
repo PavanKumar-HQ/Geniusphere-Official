@@ -28,6 +28,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [simLabOpen, setSimLabOpen] = useState(false);
   const [simLabCourseTitle, setSimLabCourseTitle] = useState('Cybersecurity & Defensive Web Security');
+  const [simLabCourseSlug, setSimLabCourseSlug] = useState('');
+  const [simLabDomain, setSimLabDomain] = useState('');
 
   const courses = db.getCourses({
     search,
@@ -217,6 +219,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     onClick={(e) => {
                       e.stopPropagation();
                       setSimLabCourseTitle(course.title);
+                      setSimLabCourseSlug(course.slug);
+                      setSimLabDomain(course.domain);
                       setSimLabOpen(true);
                     }}
                     title="Launch Interactive Simulation Lab (10 SVG Sims)"
@@ -246,6 +250,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         isOpen={simLabOpen}
         onClose={() => setSimLabOpen(false)}
         courseTitle={simLabCourseTitle}
+        courseSlug={simLabCourseSlug}
+        domain={simLabDomain}
       />
     </div>
   );
