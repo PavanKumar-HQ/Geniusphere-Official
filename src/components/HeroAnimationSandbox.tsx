@@ -10,12 +10,14 @@ import {
   Sparkles,
   AlertTriangle,
   Lock,
+  TrendingUp,
 } from 'lucide-react';
 import {
   NeuralNetworkSvg,
   BlockchainChainLinkSvg,
   IotSensorDialSvg,
   SecurityPipelineSvg,
+  CompoundGrowthSvg,
 } from './LabSvgVisualizers';
 import { Button } from './ui/Button';
 import { Badge } from './ui/Badge';
@@ -25,7 +27,7 @@ export interface HeroAnimationSandboxProps {
   onLaunchLab: (slug: string) => void;
 }
 
-export type SandboxMode = 'ai' | 'blockchain' | 'iot' | 'security';
+export type SandboxMode = 'ai' | 'blockchain' | 'iot' | 'security' | 'finance';
 
 export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLaunchLab }) => {
   const [activeMode, setActiveMode] = useState<SandboxMode>('ai');
@@ -99,6 +101,26 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
   const [secOutputEncoding, setSecOutputEncoding] = useState<boolean>(true);
   const [secCsp, setSecCsp] = useState<boolean>(true);
 
+  // -------------------------------------------------------------
+  // Mode 5: Indian FinTech & UPI Fraud Defense / SIP Compounding
+  // -------------------------------------------------------------
+  const [finSubTab, setFinSubTab] = useState<'upi' | 'sip'>('upi');
+  const [upiScenario, setUpiScenario] = useState<'lottery_scam' | 'valid_merchant' | 'urgent_kyc'>('lottery_scam');
+  const [upiFeedback, setUpiFeedback] = useState<string | null>(null);
+
+  // SIP Calculator State
+  const [sipMonthly, setSipMonthly] = useState<number>(1000); // ₹1,000 / month
+  const [sipYears, setSipYears] = useState<number>(5); // 5 years
+  const [sipRate, setSipRate] = useState<number>(12); // 12% p.a.
+
+  const rMonth = sipRate / 12 / 100;
+  const nMonths = sipYears * 12;
+  const sipTotalInvested = sipMonthly * nMonths;
+  const sipFutureVal = Math.round(
+    sipMonthly * ((Math.pow(1 + rMonth, nMonths) - 1) / rMonth) * (1 + rMonth)
+  );
+  const sipWealthGain = sipFutureVal - sipTotalInvested;
+
   const getActiveLabSlug = () => {
     switch (activeMode) {
       case 'ai':
@@ -109,6 +131,8 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
         return 'iot-sensor-simulator';
       case 'security':
         return 'defensive-web-security';
+      case 'finance':
+        return 'compound-interest-calculator';
     }
   };
 
@@ -279,6 +303,28 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
         >
           <Shield size={14} />
           <span>Web Defense</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveMode('finance')}
+          style={{
+            padding: '10px 14px',
+            border: 'none',
+            borderBottom: activeMode === 'finance' ? '2.5px solid #FDB913' : '2.5px solid transparent',
+            backgroundColor: 'transparent',
+            color: activeMode === 'finance' ? '#B45309' : 'var(--text-secondary)',
+            fontWeight: activeMode === 'finance' ? 700 : 500,
+            fontSize: '0.82rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <TrendingUp size={14} />
+          <span>India FinTech & UPI</span>
         </button>
       </div>
 
@@ -563,6 +609,309 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
                 <span>CSP Headers ({secCsp ? 'ON' : 'OFF'})</span>
               </button>
             </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* MODE 5: INDIAN FINTECH & UPI FRAUD DEFENSE / SIP          */}
+        {/* ========================================================= */}
+        {activeMode === 'finance' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Applied Indian Finance & UPI Defense
+                </h4>
+                <p style={{ margin: 0, fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                  Interactive UPI scam detection logic and exponential student SIP compounding
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => setFinSubTab('upi')}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 'var(--radius-full)',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    border: '1px solid',
+                    borderColor: finSubTab === 'upi' ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                    backgroundColor: finSubTab === 'upi' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                    color: finSubTab === 'upi' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  UPI Safety
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFinSubTab('sip')}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 'var(--radius-full)',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    border: '1px solid',
+                    borderColor: finSubTab === 'sip' ? '#B45309' : 'var(--border-subtle)',
+                    backgroundColor: finSubTab === 'sip' ? 'var(--warning-bg)' : 'var(--bg-canvas)',
+                    color: finSubTab === 'sip' ? '#B45309' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  SIP Calculator
+                </button>
+              </div>
+            </div>
+
+            {finSubTab === 'upi' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* Scenario Selector */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  {[
+                    { id: 'lottery_scam', label: '1. Reward Collect', risk: 'High' },
+                    { id: 'valid_merchant', label: '2. Campus QR', risk: 'Safe' },
+                    { id: 'urgent_kyc', label: '3. Urgent KYC', risk: 'High' },
+                  ].map((sc) => (
+                    <button
+                      key={sc.id}
+                      type="button"
+                      onClick={() => {
+                        setUpiScenario(sc.id as any);
+                        setUpiFeedback(null);
+                      }}
+                      style={{
+                        padding: '8px 6px',
+                        borderRadius: '6px',
+                        border: upiScenario === sc.id ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: upiScenario === sc.id ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: upiScenario === sc.id ? 'var(--brand-primary)' : 'var(--text-primary)',
+                      }}
+                    >
+                      {sc.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Scenario Inspection Card */}
+                <div
+                  style={{
+                    padding: '14px',
+                    borderRadius: 'var(--radius-lg)',
+                    backgroundColor: 'var(--editor-bg)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                  }}
+                >
+                  {upiScenario === 'lottery_scam' && (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--danger)' }}>
+                          COLLECT REQUEST: ₹2,500
+                        </span>
+                        <Badge variant="danger" size="sm">CRITICAL FRAUD RISK</Badge>
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+                        Request from: <code>claim-prize@instant-rewards-vpa</code>
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        Message: <em>"Enter your 6-digit UPI PIN to claim ₹25,000 festival cashback into your bank account."</em>
+                      </div>
+                    </>
+                  )}
+
+                  {upiScenario === 'valid_merchant' && (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--success)' }}>
+                          MERCHANT PAYMENT: ₹340
+                        </span>
+                        <Badge variant="success" size="sm">VERIFIED SAFE</Badge>
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+                        Payee: <code>campusbooks@okhdfcbank</code> (Verified Merchant)
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        Terminal: National Payment Corporation of India (NPCI) registered retail terminal at University Bookstore.
+                      </div>
+                    </>
+                  )}
+
+                  {upiScenario === 'urgent_kyc' && (
+                    <>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--danger)' }}>
+                          URGENT KYC PHISHING CALL
+                        </span>
+                        <Badge variant="danger" size="sm">CRITICAL PHISHING</Badge>
+                      </div>
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+                        Caller: Unverified phone number claiming to be 'State Bank Helpline'
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        Demand: <em>"Send ₹1 via GooglePay/PhonePe to personal number +91-9876543210 to stop bank account suspension."</em>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Golden Rule Callout */}
+                  <div
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '6px',
+                      backgroundColor: 'var(--warning-bg)',
+                      border: '1px solid var(--warning-border)',
+                      fontSize: '0.75rem',
+                      color: 'var(--warning-text)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Rule: Entering UPI PIN always DEDUCTS money. You NEVER enter a PIN to receive funds!
+                  </div>
+
+                  {upiFeedback && (
+                    <div
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '6px',
+                        backgroundColor: upiFeedback.includes('Correct') ? 'var(--success-bg)' : 'var(--danger-bg)',
+                        border: '1px solid',
+                        borderColor: upiFeedback.includes('Correct') ? 'var(--success-border)' : 'var(--danger-border)',
+                        color: upiFeedback.includes('Correct') ? 'var(--success)' : 'var(--danger)',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {upiFeedback}
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (upiScenario === 'lottery_scam' || upiScenario === 'urgent_kyc') {
+                          setUpiFeedback('Correct! Scams should be declined immediately and reported to 1930.');
+                        } else {
+                          setUpiFeedback('Incorrect: This was a legitimate registered merchant QR code.');
+                        }
+                      }}
+                      className="btn-danger"
+                      style={{ height: '32px', padding: '0 12px', fontSize: '0.75rem' }}
+                    >
+                      <span>Decline & Report Scam</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (upiScenario === 'valid_merchant') {
+                          setUpiFeedback('Correct! Verified merchant payment completed safely.');
+                        } else {
+                          setUpiFeedback('Dangerous: Entering UPI PIN here would have stolen funds from your account!');
+                        }
+                      }}
+                      className="btn-primary"
+                      style={{ height: '32px', padding: '0 12px', fontSize: '0.75rem' }}
+                    >
+                      <span>Enter PIN & Authorize</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {/* SVG Compounding Chart */}
+                <CompoundGrowthSvg
+                  principal={0}
+                  monthly={sipMonthly}
+                  rate={sipRate}
+                  years={sipYears}
+                  currencySymbol="₹"
+                />
+
+                {/* Metrics Summary */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+                  <div style={{ padding: '8px', backgroundColor: 'var(--bg-canvas)', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Invested (₹)</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
+                      ₹{sipTotalInvested.toLocaleString('en-IN')}
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '8px', backgroundColor: 'var(--bg-canvas)', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Wealth Created (₹)</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--success)' }}>
+                      ₹{sipFutureVal.toLocaleString('en-IN')}
+                    </div>
+                  </div>
+
+                  <div style={{ padding: '8px', backgroundColor: 'var(--bg-canvas)', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Compounding Gain</div>
+                    <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#B45309' }}>
+                      +₹{sipWealthGain.toLocaleString('en-IN')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sliders */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '10px' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '4px' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Monthly SIP</span>
+                      <strong style={{ color: 'var(--brand-primary)' }}>₹{sipMonthly.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <input
+                      type="range"
+                      min="500"
+                      max="10000"
+                      step="500"
+                      value={sipMonthly}
+                      onChange={(e) => setSipMonthly(Number(e.target.value))}
+                      style={{ width: '100%', accentColor: 'var(--brand-primary)' }}
+                    />
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '4px' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>Horizon</span>
+                      <strong style={{ color: 'var(--brand-secondary)' }}>{sipYears} Yrs</strong>
+                    </div>
+                    <input
+                      type="range"
+                      min="1"
+                      max="15"
+                      step="1"
+                      value={sipYears}
+                      onChange={(e) => setSipYears(Number(e.target.value))}
+                      style={{ width: '100%', accentColor: 'var(--brand-secondary)' }}
+                    />
+                  </div>
+
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '4px' }}>
+                      <span style={{ color: 'var(--text-secondary)' }}>CAGR Rate</span>
+                      <strong style={{ color: '#B45309' }}>{sipRate}%</strong>
+                    </div>
+                    <input
+                      type="range"
+                      min="6"
+                      max="18"
+                      step="1"
+                      value={sipRate}
+                      onChange={(e) => setSipRate(Number(e.target.value))}
+                      style={{ width: '100%', accentColor: '#B45309' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

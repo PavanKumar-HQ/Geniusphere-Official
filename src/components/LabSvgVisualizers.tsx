@@ -504,9 +504,10 @@ interface CompoundGrowthSvgProps {
   monthly: number;
   rate: number;
   years: number;
+  currencySymbol?: string;
 }
 
-export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal, monthly, rate, years }) => {
+export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal, monthly, rate, years, currencySymbol = '$' }) => {
   const steps = 5;
   const milestoneYears = Array.from({ length: steps }, (_, i) => Math.round(((i + 1) / steps) * years));
 
@@ -538,11 +539,11 @@ export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal,
           return (
             <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
               <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                ${(item.total / 1000).toFixed(0)}k
+                {currencySymbol}{(item.total / 1000).toFixed(0)}k
               </div>
               <div style={{ width: '80%', display: 'flex', flexDirection: 'column', height: `${totalHeightPct}%` }}>
-                <div style={{ height: `${interestHeightPct}%`, backgroundColor: '#FDB913', borderRadius: '4px 4px 0 0' }} title={`Interest: $${item.interest}`} />
-                <div style={{ height: `${depositHeightPct}%`, backgroundColor: '#30B2E7', borderRadius: interestHeightPct <= 0 ? '4px 4px 0 0' : 0 }} title={`Deposits: $${item.deposits}`} />
+                <div style={{ height: `${interestHeightPct}%`, backgroundColor: '#FDB913', borderRadius: '4px 4px 0 0' }} title={`Interest: ${currencySymbol}${item.interest}`} />
+                <div style={{ height: `${depositHeightPct}%`, backgroundColor: '#30B2E7', borderRadius: interestHeightPct <= 0 ? '4px 4px 0 0' : 0 }} title={`Deposits: ${currencySymbol}${item.deposits}`} />
               </div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                 Yr {item.yr}
