@@ -177,7 +177,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                       <Clock size={14} /> {course.duration_hours} hrs
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <BookOpen size={14} /> {course.modules.length > 0 ? `${course.modules.length} modules` : 'Full syllabus'}
+                      <BookOpen size={14} /> {course.modules.length > 0 ? `${course.modules.length} ${course.modules.length === 1 ? 'module' : 'modules'}` : 'Full syllabus'}
                     </div>
                   </div>
                 </div>

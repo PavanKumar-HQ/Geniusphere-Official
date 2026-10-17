@@ -1,24 +1,18 @@
 import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import {
-  ShieldCheck,
-  Terminal,
-  BookOpen,
-  ArrowRight,
   Shield,
+  Terminal,
+  ArrowRight,
   Coins,
   Briefcase,
   CheckCircle2,
   Award,
-  GraduationCap,
-  Sparkles,
   ChevronRight,
   School,
-  Lock,
-  HelpCircle,
   Play,
-  Menu,
-  X,
+  Code,
+  Sparkles,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -27,485 +21,374 @@ interface HomepageProps {
   currentUserId: string;
 }
 
-export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const featuredCourses = db.getCourses({ publishedOnly: true });
   const learningPaths = db.getLearningPaths();
-  const currentUser = db.users.get(currentUserId);
 
   const toggleFaq = (idx: number) => {
     setActiveFaq(activeFaq === idx ? null : idx);
   };
 
+  const formatModules = (count: number) => {
+    return `${count} ${count === 1 ? 'module' : 'modules'}`;
+  };
+
   return (
-    <div style={{ backgroundColor: 'var(--bg-app)', color: 'var(--text-primary)' }}>
+    <div style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)', minHeight: '100vh' }}>
       {/* ============================================================ */}
-      {/* SECTION 1: PUBLIC NAVIGATION                                 */}
+      {/* 1. CLEAN, COMPACT SUB-HEADER & QUICK NAVIGATION              */}
       {/* ============================================================ */}
-      <header
+      <div
         style={{
-          borderBottom: '1px solid var(--border-subtle)',
           backgroundColor: 'var(--bg-surface)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 90,
+          borderBottom: '1px solid var(--border-subtle)',
+          padding: '10px 24px',
         }}
       >
         <div
           style={{
             maxWidth: '1240px',
             margin: '0 auto',
-            padding: '12px 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px',
+            fontSize: '0.85rem',
           }}
         >
-          {/* Brand */}
-          <div
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
-            onClick={() => onNavigate('home')}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>Quick Links:</span>
+            <button
+              type="button"
+              onClick={() => onNavigate('catalogue')}
+              style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 0, fontWeight: 500 }}
+            >
+              Explore 27 Courses
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('lab')}
+              style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', padding: 0, fontWeight: 600 }}
+            >
+              Interactive SQL Lab
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('classrooms')}
+              style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 0, fontWeight: 500 }}
+            >
+              Classroom & Join Codes
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('resume-builder')}
+              style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 0, fontWeight: 500 }}
+            >
+              Resume Builder
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('schoolkit')}
+              style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', padding: 0, fontWeight: 500 }}
+            >
+              Educator SchoolKit
+            </button>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
+              Four Core Disciplines
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* 2. STRONG HERO SECTION                                       */}
+      {/* ============================================================ */}
+      <section style={{ padding: '72px 24px 64px', maxWidth: '1240px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'center' }}>
+          <div>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '20px' }}>
+              <Sparkles size={15} />
+              <span>PRACTICAL EDUCATION PLATFORM</span>
+            </div>
+
+            <h1
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 'clamp(2.4rem, 4.5vw, 3.4rem)',
+                fontWeight: 800,
+                lineHeight: 1.15,
+                letterSpacing: '-0.03em',
+                marginBottom: '20px',
+                color: 'var(--text-primary)',
+              }}
+            >
+              Learn what school doesn't always teach you.
+            </h1>
+
+            <p
+              style={{
+                fontSize: '1.1rem',
+                lineHeight: 1.6,
+                color: 'var(--text-secondary)',
+                marginBottom: '32px',
+                maxWidth: '540px',
+              }}
+            >
+              Master modern technology, write real code, understand the mechanics of money, and build practical professional skills through hands-on challenges and evidence-backed achievements.
+            </p>
+
+            <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => onNavigate('catalogue')}
+                style={{ height: '48px', padding: '0 24px', fontSize: '0.95rem' }}
+              >
+                <span>Explore Courses</span>
+                <ArrowRight size={18} />
+              </button>
+
+              <button
+                type="button"
+                className="btn-outline"
+                onClick={() => onNavigate('lab')}
+                style={{ height: '48px', padding: '0 22px', fontSize: '0.95rem' }}
+              >
+                <Terminal size={18} />
+                <span>Try Interactive Lab</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Real Visual Preview Card */}
+          <div className="card-elevated" style={{ padding: '24px', borderTop: '4px solid var(--brand-primary)', backgroundColor: 'var(--bg-surface)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span className="badge badge-brand">FEATURED LEARNING LAB</span>
+                <span className="badge badge-success">READY TO RUN</span>
+              </div>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Lab 101</span>
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
+              SQL Parameterization & Defense
+            </h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '16px' }}>
+              Learn why concatenating untrusted strings into queries creates injection vulnerabilities, and write parameterized queries using positional placeholders.
+            </p>
+
+            {/* Code Snippet Preview */}
             <div
               style={{
-                width: '36px',
-                height: '36px',
+                backgroundColor: 'var(--bg-surface-subdued)',
                 borderRadius: '8px',
-                backgroundColor: 'var(--brand-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFF',
+                padding: '14px 16px',
+                fontFamily: 'monospace',
+                fontSize: '0.82rem',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                marginBottom: '18px',
+                overflowX: 'auto',
               }}
             >
-              <ShieldCheck size={20} />
+              <div style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>-- Defended parameterized query structure:</div>
+              <div>SELECT id, username, role</div>
+              <div>FROM challenge_users</div>
+              <div style={{ color: 'var(--brand-primary)', fontWeight: 700 }}>WHERE username = ? AND account_status = 'active';</div>
             </div>
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800 }}>
-              GENIUSPHERE
-            </span>
-          </div>
 
-          {/* Desktop Nav Links */}
-          <nav
-            style={{
-              display: 'none',
-              alignItems: 'center',
-              gap: '24px',
-              fontSize: '0.9rem',
-              fontWeight: 500,
-            }}
-            className="desktop-nav"
-          >
-            <a
-              href="#courses"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('catalogue');
-              }}
-              style={{ color: 'var(--text-primary)' }}
-            >
-              Explore Courses
-            </a>
-            <a
-              href="#paths"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('catalogue');
-              }}
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              Learning Paths
-            </a>
-            <a
-              href="#labs"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('lab');
-              }}
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              Interactive Labs
-            </a>
-            <a
-              href="#schools"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('schoolkit');
-              }}
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              School Programs
-            </a>
-            <a
-              href="#educators"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('gradebook');
-              }}
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              For Educators
-            </a>
-            <a
-              href="#about"
-              onClick={(e) => {
-                e.preventDefault();
-                const el = document.getElementById('about');
-                el?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              About
-            </a>
-          </nav>
-
-          {/* Desktop Auth CTAs */}
-          <div style={{ display: 'none', alignItems: 'center', gap: '12px' }} className="desktop-nav">
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Signed in as <strong>{currentUser?.full_name.split(' ')[0]}</strong>
-            </span>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => onNavigate('catalogue')}
-              style={{ height: '38px', padding: '0 16px', fontSize: '0.85rem' }}
-            >
-              Get Started
-            </button>
-          </div>
-
-          {/* Mobile Hamburger Button */}
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{ width: '40px', height: '40px', padding: 0 }}
-            aria-label="Toggle Navigation Menu"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-
-        {/* Mobile Dropdown Menu */}
-        {mobileMenuOpen && (
-          <div
-            style={{
-              padding: '16px 24px',
-              backgroundColor: 'var(--bg-surface)',
-              borderTop: '1px solid var(--border-subtle)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-            }}
-          >
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate('catalogue');
-              }}
-              style={{ justifyContent: 'flex-start' }}
-            >
-              <BookOpen size={18} /> Explore Courses
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate('lab');
-              }}
-              style={{ justifyContent: 'flex-start' }}
-            >
-              <Terminal size={18} /> Interactive Labs
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate('schoolkit');
-              }}
-              style={{ justifyContent: 'flex-start' }}
-            >
-              <School size={18} /> SchoolKit & Programs
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate('resume-builder');
-              }}
-              style={{ justifyContent: 'flex-start' }}
-            >
-              <Award size={18} /> Resume Builder & Portfolio
-            </button>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onNavigate('catalogue');
-              }}
-            >
-              Launch Platform
-            </button>
-          </div>
-        )}
-      </header>
-
-      {/* ============================================================ */}
-      {/* SECTION 2: HERO SECTION                                      */}
-      {/* ============================================================ */}
-      <section
-        style={{
-          padding: '64px 24px 56px',
-          maxWidth: '1240px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '40px',
-          alignItems: 'center',
-        }}
-      >
-        <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: '999px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: '0.8rem', fontWeight: 600, marginBottom: '20px' }}>
-            <Sparkles size={14} /> Authoritative Education Platform • Real Data
-          </div>
-
-          <h1 style={{ fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.03em', marginBottom: '18px' }}>
-            Learn what school <br />
-            <span style={{ color: 'var(--brand-primary)' }}>doesn't always teach you.</span>
-          </h1>
-
-          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '28px', maxWidth: '540px' }}>
-            Master practical technology, understand the mechanics of money, build defensible cybersecurity habits, and prove what you can do through hands-on challenges.
-          </p>
-
-          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => onNavigate('catalogue')}
-              style={{ height: '48px', padding: '0 24px', fontSize: '1rem' }}
-            >
-              <span>Explore Learning Paths</span>
-              <ArrowRight size={18} />
-            </button>
-
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => onNavigate('lab')}
-              style={{ height: '48px', padding: '0 20px', fontSize: '1rem' }}
-            >
-              <Terminal size={18} />
-              <span>Launch Lab 101</span>
-            </button>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginTop: '36px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircle2 size={16} color="var(--success)" /> Zero Simulated Data
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                Target: <strong>challenge_users</strong> • Score: <strong>100 pts</strong>
+              </div>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => onNavigate('lab')}
+                style={{ height: '36px', padding: '0 16px', fontSize: '0.82rem' }}
+              >
+                Launch Lab
+              </button>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Lock size={16} color="var(--brand-primary)" /> Database RLS Protected
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <ShieldCheck size={16} color="var(--success)" /> DPDP Act 2023 Compliant
-            </div>
-          </div>
-        </div>
-
-        {/* Live Interactive Hero Preview Card */}
-        <div className="card-elevated" style={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-strong)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#EF4444' }} />
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#F59E0B' }} />
-              <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)', marginLeft: '8px' }}>
-                Geniusphere Interactive Sandbox
-              </span>
-            </div>
-            <span className="badge badge-brand">LIVE ENGINE</span>
-          </div>
-
-          <div style={{ backgroundColor: '#18181B', borderRadius: '8px', padding: '16px', color: '#F4F4F5', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', marginBottom: '16px' }}>
-            <div style={{ color: '#71717A', marginBottom: '6px' }}>-- Defeating SQL Injection via Parameter Binding</div>
-            <div style={{ color: '#38BDF8' }}>SELECT <span style={{ color: '#FFF' }}>id, username, role</span></div>
-            <div>FROM <span style={{ color: '#34D399' }}>challenge_users</span></div>
-            <div>WHERE <span style={{ color: '#FCD34D' }}>username = ?</span></div>
-            <div>  AND <span style={{ color: '#FCD34D' }}>account_status = 'active'</span>;</div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>
-              Server evaluation: <strong>5/5 assertions passed (100 pts)</strong>
-            </span>
-            <button
-              type="button"
-              className="btn-outline"
-              onClick={() => onNavigate('lab')}
-              style={{ minHeight: '36px', height: '36px', padding: '0 12px', fontSize: '0.8rem' }}
-            >
-              Test Live Sandbox
-            </button>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 3: LEARNING CATEGORIES                               */}
+      {/* 3. FOUR CLEAR LEARNING-AREA CARDS                            */}
       {/* ============================================================ */}
-      <section style={{ backgroundColor: 'var(--bg-surface)', padding: '56px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <section style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '8px' }}>
-              Four Core Disciplines for Modern Learners
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '10px' }}>
+              Four Essential Learning Areas
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '620px', margin: '0 auto' }}>
-              Practical, structured curriculum designed to bridge the gap between classroom theory and modern workforce demands.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '640px', margin: '0 auto' }}>
+              A coherent curriculum designed for modern students, covering emerging technology, practical coding, financial foundations, and professional skills.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+            {/* Card 1: Technology */}
             <div
               className="card"
-              style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+              style={{ cursor: 'pointer', transition: 'box-shadow 0.2s ease', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
               onClick={() => onNavigate('catalogue', 'technology')}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Shield size={24} color="var(--brand-primary)" />
+              <div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                  <Shield size={24} color="var(--brand-primary)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Technology</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Artificial intelligence, responsible AI, blockchain fundamentals, Internet of Things (IoT), Microsoft enterprise tools, digital privacy, cybersecurity, and computing systems.
+                </p>
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Technology</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Artificial intelligence, responsible AI, blockchain, IoT, Microsoft technologies, digital privacy, cybersecurity, and computing fundamentals.
-              </p>
-              <span style={{ color: 'var(--brand-primary)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Explore 8 Technology Subjects <ChevronRight size={14} />
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>8 Subjects</span>
+                <span style={{ color: 'var(--brand-primary)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  Explore Technology <ChevronRight size={14} />
+                </span>
+              </div>
             </div>
 
+            {/* Card 2: Coding & Programming */}
             <div
               className="card"
-              style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+              style={{ cursor: 'pointer', transition: 'box-shadow 0.2s ease', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
               onClick={() => onNavigate('catalogue', 'coding')}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Terminal size={24} color="var(--success)" />
+              <div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                  <Code size={24} color="var(--success)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Coding & Programming</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Programming fundamentals, variables, data types, conditions, loops, algorithmic problem-solving, relational databases and SQL, web development, and debugging exercises.
+                </p>
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Coding & Programming</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Programming fundamentals, data types, variables, conditions, loops, problem-solving, relational SQL databases, web dev, and debugging.
-              </p>
-              <span style={{ color: 'var(--success)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Explore 7 Coding Subjects <ChevronRight size={14} />
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>7 Subjects</span>
+                <span style={{ color: 'var(--success)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  Explore Coding <ChevronRight size={14} />
+                </span>
+              </div>
             </div>
 
+            {/* Card 3: Finance */}
             <div
               className="card"
-              style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+              style={{ cursor: 'pointer', transition: 'box-shadow 0.2s ease', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
               onClick={() => onNavigate('catalogue', 'finance')}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Coins size={24} color="var(--warning)" />
+              <div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                  <Coins size={24} color="var(--warning)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Finance</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Introduction to finance, global economic events, financial markets, banking institutions, cryptocurrency education and risks, stock market fundamentals, and fintech.
+                </p>
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Finance</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Introduction to finance, global economic events, financial markets, banking institutions, crypto risks, stock market, and fintech.
-              </p>
-              <span style={{ color: 'var(--warning)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Explore 7 Finance Subjects <ChevronRight size={14} />
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>7 Subjects</span>
+                <span style={{ color: 'var(--warning)', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  Explore Finance <ChevronRight size={14} />
+                </span>
+              </div>
             </div>
 
+            {/* Card 4: Professional Skills */}
             <div
               className="card"
-              style={{ cursor: 'pointer', transition: 'transform 0.15s ease' }}
+              style={{ cursor: 'pointer', transition: 'box-shadow 0.2s ease', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
               onClick={() => onNavigate('catalogue', 'professional')}
             >
-              <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                <Briefcase size={24} color="#4F46E5" />
+              <div>
+                <div style={{ width: '48px', height: '48px', borderRadius: '10px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                  <Briefcase size={24} color="#4F46E5" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Professional Skills</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Time management, workplace professional etiquette, soft skills development, social profiles and professional identity, and evidence-backed portfolio building.
+                </p>
               </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Professional Skills</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '14px' }}>
-                Time management, workplace professional skills, soft skills development, social profiles and professional identity, and portfolio building.
-              </p>
-              <span style={{ color: '#4F46E5', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                Explore 5 Professional Subjects <ChevronRight size={14} />
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>5 Subjects</span>
+                <span style={{ color: '#4F46E5', fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  Explore Skills <ChevronRight size={14} />
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 4: LEARNING BY DOING (THE 4-STEP CYCLE)              */}
+      {/* 4. LEARNING BY DOING (THE 4-STEP CYCLE)                      */}
       {/* ============================================================ */}
       <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '44px' }}>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
             Pedagogical Architecture
           </div>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>
-            Learn → Experiment → Solve → Prove
-          </h2>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Learn → Experiment → Solve → Prove</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto' }}>
-            We replace passive video watching with practical experimentation, real sandboxes, and authoritative verification.
+            Education is not passive video consumption. Every subject follows a clear progression from structured concept to working proof.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
-          <div className="card" style={{ borderTop: '4px solid #3B82F6' }}>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#3B82F6', marginBottom: '6px' }}>01. Learn</div>
-            <h4 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>Structured Lessons</h4>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
+          <div className="card" style={{ borderLeft: '4px solid var(--brand-primary)' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--brand-primary)', marginBottom: '8px' }}>01</div>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Learn Concepts</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-              Concise, age-appropriate conceptual breakdowns focusing on first principles, architectural trade-offs, and root causes.
+              Read structured lessons, analyze technical threat models, and study architectural trade-offs without unnecessary jargon.
             </p>
           </div>
 
-          <div className="card" style={{ borderTop: '4px solid #10B981' }}>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#10B981', marginBottom: '6px' }}>02. Experiment</div>
-            <h4 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>Interactive Sandboxes</h4>
+          <div className="card" style={{ borderLeft: '4px solid var(--success)' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--success)', marginBottom: '8px' }}>02</div>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Experiment in Labs</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-              Isolated in-memory SQLite-WASM and code execution sandboxes where learners test payloads safely in real time.
+              Interact with real client-side WebAssembly sandboxes (SQLite, Python) to test hypotheses with zero installation friction.
             </p>
           </div>
 
-          <div className="card" style={{ borderTop: '4px solid #F59E0B' }}>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#F59E0B', marginBottom: '6px' }}>03. Solve</div>
-            <h4 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>Practical Challenges</h4>
+          <div className="card" style={{ borderLeft: '4px solid var(--warning)' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--warning)', marginBottom: '8px' }}>03</div>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Solve Challenges</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-              Realistic mission objectives requiring actual implementation—not multiple-choice guessing.
+              Apply defensive patterns, write parameterized templates, and test against adversarial attack payloads.
             </p>
           </div>
 
-          <div className="card" style={{ borderTop: '4px solid #8B5CF6' }}>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#8B5CF6', marginBottom: '6px' }}>04. Prove</div>
-            <h4 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>Authoritative Verification</h4>
+          <div className="card" style={{ borderLeft: '4px solid #4F46E5' }}>
+            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#4F46E5', marginBottom: '8px' }}>04</div>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Prove Competency</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-              Server-authoritative test assertions, anti-tamper SHA-256 integrity hashes, and immutable progress records.
+              Receive authoritative server grading and build an evidence-backed portfolio with verifiable completion records.
             </p>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 5: FEATURED COURSES (DATABASE-BACKED)                */}
+      {/* 5. DISCOVERABLE FEATURED COURSES                             */}
       {/* ============================================================ */}
-      <section id="courses" style={{ backgroundColor: 'var(--bg-surface)', padding: '60px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <section style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
             <div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Featured Curriculum Courses</h2>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Featured Curriculum</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-                Curriculum seeded from our relational content engine with verified lesson modules.
+                Flagship courses with interactive modules, lesson quizzes, and practical exercises.
               </p>
             </div>
             <button
@@ -513,7 +396,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               className="btn-outline"
               onClick={() => onNavigate('catalogue')}
             >
-              <span>View Full 27-Subject Catalogue</span>
+              <span>Explore All 27 Courses</span>
               <ChevronRight size={16} />
             </button>
           </div>
@@ -527,35 +410,33 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                       {course.domain === 'coding' ? 'CODING & PROGRAMMING' : course.domain.toUpperCase()}
                     </span>
                     {course.availability_status === 'verified_functional' ? (
-                      <span className="badge badge-success">VERIFIED & USABLE</span>
+                      <span className="badge badge-success">AVAILABLE NOW</span>
                     ) : course.availability_status === 'implemented_in_build' ? (
-                      <span className="badge badge-brand">IMPLEMENTED IN BUILD</span>
+                      <span className="badge badge-brand">AVAILABLE NOW</span>
                     ) : (
-                      <span className="badge badge-neutral">IN DEVELOPMENT</span>
+                      <span className="badge badge-neutral">CURRICULUM ROADMAP</span>
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>{course.title}</h3>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>{course.title}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
                     {course.summary}
                   </p>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '20px' }}>
                     <div>Subject: <strong>{course.subject}</strong></div>
-                    <div>Modules: <strong>{course.modules.length} modules</strong> • Est. Duration: <strong>{course.duration_hours} hrs</strong></div>
+                    <div>Curriculum: <strong>{formatModules(course.modules.length)}</strong> • Est. Duration: <strong>{course.duration_hours} hrs</strong></div>
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button
-                    type="button"
-                    className="btn-primary"
-                    onClick={() => onNavigate('course-detail', course.slug)}
-                    style={{ flex: 1, height: '40px', fontSize: '0.875rem' }}
-                  >
-                    View Syllabus & Enroll
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => onNavigate('course-detail', course.slug)}
+                  style={{ width: '100%', height: '40px', fontSize: '0.875rem' }}
+                >
+                  View Syllabus & Enroll
+                </button>
               </div>
             ))}
           </div>
@@ -563,7 +444,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 6: INTERACTIVE LABS CATALOGUE                        */}
+      {/* 6. INTERACTIVE LAB SECTION FEATURING LAB 101                 */}
       {/* ============================================================ */}
       <section id="labs" style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
@@ -573,25 +454,24 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Interactive Learning Sandboxes</h2>
           </div>
-          <span className="badge badge-brand">SQLite-WASM Enabled</span>
+          <span className="badge badge-brand">SQLite-WASM Sandbox</span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-          {/* Lab 101 - Operational */}
           <div className="card" style={{ borderLeft: '4px solid var(--brand-primary)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="badge badge-brand">CYBER DEFENSE</span>
-                <span className="badge badge-success">OPERATIONAL</span>
+                <span className="badge badge-brand">WEB DEFENSE</span>
+                <span className="badge badge-success">AVAILABLE NOW</span>
               </div>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
                 Lab 101: SQL Parameterization & Injection Defense
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
                 Defeat authentication bypass vulnerabilities by implementing native parameter placeholders and testing against 5 attack payloads.
               </p>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Runtime: <strong>In-Memory SQLite-WASM Sandbox</strong> • Score: <strong>100 pts</strong>
+                Runtime: <strong>Client-side SQLite-WASM Sandbox</strong> • Score: <strong>100 pts</strong>
               </div>
             </div>
 
@@ -606,21 +486,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             </button>
           </div>
 
-          {/* Lab 102 - Planned */}
-          <div className="card" style={{ borderLeft: '4px solid var(--border-strong)', opacity: 0.85, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span className="badge badge-neutral">AI VERIFICATION</span>
-                <span className="badge badge-warning">PLANNED (PILOT B)</span>
+                <span className="badge badge-neutral">NETWORK SECURITY</span>
+                <span className="badge badge-neutral">PLANNED LAB</span>
               </div>
-              <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>
-                Lab 102: LLM Hallucination Detection & Fact Auditing
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
+                Lab 102: Network Packet Inspection & TLS Handshake
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                Identify fabricated citations, statistical biases, and evaluate verification test suites against synthetic language model outputs.
+                Trace cryptographic key exchange, cipher suites, and certificate validation in simulated browser connections.
               </p>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Runtime: <strong>Python-WASM Sandbox</strong> • Level: <strong>Intermediate</strong>
+                Runtime: <strong>Interactive Protocol Visualizer</strong> • Score: <strong>100 pts</strong>
               </div>
             </div>
 
@@ -630,14 +509,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               disabled
               style={{ width: '100%', height: '40px', cursor: 'not-allowed' }}
             >
-              Scheduled for Phase 2
+              Curriculum Roadmap
             </button>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 7: LEARNING PATHS                                    */}
+      {/* 7. CONCISE SECTION FOR LEARNING PATHS                        */}
       {/* ============================================================ */}
       <section id="paths" style={{ backgroundColor: 'var(--bg-surface)', padding: '60px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
@@ -653,10 +532,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               <div key={path.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                    <span className="badge badge-neutral">{path.domain.toUpperCase()}</span>
+                    <span className="badge badge-neutral">
+                      {path.domain === 'coding' ? 'CODING' : path.domain.toUpperCase()}
+                    </span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{path.course_ids.length} Courses</span>
                   </div>
-                  <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>{path.title}</h3>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '8px' }}>{path.title}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '16px' }}>
                     {path.description}
                   </p>
@@ -665,10 +546,10 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 <button
                   type="button"
                   className="btn-outline"
-                  onClick={() => onNavigate('catalogue')}
+                  onClick={() => onNavigate('catalogue', path.domain)}
                   style={{ height: '36px', fontSize: '0.8rem', width: '100%' }}
                 >
-                  Explore Path Curriculum
+                  Explore Path Courses
                 </button>
               </div>
             ))}
@@ -677,38 +558,38 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 8 & 9: FOR SCHOOLS, COLLEGES & EDUCATORS             */}
+      {/* 8. FOR SCHOOLS, TEACHERS & CLASSROOMS                        */}
       {/* ============================================================ */}
       <section id="schools" style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
-              Institutional Architecture
+              Classroom & Institutional Management
             </div>
             <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '16px' }}>
-              Engineered for Modern Schools & Universities
+              Engineered for Real Schools & Colleges
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6, marginBottom: '24px' }}>
-              Geniusphere empowers educators with database-enforced multi-tenant isolation, cryptographically secure join codes, assignment rubrics, and automated gradebooks.
+              Geniusphere empowers educators to organize cohorts, distribute structured labs, review authentic submissions, and track class mastery with robust multi-tenant isolation.
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '28px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px' }} />
-                <span style={{ fontSize: '0.95rem' }}>
-                  <strong>Instant Classroom Provisioning:</strong> Teachers generate high-entropy 8-character join codes with automatic expiration.
+                <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.9rem' }}>
+                  <strong>Cryptographic Join Codes:</strong> Unpredictable random alphanumeric codes with 14-day expiration and teacher revocation.
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px' }} />
-                <span style={{ fontSize: '0.95rem' }}>
-                  <strong>Authoritative Gradebook:</strong> Real scores and SHA-256 submission hashes with zero client-side tampering.
+                <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.9rem' }}>
+                  <strong>Gradebook Review:</strong> Real teacher dashboard displaying submission timestamps, attempt counts, and server scores.
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-                <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px' }} />
-                <span style={{ fontSize: '0.95rem' }}>
-                  <strong>DPDP Act 2023 Compliance:</strong> Verifiable parental consent verification for school-age minor learners.
+                <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <span style={{ fontSize: '0.9rem' }}>
+                  <strong>Parental Oversight:</strong> Verifiable consent mechanisms and minor data protections.
                 </span>
               </div>
             </div>
@@ -717,272 +598,322 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               <button
                 type="button"
                 className="btn-primary"
-                onClick={() => onNavigate('gradebook')}
-                style={{ height: '44px', padding: '0 20px' }}
+                onClick={() => onNavigate('classrooms')}
+                style={{ height: '44px', padding: '0 20px', fontSize: '0.9rem' }}
               >
-                <GraduationCap size={18} />
-                <span>Open Educator Gradebook</span>
+                <School size={16} />
+                <span>Classroom Manager</span>
               </button>
-
               <button
                 type="button"
-                className="btn-secondary"
+                className="btn-outline"
                 onClick={() => onNavigate('schoolkit')}
-                style={{ height: '44px', padding: '0 16px' }}
+                style={{ height: '44px', padding: '0 20px', fontSize: '0.9rem' }}
               >
-                <School size={18} />
-                <span>Access SchoolKit Guide</span>
+                <span>Educator SchoolKit</span>
               </button>
             </div>
           </div>
 
-          {/* Institutional Preview Card */}
-          <div className="card-elevated" style={{ backgroundColor: 'var(--bg-surface)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <h3 style={{ fontSize: '1.15rem' }}>Delhi Public Technology School</h3>
-              <span className="badge badge-success">ACTIVE TENANT</span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', textAlign: 'center', marginBottom: '20px' }}>
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>1</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Classroom</div>
+          <div className="card" style={{ padding: '24px', backgroundColor: 'var(--bg-surface)' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '14px' }}>The Institutional Flow</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>1.</span>
+                <span>Institution establishes workspace and adds verified teachers.</span>
               </div>
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>SEC2026A</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Active Code</div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>2.</span>
+                <span>Teacher provisions course section and generates secure join code.</span>
               </div>
-              <div style={{ padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800 }}>100%</div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>RLS Isolated</div>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>3.</span>
+                <span>Students enroll using join code; single-membership rules prevent duplicates.</span>
               </div>
-            </div>
-
-            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '14px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Assigned Lab: <strong>SQL Parameterization & Injection Defense</strong> • Enrolled: Aarav Patel (Minor, Verified Guardian Consent)
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>4.</span>
+                <span>Teacher assigns labs and reviews student progress in live gradebook.</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 10 & 11: TOOLS, RESUME BUILDER & ACHIEVEMENTS        */}
+      {/* 9. STUDENT TOOLS: RESUME BUILDER & SCHOOLKIT                 */}
       {/* ============================================================ */}
-      <section style={{ backgroundColor: 'var(--bg-surface)', padding: '60px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      <section style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Student Tools & Proof of Mastery</h2>
+            <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Practical Learning Tools</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto' }}>
-              Turn practical learning into verifiable career and academic assets.
+              Functional utilities to help learners prove their skills and help institutions deploy coursework.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-            <div className="card">
-              <Award size={28} color="var(--brand-primary)" style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Technical Resume Builder</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                Automatically link verified lab scores, project descriptions, and skill tags into an ATS-friendly one-page resume.
-              </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+            {/* Tool 1: Resume Builder */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  <Award size={22} color="var(--brand-primary)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Technical Resume Builder</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Build structured technical resumes with auto-discovered verified achievements from completed labs (including integrity hashes) and export clean JSON or print-ready versions.
+                </p>
+              </div>
+
               <button
                 type="button"
                 className="btn-primary"
                 onClick={() => onNavigate('resume-builder')}
-                style={{ width: '100%', height: '38px', fontSize: '0.85rem' }}
+                style={{ height: '40px', fontSize: '0.875rem' }}
               >
-                Launch Resume Builder
+                Open Resume Builder
               </button>
             </div>
 
-            <div className="card">
-              <School size={28} color="var(--success)" style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>SchoolKit for Educators</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                Curriculum cross-walks, classroom join code protocols, and DPDP 2023 compliance guidelines for school administrators.
-              </p>
+            {/* Tool 2: SchoolKit */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  <School size={22} color="var(--success)" />
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Educator SchoolKit</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                  Operational guidelines, safeguarding protocols, and a downloadable JSON Educator Pack covering multi-tenant architecture and join-code policies.
+                </p>
+              </div>
+
               <button
                 type="button"
-                className="btn-secondary"
+                className="btn-outline"
                 onClick={() => onNavigate('schoolkit')}
-                style={{ width: '100%', height: '38px', fontSize: '0.85rem' }}
+                style={{ height: '40px', fontSize: '0.875rem' }}
               >
                 Open SchoolKit Guide
               </button>
             </div>
-
-            <div className="card">
-              <ShieldCheck size={28} color="#8B5CF6" style={{ marginBottom: '12px' }} />
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>Parent & Guardian Oversight</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                DPDP Act 2023 verifiable consent dashboard, academic inspection, and statutory data export package generation.
-              </p>
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => onNavigate('parent')}
-                style={{ width: '100%', height: '38px', fontSize: '0.85rem' }}
-              >
-                Guardian Portal
-              </button>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* SECTION 12: ABOUT & MISSION                                  */}
+      {/* 10. COMPACT FAQ, FINAL CTA & CLEAN FOOTER                    */}
       {/* ============================================================ */}
-      <section id="about" style={{ padding: '64px 24px', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '14px' }}>
-          Democratizing Modern Skills with Integrity
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '24px' }}>
-          Conventional academic curricula frequently lag behind modern computing architectures, cybersecurity threat landscapes, and real-world financial realities. Geniusphere was established to make high-caliber, practical education accessible to every student—independent of institutional affiliation or financial background.
-        </p>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-          We hold ourselves to a strict engineering standard: <strong>zero fake metrics, zero fabricated testimonials, and authoritative assessment verification</strong>. Real education demands real software.
-        </p>
-      </section>
-
-      {/* ============================================================ */}
-      {/* SECTION 13: FAQ                                              */}
-      {/* ============================================================ */}
-      <section style={{ backgroundColor: 'var(--bg-surface)', padding: '60px 24px', borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, textAlign: 'center', marginBottom: '32px' }}>
-            Frequently Asked Questions
-          </h2>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {[
-              {
-                q: 'Who can use Geniusphere?',
-                a: 'Geniusphere serves independent learners, school and college students, educators, and institutional administrators across India and globally.',
-              },
-              {
-                q: 'How do interactive labs work?',
-                a: 'Labs execute within isolated client sandboxes (such as SQLite-WASM) for instantaneous experimentation, while formal submissions are evaluated against server-authoritative test assertions with cryptographic SHA-256 integrity hashes.',
-              },
-              {
-                q: 'How do classroom join codes work?',
-                a: 'Teachers generate cryptographically secure, high-entropy 8-character join codes with a defined expiration date. Students enter the code to verify classroom enrollment.',
-              },
-              {
-                q: 'How is student privacy and child safety safeguarded?',
-                a: 'In compliance with the Indian DPDP Act 2023, accounts for minors require verifiable parental consent. Parents have real-time access to inspect progress, export records, or withdraw consent at any time.',
-              },
-              {
-                q: 'Are courses self-paced?',
-                a: 'Yes. Independent learners can progress through lessons and interactive challenges at their own pace, with progress synchronized securely to our database.',
-              },
-            ].map((faq, idx) => (
-              <div
-                key={idx}
-                style={{
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '8px',
-                  backgroundColor: 'var(--bg-app)',
-                  overflow: 'hidden',
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleFaq(idx)}
-                  style={{
-                    width: '100%',
-                    padding: '16px 20px',
-                    textAlign: 'left',
-                    fontWeight: 600,
-                    fontSize: '0.95rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    minHeight: 'auto',
-                  }}
-                >
-                  <span>{faq.q}</span>
-                  <HelpCircle size={18} color="var(--brand-primary)" />
-                </button>
-                {activeFaq === idx && (
-                  <div style={{ padding: '0 20px 16px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                    {faq.a}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* SECTION 14: FINAL CALL TO ACTION & FOOTER                    */}
-      {/* ============================================================ */}
-      <section style={{ padding: '64px 24px', textAlign: 'center', backgroundColor: 'var(--brand-surface)' }}>
-        <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '12px' }}>
-            Ready to Build Real Skills?
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.5, marginBottom: '24px' }}>
-            Explore our curriculum, defeat your first SQL injection challenge in Lab 101, and assemble your verified technical resume.
+      <section style={{ padding: '64px 24px', maxWidth: '840px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Frequently Asked Questions</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+            Straightforward answers about our courses, interactive labs, and platform functionality.
           </p>
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => onNavigate('catalogue')}
-            style={{ height: '48px', padding: '0 28px', fontSize: '1rem' }}
-          >
-            Start Learning Today
-          </button>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {[
+            {
+              q: 'Who can use Geniusphere?',
+              a: 'Geniusphere is built for independent students, teachers, schools, and colleges seeking practical education in technology, coding, finance, and career skills.',
+            },
+            {
+              q: 'Are the courses self-paced?',
+              a: 'Yes. Independent learners can explore courses and complete lessons at their own speed. In classroom mode, teachers can configure assignment schedules and deadlines.',
+            },
+            {
+              q: 'How do the interactive labs work?',
+              a: 'Labs run in lightweight WebAssembly environments (like SQLite-WASM) in your browser for instant experimentation, while evaluations are sent to the server for authoritative grading.',
+            },
+            {
+              q: 'How do classroom join codes work?',
+              a: 'Teachers generate 8-character cryptographic join codes with a 14-day validity period. Students enter the code to enroll directly into their school cohort.',
+            },
+            {
+              q: 'How are achievements verified?',
+              a: 'Achievements are earned only by passing defined automated test assertions. Completed lab submissions generate cryptographic hashes that prevent client-side score forgery.',
+            },
+            {
+              q: 'How is learner privacy protected?',
+              a: 'Minor accounts require parental consent verification, and personal progress is protected through strict database authorization boundaries.',
+            },
+          ].map((faq, idx) => (
+            <div key={idx} className="card" style={{ padding: '16px 20px', cursor: 'pointer' }} onClick={() => toggleFaq(idx)}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+                <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{faq.q}</span>
+                <ChevronRight size={18} color="var(--text-muted)" style={{ transform: activeFaq === idx ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
+              </div>
+              {activeFaq === idx && (
+                <div style={{ marginTop: '12px', fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.6, borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' }}>
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
-      <footer style={{ backgroundColor: '#18181B', color: '#A1A1AA', padding: '48px 24px 32px', fontSize: '0.85rem' }}>
-        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '32px', marginBottom: '36px' }}>
+      {/* Final Call to Action */}
+      <section style={{ backgroundColor: 'var(--brand-primary)', color: '#FFF', padding: '60px 24px', textAlign: 'center' }}>
+        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#FFF', marginBottom: '14px' }}>
+            Ready to explore real learning?
+          </h2>
+          <p style={{ fontSize: '1.05rem', color: '#E0E7FF', lineHeight: 1.6, marginBottom: '28px' }}>
+            Discover our complete 27-subject curriculum or test your skills in the interactive SQL defense lab.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => onNavigate('catalogue')}
+              style={{
+                backgroundColor: '#FFF',
+                color: 'var(--brand-primary)',
+                fontWeight: 700,
+                padding: '0 24px',
+                height: '46px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+              }}
+            >
+              Browse Course Catalogue
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('lab')}
+              style={{
+                backgroundColor: 'transparent',
+                color: '#FFF',
+                fontWeight: 600,
+                padding: '0 22px',
+                height: '46px',
+                borderRadius: '8px',
+                border: '2px solid #FFF',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+              }}
+            >
+              Launch Lab 101
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Clean Footer */}
+      <footer style={{ backgroundColor: '#18181B', color: '#D4D4D8', padding: '48px 24px 32px' }}>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '36px', marginBottom: '36px' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#FFF', fontWeight: 800, fontSize: '1.1rem', marginBottom: '12px' }}>
-              <ShieldCheck size={20} color="#38BDF8" /> GENIUSPHERE
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '6px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF' }}>
+                <Shield size={16} />
+              </div>
+              <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#FFF' }}>GENIUSPHERE</span>
             </div>
-            <p style={{ lineHeight: 1.5, fontSize: '0.8rem' }}>
-              Practical technology, cybersecurity, finance, and career skills platform for independent learners and educational institutions.
+            <p style={{ fontSize: '0.85rem', color: '#A1A1AA', lineHeight: 1.5 }}>
+              Accessible, hands-on learning across technology, coding, finance, and professional development.
             </p>
           </div>
 
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '0.9rem', marginBottom: '12px' }}>Curriculum (4 Categories)</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'technology'); }} style={{ color: '#A1A1AA' }}>Technology (8 Subjects)</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'coding'); }} style={{ color: '#A1A1AA' }}>Coding & Programming (7 Subjects)</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'finance'); }} style={{ color: '#A1A1AA' }}>Finance (7 Subjects)</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('catalogue', 'professional'); }} style={{ color: '#A1A1AA' }}>Professional Skills (5 Subjects)</a>
+            <h4 style={{ color: '#FFF', fontSize: '0.9rem', fontWeight: 700, marginBottom: '14px' }}>Curriculum Areas</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+              <button
+                type="button"
+                onClick={() => onNavigate('catalogue', 'technology')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Technology (8 Subjects)
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('catalogue', 'coding')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Coding & Programming (7 Subjects)
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('catalogue', 'finance')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Finance (7 Subjects)
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('catalogue', 'professional')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Professional Skills (5 Subjects)
+              </button>
             </div>
           </div>
 
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '0.9rem', marginBottom: '12px' }}>Workspaces</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('lab'); }} style={{ color: '#A1A1AA' }}>Interactive SQL Lab</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('gradebook'); }} style={{ color: '#A1A1AA' }}>Teacher Gradebook</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('resume-builder'); }} style={{ color: '#A1A1AA' }}>Resume Builder</a>
-              <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('schoolkit'); }} style={{ color: '#A1A1AA' }}>SchoolKit Guide</a>
+            <h4 style={{ color: '#FFF', fontSize: '0.9rem', fontWeight: 700, marginBottom: '14px' }}>Workspaces & Tools</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+              <button
+                type="button"
+                onClick={() => onNavigate('lab')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Interactive SQL Lab
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('classrooms')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Classroom Manager
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('resume-builder')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Resume Builder
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('schoolkit')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                SchoolKit Guide
+              </button>
             </div>
           </div>
 
           <div>
-            <h4 style={{ color: '#FFF', fontSize: '0.9rem', marginBottom: '12px' }}>Compliance & Trust</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <span style={{ color: '#A1A1AA' }}>DPDP Act 2023 Registered</span>
-              <span style={{ color: '#A1A1AA' }}>CERT-In Standard Adherence</span>
-              <span style={{ color: '#A1A1AA' }}>Zero Mock Data Policy</span>
-              <span style={{ color: '#A1A1AA' }}>AWS Mumbai (ap-south-1)</span>
+            <h4 style={{ color: '#FFF', fontSize: '0.9rem', fontWeight: 700, marginBottom: '14px' }}>Platform Navigation</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+              <button
+                type="button"
+                onClick={() => onNavigate('home')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Home Overview
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('catalogue')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Course Catalogue
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('paths')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                Learning Paths
+              </button>
             </div>
           </div>
         </div>
 
-        <div style={{ maxWidth: '1240px', margin: '0 auto', paddingTop: '20px', borderTop: '1px solid #27272A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', fontSize: '0.78rem' }}>
-          <div>© 2026 Geniusphere. All rights reserved. Production-grade autonomous engineering.</div>
-          <div>Authorized Local Development Baseline • Zero Live Website Modification</div>
+        <div style={{ maxWidth: '1240px', margin: '0 auto', paddingTop: '20px', borderTop: '1px solid #27272A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', fontSize: '0.78rem', color: '#71717A' }}>
+          <span>© 2026 Geniusphere. Evidence-Backed Education.</span>
+          <span>Four Authorized Learning Areas • 27 Substantive Curricular Subjects</span>
         </div>
       </footer>
     </div>
