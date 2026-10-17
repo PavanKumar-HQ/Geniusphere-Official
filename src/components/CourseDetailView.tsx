@@ -22,6 +22,7 @@ interface CourseDetailViewProps {
   currentUserId: string;
   onBack: () => void;
   onStartLesson: (courseId: string, lessonId: string) => void;
+  onLaunchLab?: (labSlug: string) => void;
 }
 
 export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
@@ -30,6 +31,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   currentUserId,
   onBack,
   onStartLesson,
+  onLaunchLab,
 }) => {
   const course = db.getCourseBySlug(courseSlug);
   const [enrollment, setEnrollment] = useState<CourseEnrollment | null>(
@@ -37,6 +39,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   );
   const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
   const [simLabOpen, setSimLabOpen] = useState(false);
+  const matchingLab = course ? db.getLabDefinitions().find((l) => l.course_slug === courseSlug || l.category === course.domain) : null;
 
   if (!course) {
     return (
@@ -158,17 +161,37 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                 height: '44px',
                 padding: '0 18px',
                 fontSize: '0.9rem',
-                border: '1px solid #00F0FF',
-                color: '#00F0FF',
-                boxShadow: '0 0 12px rgba(0, 240, 255, 0.2)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
               }}
             >
               <Cpu size={18} />
-              <span>Launch Simulation Lab (10 SVG Sims)</span>
+              <span>SVG Visualizer Lab</span>
             </button>
+
+            {matchingLab && onLaunchLab && (
+              <button
+                type="button"
+                className="btn-outline"
+                onClick={() => onLaunchLab(matchingLab.slug)}
+                style={{
+                  height: '44px',
+                  padding: '0 18px',
+                  fontSize: '0.9rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: 'var(--brand-surface)',
+                  color: 'var(--brand-primary)',
+                  borderColor: 'var(--brand-border)',
+                }}
+                title="Launch associated interactive concept lab"
+              >
+                <Terminal size={18} />
+                <span>Launch Interactive Lab</span>
+              </button>
+            )}
 
             {course.is_published ? (
               <button

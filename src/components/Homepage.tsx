@@ -582,21 +582,6 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           </div>
         </div>
       </section>
-
-      {/* ============================================================ */}
-      {/* 7. COMPACT FOOTER (Section 2 Order)                           */}
-      {/* ============================================================ */}
-      <footer style={{ backgroundColor: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', padding: '36px 24px' }}>
-        <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: 'var(--text-meta)', color: 'var(--text-muted)' }}>
-          <div>© 2026 Geniusphere. Evidence-Backed Educational Platform.</div>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <button type="button" onClick={() => onNavigate('catalogue')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Courses</button>
-            <button type="button" onClick={() => onNavigate('labs')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Labs</button>
-            <button type="button" onClick={() => onNavigate('resources')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Resources</button>
-            <button type="button" onClick={() => onNavigate('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>About</button>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

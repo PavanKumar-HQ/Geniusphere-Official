@@ -155,6 +155,101 @@ export const App: React.FC = () => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-canvas)' }}>
       {/* ============================================================ */}
+      {/* 0. LIVE DEMONSTRATION & MULTI-TENANT EVALUATION BAR          */}
+      {/* ============================================================ */}
+      <div
+        style={{
+          backgroundColor: '#0F172A',
+          color: '#F8FAFC',
+          fontSize: '0.78rem',
+          padding: '6px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '10px',
+          borderBottom: '1px solid #1E293B',
+          zIndex: 101,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ backgroundColor: '#2563EB', color: '#FFFFFF', fontWeight: 800, padding: '2px 7px', borderRadius: '4px', fontSize: '0.68rem', letterSpacing: '0.04em' }}>
+            DEMO READY
+          </span>
+          <span style={{ color: '#94A3B8' }}>Active Persona:</span>
+          <span style={{ fontWeight: 700, color: '#38BDF8' }}>
+            {currentUser.name.split(' (')[0]} ({currentUser.role.toUpperCase()})
+          </span>
+        </div>
+
+        {/* Quick Role & View Switchers for Live Demonstration */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+          <span style={{ color: '#94A3B8', marginRight: '2px' }}>Quick Demo:</span>
+          <button
+            type="button"
+            onClick={() => handleNavigate('home')}
+            style={{ background: currentView === 'home' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            Home
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNavigate('catalogue')}
+            style={{ background: currentView === 'catalogue' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            Courses (27)
+          </button>
+          <button
+            type="button"
+            onClick={() => handleNavigate('labs')}
+            style={{ background: currentView === 'labs' || currentView === 'lab-workspace' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            12 Interactive Labs
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentUserId('user-student-1');
+              handleNavigate('student-dashboard');
+            }}
+            style={{ background: currentView === 'student-dashboard' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            Student Workspace
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentUserId('user-teacher-1');
+              handleNavigate('gradebook');
+            }}
+            style={{ background: currentView === 'gradebook' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            Teacher Gradebook
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentUserId('user-guardian-1');
+              handleNavigate('parent');
+            }}
+            style={{ background: currentView === 'parent' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            Parent Oversight
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setCurrentUserId('user-admin-1');
+              handleNavigate('platform-workspace');
+            }}
+            style={{ background: currentView === 'platform-workspace' ? '#334155' : 'transparent', border: '1px solid #475569', color: '#F1F5F9', borderRadius: '4px', padding: '2px 8px', fontSize: '0.74rem', cursor: 'pointer' }}
+          >
+            Platform Admin
+          </button>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
       {/* 1. TOP PRIMARY NAVIGATION BAR                                */}
       {/* ============================================================ */}
       <header
@@ -717,6 +812,10 @@ export const App: React.FC = () => {
             currentUserId={currentUserId}
             onBack={() => handleNavigate('catalogue')}
             onStartLesson={handleStartLesson}
+            onLaunchLab={(slug) => {
+              setSelectedLabSlug(slug);
+              setCurrentView('lab-workspace');
+            }}
           />
         )}
 
@@ -728,7 +827,11 @@ export const App: React.FC = () => {
             initialLessonId={selectedLessonId}
             currentUserId={currentUserId}
             onBackToCourse={() => handleNavigate('course-detail', selectedCourseSlug)}
-            onLaunchLab={() => {}}
+            onLaunchLab={() => {
+              const matchedLab = db.getLabDefinitions().find((l) => l.course_slug === selectedCourseSlug || l.category === selectedDomain) || db.getLabDefinitions()[0];
+              setSelectedLabSlug(matchedLab.slug);
+              setCurrentView('lab-workspace');
+            }}
           />
         )}
 
@@ -823,23 +926,119 @@ export const App: React.FC = () => {
       />
 
       {/* ============================================================ */}
-      {/* 5. GLOBAL FOOTER                                             */}
+      {/* 5. SINGLE CANONICAL GLOBAL FOOTER                            */}
       {/* ============================================================ */}
-      <footer
-        style={{
-          borderTop: '1px solid var(--border-subtle)',
-          backgroundColor: 'var(--bg-surface)',
-          padding: '20px 24px',
-          textAlign: 'center',
-          fontSize: '0.85rem',
-          color: 'var(--text-muted)',
-        }}
-      >
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-          <span>© {new Date().getFullYear()} Geniusphere. Evidence-Backed Education Platform.</span>
-          <span>Four Core Disciplines • 27 Approved Curricular Courses • Zero Fabricated Data</span>
-        </div>
-      </footer>
+      {currentView !== 'lab-workspace' && currentView !== 'lesson-player' && (
+        <footer
+          style={{
+            borderTop: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-surface)',
+            padding: '48px 24px 28px',
+            color: 'var(--text-secondary)',
+            fontSize: 'var(--text-body)',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '1240px',
+              margin: '0 auto',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '36px',
+              paddingBottom: '36px',
+              borderBottom: '1px solid var(--border-subtle)',
+            }}
+          >
+            {/* Column 1: Brand & Identity */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '6px', backgroundColor: 'var(--brand-primary)', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ShieldCheck size={18} />
+                </div>
+                <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+                  GENIUSPHERE
+                </span>
+                <span className="badge badge-brand" style={{ fontSize: '0.65rem', padding: '1px 6px' }}>PILOT</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+                Evidence-backed, interactive education platform bridging academic curricula with hands-on capability across technology, programming, and finance.
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600 }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--success)', display: 'inline-block' }} />
+                <span>Zero Fabricated Data • DPDP Act 2023 Compliant</span>
+              </div>
+            </div>
+
+            {/* Column 2: Approved Disciplines */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <strong style={{ fontSize: '0.88rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Curriculum Areas
+              </strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+                <button type="button" onClick={() => { setSelectedDomain('technology'); handleNavigate('catalogue'); }} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Technology & Architecture</button>
+                <button type="button" onClick={() => { setSelectedDomain('coding'); handleNavigate('catalogue'); }} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Coding & Programming</button>
+                <button type="button" onClick={() => { setSelectedDomain('finance'); handleNavigate('catalogue'); }} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Finance & Capital Markets</button>
+                <button type="button" onClick={() => { setSelectedDomain('professional'); handleNavigate('catalogue'); }} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Professional Development</button>
+              </div>
+            </div>
+
+            {/* Column 3: Interactive Workspaces */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <strong style={{ fontSize: '0.88rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Interactive Engines
+              </strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+                <button type="button" onClick={() => handleNavigate('labs')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>12 Approved Interactive Labs</button>
+                <button type="button" onClick={() => handleNavigate('resources')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Curriculum Video Lessons</button>
+                <button type="button" onClick={() => handleNavigate('leaderboard')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Verified Mastery Leaderboard</button>
+                <button type="button" onClick={() => handleNavigate('student-dashboard')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Student Progress Workspace</button>
+                <button type="button" onClick={() => handleNavigate('gradebook')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Educator Gradebook & Classes</button>
+              </div>
+            </div>
+
+            {/* Column 4: Institution & Trust */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <strong style={{ fontSize: '0.88rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Trust & Verification
+              </strong>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
+                <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>About Geniusphere Mission</button>
+                <span style={{ color: 'var(--text-muted)' }}>PES University CIE Incubated</span>
+                <span style={{ color: 'var(--text-muted)' }}>Bengaluru, Karnataka, India</span>
+                <span style={{ color: 'var(--text-muted)' }}>contact@geniusphere.tech</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div
+            style={{
+              maxWidth: '1240px',
+              margin: '20px auto 0',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px',
+              fontSize: 'var(--text-meta)',
+              color: 'var(--text-muted)',
+            }}
+          >
+            <div>
+              © {new Date().getFullYear()} Geniusphere. Evidence-Backed Education Platform. All rights reserved.
+            </div>
+            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '2px 8px' }}>Active Pilot Deployment</span>
+              <span>•</span>
+              <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Privacy Policy</button>
+              <span>•</span>
+              <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
+              <span>•</span>
+              <span>27 Curricular Courses • 12 Interactive Labs</span>
+            </div>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };
