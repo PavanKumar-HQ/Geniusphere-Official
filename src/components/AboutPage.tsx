@@ -8,6 +8,8 @@ import {
   MapPin,
   Sparkles,
   ArrowRight,
+  Award,
+  ExternalLink,
 } from 'lucide-react';
 
 interface AboutPageProps {
@@ -141,6 +143,100 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6 }}>
               Educational administrators overseeing cohort delivery and parents exercising statutory oversight under India's Digital Personal Data Protection (DPDP) Act 2023.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Verified Lead Instructor & Academic Credentials */}
+      <div className="card-elevated" style={{ padding: '36px', borderTop: '4px solid var(--brand-primary)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+          <span className="badge badge-brand">EDUCATIONAL LEADERSHIP</span>
+        </div>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '8px' }}>
+          Founder & Lead Instructor
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6, maxWidth: '800px', marginBottom: '24px' }}>
+          <strong>Pavan Kumar S.</strong> leads curriculum architecture and pedagogical design at Geniusphere, integrating practical systems engineering, computational logic, and defensive web security into foundational student learning.
+        </p>
+
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '14px', color: 'var(--text-primary)' }}>
+          Verified Professional Credentials & Certifications
+        </h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+          <div className="card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--brand-primary)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <Award size={18} />
+              <span>Google Cybersecurity</span>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Specialized credential covering network security, threat mitigation, Linux, and defensive architecture.
+            </p>
+            <a
+              href="https://edu.exceedlms.com/student/award/3mq9jHMoY6dL29HR6pAQ8oP1"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: '0.78rem', color: 'var(--brand-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
+            >
+              <span>View Verified Credential</span>
+              <ExternalLink size={12} />
+            </a>
+          </div>
+
+          <div className="card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--brand-accent)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <Award size={18} />
+              <span>Google AI for Higher Ed</span>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Curriculum pedagogy and AI model evaluation frameworks for higher education students.
+            </p>
+            <a
+              href="https://edu.exceedlms.com/student/award/ubojGQu5fkSgUFgLLKXxB8jx"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: '0.78rem', color: 'var(--brand-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
+            >
+              <span>View Verified Credential</span>
+              <ExternalLink size={12} />
+            </a>
+          </div>
+
+          <div className="card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#D97706', fontWeight: 700, fontSize: '0.95rem' }}>
+              <Award size={18} />
+              <span>Google AI for K-12</span>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Foundational AI concepts, algorithmic safety, and age-appropriate technology instruction.
+            </p>
+            <a
+              href="https://edu.exceedlms.com/student/award/kXm7XPWrWrkXqUHk3TexNuqW"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: '0.78rem', color: 'var(--brand-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
+            >
+              <span>View Verified Credential</span>
+              <ExternalLink size={12} />
+            </a>
+          </div>
+
+          <div className="card" style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--brand-primary)', fontWeight: 700, fontSize: '0.95rem' }}>
+              <Award size={18} />
+              <span>Generative AI for Educators</span>
+            </div>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Responsible AI usage, generative model limitations, and instructional workflows.
+            </p>
+            <a
+              href="https://edu.exceedlms.com/student/award/2sEp7nY7HihXS4r3QL5nFGFu"
+              target="_blank"
+              rel="noreferrer"
+              style={{ fontSize: '0.78rem', color: 'var(--brand-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}
+            >
+              <span>View Verified Credential</span>
+              <ExternalLink size={12} />
+            </a>
           </div>
         </div>
       </div>
