@@ -584,3 +584,153 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* ============================================================ */
+/* Reference Showcase Sections: Fun Zone, Events, Ambassador, Social */
+/* ============================================================ */
+
+/* Fun Zone & Interactive Cards */
+.cosmic-section {
+  background: radial-gradient(circle at 50% 20%, #0d1629 0%, #040812 100%);
+  color: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cosmic-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 40px 70px, rgba(0, 240, 255, 0.8) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 90px 40px, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(168, 85, 247, 0.8) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 230px 190px, #ffffff 100%, transparent),
+    radial-gradient(1px 1px at 310px 80px, #00f0ff 100%, transparent);
+  background-size: 350px 350px;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.funzone-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.funzone-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+.funzone-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+/* Event & Hackathon Cards */
+.event-card {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.25s ease;
+  min-width: 280px;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* Ambassador Program Banner */
+.ambassador-container {
+  background: linear-gradient(135deg, rgba(13, 22, 41, 0.95) 0%, rgba(10, 15, 30, 0.98) 100%);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(0, 240, 255, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.ambassador-container::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.perk-tile {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.perk-tile:hover {
+  background: rgba(0, 240, 255, 0.06);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* Social Channel Tiles */
+.social-tile {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-width: 110px;
+}
+
+.social-tile:hover {
+  transform: translateY(-4px);
+  background: rgba(0, 240, 255, 0.1);
+  border-color: #00F0FF;
+  box-shadow: 0 8px 20px rgba(0, 240, 255, 0.2);
+}
