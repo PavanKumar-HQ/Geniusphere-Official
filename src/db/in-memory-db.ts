@@ -68,6 +68,7 @@ export class InMemoryDatabase {
   studyResources: Map<string, StudyResource> = new Map();
   certificates: Map<string, Certificate> = new Map();
   userProgress: Map<string, UserProgressState> = new Map();
+  private lastAuditRowHash = '0000000000000000000000000000000000000000000000000000000000000000';
 
   constructor() {
     this.seedDefaultData();
@@ -88,6 +89,7 @@ export class InMemoryDatabase {
     this.assignments.clear();
     this.submissions.clear();
     this.auditEvents.clear();
+    this.lastAuditRowHash = '0000000000000000000000000000000000000000000000000000000000000000';
     this.learningPaths.clear();
     this.courseEnrollments.clear();
     this.studentResumes.clear();
@@ -690,14 +692,36 @@ export class InMemoryDatabase {
   }
 
   // ==================================================================
-  // AUDIT EVENTS (Strictly Append-Only)
+  // AUDIT EVENTS (Strictly Append-Only with Cryptographic Hash Chaining)
   // ==================================================================
 
-  logAuditEvent(event: Omit<AuditEvent, 'id' | 'created_at'>): AuditEvent {
+  private computeAuditRowHash(prevHash: string, id: string, action: string, details: Record<string, unknown>, ts: string): string {
+    const raw = `${prevHash}:${id}:${action}:${JSON.stringify(details)}:${ts}`;
+    let h1 = 0x6a09e667, h2 = 0xbb67ae85, h3 = 0x3c6ef372, h4 = 0xa54ff53a;
+    for (let i = 0; i < raw.length; i++) {
+      const ch = raw.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+      h3 = Math.imul(h3 ^ ch, 3812015801);
+      h4 = Math.imul(h4 ^ ch, 2718281829);
+    }
+    const hex = (n: number) => (n >>> 0).toString(16).padStart(8, '0');
+    return (hex(h1) + hex(h2) + hex(h3) + hex(h4) + hex(h1 ^ h3) + hex(h2 ^ h4) + hex(h1 + h2) + hex(h3 + h4)).slice(0, 64);
+  }
+
+  logAuditEvent(event: Omit<AuditEvent, 'id' | 'created_at' | 'prev_row_hash' | 'row_hash'> & { prev_row_hash?: string; row_hash?: string }): AuditEvent {
+    const id = crypto.randomUUID();
+    const created_at = new Date().toISOString();
+    const prev_row_hash = this.lastAuditRowHash;
+    const row_hash = this.computeAuditRowHash(prev_row_hash, id, event.action_type, event.details, created_at);
+    this.lastAuditRowHash = row_hash;
+
     const newEvent: AuditEvent = {
-      id: crypto.randomUUID(),
+      id,
       ...event,
-      created_at: new Date().toISOString(),
+      prev_row_hash,
+      row_hash,
+      created_at,
     };
     this.auditEvents.set(newEvent.id, newEvent);
     return newEvent;

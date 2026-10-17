@@ -325,6 +325,8 @@ export interface AuditEvent {
   ip_address: string | null;
   user_agent: string | null;
   details: Record<string, unknown>;
+  prev_row_hash?: string;
+  row_hash?: string;
   created_at: string;
 }
 

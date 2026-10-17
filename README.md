@@ -57,6 +57,7 @@ geniuspheregpt/
 ├── .github/                # CI/CD workflows and automated checks
 ├── docs/                   # Architectural documentation & registers
 │   ├── architecture/       # Architecture Decision Records (ADRs)
+│   ├── GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md # Master forensic audit, competitive dossier, and 10-module blueprint
 │   ├── DECISIONS.md        # Architectural decisions register
 │   ├── MASTER_COVERAGE_REGISTER.md # Comprehensive test & requirement traceability
 │   ├── PRODUCT_SPEC.md     # Product specification & user personas

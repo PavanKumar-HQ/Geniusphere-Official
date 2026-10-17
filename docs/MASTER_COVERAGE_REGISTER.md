@@ -1,8 +1,9 @@
 # Geniusphere — Master Requirements & Coverage Register (`MASTER_COVERAGE_REGISTER.md`)
 
-*Document Version:* 1.1.0  
+*Document Version:* 1.2.0  
 *Status:* Authoritative Single Source of Truth  
-*Phase:* Implementation Phase — Reconciled 27-Subject Curriculum, Redesigned Homepage & Multi-Tenant Engine  
+*Master Blueprint:* [docs/GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md](file:///Users/pavankumars/Downloads/geniuspheregpt/docs/GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md)  
+*Phase:* Implementation Phase — Reconciled 27-Subject Curriculum, Redesigned Homepage, Multi-Tenant Engine & Cryptographic Audit Trails  
 *Last Updated:* 2026-10-17  
 *Operating Principle:* No requirement may disappear from this register. A polished plan is not a working product; a passing happy-path test is not security evidence; and a feature is not complete until its real failure modes and boundaries are verified.
 

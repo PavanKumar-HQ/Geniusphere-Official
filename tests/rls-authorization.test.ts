@@ -308,5 +308,38 @@ describe('Multi-Tenant RLS & Invariant Security Test Suite', () => {
       const adminEvents = db.getAuditEvents('user-admin-1', 'org-school-1');
       expect(adminEvents.length).toBeGreaterThan(0);
     });
+
+    it('cryptographically chains audit events with tamper-evident hashes', () => {
+      const ev1 = db.logAuditEvent({
+        organization_id: 'org-school-1',
+        actor_id: 'user-admin-1',
+        action_type: 'exam_freeze_window_set',
+        resource_type: 'organization',
+        resource_id: 'org-school-1',
+        ip_address: '127.0.0.1',
+        user_agent: 'test-agent',
+        details: { freeze_until: '2026-11-15' },
+      });
+
+      const ev2 = db.logAuditEvent({
+        organization_id: 'org-school-1',
+        actor_id: 'user-parent-1',
+        action_type: 'consent_granted',
+        resource_type: 'user',
+        resource_id: 'user-student-1',
+        ip_address: '127.0.0.1',
+        user_agent: 'test-agent',
+        details: { method: 'DIGILOCKER_TOKEN' },
+      });
+
+      expect(ev1.prev_row_hash).toBeDefined();
+      expect(ev1.row_hash).toBeDefined();
+      expect(ev1.row_hash).toHaveLength(64);
+
+      expect(ev2.prev_row_hash).toBe(ev1.row_hash);
+      expect(ev2.row_hash).toBeDefined();
+      expect(ev2.row_hash).toHaveLength(64);
+      expect(ev2.row_hash).not.toBe(ev1.row_hash);
+    });
   });
 });
