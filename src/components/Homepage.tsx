@@ -1,5 +1,6 @@
 import React from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
+import { FunZoneSection } from './FunZoneSection';
 import {
   Shield,
   ArrowRight,
@@ -369,6 +370,15 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           ))}
         </div>
       </section>
+
+      {/* ============================================================ */}
+      {/* 3B. INTERACTIVE FUN ZONE (Auto-Scrolling & Uniform Cards)    */}
+      {/* ============================================================ */}
+      <FunZoneSection
+        db={db}
+        currentUserId={currentUserId}
+        onNavigate={onNavigate}
+      />
 
       {/* ============================================================ */}
       {/* 4. HOW LEARNING WORKS (3 Visual Steps - Section 2 Order)     */}
