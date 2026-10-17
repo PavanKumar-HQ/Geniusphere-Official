@@ -1,13 +1,69 @@
 /* ====================================================================
-   Geniusphere Design System — Unified Light-First Visual Language
-   Coherent, accessible, restrained palette strictly matching Section 1
+   Official Brand Fonts (Brand Guidelines 2026 Pages 18-20)
+   - Mikado Black (Schools & Primary Display)
+   - Causten Round (Brand Heading & Body Copy for websites)
    ==================================================================== */
 
+@font-face {
+  font-family: 'Mikado';
+  src: url('/fonts/Mikado-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Causten Round';
+  src: url('/fonts/CaustenRound-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Causten Round';
+  src: url('/fonts/CaustenRound-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Causten Round';
+  src: url('/fonts/CaustenRound-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Causten Round';
+  src: url('/fonts/CaustenRound-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Causten Round';
+  src: url('/fonts/CaustenRound-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  /* Typography Scale */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Typography Scale — Official Brand Typography */
+  --font-display-brand: 'Mikado', 'Causten Round', 'Outfit', sans-serif;
+  --font-sans: 'Causten Round', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-heading: 'Causten Round', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+
+  /* Official Brand Colors (Brand Guidelines 2026 Page 13) */
+  --brand-qurious-sky: #30B2E7;          /* CMYK: C67 M10 Y0 K0 - Primary Sky Action */
+  --brand-joy-of-quest: #FDB913;         /* CMYK: C0 M30 Y100 K0 - Warm Quest Yellow */
+  --brand-always-questioning: #75B543;   /* CMYK: C60 M7 Y100 K0 - Fresh Active Green */
+  --bg-canvas-warm: #FBF9F5;             /* Warm Cream Guideline Canvas */
 
   /* Typography Sizing Tokens (Section 1.3) */
   --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
