@@ -22,6 +22,8 @@
 | **ADR-10** | Regional Edge Function Pinning & Residency Evidence | **Updated & Refined** | Supabase Edge Functions run globally by default unless pinned to **`ap-south-1` (Mumbai)**. Response headers (`x-sb-edge-region`) are diagnostic runtime evidence; provider contracts, dashboard configs, and DPAs establish formal residency. |
 | **ADR-11** | SQL Execution Sandbox, Host Watchdog & Memory Limits | **Updated & Refined** | Primary-source research proved `deno.land/x/sqlite` lacks C authorizers. Enforce safety via AST validation, single `SELECT` enforcement, 300-char cap, positional parameter binding (`?`), and a host process watchdog timer calling `worker.terminate()` after 1.0s. Worker memory limits marked unverified. |
 | **ADR-12** | Logging Architecture & Budget Spending Ceiling | **Updated & Refined** | Native Supabase log retention is 7 days. Official Log Drains add-on costs $60/month. For Phase 1 Pilot, capture structured 180-day audit events directly inside the Mumbai PostgreSQL database (`audit_events` table) at $0 extra cost. External S3 Log Drains are **disabled** to honor the $35/mo cap. In-DB logs disclosed as not superuser tamper-proof. |
+| **ADR-13** | Reconciliation of GS-ENG-2026-V1 Baseline & Deferred Technologies | Confirmed | PostgreSQL 16 sole transactional database; MongoDB and Redis deferred; CodeMirror 6 over Monaco; accessible SVG visualizers over heavy WebGL. |
+| **ADR-14** | Framework Selection: Retaining React 19 + Vite 6 SPA with Edge PWA | **Confirmed & Selected** | Evaluated against Next.js, Astro, SvelteKit, and React Router v7. React 19 + Vite 6 delivers sub-second builds (890ms), 198KB gzipped bundle, seamless browser Wasm (sql.js) and CodeMirror 6 integration, zero server runtime maintenance, and avoids catastrophic rewrite of 60+ green tests and 12 working lab engines. |
 
 ---
 
@@ -84,4 +86,19 @@
   8. **Targeted Offline Sync:** Built incrementally using IndexedDB mutation queues and Service Worker CacheStorage (`LOCAL_UNSYNCED` -> `SYNCING` -> `SERVER_CONFIRMED`). Acknowledges iOS Safari lacks Background Sync.
   9. **Zero Mascots / Heavy WebGL:** All visual animations are accessible SVG components respecting `prefers-reduced-motion` and loading in <10ms.
 - **Status:** **Approved & Reconciled**.
+
+---
+
+### ADR-14: Framework Selection — Retaining React 19 + Vite 6 Single Page Architecture with Edge PWA
+
+- **Context:** A formal architecture review was conducted evaluating the current architecture against Next.js 15 (App Router), Astro 5, SvelteKit 2, and React Router v7 across 10 critical product dimensions (Public SEO, Multi-tenant Workspaces, RLS Authorization, Database Integration, Interactive SVGs, CodeMirror Editor, In-Browser Wasm Execution, Offline Sync, Modest Mobile Performance, and Migration Burden).
+- **Decision:**
+  1. **Primary Selection:** Retain **React 19.0.0** with **Vite 6.2.0**.
+  2. **Empirical Evidence:** Vite delivers sub-second production builds (890 ms) and a lean ~198 KB gzipped JavaScript payload. Vitest executes all 60 tests in 180 ms.
+  3. **Wasm & DOM Compatibility:** CodeMirror 6, `sql.js` (WebAssembly SQLite), Web Workers, and stateful SVG simulation engines require synchronous DOM access and `SharedArrayBuffer` support. Next.js Server Components introduce severe serialization hurdles, hydration errors, and unnecessary server runtime maintenance costs.
+  4. **Avoid Catastrophic Rewrite:** Migrating to SvelteKit would require discarding 100,000+ lines of working, tested React code and 12 simulation engines. Migrating to Astro would force artificial client-only islands (`client:only="react"`) around every workspace without delivering SSR benefits for authenticated users.
+  5. **No Secondary Frontend Framework:** A secondary framework will NOT be introduced for marketing pages. Public landing page SEO is handled via semantic HTML, OpenGraph meta tags, and structured JSON-LD schemas.
+- **Supporting Documentation:** Full evaluation scorecard and benchmarks recorded in [`REPORTS/2026-10-17_FRAMEWORK_SELECTION_AND_ARCHITECTURE_REVIEW.md`](../REPORTS/2026-10-17_FRAMEWORK_SELECTION_AND_ARCHITECTURE_REVIEW.md).
+- **Status:** **Approved & Confirmed**.
+
 
