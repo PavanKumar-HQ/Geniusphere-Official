@@ -70,13 +70,110 @@ export interface ClassroomEnrollment {
   enrolled_at: string;
 }
 
+export type DomainType = 'technology' | 'cybersecurity' | 'finance' | 'professional';
+export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+
+export interface QuizQuestion {
+  id: string;
+  prompt: string;
+  options: string[];
+  correct_option_index: number;
+  explanation: string;
+}
+
+export interface LessonQuiz {
+  id: string;
+  questions: QuizQuestion[];
+}
+
+export interface LessonActivity {
+  id: string;
+  title: string;
+  instructions: string;
+  starter_code?: string;
+}
+
+export interface Lesson {
+  id: string;
+  module_id: string;
+  title: string;
+  order_index: number;
+  summary: string;
+  content_markdown: string;
+  duration_minutes: number;
+  activities?: LessonActivity[];
+  quiz?: LessonQuiz;
+  linked_lab_id?: string;
+}
+
+export interface CourseModule {
+  id: string;
+  course_id: string;
+  title: string;
+  order_index: number;
+  lessons: Lesson[];
+}
+
 export interface Course {
   id: string;
   title: string;
   slug: string;
-  domain: 'technology' | 'cybersecurity' | 'finance' | 'professional';
+  domain: DomainType;
+  subject: string;
+  level: DifficultyLevel;
+  summary: string;
+  description: string;
+  learning_objectives: string[];
+  prerequisites: string[];
+  duration_hours: number;
   is_published: boolean;
+  learning_path_id?: string;
+  modules: CourseModule[];
   created_at: string;
+}
+
+export interface CourseEnrollment {
+  id: string;
+  user_id: string;
+  course_id: string;
+  enrolled_at: string;
+  completed_lessons: string[];
+  progress_percent: number;
+  completed_at?: string;
+}
+
+export interface LearningPath {
+  id: string;
+  title: string;
+  slug: string;
+  domain: DomainType;
+  description: string;
+  target_audience: string;
+  prerequisites: string[];
+  course_ids: string[];
+}
+
+export interface ResumeProject {
+  id: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  github_url?: string;
+  live_url?: string;
+}
+
+export interface StudentResume {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  headline: string;
+  summary: string;
+  skills: string[];
+  education: { school: string; degree: string; graduation_year: string }[];
+  projects: ResumeProject[];
+  verified_achievements: string[];
+  updated_at: string;
 }
 
 export interface Lab {

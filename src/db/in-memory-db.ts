@@ -16,7 +16,11 @@ import {
   Submission,
   AuditEvent,
   OrgRole,
+  LearningPath,
+  CourseEnrollment,
+  StudentResume,
 } from '../types';
+import { ALL_COURSES, LEARNING_PATHS } from '../data/curriculum';
 
 export class DatabaseError extends Error {
   code: string;
@@ -42,6 +46,9 @@ export class InMemoryDatabase {
   assignments: Map<string, Assignment> = new Map();
   submissions: Map<string, Submission> = new Map();
   auditEvents: Map<string, AuditEvent> = new Map();
+  learningPaths: Map<string, LearningPath> = new Map();
+  courseEnrollments: Map<string, CourseEnrollment> = new Map();
+  studentResumes: Map<string, StudentResume> = new Map();
 
   constructor() {
     this.seedDefaultData();
@@ -62,6 +69,9 @@ export class InMemoryDatabase {
     this.assignments.clear();
     this.submissions.clear();
     this.auditEvents.clear();
+    this.learningPaths.clear();
+    this.courseEnrollments.clear();
+    this.studentResumes.clear();
 
     // 1. Organizations
     const org1: Organization = {
@@ -215,20 +225,17 @@ export class InMemoryDatabase {
       enrolled_at: new Date().toISOString(),
     });
 
-    // 7. Course & Lab
-    const course1: Course = {
-      id: 'course-web-sec',
-      title: 'Web Application Defense Fundamentals',
-      slug: 'web-defense-101',
-      domain: 'cybersecurity',
-      is_published: true,
-      created_at: new Date().toISOString(),
-    };
-    this.courses.set(course1.id, course1);
+    // 7. Complete Curriculum & Learning Paths
+    for (const c of ALL_COURSES) {
+      this.courses.set(c.id, c);
+    }
+    for (const p of LEARNING_PATHS) {
+      this.learningPaths.set(p.id, p);
+    }
 
     const lab1: Lab = {
       id: 'lab-sec-101',
-      course_id: course1.id,
+      course_id: 'course-web-sec',
       title: 'SQL Parameterization & Injection Defense',
       lab_type: 'sqlite_wasm',
       challenge_spec: {
@@ -254,6 +261,44 @@ export class InMemoryDatabase {
       created_at: new Date().toISOString(),
     };
     this.assignments.set(assign1.id, assign1);
+
+    // 9. Seed Student Course Enrollment
+    this.courseEnrollments.set('user-student-1:course-web-sec', {
+      id: 'enr-course-web-sec',
+      user_id: student1.id,
+      course_id: 'course-web-sec',
+      enrolled_at: new Date(Date.now() - 3 * 86400 * 1000).toISOString(),
+      completed_lessons: ['les-sec-101'],
+      progress_percent: 50,
+    });
+
+    // 10. Seed Student Resume & Portfolio
+    this.studentResumes.set(student1.id, {
+      id: 'resume-student-1',
+      user_id: student1.id,
+      full_name: student1.full_name,
+      email: student1.email,
+      headline: 'Aspiring Cybersecurity & Systems Engineer',
+      summary: 'High school technologist focusing on practical application security, defensive parameterization, and systems problem-solving. Active contributor to Cyber Defense Cohort 2026.',
+      skills: ['SQL Defense', 'Prepared Statements', 'Python', 'Web Security', 'Git', 'Linux'],
+      education: [
+        {
+          school: 'Delhi Public Technology School',
+          degree: 'Senior Secondary (Science & Computing)',
+          graduation_year: '2027',
+        },
+      ],
+      projects: [
+        {
+          id: 'proj-1',
+          title: 'SQL Injection Defense Lab Implementation',
+          description: 'Engineered safe positional parameter query templates to defend against auth bypass attacks with automated test verification.',
+          technologies: ['SQLite-WASM', 'TypeScript', 'Prepared Statements'],
+        },
+      ],
+      verified_achievements: ['Lab 101: SQL Parameterization & Injection Defense (Score 100/100)'],
+      updated_at: new Date().toISOString(),
+    });
   }
 
   // ==================================================================
@@ -653,5 +698,317 @@ export class InMemoryDatabase {
 
   deleteAuditEvent(): void {
     throw new DatabaseError('RLS Policy Denied: Audit events cannot be deleted', '42501', 403);
+  }
+
+  // ==================================================================
+  // COURSE CATALOGUE & LESSON PROGRESSION
+  // ==================================================================
+
+  getCourses(filters?: {
+    domain?: string;
+    level?: string;
+    publishedOnly?: boolean;
+    search?: string;
+  }): Course[] {
+    let result = Array.from(this.courses.values());
+
+    if (filters?.publishedOnly) {
+      result = result.filter((c) => c.is_published);
+    }
+    if (filters?.domain && filters.domain !== 'all') {
+      result = result.filter((c) => c.domain === filters.domain);
+    }
+    if (filters?.level && filters.level !== 'all') {
+      result = result.filter((c) => c.level === filters.level);
+    }
+    if (filters?.search && filters.search.trim()) {
+      const q = filters.search.toLowerCase().trim();
+      result = result.filter(
+        (c) =>
+          c.title.toLowerCase().includes(q) ||
+          c.summary.toLowerCase().includes(q) ||
+          c.subject.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }
+
+  getCourseById(id: string): Course | null {
+    return this.courses.get(id) || null;
+  }
+
+  getCourseBySlug(slug: string): Course | null {
+    for (const c of this.courses.values()) {
+      if (c.slug === slug) return c;
+    }
+    return null;
+  }
+
+  getLearningPaths(): LearningPath[] {
+    return Array.from(this.learningPaths.values());
+  }
+
+  getLearningPathById(id: string): LearningPath | null {
+    return this.learningPaths.get(id) || null;
+  }
+
+  enrollInCourse(userId: string, courseId: string): CourseEnrollment {
+    const user = this.users.get(userId);
+    if (!user) throw new DatabaseError('User not found', '23503', 404);
+    const course = this.courses.get(courseId);
+    if (!course) throw new DatabaseError('Course not found', '23503', 404);
+
+    const enrollmentKey = `${userId}:${courseId}`;
+    const existing = this.courseEnrollments.get(enrollmentKey);
+    if (existing) return existing;
+
+    const enrollment: CourseEnrollment = {
+      id: crypto.randomUUID(),
+      user_id: userId,
+      course_id: courseId,
+      enrolled_at: new Date().toISOString(),
+      completed_lessons: [],
+      progress_percent: 0,
+    };
+    this.courseEnrollments.set(enrollmentKey, enrollment);
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: userId,
+      action_type: 'COURSE_ENROLLED',
+      resource_type: 'course',
+      resource_id: courseId,
+      ip_address: null,
+      user_agent: null,
+      details: { course_title: course.title },
+    });
+
+    return enrollment;
+  }
+
+  getCourseEnrollment(userId: string, courseId: string): CourseEnrollment | null {
+    return this.courseEnrollments.get(`${userId}:${courseId}`) || null;
+  }
+
+  getUserEnrollments(userId: string): CourseEnrollment[] {
+    const list: CourseEnrollment[] = [];
+    for (const enr of this.courseEnrollments.values()) {
+      if (enr.user_id === userId) {
+        list.push(enr);
+      }
+    }
+    return list;
+  }
+
+  completeLesson(userId: string, courseId: string, lessonId: string): CourseEnrollment {
+    const course = this.courses.get(courseId);
+    if (!course) throw new DatabaseError('Course not found', '23503', 404);
+
+    const enrollmentKey = `${userId}:${courseId}`;
+    let enrollment = this.courseEnrollments.get(enrollmentKey);
+    if (!enrollment) {
+      enrollment = this.enrollInCourse(userId, courseId);
+    }
+
+    if (!enrollment.completed_lessons.includes(lessonId)) {
+      enrollment.completed_lessons.push(lessonId);
+
+      // Calculate total lessons in course
+      let totalLessons = 0;
+      for (const m of course.modules) {
+        totalLessons += m.lessons.length;
+      }
+      enrollment.progress_percent =
+        totalLessons > 0
+          ? Math.round((enrollment.completed_lessons.length / totalLessons) * 100)
+          : 100;
+
+      if (enrollment.progress_percent >= 100 && !enrollment.completed_at) {
+        enrollment.completed_at = new Date().toISOString();
+      }
+
+      this.courseEnrollments.set(enrollmentKey, enrollment);
+
+      this.logAuditEvent({
+        organization_id: null,
+        actor_id: userId,
+        action_type: 'LESSON_COMPLETED',
+        resource_type: 'lesson',
+        resource_id: lessonId,
+        ip_address: null,
+        user_agent: null,
+        details: { course_id: courseId, progress: enrollment.progress_percent },
+      });
+    }
+
+    return enrollment;
+  }
+
+  // ==================================================================
+  // STUDENT RESUME & PORTFOLIO BUILDER
+  // ==================================================================
+
+  getResume(userId: string): StudentResume | null {
+    return this.studentResumes.get(userId) || null;
+  }
+
+  saveResume(userId: string, resumeData: Partial<StudentResume>): StudentResume {
+    const existing = this.studentResumes.get(userId);
+    const user = this.users.get(userId);
+    if (!user) throw new DatabaseError('User not found', '23503', 404);
+
+    const updated: StudentResume = {
+      id: existing?.id || crypto.randomUUID(),
+      user_id: userId,
+      full_name: resumeData.full_name || user.full_name,
+      email: resumeData.email || user.email,
+      headline: resumeData.headline || existing?.headline || '',
+      summary: resumeData.summary || existing?.summary || '',
+      skills: resumeData.skills || existing?.skills || [],
+      education: resumeData.education || existing?.education || [],
+      projects: resumeData.projects || existing?.projects || [],
+      verified_achievements: resumeData.verified_achievements || existing?.verified_achievements || [],
+      updated_at: new Date().toISOString(),
+    };
+
+    this.studentResumes.set(userId, updated);
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: userId,
+      action_type: 'RESUME_UPDATED',
+      resource_type: 'resume',
+      resource_id: updated.id,
+      ip_address: null,
+      user_agent: null,
+      details: { skills_count: updated.skills.length, projects_count: updated.projects.length },
+    });
+
+    return updated;
+  }
+
+  // ==================================================================
+  // CRYPTOGRAPHIC CLASSROOM JOIN CODES & LIFECYCLE
+  // ==================================================================
+
+  generateClassroomJoinCode(
+    teacherUserId: string,
+    classroomId: string,
+    expirationDays: number = 14
+  ): Classroom {
+    const cls = this.classrooms.get(classroomId);
+    if (!cls) throw new DatabaseError('Classroom not found', '23503', 404);
+
+    if (cls.teacher_id !== teacherUserId && !this.isPlatformSuperadmin(teacherUserId)) {
+      throw new DatabaseError('Permission denied: only classroom teacher can regenerate join codes', '42501', 403);
+    }
+
+    // Generate high-entropy 8-character cryptographic alphanumeric string
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const randomBytes = new Uint8Array(8);
+    crypto.getRandomValues(randomBytes);
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+      code += chars[randomBytes[i] % chars.length];
+    }
+
+    const expiresAt = new Date(Date.now() + expirationDays * 86400 * 1000).toISOString();
+    const updatedClass: Classroom = {
+      ...cls,
+      join_code: code,
+      join_code_expires_at: expiresAt,
+      is_active: true,
+    };
+    this.classrooms.set(classroomId, updatedClass);
+
+    this.logAuditEvent({
+      organization_id: cls.organization_id,
+      actor_id: teacherUserId,
+      action_type: 'CLASSROOM_CODE_REGENERATED',
+      resource_type: 'classroom',
+      resource_id: classroomId,
+      ip_address: null,
+      user_agent: null,
+      details: { expires_at: expiresAt },
+    });
+
+    return updatedClass;
+  }
+
+  revokeClassroomJoinCode(teacherUserId: string, classroomId: string): Classroom {
+    const cls = this.classrooms.get(classroomId);
+    if (!cls) throw new DatabaseError('Classroom not found', '23503', 404);
+
+    if (cls.teacher_id !== teacherUserId && !this.isPlatformSuperadmin(teacherUserId)) {
+      throw new DatabaseError('Permission denied: only classroom teacher can revoke join codes', '42501', 403);
+    }
+
+    // Expire immediately
+    const updatedClass: Classroom = {
+      ...cls,
+      join_code_expires_at: new Date(Date.now() - 1000).toISOString(),
+    };
+    this.classrooms.set(classroomId, updatedClass);
+
+    this.logAuditEvent({
+      organization_id: cls.organization_id,
+      actor_id: teacherUserId,
+      action_type: 'CLASSROOM_CODE_REVOKED',
+      resource_type: 'classroom',
+      resource_id: classroomId,
+      ip_address: null,
+      user_agent: null,
+      details: { revoked_at: new Date().toISOString() },
+    });
+
+    return updatedClass;
+  }
+
+  validateAndJoinClassroom(studentUserId: string, joinCode: string): { classroom: Classroom; enrollment: ClassroomEnrollment } {
+    const cleanCode = joinCode.trim().toUpperCase();
+    if (!cleanCode) throw new DatabaseError('Join code cannot be empty', '23514', 400);
+
+    let targetClass: Classroom | null = null;
+    for (const c of this.classrooms.values()) {
+      if (c.join_code === cleanCode) {
+        targetClass = c;
+        break;
+      }
+    }
+
+    if (!targetClass || !targetClass.is_active) {
+      throw new DatabaseError('Invalid or inactive classroom join code', '23503', 404);
+    }
+
+    if (new Date(targetClass.join_code_expires_at).getTime() < Date.now()) {
+      throw new DatabaseError('This classroom join code has expired', '23514', 400);
+    }
+
+    for (const enr of this.enrollments.values()) {
+      if (enr.classroom_id === targetClass.id && enr.student_id === studentUserId) {
+        throw new DatabaseError('Student is already enrolled in this classroom', '23505', 400);
+      }
+    }
+
+    const newEnr: ClassroomEnrollment = {
+      id: crypto.randomUUID(),
+      classroom_id: targetClass.id,
+      student_id: studentUserId,
+      enrolled_at: new Date().toISOString(),
+    };
+    this.enrollments.set(newEnr.id, newEnr);
+
+    this.logAuditEvent({
+      organization_id: targetClass.organization_id,
+      actor_id: studentUserId,
+      action_type: 'CLASSROOM_ENROLLED',
+      resource_type: 'classroom',
+      resource_id: targetClass.id,
+      ip_address: null,
+      user_agent: null,
+      details: { join_code: cleanCode },
+    });
+
+    return { classroom: targetClass, enrollment: newEnr };
   }
 }

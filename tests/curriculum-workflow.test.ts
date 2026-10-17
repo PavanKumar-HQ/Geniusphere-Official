@@ -1,0 +1,251 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { InMemoryDatabase } from '../src/db/in-memory-db';
+import { ALL_COURSES, LEARNING_PATHS } from '../src/data/curriculum';
+
+describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflow', () => {
+  let db: InMemoryDatabase;
+
+  beforeEach(() => {
+    db = new InMemoryDatabase();
+  });
+
+  describe('Curriculum Inventory & Discovery', () => {
+    it('contains all 26 curricular subjects across Technology, Cybersecurity, Finance, and Professional Skills', () => {
+      expect(ALL_COURSES.length).toBe(26);
+
+      const techCourses = ALL_COURSES.filter((c) => c.domain === 'technology');
+      const cyberCourses = ALL_COURSES.filter((c) => c.domain === 'cybersecurity');
+      const financeCourses = ALL_COURSES.filter((c) => c.domain === 'finance');
+      const profCourses = ALL_COURSES.filter((c) => c.domain === 'professional');
+
+      // Combined Tech (10) & Cyber (2) = 12 curricular subjects
+      expect(techCourses.length).toBe(10);
+      expect(cyberCourses.length).toBe(2);
+      expect(techCourses.length + cyberCourses.length).toBe(12);
+
+      expect(financeCourses.length).toBe(7);
+      expect(profCourses.length).toBe(7);
+
+      // Verify all 5 Learning Paths
+      expect(LEARNING_PATHS.length).toBe(5);
+      const pathSlugs = LEARNING_PATHS.map((p) => p.slug);
+      expect(pathSlugs).toContain('ai-responsible-technology');
+      expect(pathSlugs).toContain('programming-foundations');
+      expect(pathSlugs).toContain('cybersecurity-defense');
+      expect(pathSlugs).toContain('finance-literacy');
+      expect(pathSlugs).toContain('professional-identity');
+    });
+
+    it('filters courses by domain, level, and published status through database querying', () => {
+      const all = db.getCourses();
+      expect(all.length).toBe(26);
+
+      const published = db.getCourses({ publishedOnly: true });
+      expect(published.length).toBeGreaterThanOrEqual(4);
+      published.forEach((c) => expect(c.is_published).toBe(true));
+
+      const financeOnly = db.getCourses({ domain: 'finance' });
+      expect(financeOnly.length).toBe(7);
+      financeOnly.forEach((c) => expect(c.domain).toBe('finance'));
+
+      const searchResult = db.getCourses({ search: 'SQL' });
+      expect(searchResult.length).toBeGreaterThanOrEqual(1);
+      expect(
+        searchResult.some(
+          (c) => c.title.toLowerCase().includes('sql') || c.summary.toLowerCase().includes('sql')
+        )
+      ).toBe(true);
+    });
+
+    it('retrieves detailed course structure, learning objectives, and quiz definitions', () => {
+      const course = db.getCourseBySlug('web-defense-101');
+      expect(course).toBeDefined();
+      expect(course!.id).toBe('course-web-sec');
+      expect(course!.learning_objectives.length).toBeGreaterThan(0);
+      expect(course!.prerequisites.length).toBeGreaterThan(0);
+      expect(course!.modules.length).toBeGreaterThan(0);
+
+      const firstModule = course!.modules[0];
+      expect(firstModule.lessons.length).toBeGreaterThan(0);
+
+      const firstLesson = firstModule.lessons[0];
+      expect(firstLesson.quiz).toBeDefined();
+      expect(firstLesson.quiz!.questions.length).toBe(2);
+      expect(firstLesson.quiz!.questions[0].options.length).toBe(4);
+      expect(firstLesson.quiz!.questions[0].correct_option_index).toBe(1);
+    });
+  });
+
+  describe('Student Enrollment & Lesson Progress', () => {
+    it('allows a student to enroll in a course and tracks progress authentically', () => {
+      const studentId = 'user-student-org2';
+      const courseId = 'course-web-sec';
+
+      // Initially not enrolled
+      let enrollment = db.getCourseEnrollment(studentId, courseId);
+      expect(enrollment).toBeNull();
+
+      // Enroll student
+      enrollment = db.enrollInCourse(studentId, courseId);
+      expect(enrollment.user_id).toBe(studentId);
+      expect(enrollment.course_id).toBe(courseId);
+      expect(enrollment.progress_percent).toBe(0);
+      expect(enrollment.completed_lessons).toEqual([]);
+
+      // Complete first lesson (course has 2 lessons)
+      const updated1 = db.completeLesson(studentId, courseId, 'les-sec-101');
+      expect(updated1.completed_lessons).toContain('les-sec-101');
+      expect(updated1.progress_percent).toBe(50);
+
+      // Re-completing the same lesson does not duplicate or artificially inflate progress
+      const duplicateComplete = db.completeLesson(studentId, courseId, 'les-sec-101');
+      expect(duplicateComplete.completed_lessons.length).toBe(1);
+      expect(duplicateComplete.progress_percent).toBe(50);
+
+      // Complete second lesson -> 100% progress
+      const updated2 = db.completeLesson(studentId, courseId, 'les-sec-102');
+      expect(updated2.completed_lessons).toContain('les-sec-102');
+      expect(updated2.progress_percent).toBe(100);
+      expect(updated2.completed_at).toBeDefined();
+    });
+  });
+
+  describe('Classroom Join Code Generation, Revocation, and Membership', () => {
+    it('generates high-entropy cryptographic join codes with valid expiration', () => {
+      const teacherId = 'user-teacher-1';
+      const classroomId = 'class-sec-101';
+
+      const code1 = db.generateClassroomJoinCode(teacherId, classroomId);
+      expect(code1.join_code).toMatch(/^[A-Z0-9]{8}$/);
+      expect(code1.id).toBe(classroomId);
+      expect(code1.is_active).toBe(true);
+
+      const expDate = new Date(code1.join_code_expires_at).getTime();
+      const now = Date.now();
+      // Should expire approximately 14 days in the future (within 10 seconds tolerance)
+      const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
+      expect(expDate - now).toBeGreaterThan(fourteenDaysMs - 10000);
+      expect(expDate - now).toBeLessThanOrEqual(fourteenDaysMs + 1000);
+
+      // Generating a second code should produce a different unpredictable random code
+      const code2 = db.generateClassroomJoinCode(teacherId, classroomId);
+      expect(code2.join_code).not.toBe(code1.join_code);
+    });
+
+    it('allows students to join with valid codes and prevents duplicate or unauthorized memberships', () => {
+      const studentId = 'user-student-org2';
+      const classroomId = 'class-sec-101';
+
+      // Generate a fresh active code (teacherId, classroomId)
+      const updatedClass = db.generateClassroomJoinCode('user-teacher-1', classroomId);
+
+      // Join classroom (studentUserId, joinCode)
+      const joinResult = db.validateAndJoinClassroom(studentId, updatedClass.join_code);
+      expect(joinResult.classroom.id).toBe(classroomId);
+      expect(joinResult.enrollment.student_id).toBe(studentId);
+
+      // Verify membership exists in DB
+      expect(db.isEnrolledStudent(studentId, classroomId)).toBe(true);
+
+      // Attempting to join the same classroom again throws a duplicate error
+      expect(() => {
+        db.validateAndJoinClassroom(studentId, updatedClass.join_code);
+      }).toThrow('already enrolled');
+    });
+
+    it('rejects invalid, revoked, or expired join codes', () => {
+      const studentId = 'user-student-org2';
+      const classroomId = 'class-sec-101';
+
+      // 1. Invalid code
+      expect(() => {
+        db.validateAndJoinClassroom(studentId, 'NONEXIST');
+      }).toThrow('Invalid or inactive');
+
+      // 2. Revoked code (teacherUserId, classroomId)
+      const codeObj = db.generateClassroomJoinCode('user-teacher-1', classroomId);
+      db.revokeClassroomJoinCode('user-teacher-1', classroomId);
+
+      expect(() => {
+        db.validateAndJoinClassroom(studentId, codeObj.join_code);
+      }).toThrow('expired');
+
+      // 3. Expired code simulation
+      const expiredObj = db.generateClassroomJoinCode('user-teacher-1', classroomId);
+      expiredObj.join_code_expires_at = new Date(Date.now() - 1000).toISOString(); // set in the past
+      db.classrooms.set(classroomId, expiredObj);
+
+      expect(() => {
+        db.validateAndJoinClassroom(studentId, expiredObj.join_code);
+      }).toThrow('expired');
+    });
+  });
+
+  describe('Student Resume Builder & Verified Credentials', () => {
+    it('retrieves and updates student resumes with persistent skills and projects', () => {
+      const studentId = 'user-student-1';
+      const resume = db.getResume(studentId);
+      expect(resume).toBeDefined();
+      expect(resume!.full_name).toBe('Aarav Patel');
+      expect(resume!.skills.length).toBeGreaterThan(0);
+
+      // Update resume with new skills and project
+      db.saveResume(studentId, {
+        full_name: 'Aarav Patel',
+        email: 'student1@dpts.edu',
+        headline: 'Aspiring Cybersecurity Defender & Full Stack Engineer',
+        summary: 'Focused on secure SQL templating and web application security architectures.',
+        skills: ['SQL Parameterization', 'TypeScript', 'Prepared Statements', 'PostgreSQL RLS'],
+        projects: [
+          {
+            id: 'proj-def-1',
+            title: 'Database Parameterization Defense Engine',
+            description: 'Implemented positional placeholders preventing SQL injection with 5 authoritative server assertions.',
+            technologies: ['SQLite-WASM', 'TypeScript'],
+          },
+        ],
+      });
+
+      const updated = db.getResume(studentId);
+      expect(updated!.skills).toContain('PostgreSQL RLS');
+      expect(updated!.projects.length).toBe(1);
+      expect(updated!.projects[0].title).toBe('Database Parameterization Defense Engine');
+    });
+
+    it('reflects verified database credentials from authoritative lab submissions', () => {
+      const studentId = 'user-student-1';
+
+      // Create and grade an authentic submission
+      const draft = db.createSubmissionDraft(
+        studentId,
+        'assign-lab-101',
+        `SELECT id, username, role FROM challenge_users WHERE username = ? AND account_status = 'active';`
+      );
+
+      const graded = db.persistServerGrade(
+        draft.id,
+        true,
+        100,
+        'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        {
+          all_passed: true,
+          score: 100,
+          execution_region: 'ap-south-1',
+          details: 'All 5 server-authoritative defense assertions passed',
+        }
+      );
+
+      expect(graded.passed).toBe(true);
+      expect(graded.score).toBe(100);
+      expect(graded.submission_hash).toBeDefined();
+      expect(graded.submission_hash.length).toBe(64);
+
+      // Submissions in DB for student1 are confirmed
+      const studentSubmissions = Array.from(db.submissions.values()).filter(
+        (s) => s.student_id === studentId && s.passed
+      );
+      expect(studentSubmissions.length).toBeGreaterThan(0);
+      expect(studentSubmissions[0].score).toBe(100);
+    });
+  });
+});

@@ -1,10 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from './db/in-memory-db';
+import { Homepage } from './components/Homepage';
+import { CourseCatalogue } from './components/CourseCatalogue';
+import { CourseDetailView } from './components/CourseDetailView';
+import { LessonPlayer } from './components/LessonPlayer';
 import { SqlLab } from './components/SqlLab';
 import { TeacherGradebook } from './components/TeacherGradebook';
 import { ClassroomManager } from './components/ClassroomManager';
 import { ParentPortal } from './components/ParentPortal';
 import { AuditLogViewer } from './components/AuditLogViewer';
+import { ResumeBuilder } from './components/ResumeBuilder';
+import { SchoolKit } from './components/SchoolKit';
 import {
   ShieldCheck,
   Terminal,
@@ -13,7 +19,23 @@ import {
   FileText,
   User,
   GraduationCap,
+  Home,
+  Briefcase,
+  School,
 } from 'lucide-react';
+
+export type AppView =
+  | 'home'
+  | 'catalogue'
+  | 'course-detail'
+  | 'lesson-player'
+  | 'lab'
+  | 'gradebook'
+  | 'classrooms'
+  | 'parent'
+  | 'audit'
+  | 'resume-builder'
+  | 'schoolkit';
 
 export const App: React.FC = () => {
   // Single persistent in-memory database instance for genuine state progression
@@ -28,7 +50,11 @@ export const App: React.FC = () => {
   ];
 
   const [currentUserId, setCurrentUserId] = useState<string>('user-student-1');
-  const [activeTab, setActiveTab] = useState<'lab' | 'gradebook' | 'classrooms' | 'parent' | 'audit'>('lab');
+  const [currentView, setCurrentView] = useState<AppView>('home');
+  const [selectedCourseSlug, setSelectedCourseSlug] = useState<string>('web-application-defense-fundamentals');
+  const [selectedCourseId, setSelectedCourseId] = useState<string>('course-web-defense-101');
+  const [selectedLessonId, setSelectedLessonId] = useState<string>('lesson-wd-101');
+  const [selectedDomain, setSelectedDomain] = useState<string>('all');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const currentUser = users.find((u) => u.id === currentUserId)!;
@@ -41,8 +67,51 @@ export const App: React.FC = () => {
     setRefreshTrigger((prev) => prev + 1);
   };
 
+  const handleNavigate = (view: string, slug?: string) => {
+    if (view === 'course-detail' && slug) {
+      setSelectedCourseSlug(slug);
+      setCurrentView('course-detail');
+    } else if (view === 'catalogue') {
+      if (slug) {
+        setSelectedDomain(slug);
+      } else {
+        setSelectedDomain('all');
+      }
+      setCurrentView('catalogue');
+    } else if (
+      view === 'home' ||
+      view === 'lab' ||
+      view === 'classrooms' ||
+      view === 'gradebook' ||
+      view === 'parent' ||
+      view === 'audit' ||
+      view === 'resume-builder' ||
+      view === 'schoolkit'
+    ) {
+      setCurrentView(view as AppView);
+    }
+  };
+
+  const handleSelectCourse = (slug: string) => {
+    setSelectedCourseSlug(slug);
+    const course = db.getCourseBySlug(slug);
+    if (course) {
+      setSelectedCourseId(course.id);
+      if (course.modules?.[0]?.lessons?.[0]?.id) {
+        setSelectedLessonId(course.modules[0].lessons[0].id);
+      }
+    }
+    setCurrentView('course-detail');
+  };
+
+  const handleStartLesson = (courseId: string, lessonId: string) => {
+    setSelectedCourseId(courseId);
+    setSelectedLessonId(lessonId);
+    setCurrentView('lesson-player');
+  };
+
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-canvas)' }}>
       {/* Top Application Header */}
       <header
         style={{
@@ -56,7 +125,7 @@ export const App: React.FC = () => {
       >
         <div
           style={{
-            maxWidth: '1200px',
+            maxWidth: '1280px',
             margin: '0 auto',
             display: 'flex',
             alignItems: 'center',
@@ -66,7 +135,20 @@ export const App: React.FC = () => {
           }}
         >
           {/* Brand Logo & Tagline */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            type="button"
+            onClick={() => setCurrentView('home')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              textAlign: 'left',
+            }}
+          >
             <div
               style={{
                 width: '38px',
@@ -83,7 +165,7 @@ export const App: React.FC = () => {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
                   GENIUSPHERE
                 </span>
                 <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
@@ -91,16 +173,16 @@ export const App: React.FC = () => {
                 </span>
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                Authoritative Education Platform • Real Data & Zero Placeholders
+                Evidence-Backed Education Platform • Zero Fake Data
               </div>
             </div>
-          </div>
+          </button>
 
           {/* Actor Role Switcher for Testing & Pilot Demonstration */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
               <User size={16} />
-              <span>Simulated Persona:</span>
+              <span>Persona:</span>
             </div>
             <select
               value={currentUserId}
@@ -108,10 +190,9 @@ export const App: React.FC = () => {
                 const newUserId = e.target.value;
                 setCurrentUserId(newUserId);
                 const userObj = users.find((u) => u.id === newUserId);
-                if (userObj?.role === 'teacher') setActiveTab('gradebook');
-                else if (userObj?.role === 'guardian') setActiveTab('parent');
-                else if (userObj?.role === 'institution_admin') setActiveTab('audit');
-                else setActiveTab('lab');
+                if (userObj?.role === 'teacher') setCurrentView('gradebook');
+                else if (userObj?.role === 'guardian') setCurrentView('parent');
+                else if (userObj?.role === 'institution_admin') setCurrentView('audit');
               }}
               style={{
                 padding: '8px 12px',
@@ -120,6 +201,7 @@ export const App: React.FC = () => {
                 backgroundColor: 'var(--bg-surface-subdued)',
                 fontWeight: 600,
                 fontSize: '0.875rem',
+                cursor: 'pointer',
               }}
               aria-label="Switch User Persona"
             >
@@ -133,114 +215,263 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Navigation Tab Bar */}
+      {/* Primary Navigation Bar */}
       <nav
         style={{
           backgroundColor: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-subtle)',
           padding: '0 24px',
+          overflowX: 'auto',
         }}
       >
         <div
           style={{
-            maxWidth: '1200px',
+            maxWidth: '1280px',
             margin: '0 auto',
             display: 'flex',
             gap: '8px',
-            overflowX: 'auto',
           }}
         >
           <button
             type="button"
-            onClick={() => setActiveTab('lab')}
+            onClick={() => setCurrentView('home')}
             style={{
               height: '48px',
               backgroundColor: 'transparent',
-              color: activeTab === 'lab' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-              borderBottom: activeTab === 'lab' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              color: currentView === 'home' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              borderBottom: currentView === 'home' ? '3px solid var(--brand-primary)' : '3px solid transparent',
               borderRadius: '0',
-              fontWeight: activeTab === 'lab' ? 700 : 500,
+              fontWeight: currentView === 'home' ? 700 : 500,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}
           >
-            <Terminal size={18} />
-            <span>SQL Injection Lab</span>
+            <Home size={17} />
+            <span>Home</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedDomain('all');
+              setCurrentView('catalogue');
+            }}
+            style={{
+              height: '48px',
+              backgroundColor: 'transparent',
+              color: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              borderBottom: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              borderRadius: '0',
+              fontWeight: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 700 : 500,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <BookOpen size={17} />
+            <span>Courses (26)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCurrentView('lab')}
+            style={{
+              height: '48px',
+              backgroundColor: 'transparent',
+              color: currentView === 'lab' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              borderBottom: currentView === 'lab' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              borderRadius: '0',
+              fontWeight: currentView === 'lab' ? 700 : 500,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Terminal size={17} />
+            <span>SQL Lab 101</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCurrentView('classrooms')}
+            style={{
+              height: '48px',
+              backgroundColor: 'transparent',
+              color: currentView === 'classrooms' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              borderBottom: currentView === 'classrooms' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              borderRadius: '0',
+              fontWeight: currentView === 'classrooms' ? 700 : 500,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Users size={17} />
+            <span>Classroom & Join Codes</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCurrentView('resume-builder')}
+            style={{
+              height: '48px',
+              backgroundColor: 'transparent',
+              color: currentView === 'resume-builder' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              borderBottom: currentView === 'resume-builder' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              borderRadius: '0',
+              fontWeight: currentView === 'resume-builder' ? 700 : 500,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Briefcase size={17} />
+            <span>Resume Builder</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCurrentView('schoolkit')}
+            style={{
+              height: '48px',
+              backgroundColor: 'transparent',
+              color: currentView === 'schoolkit' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              borderBottom: currentView === 'schoolkit' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              borderRadius: '0',
+              fontWeight: currentView === 'schoolkit' ? 700 : 500,
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <School size={17} />
+            <span>SchoolKit</span>
           </button>
 
           {(isTeacher || isAdmin) && (
             <button
               type="button"
-              onClick={() => setActiveTab('gradebook')}
+              onClick={() => setCurrentView('gradebook')}
               style={{
                 height: '48px',
                 backgroundColor: 'transparent',
-                color: activeTab === 'gradebook' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                borderBottom: activeTab === 'gradebook' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+                color: currentView === 'gradebook' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                borderBottom: currentView === 'gradebook' ? '3px solid var(--brand-primary)' : '3px solid transparent',
                 borderRadius: '0',
-                fontWeight: activeTab === 'gradebook' ? 700 : 500,
+                fontWeight: currentView === 'gradebook' ? 700 : 500,
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              <GraduationCap size={18} />
+              <GraduationCap size={17} />
               <span>Teacher Gradebook</span>
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('classrooms')}
-            style={{
-              height: '48px',
-              backgroundColor: 'transparent',
-              color: activeTab === 'classrooms' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-              borderBottom: activeTab === 'classrooms' ? '3px solid var(--brand-primary)' : '3px solid transparent',
-              borderRadius: '0',
-              fontWeight: activeTab === 'classrooms' ? 700 : 500,
-            }}
-          >
-            <BookOpen size={18} />
-            <span>Classroom & Join Codes</span>
-          </button>
-
           {(isGuardian || isAdmin) && (
             <button
               type="button"
-              onClick={() => setActiveTab('parent')}
+              onClick={() => setCurrentView('parent')}
               style={{
                 height: '48px',
                 backgroundColor: 'transparent',
-                color: activeTab === 'parent' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                borderBottom: activeTab === 'parent' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+                color: currentView === 'parent' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                borderBottom: currentView === 'parent' ? '3px solid var(--brand-primary)' : '3px solid transparent',
                 borderRadius: '0',
-                fontWeight: activeTab === 'parent' ? 700 : 500,
+                fontWeight: currentView === 'parent' ? 700 : 500,
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              <Users size={18} />
-              <span>Parent Oversight (DPDP)</span>
+              <Users size={17} />
+              <span>Parent Oversight</span>
             </button>
           )}
 
           {isAdmin && (
             <button
               type="button"
-              onClick={() => setActiveTab('audit')}
+              onClick={() => setCurrentView('audit')}
               style={{
                 height: '48px',
                 backgroundColor: 'transparent',
-                color: activeTab === 'audit' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                borderBottom: activeTab === 'audit' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+                color: currentView === 'audit' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                borderBottom: currentView === 'audit' ? '3px solid var(--brand-primary)' : '3px solid transparent',
                 borderRadius: '0',
-                fontWeight: activeTab === 'audit' ? 700 : 500,
+                fontWeight: currentView === 'audit' ? 700 : 500,
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
               }}
             >
-              <FileText size={18} />
-              <span>Audit Log Trail</span>
+              <FileText size={17} />
+              <span>Audit Trail</span>
             </button>
           )}
         </div>
       </nav>
 
       {/* Main Content Area */}
-      <main style={{ flex: 1, padding: '28px 24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-        {activeTab === 'lab' && (
+      <main style={{ flex: 1, padding: currentView === 'home' ? '0' : '28px 24px', maxWidth: currentView === 'home' ? '100%' : '1280px', margin: '0 auto', width: '100%' }}>
+        {currentView === 'home' && (
+          <Homepage
+            key={`home-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            onNavigate={handleNavigate}
+            currentUserId={currentUserId}
+          />
+        )}
+
+        {currentView === 'catalogue' && (
+          <CourseCatalogue
+            key={`catalogue-${currentUserId}-${refreshTrigger}-${selectedDomain}`}
+            db={db}
+            onSelectCourse={handleSelectCourse}
+            onNavigateHome={() => setCurrentView('home')}
+            initialDomain={selectedDomain}
+          />
+        )}
+
+        {currentView === 'course-detail' && (
+          <CourseDetailView
+            key={`detail-${selectedCourseSlug}-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            courseSlug={selectedCourseSlug}
+            currentUserId={currentUserId}
+            onBack={() => setCurrentView('catalogue')}
+            onStartLesson={handleStartLesson}
+          />
+        )}
+
+        {currentView === 'lesson-player' && (
+          <LessonPlayer
+            key={`player-${selectedCourseId}-${selectedLessonId}-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            courseId={selectedCourseId}
+            initialLessonId={selectedLessonId}
+            currentUserId={currentUserId}
+            onBackToCourse={() => setCurrentView('course-detail')}
+            onLaunchLab={(labId) => {
+              if (labId === 'lab-sec-101') {
+                setCurrentView('lab');
+              }
+            }}
+          />
+        )}
+
+        {currentView === 'lab' && (
           <SqlLab
             key={`lab-${currentUserId}-${refreshTrigger}`}
             db={db}
@@ -250,7 +481,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'gradebook' && (
+        {currentView === 'gradebook' && (
           <TeacherGradebook
             key={`gradebook-${currentUserId}-${refreshTrigger}`}
             db={db}
@@ -258,7 +489,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'classrooms' && (
+        {currentView === 'classrooms' && (
           <ClassroomManager
             key={`classrooms-${currentUserId}-${refreshTrigger}`}
             db={db}
@@ -267,7 +498,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'parent' && (
+        {currentView === 'parent' && (
           <ParentPortal
             key={`parent-${currentUserId}-${refreshTrigger}`}
             db={db}
@@ -275,11 +506,26 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'audit' && (
+        {currentView === 'audit' && (
           <AuditLogViewer
             key={`audit-${currentUserId}-${refreshTrigger}`}
             db={db}
             currentUserId={isAdmin ? currentUserId : 'user-admin-1'}
+          />
+        )}
+
+        {currentView === 'resume-builder' && (
+          <ResumeBuilder
+            key={`resume-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            currentUserId={currentUserId}
+          />
+        )}
+
+        {currentView === 'schoolkit' && (
+          <SchoolKit
+            key={`schoolkit-${refreshTrigger}`}
+            onOpenGradebook={() => setCurrentView('gradebook')}
           />
         )}
       </main>
@@ -289,15 +535,15 @@ export const App: React.FC = () => {
         style={{
           borderTop: '1px solid var(--border-subtle)',
           backgroundColor: 'var(--bg-surface)',
-          padding: '16px 24px',
+          padding: '20px 24px',
           textAlign: 'center',
-          fontSize: '0.8rem',
+          fontSize: '0.85rem',
           color: 'var(--text-muted)',
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-          <span>© 2026 Geniusphere. Production-Grade Autonomous Engineering.</span>
-          <span>Zero Fake Data • Database RLS Enforced • SQLite-WASM Sandbox</span>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <span>© 2026 Geniusphere. Full Learning Experience & Evidence-Backed Education.</span>
+          <span>Zero Placeholders • Authoritative Server Grading • 26 Curricular Subjects • DPDP 2023 Compliant</span>
         </div>
       </footer>
     </div>
