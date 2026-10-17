@@ -923,7 +923,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                       </span>
                     </div>
 
-                    <div style={{ fontSize: '0.82rem', fontFamily: 'monospace', color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
                       PREV HASH: {blk.prevHash}
                     </div>
 
@@ -932,7 +932,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                      <span style={{ fontSize: '0.82rem', fontFamily: 'monospace', color: 'var(--brand-primary)', fontWeight: 700 }}>
+                      <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)', fontWeight: 700 }}>
                         HASH: {blk.hash} (Nonce: {blk.nonce})
                       </span>
                       <button
@@ -1044,7 +1044,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
                   MQTT Telemetry Event Log
                 </div>
-                <div style={{ maxHeight: '140px', overflowY: 'auto', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '10px', fontFamily: 'monospace', fontSize: '0.78rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={{ maxHeight: '140px', overflowY: 'auto', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '10px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   {iotEventLogs.map((log, i) => (
                     <div key={i} style={{ color: 'var(--text-secondary)' }}>{log}</div>
                   ))}
@@ -1161,7 +1161,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                   value={secQueryInput}
                   onChange={(e) => setSecQueryInput(e.target.value)}
                   className="form-input"
-                  style={{ fontFamily: 'monospace' }}
+                  style={{ fontFamily: 'var(--font-mono)' }}
                 />
               </div>
 
@@ -1207,7 +1207,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               </div>
 
               {secExecutionLog.length > 0 && (
-                <div style={{ backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'monospace', fontSize: '0.82rem' }}>
+                <div style={{ backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.82rem' }}>
                   {secExecutionLog.map((log, i) => (
                     <div key={i} style={{ color: log.startsWith('✓') ? 'var(--success)' : 'var(--danger)' }}>
                       {log}
@@ -1282,7 +1282,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     value={prodFormulaSum}
                     onChange={(e) => setProdFormulaSum(e.target.value)}
                     className="form-input"
-                    style={{ fontFamily: 'monospace' }}
+                    style={{ fontFamily: 'var(--font-mono)' }}
                   />
                   {prodRevenueCorrect && (
                     <span style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600 }}>
@@ -1301,7 +1301,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     value={prodFormulaAvg}
                     onChange={(e) => setProdFormulaAvg(e.target.value)}
                     className="form-input"
-                    style={{ fontFamily: 'monospace' }}
+                    style={{ fontFamily: 'var(--font-mono)' }}
                   />
                   {prodAvgCorrect && (
                     <span style={{ fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600 }}>
@@ -1511,7 +1511,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 ))}
               </div>
 
-              <div style={{ maxHeight: '160px', overflowY: 'auto', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '12px', fontFamily: 'monospace', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ maxHeight: '160px', overflowY: 'auto', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '12px', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {flowLogs.map((log, i) => (
                   <div key={i} style={{ color: 'var(--text-primary)' }}>{log}</div>
                 ))}
@@ -1602,7 +1602,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     border: '1px solid var(--border-subtle)',
                     borderRadius: '6px',
                     padding: '12px',
-                    fontFamily: 'monospace',
+                    fontFamily: 'var(--font-mono)',
                     fontSize: '0.82rem',
                     color: codeTestsPassed ? 'var(--success)' : 'var(--text-primary)',
                     whiteSpace: 'pre-wrap',

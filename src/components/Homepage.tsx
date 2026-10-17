@@ -536,7 +536,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               Awarded to Aarav Patel • Score: 100% • Verified
             </div>
-            <div style={{ fontSize: '0.75rem', fontFamily: 'monospace', color: 'var(--text-muted)', backgroundColor: 'var(--bg-surface)', padding: '6px', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', backgroundColor: 'var(--bg-surface)', padding: '6px', borderRadius: '4px', border: '1px solid var(--border-subtle)' }}>
               HASH: 8f9b2a...e7c41d
             </div>
           </div>

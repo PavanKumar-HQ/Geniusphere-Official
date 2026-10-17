@@ -751,6 +751,10 @@ export const App: React.FC = () => {
             key={`catalogue-${currentUserId}-${refreshTrigger}-${selectedDomain}`}
             db={db}
             onSelectCourse={handleSelectCourse}
+            onLaunchLab={(slug) => {
+              setSelectedLabSlug(slug);
+              setCurrentView('lab-workspace');
+            }}
             onNavigateHome={() => handleNavigate('home')}
             initialDomain={selectedDomain}
           />

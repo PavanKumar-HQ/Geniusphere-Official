@@ -134,8 +134,9 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ config, 
           style={{
             fontFamily: 'var(--font-mono)',
             fontSize: '0.85rem',
-            backgroundColor: '#030612',
-            borderColor: status === 'success' ? '#10B981' : 'var(--border-subtle)',
+            backgroundColor: 'var(--editor-bg)',
+            color: 'var(--text-primary)',
+            borderColor: status === 'success' ? 'var(--success-border)' : 'var(--border-subtle)',
             resize: 'vertical',
           }}
         />
@@ -169,13 +170,13 @@ export const InteractiveSandbox: React.FC<InteractiveSandboxProps> = ({ config, 
       {output && (
         <div
           style={{
-            backgroundColor: '#02040A',
-            border: status === 'success' ? '1px solid #10B981' : '1px solid #334155',
+            backgroundColor: 'var(--editor-bg)',
+            border: status === 'success' ? '1px solid var(--success-border)' : '1px solid var(--border-subtle)',
             borderRadius: '10px',
             padding: '14px 18px',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.82rem',
-            color: status === 'success' ? '#34D399' : '#94A3B8',
+            color: status === 'success' ? 'var(--success-text)' : 'var(--text-primary)',
             whiteSpace: 'pre-wrap',
             lineHeight: 1.5,
           }}

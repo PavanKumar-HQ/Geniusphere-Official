@@ -437,7 +437,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       if (paragraph.startsWith('```')) {
                         const cleanCode = paragraph.replace(/```[a-z]*\n?/g, '');
                         return (
-                          <pre key={pIdx} style={{ backgroundColor: '#02040A', color: '#00F5A0', padding: '14px', borderRadius: '8px', overflowX: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', border: '1px solid rgba(0, 245, 160, 0.2)' }}>
+                          <pre key={pIdx} style={{ backgroundColor: 'var(--editor-bg)', color: 'var(--text-primary)', padding: '14px', borderRadius: 'var(--radius-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', border: '1px solid var(--border-subtle)' }}>
                             <code>{cleanCode}</code>
                           </pre>
                         );

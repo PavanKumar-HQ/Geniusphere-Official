@@ -38,23 +38,30 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             minHeight,
             fontSize: '14px',
             borderRadius: '8px',
+            backgroundColor: '#F8FAFC',
+            color: '#172B4D',
           },
           '.cm-scroller': {
             overflow: 'auto',
             fontFamily: 'var(--font-mono)',
           },
           '.cm-content': {
-            caretColor: '#38BDF8',
+            caretColor: 'var(--brand-primary)',
             padding: '12px 14px',
           },
           '&.cm-focused .cm-cursor': {
-            borderLeftColor: '#38BDF8',
+            borderLeftColor: 'var(--brand-primary)',
           },
           '&.cm-focused .cm-selectionBackground, ::selection': {
-            backgroundColor: '#0369A1',
+            backgroundColor: '#EFF6FF',
           },
           '.cm-activeLine': {
-            backgroundColor: '#27272A55',
+            backgroundColor: 'rgba(37, 99, 235, 0.04)',
+          },
+          '.cm-gutters': {
+            backgroundColor: '#F8FAFC',
+            color: '#94A3B8',
+            borderRight: '1px solid #E2E8F0',
           },
         }),
         EditorView.updateListener.of((update) => {
@@ -99,7 +106,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         minHeight,
         borderRadius: '8px',
         overflow: 'hidden',
-        border: '1px solid #3F3F46',
+        border: '1px solid var(--border-subtle)',
+        backgroundColor: 'var(--editor-bg)',
       }}
       aria-label="SQL Code Editor"
       role="region"

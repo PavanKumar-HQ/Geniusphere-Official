@@ -15,6 +15,7 @@ interface CourseCatalogueProps {
   onSelectCourse: (slug: string) => void;
   onNavigateHome: () => void;
   initialDomain?: string;
+  onLaunchLab?: (slug: string) => void;
 }
 
 export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
@@ -22,6 +23,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   onSelectCourse,
   onNavigateHome,
   initialDomain = 'all',
+  onLaunchLab,
 }) => {
   const [search, setSearch] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<string>(initialDomain);
@@ -218,12 +220,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     className="play-sim-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setSimLabCourseTitle(course.title);
-                      setSimLabCourseSlug(course.slug);
-                      setSimLabDomain(course.domain);
-                      setSimLabOpen(true);
+                      if (onLaunchLab) {
+                        const allLabs = db.getLabDefinitions();
+                        const matched = allLabs.find(
+                          (l) => l.course_slug === course.slug || l.category === course.domain
+                        ) || allLabs[0];
+                        onLaunchLab(matched.slug);
+                      } else {
+                        setSimLabCourseTitle(course.title);
+                        setSimLabCourseSlug(course.slug);
+                        setSimLabDomain(course.domain);
+                        setSimLabOpen(true);
+                      }
                     }}
-                    title="Launch Interactive Simulation Lab (10 SVG Sims)"
+                    title="Launch Interactive Lab"
                   >
                     <Play size={16} fill="currentColor" />
                   </button>

@@ -323,7 +323,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                     Timestamp: {new Date(sub.submitted_at).toLocaleTimeString()} • 5/5 Assertions Passed
                   </div>
                   {sub.submission_hash && (
-                    <div style={{ fontSize: '0.7rem', color: 'var(--brand-primary)', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--brand-primary)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                       Hash: {sub.submission_hash.slice(0, 32)}...
                     </div>
                   )}

@@ -608,7 +608,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               <div style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', marginBottom: '6px' }}>
                 Predict runtime output array:
               </div>
-              <div style={{ backgroundColor: 'var(--editor-bg)', padding: '8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontFamily: 'monospace', fontSize: '0.78rem', marginBottom: '10px' }}>
+              <div style={{ backgroundColor: 'var(--editor-bg)', padding: '8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', marginBottom: '10px' }}>
                 [1, 2, 3].map(x =&gt; x * 2).filter(x =&gt; x &gt; 2)
               </div>
 
@@ -632,7 +632,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                         color: isChosen
                           ? isCorrect ? 'var(--success)' : 'var(--danger)'
                           : 'var(--text-primary)',
-                        fontFamily: 'monospace',
+                        fontFamily: 'var(--font-mono)',
                         fontSize: '0.76rem',
                         fontWeight: 700,
                         cursor: 'pointer',
