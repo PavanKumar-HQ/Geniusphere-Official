@@ -403,10 +403,10 @@ export const App: React.FC = () => {
                   <span
                     style={{
                       fontFamily: 'var(--font-heading)',
-                      fontSize: '1.28rem',
-                      fontWeight: 900,
+                      fontSize: '1.25rem',
+                      fontWeight: 800,
                       letterSpacing: '-0.02em',
-                      color: 'var(--text-primary)',
+                      color: 'var(--brand-forest)',
                     }}
                   >
                     GENIUSPHERE

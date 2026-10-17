@@ -6,22 +6,19 @@ import { PilotApplicationModal } from './PilotApplicationModal';
 import {
   Shield,
   ArrowRight,
-  BookOpen,
   Terminal,
-  Zap,
-  Flame,
   CheckCircle2,
   Clock,
   School,
   Cpu,
   TrendingUp,
   Briefcase,
-  Trophy,
   Users,
   ChevronDown,
   ChevronUp,
   FileText,
   Check,
+  Sparkles,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -33,7 +30,6 @@ interface HomepageProps {
 export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId }) => {
   const publishedCourses = db.getCourses({ publishedOnly: true });
   const allLabs = db.getLabDefinitions();
-  const userProgress = db.getUserProgress(currentUserId);
 
   const [pilotModalOpen, setPilotModalOpen] = useState(false);
   const [audienceTab, setAudienceTab] = useState<'school' | 'college' | 'teacher' | 'parent'>('school');
@@ -83,110 +79,67 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               gap: '20px',
             }}
           >
-            {/* Status Badge with Live Pulse */}
+            {/* Clean Status Eyebrow */}
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '5px 14px',
-                borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--brand-surface)',
-                border: '1px solid var(--brand-border)',
-                color: 'var(--brand-forest)',
-                fontSize: '0.82rem',
+                padding: '6px 14px',
+                borderRadius: '9999px',
+                backgroundColor: '#EBF5F0',
+                border: '1px solid #C4E3D4',
+                color: '#164E3D',
+                fontSize: '0.8rem',
                 fontWeight: 700,
+                letterSpacing: '0.03em',
               }}
             >
-              <span className="pulse-dot pulse-dot-green" />
-              <span
-                style={{
-                  backgroundColor: '#1E6B4E',
-                  color: '#FFFFFF',
-                  padding: '2px 7px',
-                  borderRadius: '4px',
-                  fontSize: '0.68rem',
-                  fontWeight: 800,
-                  letterSpacing: '0.04em',
-                }}
-              >
-                PILOT READY
-              </span>
-              <span>Evidence-Backed Practical Skills • India 2026</span>
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#1E6B4E' }} />
+              <span>EVIDENCE-BACKED EDUCATION • INDIA 2026</span>
             </div>
 
-            {/* Headline: Clean, Crisp Scholarly Typography */}
+            {/* Headline: Clean, Normalized, Prestigious Typography */}
             <h1
               style={{
-                fontSize: 'clamp(2.4rem, 4.4vw, 3.6rem)',
-                fontWeight: 900,
-                lineHeight: 1.15,
+                fontSize: 'clamp(2.5rem, 4.4vw, 3.75rem)',
+                fontWeight: 800,
+                lineHeight: 1.12,
                 letterSpacing: '-0.03em',
-                color: 'var(--text-primary)',
+                color: '#14261C',
                 margin: 0,
               }}
             >
-              <span style={{ color: '#164E3D' }}>Practical skills</span>, taught in class,{' '}
-              <span style={{ color: '#1D58A6' }}>measured clearly.</span>
+              Practical skills, taught in class,{' '}
+              <span style={{ color: '#1E6B4E' }}>measured clearly.</span>
             </h1>
 
-            {/* Supporting summary matching Research Study USP */}
+            {/* Supporting Summary */}
             <p
               style={{
                 fontSize: '1.08rem',
-                lineHeight: 1.65,
-                color: 'var(--text-secondary)',
+                lineHeight: 1.68,
+                color: '#475569',
                 margin: 0,
                 maxWidth: '560px',
               }}
             >
-              For schools, PU colleges, universities, and independent learners. An India-first practical skills ecosystem for Technology, Finance, and Professional Skills—with teacher-controlled cohorts, zero-install browser sandboxes, and safeguarding-first analytics.
+              An India-first practical skills ecosystem for schools, PU colleges, and universities. Hands-on Technology, Applied Finance, and Professional Competencies—with teacher-managed cohorts, zero-install browser sandboxes, and DPDP-compliant safeguarding.
             </p>
 
-            {/* Gamification Ribbon with Fiery & Cosmic Pills */}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div className="streak-pill">
-                <Flame size={16} />
-                <span>{userProgress.streak_days}-Day Streak</span>
-              </div>
-              <div className="xp-pill">
-                <Zap size={16} />
-                <span>{userProgress.xp.toLocaleString()} XP Points</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => onNavigate('leaderboard')}
-                className="rank-pill"
-                style={{
-                  cursor: 'pointer',
-                  border: 'none',
-                  textDecoration: 'none',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                <Trophy size={14} />
-                <span>Leaderboard</span>
-                <ArrowRight size={13} />
-              </button>
-            </div>
-
-            {/* Micro-Features Colorful Chips */}
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '0.76rem', fontWeight: 700 }}>
-              <span className="tag-pill tag-pill-sky">⚡ Zero-Install Wasm</span>
-              <span className="tag-pill tag-pill-gold">🛡️ Safe for Minors</span>
-              <span className="tag-pill tag-pill-emerald">📊 Exportable Outcomes</span>
-              <span className="tag-pill tag-pill-indigo">🇮🇳 CBSE & AICTE Ready</span>
-            </div>
-
-            {/* Primary Action Buttons with Vibrant Gradients */}
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '4px' }}>
+            {/* Primary Action Buttons */}
+            <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
               <button
                 type="button"
                 className="btn-primary"
                 onClick={() => setPilotModalOpen(true)}
-                style={{ height: '46px', padding: '0 24px', fontSize: '0.96rem' }}
+                style={{
+                  height: '48px',
+                  padding: '0 26px',
+                  fontSize: '0.96rem',
+                  fontWeight: 700,
+                  borderRadius: '8px',
+                }}
               >
                 <School size={17} />
                 <span>Book a 20-min Pilot Demo</span>
@@ -195,23 +148,46 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
               <button
                 type="button"
-                className="btn-quest"
+                className="btn-secondary"
                 onClick={() => onNavigate('labs')}
-                style={{ height: '46px', padding: '0 22px', fontSize: '0.96rem' }}
+                style={{
+                  height: '48px',
+                  padding: '0 22px',
+                  fontSize: '0.96rem',
+                  fontWeight: 700,
+                  borderRadius: '8px',
+                }}
               >
-                <Terminal size={17} />
+                <Terminal size={17} color="#1E6B4E" />
                 <span>Explore 12 Sandboxes</span>
               </button>
+            </div>
 
-              <button
-                type="button"
-                className="btn-outline"
-                onClick={() => onNavigate('catalogue')}
-                style={{ height: '46px', padding: '0 20px', fontSize: '0.96rem' }}
-              >
-                <BookOpen size={17} />
-                <span>Browse 27 Courses</span>
-              </button>
+            {/* Refined Institutional Verification Badges */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '20px',
+                flexWrap: 'wrap',
+                paddingTop: '12px',
+                borderTop: '1px solid #E8E2D6',
+                width: '100%',
+                maxWidth: '560px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
+                <CheckCircle2 size={15} color="#1E6B4E" />
+                <span>CBSE & AICTE Aligned</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
+                <Shield size={15} color="#1D58A6" />
+                <span>DPDP Act 2023 Compliant</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
+                <Sparkles size={15} color="#B45309" />
+                <span>Zero-Install Wasm</span>
+              </div>
             </div>
           </div>
 
@@ -314,12 +290,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 backgroundColor: '#FFFFFF',
                 borderTop:
                   audienceTab === 'school'
-                    ? '4px solid #0284C7'
+                    ? '4px solid #1E6B4E'
                     : audienceTab === 'college'
-                    ? '4px solid #6366F1'
+                    ? '4px solid #1D58A6'
                     : audienceTab === 'teacher'
-                    ? '4px solid #FDB913'
-                    : '4px solid #75B543',
+                    ? '4px solid #237A59'
+                    : '4px solid #B45309',
                 boxShadow: 'var(--shadow-md)',
               }}
             >
@@ -338,8 +314,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#0284C7" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#1D58A6" />
                       </div>
                       <span><strong>DPDP Act 2023 Compliant:</strong> Verifiable parental consent ledger for all minors.</span>
                     </div>
@@ -422,8 +398,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                       <span><strong>Auto-Graded Checks:</strong> Instant visibility into student attempt quality.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#0284C7" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#1D58A6" />
                       </div>
                       <span><strong>8-Character Join Codes:</strong> No student signups required for classroom labs.</span>
                     </div>
@@ -452,8 +428,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                       <span><strong>Zero Ad Profiling:</strong> No behavioral tracking or third-party ad pixels.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#0284C7" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#1D58A6" />
                       </div>
                       <span><strong>Consent Management:</strong> Review or withdraw consent at any time.</span>
                     </div>
@@ -479,7 +455,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
         >
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 40px' }}>
             <span
-              className="tag-pill tag-pill-purple"
+              className="tag-pill tag-pill-emerald"
               style={{ marginBottom: '10px' }}
             >
               COMPREHENSIVE CURRICULUM TRACKS
@@ -500,7 +476,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                borderTop: '5px solid #0284C7',
+                borderTop: '4px solid #1D58A6',
                 boxShadow: 'var(--shadow-md)',
                 transition: 'all 0.2s ease',
               }}
@@ -857,7 +833,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           {allLabs.slice(0, 4).map((lab) => {
             const isTech = lab.category === 'technology' || lab.category === 'coding';
             const isFinance = lab.category === 'finance';
-            const topColor = isTech ? '#0284C7' : isFinance ? '#FDB913' : '#75B543';
+            const topColor = isTech ? '#1D58A6' : isFinance ? '#B45309' : '#1E6B4E';
             const tagClass = isTech ? 'tag-pill-sky' : isFinance ? 'tag-pill-gold' : 'tag-pill-emerald';
 
             return (
