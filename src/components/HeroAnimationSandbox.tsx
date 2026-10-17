@@ -289,9 +289,9 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
           style={{
             padding: '10px 14px',
             border: 'none',
-            borderBottom: activeMode === 'security' ? '2.5px solid #2563EB' : '2.5px solid transparent',
+            borderBottom: activeMode === 'security' ? '2.5px solid var(--brand-primary)' : '2.5px solid transparent',
             backgroundColor: 'transparent',
-            color: activeMode === 'security' ? '#2563EB' : 'var(--text-secondary)',
+            color: activeMode === 'security' ? 'var(--brand-primary)' : 'var(--text-secondary)',
             fontWeight: activeMode === 'security' ? 700 : 500,
             fontSize: '0.82rem',
             cursor: 'pointer',

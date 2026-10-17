@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'brand' | 'accent' | 'success' | 'warning' | 'danger' | 'neutral';
+  variant?: 'brand' | 'accent' | 'success' | 'warning' | 'danger' | 'neutral' | 'quest' | 'questioning';
   size?: 'sm' | 'md';
   icon?: React.ReactNode;
 }
@@ -17,6 +17,8 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const baseClass = {
     brand: 'badge badge-brand',
+    quest: 'badge badge-quest',
+    questioning: 'badge badge-questioning',
     accent: 'badge badge-accent',
     success: 'badge badge-success',
     warning: 'badge badge-warning',

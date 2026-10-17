@@ -48,7 +48,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
           <div className="certificate-border-inner">
             {/* Header Brand */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF' }}>
                 <ShieldCheck size={22} />
               </div>
               <span style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', color: '#FFFFFF' }}>
@@ -56,7 +56,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
               </span>
             </div>
 
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.2em', color: '#F59E0B', textTransform: 'uppercase', marginBottom: '14px' }}>
+            <div style={{ fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--brand-joy-of-quest)', textTransform: 'uppercase', marginBottom: '14px' }}>
               CERTIFICATE OF ACCOMPLISHMENT & MASTERY
             </div>
 

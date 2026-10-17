@@ -7,7 +7,7 @@
 @font-face {
   font-family: 'Mikado';
   src: url('/fonts/Mikado-Black.otf') format('opentype');
-  font-weight: 900;
+  font-weight: 700 900;
   font-style: normal;
   font-display: swap;
 }
@@ -46,6 +46,14 @@
 
 @font-face {
   font-family: 'Causten Round';
+  src: url('/fonts/CaustenRound-ExtraBold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Causten Round';
   src: url('/fonts/CaustenRound-Black.otf') format('opentype');
   font-weight: 900;
   font-style: normal;
@@ -53,19 +61,19 @@
 }
 
 :root {
-  /* Typography Scale — Official Brand Typography */
-  --font-display-brand: 'Mikado', 'Causten Round', 'Outfit', sans-serif;
+  /* Typography Scale — Official Brand Typography (Brand Guidelines 2026 Pages 18-20) */
+  --font-display-brand: 'Mikado', 'Causten Round', sans-serif;
+  --font-heading: 'Mikado', 'Causten Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'Causten Round', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-heading: 'Causten Round', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  /* Official Brand Colors (Brand Guidelines 2026 Page 13) */
-  --brand-qurious-sky: #30B2E7;          /* CMYK: C67 M10 Y0 K0 - Primary Sky Action */
-  --brand-joy-of-quest: #FDB913;         /* CMYK: C0 M30 Y100 K0 - Warm Quest Yellow */
-  --brand-always-questioning: #75B543;   /* CMYK: C60 M7 Y100 K0 - Fresh Active Green */
-  --bg-canvas-warm: #FBF9F5;             /* Warm Cream Guideline Canvas */
+  /* Official Brand Colors (Brand Guidelines 2026 Page 13 & 14) */
+  --brand-qurious-sky: #30B2E7;          /* CMYK: C67 M10 Y0 K0 - Primary Qurious Sky */
+  --brand-joy-of-quest: #FDB913;         /* CMYK: C0 M30 Y100 K0 - Warm Joy of Quest */
+  --brand-always-questioning: #75B543;   /* CMYK: C60 M7 Y100 K0 - Active Always Questioning */
+  --bg-canvas-warm: #FFF6E3;             /* Page 14 Guideline Warm Cream Canvas */
 
-  /* Typography Sizing Tokens (Section 1.3) */
+  /* Typography Sizing Tokens */
   --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
   --text-page-title: clamp(1.5rem, 2.5vw, 2rem);    /* 24-28px mobile, 28-32px desktop */
   --text-section-title: 1.375rem;                   /* 20-24px */
@@ -73,42 +81,50 @@
   --text-body: 0.9375rem;                           /* 14-16px */
   --text-meta: 0.8125rem;                           /* 12-13px */
 
-  /* Section 1.1 Baseline Design Tokens */
-  --bg-canvas: #F7F9FC;         /* Page background */
-  --bg-surface: #FFFFFF;        /* Main surfaces / White cards */
-  --bg-surface-subdued: #F1F5F9;/* Subdued neutral surface */
+  /* Baseline Design Tokens Anchored on Brand System */
+  --bg-canvas: #FBF9F5;                  /* Warm Cream Educational Page Background */
+  --bg-surface: #FFFFFF;                 /* Crisp Pure White Surface / Cards */
+  --bg-surface-subdued: #F5F2EB;         /* Subtle Warm Neutral Surface */
   --bg-surface-elevated: #FFFFFF;
 
-  --text-primary: #172B4D;      /* Primary text (Atlassian/slate high contrast) */
-  --text-secondary: #64748B;    /* Secondary text */
-  --text-muted: #94A3B8;        /* Supporting metadata */
+  --text-primary: #172B4D;               /* High Contrast Mikado Black / Charcoal Navy */
+  --text-secondary: #5E6C84;             /* Secondary Slate */
+  --text-muted: #8993A4;                 /* Supporting Meta Text */
   --text-inverse: #FFFFFF;
 
-  /* Primary Brand Action: #2563EB */
-  --brand-primary: #2563EB;
-  --brand-primary-hover: #1D4ED8;
-  --brand-surface: #EFF6FF;     /* Subtle selected background */
-  --brand-border: #BFDBFE;
+  /* Primary Brand Action: Deep Qurious Sky for WCAG AA 4.8:1 contrast on white */
+  --brand-primary: #1282B2;
+  --brand-primary-bright: #30B2E7;
+  --brand-primary-hover: #0C6A93;
+  --brand-surface: #E8F7FD;              /* Qurious Sky Tint */
+  --brand-border: #BCE7F7;
 
-  /* Secondary Brand Accent: #0F766E */
-  --brand-accent: #0F766E;
-  --brand-accent-hover: #0D9488;
-  --brand-accent-surface: #F0FDFA;
-  --brand-accent-border: #99F6E4;
+  /* Secondary Brand Accent: Always Questioning #75B543 */
+  --brand-accent: #5B9B2E;
+  --brand-accent-hover: #487C23;
+  --brand-accent-surface: #F0F9EB;       /* Always Questioning Tint */
+  --brand-accent-border: #C2E7A7;
+
+  /* Quest Accent: Joy of Quest #FDB913 */
+  --brand-quest: #FDB913;
+  --brand-quest-hover: #E5A305;
+  --brand-quest-surface: #FFF9E6;        /* Joy of Quest Warm Tint */
+  --brand-quest-border: #FDE68A;
+  --brand-quest-text: #92400E;
 
   /* Selected State */
-  --selected-bg: #EFF6FF;
+  --selected-bg: #E8F7FD;
 
   /* Semantic State Colors */
-  --success: #15803D;
-  --success-bg: #F0FDF4;
-  --success-border: #BBF7D0;
-  --success-text: #15803D;
+  --success: #27520E;
+  --success-bg: #F0F9EB;
+  --success-border: #C2E7A7;
+  --success-text: #27520E;
 
-  --warning: #B45309;
-  --warning-bg: #FFFBEB;
+  --warning: #92400E;
+  --warning-bg: #FFF9E6;
   --warning-border: #FDE68A;
-  --warning-text: #B45309;
+  --warning-text: #92400E;
 
   --error: #B91C1C;
   --danger: #B91C1C;
@@ -117,9 +133,9 @@
   --danger-text: #B91C1C;
 
   /* Code & Editor Surfaces */
-  --editor-bg: #F8FAFC;
-  --border-subtle: #E2E8F0;     /* Borders */
-  --border-strong: #CBD5E1;
+  --editor-bg: #F8F9FA;
+  --border-subtle: #E8E3D8;              /* Soft Warm Guideline Borders */
+  --border-strong: #D5CEC1;
 
   /* Spacing Rhythm (8px base) */
   --space-1: 4px;
@@ -215,37 +231,72 @@ button {
 }
 
 .btn-primary {
-  background-color: var(--brand-primary);
+  background: linear-gradient(135deg, #168FC5, #0E74A2);
   color: var(--text-inverse);
-  border: 1px solid transparent;
+  border: 1px solid #0C658D;
+  box-shadow: 0 1px 3px rgba(18, 130, 178, 0.25);
+  font-weight: 700;
 }
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--brand-primary-hover);
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, #1181B2, #0A5D84);
+  box-shadow: 0 4px 12px rgba(18, 130, 178, 0.35);
+  transform: translateY(-1px);
 }
 .btn-primary:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-quest {
+  background: #FDB913;
+  color: #172B4D;
+  border: 1px solid #E5A305;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(253, 185, 19, 0.25);
+}
+.btn-quest:hover:not(:disabled) {
+  background: #F5AC05;
+  box-shadow: 0 4px 12px rgba(253, 185, 19, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-questioning {
+  background: #75B543;
+  color: #FFFFFF;
+  border: 1px solid #639E36;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(117, 181, 67, 0.25);
+}
+.btn-questioning:hover:not(:disabled) {
+  background: #68A43A;
+  box-shadow: 0 4px 12px rgba(117, 181, 67, 0.35);
+  transform: translateY(-1px);
 }
 
 .btn-accent {
   background-color: var(--brand-accent);
   color: var(--text-inverse);
   border: 1px solid transparent;
+  font-weight: 700;
 }
 .btn-accent:hover:not(:disabled) {
   background-color: var(--brand-accent-hover);
   box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
   background-color: var(--bg-surface);
   color: var(--text-primary);
-  border: 1px solid var(--border-strong);
+  border: 1.5px solid var(--border-strong);
+  font-weight: 600;
 }
 .btn-secondary:hover:not(:disabled) {
   background-color: var(--bg-surface-subdued);
-  border-color: var(--text-secondary);
+  border-color: var(--text-primary);
+  transform: translateY(-1px);
 }
 .btn-secondary:disabled {
   opacity: 0.55;
@@ -256,9 +307,12 @@ button {
   background-color: transparent;
   color: var(--brand-primary);
   border: 1.5px solid var(--brand-primary);
+  font-weight: 700;
 }
 .btn-outline:hover:not(:disabled) {
   background-color: var(--brand-surface);
+  border-color: var(--brand-primary-hover);
+  color: var(--brand-primary-hover);
 }
 
 .btn-danger {
@@ -414,13 +468,13 @@ button {
   color: var(--text-primary);
 }
 
-/* Clean Badges */
+/* Clean Badges (Brand Guidelines 2026 Page 13) */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   font-size: var(--text-meta);
-  font-weight: 600;
+  font-weight: 700;
   padding: 3px 8px;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
@@ -432,6 +486,18 @@ button {
   border-color: var(--brand-border);
 }
 
+.badge-quest {
+  background-color: var(--brand-quest-surface);
+  color: var(--brand-quest-text);
+  border-color: var(--brand-quest-border);
+}
+
+.badge-questioning {
+  background-color: var(--brand-accent-surface);
+  color: var(--success-text);
+  border-color: var(--brand-accent-border);
+}
+
 .badge-accent {
   background-color: var(--brand-accent-surface);
   color: var(--brand-accent);
@@ -440,13 +506,13 @@ button {
 
 .badge-success {
   background-color: var(--success-bg);
-  color: var(--success);
+  color: var(--success-text);
   border-color: var(--success-border);
 }
 
 .badge-warning {
   background-color: var(--warning-bg);
-  color: var(--warning);
+  color: var(--warning-text);
   border-color: var(--warning-border);
 }
 
@@ -456,18 +522,19 @@ button {
   border-color: var(--border-subtle);
 }
 
-/* Gamification Badges (Restrained) */
+/* Gamification Badges (Brand Guidelines 2026 Page 13 Colors) */
 .streak-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: var(--warning-bg);
-  color: var(--warning-text);
-  border: 1px solid var(--warning-border);
+  background-color: var(--brand-quest-surface);
+  color: var(--brand-quest-text);
+  border: 1.5px solid var(--brand-joy-of-quest);
   padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: var(--text-meta);
   font-weight: 700;
+  box-shadow: 0 1px 3px rgba(253, 185, 19, 0.2);
 }
 
 .xp-pill {
@@ -476,11 +543,12 @@ button {
   gap: 6px;
   background-color: var(--brand-surface);
   color: var(--brand-primary);
-  border: 1px solid var(--brand-border);
+  border: 1.5px solid var(--brand-qurious-sky);
   padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: var(--text-meta);
   font-weight: 700;
+  box-shadow: 0 1px 3px rgba(48, 178, 231, 0.2);
 }
 
 /* Clean Tables */

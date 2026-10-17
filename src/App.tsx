@@ -173,7 +173,7 @@ export const App: React.FC = () => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ backgroundColor: '#2563EB', color: '#FFFFFF', fontWeight: 800, padding: '2px 7px', borderRadius: '4px', fontSize: '0.68rem', letterSpacing: '0.04em' }}>
+          <span style={{ backgroundColor: 'var(--brand-primary)', color: '#FFFFFF', fontWeight: 800, padding: '2px 7px', borderRadius: '4px', fontSize: '0.68rem', letterSpacing: '0.04em' }}>
             DEMO READY
           </span>
           <span style={{ color: '#94A3B8' }}>Active Persona:</span>

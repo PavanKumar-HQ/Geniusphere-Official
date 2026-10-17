@@ -2,7 +2,7 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'accent' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline' | 'accent' | 'danger' | 'ghost' | 'quest' | 'questioning';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
@@ -30,6 +30,8 @@ export const Button: React.FC<ButtonProps> = ({
     accent: 'btn-accent',
     danger: 'btn-danger',
     ghost: 'btn-ghost',
+    quest: 'btn-quest',
+    questioning: 'btn-questioning',
   }[variant] || 'btn-primary';
 
   const sizeStyles: Record<'sm' | 'md' | 'lg', React.CSSProperties> = {
