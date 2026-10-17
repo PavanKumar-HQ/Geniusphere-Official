@@ -16,6 +16,9 @@ import {
   Flame,
   Zap,
   Trophy,
+  CheckCircle2,
+  Award,
+  Users,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -118,7 +121,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               }}
             >
               <Shield size={15} />
-              <span>EVIDENCE-BACKED EDUCATION PLATFORM</span>
+              <span>Inspiring Futures & Igniting Passion • Evidence-Backed Platform</span>
             </div>
 
             <h1
@@ -143,7 +146,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 maxWidth: '560px',
               }}
             >
-              Explore practical technology, understand how money works, build professional skills, and strengthen your coding abilities through structured, hands-on learning with 10 modules, interactive concept animations, and live sandbox simulations.
+              Geniusphere is a student-focused educational platform helping independent learners and school classrooms gain practical competence in modern technology, applied finance, professional skills, and coding logic through structured, hands-on learning.
             </p>
 
             {/* Quick Gamification Ribbon */}
@@ -509,7 +512,81 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       </section>
 
       {/* ============================================================ */}
-      {/* 4. RESOURCES PREVIEW (VIDEOS, GUIDES, SCHOOLKIT, RESUME)     */}
+      {/* 5. HOW LEARNING WORKS (THE 5-STEP JOURNEY)                   */}
+      {/* ============================================================ */}
+      <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto', width: '100%' }}>
+        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px' }}>
+          <span className="badge badge-brand" style={{ marginBottom: '10px' }}>
+            LEARNING METHODOLOGY
+          </span>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '12px' }}>
+            How Learning Works on Geniusphere
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6 }}>
+            A structured, evidence-backed pedagogical journey that connects foundational concepts to verifiable capability.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+          {/* Step 1 */}
+          <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.1rem' }}>
+              1
+            </div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Explore Curriculum</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Browse 27 approved subject areas across Technology, Coding, Finance, and Professional Skills with defined learning objectives.
+            </p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.1rem' }}>
+              2
+            </div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Structured Lessons</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Work through 10 comprehensive modules per course combining theory reading notes, video instruction, and animated SVG visualizers.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.1rem' }}>
+              3
+            </div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Interactive Sandboxes</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Experiment with real code, logic conditions, and financial market parameters in live, sandboxed simulations.
+            </p>
+          </div>
+
+          {/* Step 4 */}
+          <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.1rem' }}>
+              4
+            </div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Knowledge Checks</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Test first-principles understanding through formative quizzes with immediate feedback and explanation of concepts.
+            </p>
+          </div>
+
+          {/* Step 5 */}
+          <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--brand-accent-surface)', color: 'var(--brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.1rem' }}>
+              5
+            </div>
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700 }}>Verifiable Progress</h3>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, flex: '1' }}>
+              Build a real, database-recorded achievement record and earn verifiable completion certificates backed by genuine mastery.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 6. LEARNING RESOURCES (VIDEOS, GUIDES, SCHOOLKIT, RESUME)    */}
       {/* ============================================================ */}
       <section style={{ backgroundColor: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)', padding: '64px 24px' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
@@ -618,7 +695,150 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       </section>
 
       {/* ============================================================ */}
-      {/* 5. FREQUENTLY ASKED QUESTIONS                                */}
+      {/* 7. INDEPENDENT LEARNING AND INSTITUTIONAL LEARNING           */}
+      {/* ============================================================ */}
+      <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto', width: '100%' }}>
+        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px' }}>
+          <span className="badge badge-brand" style={{ marginBottom: '10px' }}>
+            DUAL AUDIENCE PLATFORM
+          </span>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '12px' }}>
+            Built for Independent Learners and Educational Institutions
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6 }}>
+            Supporting self-directed exploration while empowering teachers and institutions with structured classroom delivery.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '32px' }}>
+          {/* Column 1: Independent Learners */}
+          <div className="card-elevated" style={{ padding: '36px', display: 'flex', flexDirection: 'column', gap: '20px', borderTop: '4px solid var(--brand-primary)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Users size={22} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800 }}>Independent Learners</h3>
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Self-Paced • Practical Exploration</div>
+              </div>
+            </div>
+
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.65 }}>
+              For students and curious minds who want to explore subjects outside traditional school boundaries. Learn at your own pace without arbitrary gatekeeping.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="var(--brand-accent)" />
+                <span>Access all 27 approved curricular subjects freely</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="var(--brand-accent)" />
+                <span>Hands-on sandbox coding and financial simulators</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="var(--brand-accent)" />
+                <span>Verified course certificates and resume portfolio export</span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => onNavigate('catalogue')}
+                style={{ width: '100%', height: '44px', fontSize: '0.92rem' }}
+              >
+                <span>Explore Course Catalogue</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Column 2: Educational Institutions */}
+          <div className="card-elevated" style={{ padding: '36px', display: 'flex', flexDirection: 'column', gap: '20px', borderTop: '4px solid var(--brand-accent)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'var(--brand-accent-surface)', color: 'var(--brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <School size={22} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800 }}>Educational Institutions</h3>
+                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Classrooms • Teachers & Academic Admins</div>
+              </div>
+            </div>
+
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.65 }}>
+              For schools, colleges, and training institutes looking for structured curriculum deployment, join-code roster access, and real submission analytics.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="var(--brand-accent)" />
+                <span>Teacher workspaces with custom classroom join codes</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="var(--brand-accent)" />
+                <span>Row-level gradebooks and lab assessment evaluation</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="var(--brand-accent)" />
+                <span>Full DPDP Act 2023 compliance for minor data protection</span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+              <button
+                type="button"
+                className="btn-accent"
+                onClick={() => onNavigate('about')}
+                style={{ width: '100%', height: '44px', fontSize: '0.92rem' }}
+              >
+                <span>About Institutional Programs</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 8. FINAL CALL TO ACTION                                      */}
+      {/* ============================================================ */}
+      <section style={{ backgroundColor: 'var(--bg-surface)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)', padding: '72px 24px', textAlign: 'center' }}>
+        <div style={{ maxWidth: '840px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Award size={26} />
+          </div>
+          <h2 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.4rem)', fontWeight: 800, letterSpacing: '-0.02em', maxWidth: '680px' }}>
+            Ready to build demonstrable, practical capabilities?
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '600px', lineHeight: 1.6 }}>
+            Join independent students and partner school classrooms across India learning real technology, finance, coding, and professional skills with Geniusphere.
+          </p>
+          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '8px' }}>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => onNavigate('catalogue')}
+              style={{ height: '46px', padding: '0 26px', fontSize: '0.95rem' }}
+            >
+              <span>Explore Course Catalogue</span>
+              <ArrowRight size={17} />
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => onNavigate('resources')}
+              style={{ height: '46px', padding: '0 22px', fontSize: '0.95rem' }}
+            >
+              <span>Browse Learning Resources</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 9. FREQUENTLY ASKED QUESTIONS                                */}
       {/* ============================================================ */}
       <section style={{ padding: '64px 24px', maxWidth: '880px', margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>

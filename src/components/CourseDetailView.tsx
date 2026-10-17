@@ -115,7 +115,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
               </div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
-                  {enrollment.progress_percent >= 100 ? 'Course 100% Completed! 🎉' : 'Course In Progress'}
+                  {enrollment.progress_percent >= 100 ? 'Course 100% Completed' : 'Course In Progress'}
                 </div>
                 <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                   Completed {enrollment.completed_lessons.length} of {course.modules.flatMap(m => m.lessons).length} modules
