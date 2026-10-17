@@ -12,19 +12,19 @@
   --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  /* Official Brand Colors Reconciled: Cream, Scholarly Green, and Notebook Blue */
-  --brand-forest: #164E3D;               /* Deep Scholarly Forest Green */
-  --brand-primary: #1E6B4E;              /* Active Living Green */
-  --brand-primary-bright: #247A59;
-  --brand-primary-hover: #16533C;
-  --brand-surface: #EBF5F0;              /* Soft Sage Cream Tint */
-  --brand-border: #C4E3D4;
+  /* Strategy v1.0 Authoritative Design Tokens (17 Oct 2026) */
+  --brand-forest: #183F32;               /* Forest Green: Primary actions & navigation */
+  --brand-primary: #183F32;              /* Active Living Forest Green */
+  --brand-primary-bright: #1E4E3E;
+  --brand-primary-hover: #122E25;
+  --brand-surface: #DCE8DC;              /* Pale Sage: Supporting surfaces & highlights */
+  --brand-border: #C4D8C4;
 
-  --brand-blue: #1D58A6;                 /* Notebook Ink Blue */
-  --brand-blue-hover: #154584;
-  --brand-blue-surface: #EEF5FC;          /* Soft Sky Ink Tint */
-  --brand-blue-border: #C2DBF6;
-  --brand-qurious-sky: #1D58A6;
+  --brand-blue: #183153;                 /* Deep Blue: Links, information & selected states */
+  --brand-blue-hover: #102138;
+  --brand-blue-surface: #EDF3F9;          /* Soft Sky Tint */
+  --brand-blue-border: #CBD8E6;
+  --brand-qurious-sky: #183153;
 
   --brand-quest: #B45309;                /* Warm Amber Highlighter */
   --brand-quest-hover: #92400E;
@@ -33,11 +33,11 @@
   --brand-quest-text: #92400E;
   --brand-joy-of-quest: #B45309;
 
-  --brand-accent: #237A59;
-  --brand-accent-hover: #1A6045;
-  --brand-accent-surface: #EBF5F0;
-  --brand-accent-border: #C4E3D4;
-  --brand-always-questioning: #237A59;
+  --brand-accent: #183F32;
+  --brand-accent-hover: #122E25;
+  --brand-accent-surface: #DCE8DC;
+  --brand-accent-border: #C4D8C4;
+  --brand-always-questioning: #183F32;
 
   /* Typography Sizing Tokens */
   --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
@@ -47,14 +47,14 @@
   --text-body: 0.9375rem;                           /* 14-16px */
   --text-meta: 0.8125rem;                           /* 12-13px */
 
-  /* Paper & Cream Canvas System (Warm, Tactile Educational Baseline) */
-  --bg-canvas: #FAF7F2;                  /* Warm Tactile Cream Book-Paper Canvas */
+  /* Strategy v1.0 Warm Cream Canvas System */
+  --bg-canvas: #F7F5EC;                  /* Warm Cream Canvas & Reading Surfaces */
   --bg-surface: #FFFFFF;                 /* Crisp Pure White Surface / Notebook Pages */
-  --bg-surface-subdued: #F4EFEB;         /* Subtle Warm Parchment Tint */
+  --bg-surface-subdued: #EFECE1;         /* Subtle Parchment Reading Tint */
   --bg-surface-elevated: #FFFFFF;
 
-  --border-subtle: #E8E2D6;              /* Soft Warm Ruled Lines */
-  --border-strong: #D5CCC0;              /* Defined Notebook Border */
+  --border-subtle: #E2DFD2;              /* Soft Warm Ruled Lines */
+  --border-strong: #CDC7B5;              /* Defined Notebook Border */
 
   /* Text & Ink Typography (Clear Contrast, Softer than Harsh Black) */
   --text-primary: #14261C;               /* Deep Scholarly Forest Ink */
