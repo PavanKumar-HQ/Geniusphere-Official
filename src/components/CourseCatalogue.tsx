@@ -8,8 +8,6 @@ import {
   ArrowLeft,
   Clock,
 } from 'lucide-react';
-import { SimulationLabModal } from './SimulationLabModal';
-
 interface CourseCatalogueProps {
   db: InMemoryDatabase;
   onSelectCourse: (slug: string) => void;
@@ -28,10 +26,6 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   const [search, setSearch] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<string>(initialDomain);
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
-  const [simLabOpen, setSimLabOpen] = useState(false);
-  const [simLabCourseTitle, setSimLabCourseTitle] = useState('Cybersecurity & Defensive Web Security');
-  const [simLabCourseSlug, setSimLabCourseSlug] = useState('');
-  const [simLabDomain, setSimLabDomain] = useState('');
 
   const courses = db.getCourses({
     search,
@@ -220,17 +214,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     className="play-sim-btn"
                     onClick={(e) => {
                       e.stopPropagation();
+                      const allLabs = db.getLabDefinitions();
+                      const matched = allLabs.find(
+                        (l) => l.course_slug === course.slug || l.category === course.domain
+                      ) || allLabs[0];
                       if (onLaunchLab) {
-                        const allLabs = db.getLabDefinitions();
-                        const matched = allLabs.find(
-                          (l) => l.course_slug === course.slug || l.category === course.domain
-                        ) || allLabs[0];
                         onLaunchLab(matched.slug);
                       } else {
-                        setSimLabCourseTitle(course.title);
-                        setSimLabCourseSlug(course.slug);
-                        setSimLabDomain(course.domain);
-                        setSimLabOpen(true);
+                        onSelectCourse(course.slug);
                       }
                     }}
                     title="Launch Interactive Lab"
@@ -254,15 +245,6 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           ))}
         </div>
       )}
-
-      {/* Interactive Simulation Lab Modal (Cyber Lab Reference Image 2) */}
-      <SimulationLabModal
-        isOpen={simLabOpen}
-        onClose={() => setSimLabOpen(false)}
-        courseTitle={simLabCourseTitle}
-        courseSlug={simLabCourseSlug}
-        domain={simLabDomain}
-      />
     </div>
   );
 };

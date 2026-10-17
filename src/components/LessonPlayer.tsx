@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Lesson, CourseEnrollment, Certificate } from '../types';
 import { ConceptSvgAnimation } from './ConceptSvgAnimation';
-import { InteractiveSandbox } from './InteractiveSandbox';
+import { LessonCodingSandbox } from './LessonCodingSandbox';
 import { CertificateModal } from './CertificateModal';
-import { SimulationLabModal } from './SimulationLabModal';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -27,7 +26,7 @@ interface LessonPlayerProps {
   initialLessonId: string;
   currentUserId: string;
   onBackToCourse: () => void;
-  onLaunchLab: (labId: string) => void;
+  onLaunchLab?: (courseSlug: string) => void;
 }
 
 export const LessonPlayer: React.FC<LessonPlayerProps> = ({
@@ -36,7 +35,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   initialLessonId,
   currentUserId,
   onBackToCourse,
-  onLaunchLab: _onLaunchLab,
+  onLaunchLab,
 }) => {
   const course = db.getCourseById(courseId);
   const [currentLessonId, setCurrentLessonId] = useState<string>(initialLessonId);
@@ -45,7 +44,6 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
   const [earnedCertificate, setEarnedCertificate] = useState<Certificate | null>(null);
-  const [simLabOpen, setSimLabOpen] = useState(false);
 
   // Quiz submission state for current lesson
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
@@ -360,29 +358,30 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   <span>3. Sandbox Simulation (+100 XP)</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setSimLabOpen(true)}
-                  style={{
-                    height: '38px',
-                    padding: '0 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'rgba(0, 240, 255, 0.12)',
-                    color: '#00F0FF',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    border: '1px solid rgba(0, 240, 255, 0.35)',
-                    cursor: 'pointer',
-                    boxShadow: '0 0 10px rgba(0, 240, 255, 0.15)',
-                  }}
-                  title="Launch Cyber / Threat Simulation Lab (10 SVG Sims)"
-                >
-                  <Cpu size={15} />
-                  <span>Interactive Cyber Lab (10 SVG Sims)</span>
-                </button>
+                {onLaunchLab && (
+                  <button
+                    type="button"
+                    onClick={() => onLaunchLab(course.slug)}
+                    style={{
+                      height: '38px',
+                      padding: '0 14px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--brand-surface)',
+                      color: 'var(--brand-primary)',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      border: '1px solid var(--brand-border)',
+                      cursor: 'pointer',
+                    }}
+                    title="Launch associated interactive concept lab"
+                  >
+                    <TerminalIcon size={14} />
+                    <span>Launch Full Lab</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -533,22 +532,23 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
             {/* TAB 3: INTERACTIVE SANDBOX SIMULATION */}
             {activeTab === 'sandbox' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {activeLesson.sandbox_config ? (
-                  <InteractiveSandbox
-                    config={activeLesson.sandbox_config}
-                    onComplete={() => {
-                      db.awardXp(currentUserId, 100);
-                      const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
-                      setEnrollment({ ...updated });
-                    }}
-                  />
-                ) : (
-                  <div className="card" style={{ padding: '32px', textAlign: 'center' }}>
-                    <TerminalIcon size={36} color="var(--brand-primary)" style={{ margin: '0 auto 12px' }} />
-                    <h3>Sandbox Simulator Initialized</h3>
-                    <p style={{ color: 'var(--text-muted)' }}>Default sandbox environment active for this lesson.</p>
-                  </div>
-                )}
+                <LessonCodingSandbox
+                  config={activeLesson.sandbox_config || {
+                    title: 'Defensive SQL Sandbox',
+                    type: 'sql_runner',
+                    prompt: 'Formulate a read-only query using parameter binding.',
+                    explanation: 'Prepared statements eliminate SQL injection vulnerabilities by separating user input from syntax.',
+                    defaultInput: '-- Enter defensive SQL query or logic statement:\nSELECT id, name, category FROM courses WHERE is_published = ?;',
+                    expectedOutput: 'Query executed cleanly.',
+                    hints: ['Ensure queries are read-only SELECT statements.', 'Use ? for parameter binding.'],
+                  }}
+                  lessonTitle={activeLesson.title}
+                  onComplete={() => {
+                    db.awardXp(currentUserId, 100);
+                    const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
+                    setEnrollment({ ...updated });
+                  }}
+                />
               </div>
             )}
 
@@ -556,7 +556,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
             <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', padding: '16px 20px' }}>
               <div>
                 <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
-                  Current Status: <strong style={{ color: isCompleted ? 'var(--brand-primary)' : '#FFFFFF' }}>{isCompleted ? '✓ Completed' : 'In Progress'}</strong>
+                  Current Status: <strong style={{ color: isCompleted ? 'var(--brand-primary)' : 'var(--text-primary)' }}>{isCompleted ? '✓ Completed' : 'In Progress'}</strong>
                 </span>
               </div>
 
@@ -597,15 +597,6 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
       <CertificateModal
         certificate={earnedCertificate}
         onClose={() => setEarnedCertificate(null)}
-      />
-
-      {/* Interactive Simulation Lab Modal (Cyber Lab Reference Image 2) */}
-      <SimulationLabModal
-        isOpen={simLabOpen}
-        onClose={() => setSimLabOpen(false)}
-        courseTitle={course.title}
-        courseSlug={course.slug}
-        domain={course.domain}
       />
     </div>
   );

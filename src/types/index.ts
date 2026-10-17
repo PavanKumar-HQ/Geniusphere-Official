@@ -101,6 +101,7 @@ export interface SandboxConfig {
   defaultInput: string;
   expectedOutput?: string;
   explanation: string;
+  hints?: string[];
 }
 
 export interface Lesson {

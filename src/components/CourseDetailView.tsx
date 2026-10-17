@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { CourseEnrollment, Certificate } from '../types';
 import { CertificateModal } from './CertificateModal';
-import { SimulationLabModal } from './SimulationLabModal';
 import {
   ArrowLeft,
   BookOpen,
@@ -38,7 +37,6 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
     course ? db.getCourseEnrollment(currentUserId, course.id) : null
   );
   const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
-  const [simLabOpen, setSimLabOpen] = useState(false);
   const matchingLab = course ? db.getLabDefinitions().find((l) => l.course_slug === courseSlug || l.category === course.domain) : null;
 
   if (!course) {
@@ -153,27 +151,10 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
               </button>
             )}
 
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => setSimLabOpen(true)}
-              style={{
-                height: '44px',
-                padding: '0 18px',
-                fontSize: '0.9rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <Cpu size={18} />
-              <span>SVG Visualizer Lab</span>
-            </button>
-
             {matchingLab && onLaunchLab && (
               <button
                 type="button"
-                className="btn-outline"
+                className="btn-secondary"
                 onClick={() => onLaunchLab(matchingLab.slug)}
                 style={{
                   height: '44px',
@@ -182,9 +163,6 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  backgroundColor: 'var(--brand-surface)',
-                  color: 'var(--brand-primary)',
-                  borderColor: 'var(--brand-border)',
                 }}
                 title="Launch associated interactive concept lab"
               >
@@ -330,15 +308,6 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
       <CertificateModal
         certificate={activeCertificate}
         onClose={() => setActiveCertificate(null)}
-      />
-
-      {/* Interactive Simulation Lab Modal (Cyber Lab Reference Image 2) */}
-      <SimulationLabModal
-        isOpen={simLabOpen}
-        onClose={() => setSimLabOpen(false)}
-        courseTitle={course.title}
-        courseSlug={course.slug}
-        domain={course.domain}
       />
     </div>
   );

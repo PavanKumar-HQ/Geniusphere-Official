@@ -547,14 +547,14 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '300px',
               maxWidth: '300px',
               flex: '0 0 auto',
-              borderTop: '3px solid #6366F1',
+              borderTop: '3px solid var(--brand-primary)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
                 WORD OF THE DAY
               </span>
-              <BookOpen size={18} color="#6366F1" />
+              <BookOpen size={18} color="var(--brand-primary)" />
             </div>
 
             <div>
@@ -594,14 +594,14 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '320px',
               maxWidth: '320px',
               flex: '0 0 auto',
-              borderTop: '3px solid #8B5CF6',
+              borderTop: '3px solid var(--brand-secondary)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
                 CODE DETECTIVE
               </span>
-              <Terminal size={18} color="#8B5CF6" />
+              <Terminal size={18} color="var(--brand-secondary)" />
             </div>
 
             <div>
