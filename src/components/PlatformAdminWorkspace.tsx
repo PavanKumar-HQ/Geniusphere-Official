@@ -502,6 +502,13 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
                         src={`https://img.youtube.com/vi/${vid.youtube_id}/hqdefault.jpg`}
                         alt=""
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (!target.dataset.fallback) {
+                            target.dataset.fallback = '1';
+                            target.src = `https://img.youtube.com/vi/${vid.youtube_id}/mqdefault.jpg`;
+                          }
+                        }}
                       />
                     </div>
                     <div>

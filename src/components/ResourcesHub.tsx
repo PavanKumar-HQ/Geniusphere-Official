@@ -331,6 +331,13 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
                         objectFit: 'cover',
                       }}
                       loading="lazy"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        if (!target.dataset.fallback) {
+                          target.dataset.fallback = '1';
+                          target.src = `https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`;
+                        }
+                      }}
                     />
                     <div
                       style={{
