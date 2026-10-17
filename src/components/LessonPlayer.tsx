@@ -166,7 +166,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
         </div>
 
         {/* Course Progress */}
-        <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'rgba(15, 23, 42, 0.6)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+        <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '6px', fontWeight: 700 }}>
             <span>Course Progress</span>
             <span style={{ color: 'var(--brand-primary)' }}>{enrollment.progress_percent}%</span>
@@ -227,9 +227,9 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       style={{
                         padding: '8px 10px',
                         borderRadius: '6px',
-                        backgroundColor: isActive ? 'rgba(0, 245, 160, 0.12)' : 'transparent',
+                        backgroundColor: isActive ? 'var(--brand-surface)' : 'transparent',
                         color: isActive ? 'var(--brand-primary)' : 'var(--text-primary)',
-                        border: isActive ? '1px solid rgba(0, 245, 160, 0.3)' : '1px solid transparent',
+                        border: isActive ? '1px solid var(--brand-border)' : '1px solid transparent',
                         textAlign: 'left',
                         fontSize: '0.8rem',
                         fontWeight: isActive ? 700 : 500,
@@ -283,7 +283,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                 </div>
               </div>
 
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '10px', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '10px', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 {activeLesson.title}
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>
@@ -300,7 +300,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     padding: '0 16px',
                     borderRadius: '8px',
                     backgroundColor: activeTab === 'video' ? 'var(--brand-primary)' : 'transparent',
-                    color: activeTab === 'video' ? '#040814' : 'var(--text-secondary)',
+                    color: activeTab === 'video' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     display: 'flex',
@@ -322,7 +322,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     padding: '0 16px',
                     borderRadius: '8px',
                     backgroundColor: activeTab === 'animation' ? 'var(--brand-primary)' : 'transparent',
-                    color: activeTab === 'animation' ? '#040814' : 'var(--text-secondary)',
+                    color: activeTab === 'animation' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     display: 'flex',
@@ -344,7 +344,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     padding: '0 16px',
                     borderRadius: '8px',
                     backgroundColor: activeTab === 'sandbox' ? 'var(--brand-primary)' : 'transparent',
-                    color: activeTab === 'sandbox' ? '#040814' : 'var(--text-secondary)',
+                    color: activeTab === 'sandbox' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     display: 'flex',
@@ -403,7 +403,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   >
                     {activeLesson.content_markdown.split('\n\n').map((paragraph, pIdx) => {
                       if (paragraph.startsWith('### ')) {
-                        return <h3 key={pIdx} style={{ fontSize: '1.25rem', marginTop: '12px', fontWeight: 700, color: '#FFFFFF' }}>{paragraph.replace('### ', '')}</h3>;
+                        return <h3 key={pIdx} style={{ fontSize: '1.25rem', marginTop: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{paragraph.replace('### ', '')}</h3>;
                       }
                       if (paragraph.startsWith('#### ')) {
                         return <h4 key={pIdx} style={{ fontSize: '1.05rem', marginTop: '8px', fontWeight: 600, color: 'var(--text-secondary)' }}>{paragraph.replace('#### ', '')}</h4>;

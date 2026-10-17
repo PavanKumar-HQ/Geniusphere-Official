@@ -94,7 +94,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
 
   return (
     <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px 64px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      {/* Header Banner with Gamification XP Widget from Reference Image */}
+      {/* Header Banner with Gamification XP Widget */}
       <div
         className="card-elevated"
         style={{
@@ -104,12 +104,12 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '24px',
-          background: 'linear-gradient(135deg, rgba(11, 15, 25, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%)',
-          border: '1px solid rgba(0, 245, 160, 0.25)',
+          backgroundColor: 'var(--bg-surface)',
+          borderLeft: '5px solid var(--brand-primary)',
         }}
       >
         <div style={{ flex: '1', minWidth: '300px' }}>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, marginBottom: '8px', color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+          <h1 style={{ fontSize: '2.3rem', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
             Educational Resources
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', maxWidth: '680px', lineHeight: 1.6 }}>
@@ -122,13 +122,13 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
           style={{
             padding: '16px 20px',
             borderRadius: '12px',
-            backgroundColor: 'rgba(4, 8, 20, 0.8)',
-            border: '1px solid rgba(0, 245, 160, 0.3)',
+            backgroundColor: 'var(--bg-surface-subdued)',
+            border: '1px solid var(--border-subtle)',
             minWidth: '220px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#00F5A0', fontWeight: 800, fontSize: '0.9rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--brand-accent)', fontWeight: 800, fontSize: '0.9rem' }}>
               <Sparkles size={16} />
               <span>{userProgress.xp} XP</span>
             </div>
@@ -136,7 +136,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
               PROGRESS {completedCount}/{totalResources}
             </span>
           </div>
-          <div style={{ width: '100%', height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--border-strong)', borderRadius: '3px', overflow: 'hidden' }}>
             <div
               style={{
                 width: `${Math.min(100, Math.round((completedCount / totalResources) * 100))}%`,
@@ -148,7 +148,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
         </div>
       </div>
 
-      {/* Control Bar: Tab Switcher & Search from Reference Image */}
+      {/* Control Bar: Tab Switcher & Search */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Main Tab Switcher (Videos / Blogs & Guides / Tools) */}
@@ -160,11 +160,11 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
                 height: '42px',
                 padding: '0 20px',
                 borderRadius: '8px',
-                backgroundColor: activeTab === 'videos' ? '#EF4444' : 'rgba(15, 23, 42, 0.6)',
-                color: '#FFFFFF',
+                backgroundColor: activeTab === 'videos' ? '#EF4444' : 'var(--bg-surface)',
+                color: activeTab === 'videos' ? '#FFFFFF' : 'var(--text-primary)',
                 fontSize: '0.9rem',
                 fontWeight: 700,
-                border: activeTab === 'videos' ? 'none' : '1px solid var(--border-subtle)',
+                border: activeTab === 'videos' ? 'none' : '1px solid var(--border-strong)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
@@ -181,11 +181,11 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
                 height: '42px',
                 padding: '0 20px',
                 borderRadius: '8px',
-                backgroundColor: activeTab === 'materials' ? '#3B82F6' : 'rgba(15, 23, 42, 0.6)',
-                color: '#FFFFFF',
+                backgroundColor: activeTab === 'materials' ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                color: activeTab === 'materials' ? '#FFFFFF' : 'var(--text-primary)',
                 fontSize: '0.9rem',
                 fontWeight: 700,
-                border: activeTab === 'materials' ? 'none' : '1px solid var(--border-subtle)',
+                border: activeTab === 'materials' ? 'none' : '1px solid var(--border-strong)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
@@ -202,11 +202,11 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
                 height: '42px',
                 padding: '0 20px',
                 borderRadius: '8px',
-                backgroundColor: activeTab === 'tools' ? 'var(--brand-primary)' : 'rgba(15, 23, 42, 0.6)',
-                color: activeTab === 'tools' ? '#040814' : '#FFFFFF',
+                backgroundColor: activeTab === 'tools' ? 'var(--brand-accent)' : 'var(--bg-surface)',
+                color: activeTab === 'tools' ? '#FFFFFF' : 'var(--text-primary)',
                 fontSize: '0.9rem',
                 fontWeight: 700,
-                border: activeTab === 'tools' ? 'none' : '1px solid var(--border-subtle)',
+                border: activeTab === 'tools' ? 'none' : '1px solid var(--border-strong)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
@@ -275,17 +275,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
               key={cat.id}
               type="button"
               onClick={() => setSelectedCategory(cat.id)}
-              style={{
-                height: '32px',
-                padding: '0 14px',
-                borderRadius: '20px',
-                fontSize: '0.82rem',
-                fontWeight: selectedCategory === cat.id ? 700 : 500,
-                backgroundColor: selectedCategory === cat.id ? 'var(--brand-primary)' : 'rgba(15, 23, 42, 0.6)',
-                color: selectedCategory === cat.id ? '#040814' : 'var(--text-secondary)',
-                border: '1px solid ' + (selectedCategory === cat.id ? 'var(--brand-primary)' : 'var(--border-subtle)'),
-                cursor: 'pointer',
-              }}
+              className={`filter-pill ${selectedCategory === cat.id ? 'active' : ''}`}
             >
               {cat.label}
             </button>

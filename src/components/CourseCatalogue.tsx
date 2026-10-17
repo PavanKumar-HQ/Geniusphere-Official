@@ -69,13 +69,13 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             minHeight: 'auto',
           }}
         >
-          <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--bg-surface-subdued)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ArrowLeft size={14} />
           </div>
           <span>BACK TO HOME</span>
         </button>
 
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '8px' }}>
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
           Course Catalog
         </h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '640px' }}>
@@ -125,7 +125,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               style={{
                 background: 'none',
                 border: 'none',
-                color: selectedLevel === lvl ? 'var(--brand-cyan-light)' : 'var(--text-secondary)',
+                color: selectedLevel === lvl ? 'var(--brand-primary)' : 'var(--text-secondary)',
                 fontWeight: selectedLevel === lvl ? 700 : 500,
                 textDecoration: selectedLevel === lvl ? 'underline' : 'none',
                 cursor: 'pointer',
@@ -163,13 +163,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           {courses.map((course) => (
             <div
               key={course.id}
-              className="card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '14px',
-                padding: '26px',
-              }}
+              className="course-card"
+              onClick={() => onSelectCourse(course.slug)}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className={`badge ${course.domain === 'technology' ? 'badge-brand' : course.domain === 'coding' ? 'badge-accent' : course.domain === 'finance' ? 'badge-warning' : 'badge-neutral'}`}>
@@ -180,44 +175,42 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 </span>
               </div>
 
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, lineHeight: 1.35, color: '#FFFFFF' }}>
-                {course.title}
-              </h3>
+              <h3>{course.title}</h3>
 
-              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.55, flex: '1' }}>
-                {course.summary}
-              </p>
+              <p>{course.summary}</p>
 
               {/* Tags */}
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94A3B8', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '2px 8px', borderRadius: '4px' }}>
                   #{course.domain}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94A3B8', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '2px 8px', borderRadius: '4px' }}>
                   #{course.level}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#34D399', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#34D399', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '4px' }}>
                   #10Videos
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#22D3EE', backgroundColor: 'rgba(6, 182, 212, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
+                <span style={{ fontSize: '0.75rem', color: '#22D3EE', backgroundColor: 'rgba(6, 182, 212, 0.15)', padding: '2px 8px', borderRadius: '4px' }}>
                   #Sandbox
                 </span>
               </div>
 
-              {/* Bottom row matching Image 2 */}
-              <div style={{ paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Play size={14} style={{ color: 'var(--brand-cyan-light)' }} />
+              {/* Bottom row matching reference */}
+              <div className="course-card-footer">
+                <span className="modules-badge">
+                  <Play size={14} style={{ color: '#00F5A0' }} />
                   <span>{course.modules.length} Modules</span>
                 </span>
                 <button
                   type="button"
-                  className="btn-outline"
-                  onClick={() => onSelectCourse(course.slug)}
-                  style={{ height: '36px', fontSize: '0.82rem', padding: '0 14px' }}
+                  className="arrow-action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectCourse(course.slug);
+                  }}
+                  title="Open Course"
                 >
-                  <span>Start Course</span>
-                  <ArrowRight size={14} />
+                  <ArrowRight size={16} />
                 </button>
               </div>
             </div>

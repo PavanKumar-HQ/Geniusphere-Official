@@ -113,7 +113,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
             <Trophy size={15} />
             <span>LEARNER LEADERBOARD & RECOGNITION</span>
           </div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 900, letterSpacing: '-0.02em', color: '#FFFFFF' }}>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 900, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Global Learning Arena
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
@@ -144,10 +144,10 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
           <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: leaderboardData[1].avatar_color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', fontSize: '1.4rem', fontWeight: 800 }}>
             {leaderboardData[1].user_name[0]}
           </div>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFF' }}>{leaderboardData[1].user_name}</h3>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>{leaderboardData[1].user_name}</h3>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{leaderboardData[1].school_name}</p>
           <div className="badge badge-accent">{leaderboardData[1].badge}</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#34D399', marginTop: '6px' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--brand-accent)', marginTop: '6px' }}>
             {leaderboardData[1].xp.toLocaleString()} XP
           </div>
         </div>
@@ -168,19 +168,19 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
             transform: 'scale(1.03)',
           }}
         >
-          <div style={{ width: '46px', height: '46px', borderRadius: '50%', backgroundColor: '#F59E0B', color: '#040814', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, boxShadow: '0 0 15px #F59E0B' }}>
+          <div style={{ width: '46px', height: '46px', borderRadius: '50%', backgroundColor: '#F59E0B', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, boxShadow: '0 2px 10px rgba(245, 158, 11, 0.4)' }}>
             <Trophy size={24} />
           </div>
           <div style={{ width: '70px', height: '70px', borderRadius: '50%', backgroundColor: leaderboardData[0].avatar_color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', fontSize: '1.6rem', fontWeight: 800, border: '3px solid #F59E0B' }}>
             {leaderboardData[0].user_name[0]}
           </div>
-          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#FFF' }}>{leaderboardData[0].user_name}</h3>
+          <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)' }}>{leaderboardData[0].user_name}</h3>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{leaderboardData[0].school_name}</p>
           <div className="streak-pill" style={{ fontSize: '0.8rem', padding: '4px 12px' }}>
             <Flame size={14} />
             <span>{leaderboardData[0].streak} Days Streak</span>
           </div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#FBBF24' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#D97706' }}>
             {leaderboardData[0].xp.toLocaleString()} XP
           </div>
         </div>
@@ -193,10 +193,10 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
           <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: leaderboardData[2].avatar_color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', fontSize: '1.4rem', fontWeight: 800 }}>
             {leaderboardData[2].user_name[0]}
           </div>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFF' }}>{leaderboardData[2].user_name}</h3>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>{leaderboardData[2].user_name}</h3>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{leaderboardData[2].school_name}</p>
           <div className="badge badge-warning">{leaderboardData[2].badge}</div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#FCD34D', marginTop: '6px' }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#B45309', marginTop: '6px' }}>
             {leaderboardData[2].xp.toLocaleString()} XP
           </div>
         </div>
@@ -239,7 +239,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
         <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ backgroundColor: 'rgba(255, 255, 255, 0.04)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)', fontSize: '0.82rem', textTransform: 'uppercase' }}>
+              <tr style={{ backgroundColor: 'var(--bg-surface-subdued)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)', fontSize: '0.82rem', textTransform: 'uppercase' }}>
                 <th style={{ padding: '16px 20px' }}>Rank</th>
                 <th style={{ padding: '16px 20px' }}>Learner</th>
                 <th style={{ padding: '16px 20px' }}>School / Institution</th>
@@ -267,7 +267,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
                         {learner.user_name[0]}
                       </div>
                       <div>
-                        <div style={{ fontWeight: 700, color: '#FFFFFF', fontSize: '0.92rem' }}>
+                        <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.92rem' }}>
                           {learner.user_name}
                           {learner.user_id === currentUserId && (
                             <span className="badge badge-brand" style={{ marginLeft: '8px', fontSize: '0.65rem' }}>You</span>
@@ -305,13 +305,13 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
                 <span className="badge badge-cyan">RANK #{school.rank}</span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{school.students} Active Learners</span>
               </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#FFF' }}>{school.name}</h3>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)' }}>{school.name}</h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                Top Discipline: <strong style={{ color: '#34D399' }}>{school.topSubject}</strong>
+                Top Discipline: <strong style={{ color: 'var(--brand-accent)' }}>{school.topSubject}</strong>
               </p>
               <div style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Cumulative XP</span>
-                <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FBBF24' }}>{school.totalXp.toLocaleString()} XP</span>
+                <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#D97706' }}>{school.totalXp.toLocaleString()} XP</span>
               </div>
             </div>
           ))}

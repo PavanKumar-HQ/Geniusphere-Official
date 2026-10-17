@@ -32,3 +32,6 @@ dist-ssr
 
 # Test coverage
 coverage
+
+# Scratch scripts
+scratch/

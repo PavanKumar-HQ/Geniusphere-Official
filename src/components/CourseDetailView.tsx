@@ -107,14 +107,14 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
         </p>
 
         {/* Enrollment / Progress Action Banner */}
-        <div style={{ padding: '20px', backgroundColor: 'rgba(15, 23, 42, 0.7)', borderRadius: '12px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ padding: '20px', backgroundColor: 'var(--brand-surface)', borderRadius: '12px', border: '1px solid var(--brand-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
           {enrollment ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'rgba(0, 245, 160, 0.15)', border: '2px solid var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--brand-primary)', fontSize: '1.1rem' }}>
+              <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'var(--brand-accent-surface)', border: '2px solid var(--brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--brand-accent)', fontSize: '1.1rem' }}>
                 {enrollment.progress_percent}%
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#FFFFFF' }}>
+                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
                   {enrollment.progress_percent >= 100 ? 'Course 100% Completed! 🎉' : 'Course In Progress'}
                 </div>
                 <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
@@ -124,7 +124,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             </div>
           ) : (
             <div>
-              <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#FFFFFF' }}>Ready to begin?</div>
+              <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>Ready to begin?</div>
               <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                 10 Comprehensive Modules • 10 Videos • 10 SVG Visualizers • 10 Sandbox Labs • Certificate
               </div>
@@ -214,8 +214,8 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {course.modules.map((mod, mIdx) => (
-              <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'rgba(15, 23, 42, 0.4)' }}>
-                <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.8)', padding: '12px 18px', fontWeight: 700, fontSize: '0.95rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'var(--bg-surface)' }}>
+                <div style={{ backgroundColor: 'var(--bg-surface-subdued)', padding: '12px 18px', fontWeight: 700, fontSize: '0.95rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-primary)' }}>
                   <span>Module {mIdx + 1}: {mod.title}</span>
                   <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{mod.lessons.length} Lessons</span>
                 </div>
@@ -243,7 +243,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                             <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid var(--border-strong)', flexShrink: 0 }} />
                           )}
                           <div>
-                            <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#FFFFFF' }}>{les.title}</div>
+                            <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>{les.title}</div>
                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{les.summary}</div>
                           </div>
                         </div>
