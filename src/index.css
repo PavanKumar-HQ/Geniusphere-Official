@@ -61,17 +61,38 @@
 }
 
 :root {
-  /* Typography Scale — Official Brand Typography (Brand Guidelines 2026 Pages 18-20) */
-  --font-display-brand: 'Mikado', 'Causten Round', sans-serif;
-  --font-heading: 'Mikado', 'Causten Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Causten Round', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Typography Scale — Scholarly & Approachable Brand Typography */
+  --font-display-brand: 'Mikado', 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Mikado', 'Plus Jakarta Sans', 'Causten Round', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Causten Round', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
-  /* Official Brand Colors (Brand Guidelines 2026 Page 13 & 14) */
-  --brand-qurious-sky: #30B2E7;          /* CMYK: C67 M10 Y0 K0 - Primary Qurious Sky */
-  --brand-joy-of-quest: #FDB913;         /* CMYK: C0 M30 Y100 K0 - Warm Joy of Quest */
-  --brand-always-questioning: #75B543;   /* CMYK: C60 M7 Y100 K0 - Active Always Questioning */
-  --bg-canvas-warm: #FFF6E3;             /* Page 14 Guideline Warm Cream Canvas */
+  /* Official Brand Colors Reconciled: Cream, Scholarly Green, and Notebook Blue */
+  --brand-forest: #164E3D;               /* Deep Scholarly Forest Green */
+  --brand-primary: #1E6B4E;              /* Active Living Green */
+  --brand-primary-bright: #247A59;
+  --brand-primary-hover: #16533C;
+  --brand-surface: #EBF5F0;              /* Soft Sage Cream Tint */
+  --brand-border: #C4E3D4;
+
+  --brand-blue: #1D58A6;                 /* Notebook Ink Blue */
+  --brand-blue-hover: #154584;
+  --brand-blue-surface: #EEF5FC;          /* Soft Sky Ink Tint */
+  --brand-blue-border: #C2DBF6;
+  --brand-qurious-sky: #1D58A6;
+
+  --brand-quest: #B45309;                /* Warm Amber Highlighter */
+  --brand-quest-hover: #92400E;
+  --brand-quest-surface: #FEF7EA;        /* Warm Parchment Amber Tint */
+  --brand-quest-border: #FCE7C3;
+  --brand-quest-text: #92400E;
+  --brand-joy-of-quest: #B45309;
+
+  --brand-accent: #237A59;
+  --brand-accent-hover: #1A6045;
+  --brand-accent-surface: #EBF5F0;
+  --brand-accent-border: #C4E3D4;
+  --brand-always-questioning: #237A59;
 
   /* Typography Sizing Tokens */
   --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
@@ -81,49 +102,33 @@
   --text-body: 0.9375rem;                           /* 14-16px */
   --text-meta: 0.8125rem;                           /* 12-13px */
 
-  /* Baseline Design Tokens Anchored on Brand System */
-  --bg-canvas: #FBF9F5;                  /* Warm Cream Educational Page Background */
-  --bg-surface: #FFFFFF;                 /* Crisp Pure White Surface / Cards */
-  --bg-surface-subdued: #F5F2EB;         /* Subtle Warm Neutral Surface */
+  /* Paper & Cream Canvas System (Warm, Tactile Educational Baseline) */
+  --bg-canvas: #FAF7F2;                  /* Warm Tactile Cream Book-Paper Canvas */
+  --bg-surface: #FFFFFF;                 /* Crisp Pure White Surface / Notebook Pages */
+  --bg-surface-subdued: #F4EFEB;         /* Subtle Warm Parchment Tint */
   --bg-surface-elevated: #FFFFFF;
 
-  --text-primary: #172B4D;               /* High Contrast Mikado Black / Charcoal Navy */
-  --text-secondary: #5E6C84;             /* Secondary Slate */
-  --text-muted: #8993A4;                 /* Supporting Meta Text */
+  --border-subtle: #E8E2D6;              /* Soft Warm Ruled Lines */
+  --border-strong: #D5CCC0;              /* Defined Notebook Border */
+
+  /* Text & Ink Typography (Clear Contrast, Softer than Harsh Black) */
+  --text-primary: #14261C;               /* Deep Scholarly Forest Ink */
+  --text-secondary: #475569;             /* Refined Slate Body Copy */
+  --text-muted: #6B7C72;                 /* Gentle Sage Gray for Metadata */
   --text-inverse: #FFFFFF;
 
-  /* Primary Brand Action: Deep Qurious Sky for WCAG AA 4.8:1 contrast on white */
-  --brand-primary: #1282B2;
-  --brand-primary-bright: #30B2E7;
-  --brand-primary-hover: #0C6A93;
-  --brand-surface: #E8F7FD;              /* Qurious Sky Tint */
-  --brand-border: #BCE7F7;
-
-  /* Secondary Brand Accent: Always Questioning #75B543 */
-  --brand-accent: #5B9B2E;
-  --brand-accent-hover: #487C23;
-  --brand-accent-surface: #F0F9EB;       /* Always Questioning Tint */
-  --brand-accent-border: #C2E7A7;
-
-  /* Quest Accent: Joy of Quest #FDB913 */
-  --brand-quest: #FDB913;
-  --brand-quest-hover: #E5A305;
-  --brand-quest-surface: #FFF9E6;        /* Joy of Quest Warm Tint */
-  --brand-quest-border: #FDE68A;
-  --brand-quest-text: #92400E;
-
   /* Selected State */
-  --selected-bg: #E8F7FD;
+  --selected-bg: #EBF5F0;
 
   /* Semantic State Colors */
-  --success: #27520E;
-  --success-bg: #F0F9EB;
-  --success-border: #C2E7A7;
-  --success-text: #27520E;
+  --success: #164E3D;
+  --success-bg: #EBF5F0;
+  --success-border: #C4E3D4;
+  --success-text: #164E3D;
 
   --warning: #92400E;
-  --warning-bg: #FFF9E6;
-  --warning-border: #FDE68A;
+  --warning-bg: #FEF7EA;
+  --warning-border: #FCE7C3;
   --warning-text: #92400E;
 
   --error: #B91C1C;
@@ -133,9 +138,7 @@
   --danger-text: #B91C1C;
 
   /* Code & Editor Surfaces */
-  --editor-bg: #F8F9FA;
-  --border-subtle: #E8E3D8;              /* Soft Warm Guideline Borders */
-  --border-strong: #D5CEC1;
+  --editor-bg: #F8F6F0;
 
   /* Spacing Rhythm (8px base) */
   --space-1: 4px;
@@ -157,51 +160,24 @@
   --radius-2xl: 20px;
   --radius-full: 9999px;
 
-  /* Rich Vibrant Gradients for Premium Educational Aesthetics */
-  --grad-brand: linear-gradient(135deg, #1282B2 0%, #30B2E7 50%, #6366F1 100%);
-  --grad-sky: linear-gradient(135deg, #1282B2 0%, #30B2E7 100%);
-  --grad-quest: linear-gradient(135deg, #FF6B00 0%, #FF8A00 35%, #FDB913 100%);
-  --grad-questioning: linear-gradient(135deg, #5B9B2E 0%, #75B543 50%, #10B981 100%);
-  --grad-tech: linear-gradient(135deg, #0284C7 0%, #30B2E7 50%, #6366F1 100%);
-  --grad-finance: linear-gradient(135deg, #D97706 0%, #FDB913 50%, #F59E0B 100%);
-  --grad-pro: linear-gradient(135deg, #059669 0%, #75B543 50%, #10B981 100%);
-  --grad-coding: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #EC4899 100%);
-  --grad-fun: linear-gradient(135deg, #EC4899 0%, #F43F5E 50%, #FF8A00 100%);
-  --grad-rainbow: linear-gradient(90deg, #30B2E7 0%, #00D2FF 20%, #FDB913 40%, #FF8A00 60%, #75B543 80%, #6366F1 100%);
+  /* Dignified Solid & Subtle Tone Tokens (No Neon Gradients) */
+  --grad-brand: #1E6B4E;
+  --grad-sky: #1D58A6;
+  --grad-quest: #B45309;
+  --grad-questioning: #1E6B4E;
+  --grad-tech: #1D58A6;
+  --grad-finance: #B45309;
+  --grad-pro: #1E6B4E;
+  --grad-coding: #1D58A6;
+  --grad-fun: #1E6B4E;
+  --grad-rainbow: #1E6B4E;
 
-  /* Vivid Accent Color Palette */
-  --color-violet: #6366F1;
-  --color-violet-bg: #EEF2FF;
-  --color-violet-border: #C7D2FE;
-  --color-purple: #8B5CF6;
-  --color-purple-bg: #F5F3FF;
-  --color-purple-border: #DDD6FE;
-  --color-coral: #F43F5E;
-  --color-coral-bg: #FFF1F2;
-  --color-coral-border: #FECDD3;
-  --color-cyan: #06B6D4;
-  --color-cyan-bg: #ECFEFF;
-  --color-cyan-border: #A5F3FC;
-  --color-emerald: #10B981;
-  --color-emerald-bg: #ECFDF5;
-  --color-emerald-border: #A7F3D0;
-  --color-amber: #F59E0B;
-  --color-amber-bg: #FFFBEB;
-  --color-amber-border: #FDE68A;
-
-  /* Radiant Glow Shadows */
-  --glow-sky: 0 8px 24px -4px rgba(48, 178, 231, 0.4);
-  --glow-quest: 0 8px 24px -4px rgba(253, 185, 19, 0.4);
-  --glow-green: 0 8px 24px -4px rgba(117, 181, 67, 0.4);
-  --glow-purple: 0 8px 24px -4px rgba(99, 102, 241, 0.4);
-  --glow-coral: 0 8px 24px -4px rgba(244, 63, 94, 0.4);
-
-  /* Subtle Clean Elevations */
-  --shadow-xs: 0 1px 2px rgba(23, 43, 77, 0.04);
-  --shadow-sm: 0 2px 4px rgba(23, 43, 77, 0.06), 0 1px 2px rgba(23, 43, 77, 0.04);
-  --shadow-md: 0 6px 12px -2px rgba(23, 43, 77, 0.08), 0 3px 6px -3px rgba(23, 43, 77, 0.05);
-  --shadow-lg: 0 12px 24px -4px rgba(23, 43, 77, 0.1), 0 6px 12px -4px rgba(23, 43, 77, 0.05);
-  --shadow-xl: 0 20px 32px -6px rgba(23, 43, 77, 0.12), 0 10px 16px -5px rgba(23, 43, 77, 0.06);
+  /* Natural Tactile Paper Shadows (Zero Neon Glows) */
+  --shadow-xs: 0 1px 2px rgba(20, 38, 28, 0.04);
+  --shadow-sm: 0 1px 3px rgba(20, 38, 28, 0.06), 0 1px 2px rgba(20, 38, 28, 0.04);
+  --shadow-md: 0 4px 10px -2px rgba(20, 38, 28, 0.07), 0 2px 4px -2px rgba(20, 38, 28, 0.04);
+  --shadow-lg: 0 10px 20px -4px rgba(20, 38, 28, 0.08), 0 4px 8px -4px rgba(20, 38, 28, 0.04);
+  --shadow-xl: 0 16px 28px -6px rgba(20, 38, 28, 0.1), 0 8px 12px -5px rgba(20, 38, 28, 0.05);
 
   /* Touch Targets */
   --min-touch-target: 44px;
@@ -272,21 +248,21 @@ button {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #1282B2 0%, #30B2E7 100%);
+  background-color: var(--brand-primary);
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 14px rgba(18, 130, 178, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--brand-primary-hover);
+  box-shadow: 0 1px 3px rgba(22, 78, 61, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   font-weight: 700;
   letter-spacing: 0.01em;
 }
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0C6A93 0%, #1FB0E8 100%);
-  box-shadow: 0 6px 20px rgba(48, 178, 231, 0.45);
-  transform: translateY(-2px);
+  background-color: var(--brand-primary-hover);
+  box-shadow: 0 2px 6px rgba(22, 78, 61, 0.22);
+  transform: translateY(-1px);
 }
 .btn-primary:active:not(:disabled) {
-  transform: translateY(1px);
-  box-shadow: 0 2px 8px rgba(18, 130, 178, 0.3);
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(22, 78, 61, 0.15);
 }
 .btn-primary:disabled {
   opacity: 0.55;
@@ -296,61 +272,61 @@ button {
 }
 
 .btn-quest {
-  background: linear-gradient(135deg, #FDB913 0%, #FF8A00 100%);
-  color: #172B4D;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  font-weight: 800;
-  box-shadow: 0 4px 14px rgba(253, 185, 19, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  background-color: var(--brand-quest);
+  color: #FFFFFF;
+  border: 1px solid var(--brand-quest-hover);
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(180, 83, 9, 0.15);
 }
 .btn-quest:hover:not(:disabled) {
-  background: linear-gradient(135deg, #FFAA00 0%, #FF7700 100%);
-  box-shadow: 0 6px 20px rgba(255, 138, 0, 0.45);
-  transform: translateY(-2px);
+  background-color: var(--brand-quest-hover);
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.22);
+  transform: translateY(-1px);
 }
 .btn-quest:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 .btn-questioning {
-  background: linear-gradient(135deg, #75B543 0%, #10B981 100%);
+  background-color: #237A59;
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid #1A6045;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(117, 181, 67, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 3px rgba(35, 122, 89, 0.15);
 }
 .btn-questioning:hover:not(:disabled) {
-  background: linear-gradient(135deg, #68A43A 0%, #059669 100%);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
-  transform: translateY(-2px);
+  background-color: #1A6045;
+  box-shadow: 0 2px 6px rgba(35, 122, 89, 0.22);
+  transform: translateY(-1px);
 }
 .btn-questioning:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 .btn-accent {
-  background: linear-gradient(135deg, #5B9B2E 0%, #75B543 100%);
+  background-color: #237A59;
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #1A6045;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(91, 155, 46, 0.3);
+  box-shadow: 0 1px 3px rgba(35, 122, 89, 0.15);
 }
 .btn-accent:hover:not(:disabled) {
-  background: linear-gradient(135deg, #487C23 0%, #68A43A 100%);
-  box-shadow: 0 6px 18px rgba(117, 181, 67, 0.4);
-  transform: translateY(-2px);
+  background-color: #1A6045;
+  box-shadow: 0 2px 6px rgba(35, 122, 89, 0.22);
+  transform: translateY(-1px);
 }
 
 .btn-purple {
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  background-color: var(--brand-blue);
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--brand-blue-hover);
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 1px 3px rgba(29, 88, 166, 0.15);
 }
 .btn-purple:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
-  transform: translateY(-2px);
+  background-color: var(--brand-blue-hover);
+  box-shadow: 0 2px 6px rgba(29, 88, 166, 0.22);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -358,13 +334,13 @@ button {
   color: var(--text-primary);
   border: 1.5px solid var(--border-strong);
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(23, 43, 77, 0.05);
+  box-shadow: 0 1px 2px rgba(20, 38, 28, 0.04);
 }
 .btn-secondary:hover:not(:disabled) {
-  background-color: #F8FAFC;
+  background-color: var(--bg-surface-subdued);
   border-color: var(--brand-primary);
   color: var(--brand-primary);
-  box-shadow: 0 4px 12px rgba(48, 178, 231, 0.15);
+  box-shadow: 0 2px 5px rgba(20, 38, 28, 0.08);
   transform: translateY(-1px);
 }
 .btn-secondary:disabled {
@@ -377,25 +353,24 @@ button {
   color: var(--brand-primary);
   border: 1.5px solid var(--brand-primary);
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(18, 130, 178, 0.1);
+  box-shadow: 0 1px 2px rgba(22, 78, 61, 0.06);
 }
 .btn-outline:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--brand-surface), #F0F9FF);
+  background-color: var(--brand-surface);
   border-color: var(--brand-primary-hover);
   color: var(--brand-primary-hover);
-  box-shadow: 0 4px 14px rgba(48, 178, 231, 0.25);
   transform: translateY(-1px);
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+  background-color: var(--danger);
   color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  border: 1px solid #991B1B;
+  box-shadow: 0 1px 3px rgba(185, 28, 28, 0.15);
 }
 .btn-danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, #B91C1C 0%, #DC2626 100%);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  background-color: #991B1B;
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.22);
   transform: translateY(-1px);
 }
 
@@ -597,107 +572,97 @@ button {
   border-color: var(--border-subtle);
 }
 
-/* Gamification Badges — Rich, Vibrant & Energetic */
+/* Gamification Badges — Scholarly, Clean, Tactile Pills (No Neon) */
 .streak-pill {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #FF5500 0%, #FF8A00 45%, #FDB913 100%);
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 5px 14px;
+  background-color: var(--brand-quest-surface);
+  color: var(--brand-quest-text) !important;
+  border: 1px solid var(--brand-quest-border);
+  padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: var(--text-meta);
-  font-weight: 800;
-  box-shadow: 0 4px 14px rgba(255, 85, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  letter-spacing: 0.02em;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(180, 83, 9, 0.08);
+  letter-spacing: 0.01em;
+  transition: transform 0.15s ease;
 }
 .streak-pill:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 6px 18px rgba(255, 85, 0, 0.5);
+  transform: translateY(-1px);
 }
 
 .xp-pill {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 45%, #30B2E7 100%);
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 5px 14px;
+  background-color: var(--brand-blue-surface);
+  color: var(--brand-blue) !important;
+  border: 1px solid var(--brand-blue-border);
+  padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: var(--text-meta);
-  font-weight: 800;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  letter-spacing: 0.02em;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(29, 88, 166, 0.08);
+  letter-spacing: 0.01em;
+  transition: transform 0.15s ease;
 }
 .xp-pill:hover {
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+  transform: translateY(-1px);
 }
 
 .rank-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  color: #FFFFFF !important;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: var(--brand-surface);
+  color: var(--brand-forest) !important;
+  border: 1px solid var(--brand-border);
   padding: 4px 12px;
   border-radius: var(--radius-full);
   font-size: var(--text-meta);
-  font-weight: 800;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(22, 78, 61, 0.08);
 }
 
-/* Gradient Text Utilities */
+/* Scholarly Text Colors (Zero Neon Gradient Text) */
 .gradient-text-sky-indigo {
-  background: linear-gradient(135deg, #0284C7 0%, #30B2E7 40%, #6366F1 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--brand-forest);
+  font-weight: 800;
   display: inline-block;
 }
 
 .gradient-text-gold-emerald {
-  background: linear-gradient(135deg, #F59E0B 0%, #75B543 50%, #10B981 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--brand-blue);
+  font-weight: 800;
   display: inline-block;
 }
 
 .gradient-text-brand {
-  background: linear-gradient(135deg, #1282B2 0%, #30B2E7 50%, #FDB913 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--brand-forest);
+  font-weight: 800;
   display: inline-block;
 }
 
 .gradient-text-rainbow {
-  background: linear-gradient(90deg, #30B2E7 0%, #FDB913 35%, #75B543 70%, #8B5CF6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--brand-blue);
+  font-weight: 800;
   display: inline-block;
 }
 
-/* Ambient Background Mesh */
+/* Tactile Cream Paper Canvas (Zero Neon Radiance) */
 .hero-ambient-mesh {
   background-color: var(--bg-canvas);
   background-image: 
-    radial-gradient(circle at 10% 15%, rgba(48, 178, 231, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 90% 12%, rgba(253, 185, 19, 0.20) 0%, transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(117, 181, 67, 0.16) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(99, 102, 241, 0.14) 0%, transparent 45%);
+    radial-gradient(circle at 10% 15%, rgba(30, 107, 78, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 12%, rgba(29, 88, 166, 0.04) 0%, transparent 40%);
 }
 
 .section-ambient-mesh {
-  background-image: 
-    radial-gradient(circle at 85% 20%, rgba(48, 178, 231, 0.12) 0%, transparent 40%),
-    radial-gradient(circle at 15% 80%, rgba(253, 185, 19, 0.12) 0%, transparent 40%);
+  background-color: var(--bg-canvas);
 }
 
-/* Colorful Tag Pills */
+/* Scholarly Tag Pills (Crisp, High Contrast, Readable on Paper) */
 .tag-pill {
   font-size: 0.74rem;
   font-weight: 700;
@@ -710,57 +675,57 @@ button {
 }
 
 .tag-pill-sky {
-  background-color: #E0F2FE;
-  color: #0369A1;
-  border: 1px solid #7DD3FC;
+  background-color: var(--brand-blue-surface);
+  color: var(--brand-blue);
+  border: 1px solid var(--brand-blue-border);
 }
 .tag-pill-sky:hover {
-  background-color: #BAE6FD;
+  background-color: #E2EBF5;
 }
 
 .tag-pill-indigo {
-  background-color: #EEF2FF;
-  color: #4338CA;
-  border: 1px solid #A5B4FC;
+  background-color: #F0F4FA;
+  color: #1E3A8A;
+  border: 1px solid #BFDBFE;
 }
 .tag-pill-indigo:hover {
-  background-color: #E0E7FF;
+  background-color: #E2EBF5;
 }
 
 .tag-pill-purple {
-  background-color: #F3E8FF;
-  color: #7E22CE;
-  border: 1px solid #D8B4FE;
+  background-color: #F5EEF8;
+  color: #5B21B6;
+  border: 1px solid #DDD6FE;
 }
 .tag-pill-purple:hover {
-  background-color: #E9D5FF;
+  background-color: #EFE6F5;
 }
 
 .tag-pill-gold {
-  background-color: #FEF3C7;
-  color: #B45309;
-  border: 1px solid #FCD34D;
+  background-color: var(--brand-quest-surface);
+  color: var(--brand-quest-text);
+  border: 1px solid var(--brand-quest-border);
 }
 .tag-pill-gold:hover {
-  background-color: #FDE68A;
+  background-color: #FDEBCB;
 }
 
 .tag-pill-emerald {
-  background-color: #DCFCE7;
-  color: #15803D;
-  border: 1px solid #86EFAC;
+  background-color: var(--brand-surface);
+  color: var(--brand-forest);
+  border: 1px solid var(--brand-border);
 }
 .tag-pill-emerald:hover {
-  background-color: #BBF7D0;
+  background-color: #DCEDE4;
 }
 
 .tag-pill-coral {
-  background-color: #FFE4E6;
-  color: #BE123C;
-  border: 1px solid #FDA4AF;
+  background-color: #FDF2F2;
+  color: #991B1B;
+  border: 1px solid #FECACA;
 }
 .tag-pill-coral:hover {
-  background-color: #FECDD3;
+  background-color: #FCE8E8;
 }
 
 /* Live Pulse Indicators */

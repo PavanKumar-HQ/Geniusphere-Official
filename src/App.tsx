@@ -154,11 +154,11 @@ export const App: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-canvas)' }}>
-      {/* 3.5px Vibrant Multi-Stop Radiant Rainbow Stripe */}
+      {/* Top Hairline Rule: Academic Forest Green */}
       <div
         style={{
-          height: '3.5px',
-          background: 'linear-gradient(90deg, #30B2E7 0%, #6366F1 25%, #8B5CF6 50%, #FDB913 75%, #75B543 100%)',
+          height: '3px',
+          backgroundColor: '#1E6B4E',
           width: '100%',
         }}
       />
@@ -168,16 +168,16 @@ export const App: React.FC = () => {
       {/* ============================================================ */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
-          color: '#F8FAFC',
+          backgroundColor: '#F5EFE6',
+          color: '#14261C',
           fontSize: '0.78rem',
-          padding: '7px 20px',
+          padding: '6px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '10px',
-          borderBottom: '1px solid rgba(56, 189, 248, 0.2)',
+          borderBottom: '1px solid #E2D9CC',
           zIndex: 101,
         }}
       >
@@ -187,39 +187,38 @@ export const App: React.FC = () => {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              backgroundColor: '#1E6B4E',
               color: '#FFFFFF',
               fontWeight: 800,
               padding: '2px 8px',
-              borderRadius: '20px',
+              borderRadius: '12px',
               fontSize: '0.68rem',
               letterSpacing: '0.04em',
-              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.4)',
             }}
           >
             <span className="pulse-dot-green" />
             <span>DEMO READY</span>
           </div>
-          <span style={{ color: '#94A3B8' }}>Active Persona:</span>
-          <span style={{ fontWeight: 800, color: '#38BDF8', letterSpacing: '0.01em' }}>
+          <span style={{ color: '#64748B' }}>Active Persona:</span>
+          <span style={{ fontWeight: 800, color: '#164E3D', letterSpacing: '0.01em' }}>
             {currentUser.name.split(' (')[0]} ({currentUser.role.toUpperCase()})
           </span>
         </div>
 
         {/* Quick Role & View Switchers for Live Demonstration */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-          <span style={{ color: '#94A3B8', marginRight: '2px' }}>Quick Demo:</span>
+          <span style={{ color: '#64748B', marginRight: '2px' }}>Quick Demo:</span>
           <button
             type="button"
             onClick={() => handleNavigate('home')}
             style={{
-              background: currentView === 'home' ? 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'home' ? '1px solid #38BDF8' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#F1F5F9',
+              backgroundColor: currentView === 'home' ? '#1E6B4E' : '#FFFFFF',
+              border: currentView === 'home' ? '1px solid #16533C' : '1px solid #D5CCC0',
+              color: currentView === 'home' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'home' ? 800 : 500,
+              fontWeight: currentView === 'home' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -230,13 +229,13 @@ export const App: React.FC = () => {
             type="button"
             onClick={() => handleNavigate('catalogue')}
             style={{
-              background: currentView === 'catalogue' ? 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'catalogue' ? '1px solid #38BDF8' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#F1F5F9',
+              backgroundColor: currentView === 'catalogue' ? '#1E6B4E' : '#FFFFFF',
+              border: currentView === 'catalogue' ? '1px solid #16533C' : '1px solid #D5CCC0',
+              color: currentView === 'catalogue' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'catalogue' ? 800 : 500,
+              fontWeight: currentView === 'catalogue' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -247,13 +246,13 @@ export const App: React.FC = () => {
             type="button"
             onClick={() => handleNavigate('labs')}
             style={{
-              background: currentView === 'labs' || currentView === 'lab-workspace' ? 'linear-gradient(135deg, #F59E0B 0%, #FDB913 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid #FCD34D' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: currentView === 'labs' || currentView === 'lab-workspace' ? '#172B4D' : '#F1F5F9',
+              backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? '#B45309' : '#FFFFFF',
+              border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid #92400E' : '1px solid #D5CCC0',
+              color: currentView === 'labs' || currentView === 'lab-workspace' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 500,
+              fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -267,13 +266,13 @@ export const App: React.FC = () => {
               handleNavigate('student-dashboard');
             }}
             style={{
-              background: currentView === 'student-dashboard' ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'student-dashboard' ? '1px solid #A5B4FC' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#F1F5F9',
+              backgroundColor: currentView === 'student-dashboard' ? '#1D58A6' : '#FFFFFF',
+              border: currentView === 'student-dashboard' ? '1px solid #154584' : '1px solid #D5CCC0',
+              color: currentView === 'student-dashboard' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'student-dashboard' ? 800 : 500,
+              fontWeight: currentView === 'student-dashboard' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -287,13 +286,13 @@ export const App: React.FC = () => {
               handleNavigate('gradebook');
             }}
             style={{
-              background: currentView === 'gradebook' ? 'linear-gradient(135deg, #10B981 0%, #75B543 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'gradebook' ? '1px solid #86EFAC' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#F1F5F9',
+              backgroundColor: currentView === 'gradebook' ? '#237A59' : '#FFFFFF',
+              border: currentView === 'gradebook' ? '1px solid #1A6045' : '1px solid #D5CCC0',
+              color: currentView === 'gradebook' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'gradebook' ? 800 : 500,
+              fontWeight: currentView === 'gradebook' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -307,13 +306,13 @@ export const App: React.FC = () => {
               handleNavigate('parent');
             }}
             style={{
-              background: currentView === 'parent' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'parent' ? '1px solid #86EFAC' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#F1F5F9',
+              backgroundColor: currentView === 'parent' ? '#164E3D' : '#FFFFFF',
+              border: currentView === 'parent' ? '1px solid #0F382B' : '1px solid #D5CCC0',
+              color: currentView === 'parent' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'parent' ? 800 : 500,
+              fontWeight: currentView === 'parent' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -327,13 +326,13 @@ export const App: React.FC = () => {
               handleNavigate('platform-workspace');
             }}
             style={{
-              background: currentView === 'platform-workspace' ? 'linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)' : 'rgba(255, 255, 255, 0.08)',
-              border: currentView === 'platform-workspace' ? '1px solid #FDA4AF' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#F1F5F9',
+              backgroundColor: currentView === 'platform-workspace' ? '#334155' : '#FFFFFF',
+              border: currentView === 'platform-workspace' ? '1px solid #1E293B' : '1px solid #D5CCC0',
+              color: currentView === 'platform-workspace' ? '#FFFFFF' : '#334155',
               borderRadius: '6px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'platform-workspace' ? 800 : 500,
+              fontWeight: currentView === 'platform-workspace' ? 800 : 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -353,7 +352,7 @@ export const App: React.FC = () => {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 2px 8px rgba(20, 38, 28, 0.04)',
         }}
       >
         <div
@@ -389,12 +388,12 @@ export const App: React.FC = () => {
                   width: '40px',
                   height: '40px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 50%, #6366F1 100%)',
+                  backgroundColor: '#164E3D',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#FFFFFF',
-                  boxShadow: '0 4px 14px rgba(48, 178, 231, 0.4)',
+                  boxShadow: '0 1px 3px rgba(22, 78, 61, 0.25)',
                 }}
               >
                 <ShieldCheck size={24} />
@@ -418,9 +417,9 @@ export const App: React.FC = () => {
                       fontWeight: 800,
                       padding: '2px 8px',
                       borderRadius: '12px',
-                      background: 'linear-gradient(135deg, #F59E0B 0%, #FDB913 100%)',
-                      color: '#172B4D',
-                      boxShadow: '0 2px 6px rgba(253, 185, 19, 0.35)',
+                      backgroundColor: 'var(--brand-surface)',
+                      color: 'var(--brand-forest)',
+                      border: '1px solid var(--brand-border)',
                     }}
                   >
                     PILOT 2026
@@ -435,7 +434,7 @@ export const App: React.FC = () => {
 
           {/* RIGHT: PRIMARY NAVIGATION LINKS & ACTIONS (DESKTOP) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Desktop Navigation Links with Rounded Active Glow Pills */}
+            {/* Desktop Navigation Links */}
             <nav
               className="desktop-nav-links"
               style={{
@@ -449,10 +448,10 @@ export const App: React.FC = () => {
                 type="button"
                 onClick={() => handleNavigate('home')}
                 style={{
-                  background: currentView === 'home' ? 'rgba(48, 178, 231, 0.12)' : 'none',
-                  border: 'none',
+                  backgroundColor: currentView === 'home' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'home' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'home' ? '#0284C7' : 'var(--text-secondary)',
+                  color: currentView === 'home' ? 'var(--brand-forest)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'home' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -467,10 +466,10 @@ export const App: React.FC = () => {
                 type="button"
                 onClick={() => handleNavigate('catalogue')}
                 style={{
-                  background: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'rgba(48, 178, 231, 0.12)' : 'none',
-                  border: 'none',
+                  backgroundColor: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '#0284C7' : 'var(--text-secondary)',
+                  color: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'var(--brand-forest)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -485,10 +484,10 @@ export const App: React.FC = () => {
                 type="button"
                 onClick={() => handleNavigate('labs')}
                 style={{
-                  background: currentView === 'labs' || currentView === 'lab-workspace' ? 'rgba(253, 185, 19, 0.18)' : 'none',
-                  border: 'none',
+                  backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-quest-surface)' : 'transparent',
+                  border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid var(--brand-quest-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'labs' || currentView === 'lab-workspace' ? '#B45309' : 'var(--text-secondary)',
+                  color: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-quest-text)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -503,10 +502,10 @@ export const App: React.FC = () => {
                 type="button"
                 onClick={() => handleNavigate('resources')}
                 style={{
-                  background: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'rgba(117, 181, 67, 0.18)' : 'none',
-                  border: 'none',
+                  backgroundColor: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '#15803D' : 'var(--text-secondary)',
+                  color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-forest)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -521,10 +520,10 @@ export const App: React.FC = () => {
                 type="button"
                 onClick={() => handleNavigate('about')}
                 style={{
-                  background: currentView === 'about' ? 'rgba(99, 102, 241, 0.12)' : 'none',
-                  border: 'none',
+                  backgroundColor: currentView === 'about' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'about' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'about' ? '#4F46E5' : 'var(--text-secondary)',
+                  color: currentView === 'about' ? 'var(--brand-forest)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'about' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',

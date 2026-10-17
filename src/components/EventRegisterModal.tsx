@@ -41,41 +41,45 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(2, 6, 23, 0.85)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        inset: 0,
+        backgroundColor: 'rgba(20, 38, 28, 0.5)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
         zIndex: 1000,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '16px',
       }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleResetAndClose();
+      }}
     >
       <div
         style={{
           width: '100%',
           maxWidth: '540px',
-          backgroundColor: '#0B132B',
-          border: '1px solid rgba(0, 240, 255, 0.25)',
-          borderRadius: '20px',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.15)',
+          backgroundColor: '#FAF7F2',
+          border: '1.5px solid #D5CCC0',
+          borderRadius: '16px',
+          boxShadow: '0 20px 45px rgba(22, 78, 61, 0.16)',
           overflow: 'hidden',
-          color: '#FFFFFF',
+          color: 'var(--text-primary)',
           display: 'flex',
           flexDirection: 'column',
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
           style={{
             padding: '20px 24px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid #E8E2D6',
+            backgroundColor: '#FFFFFF',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -86,16 +90,17 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
               style={{
                 padding: '4px 10px',
                 borderRadius: '6px',
-                backgroundColor: 'rgba(0, 240, 255, 0.15)',
-                color: '#00F0FF',
+                backgroundColor: '#EEF5FC',
+                color: '#1D58A6',
                 fontSize: '0.75rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
+                border: '1px solid #C2DBF6',
               }}
             >
               {event.category}
             </span>
-            <span style={{ fontSize: '0.82rem', color: '#94A3B8' }}>Event Registration</span>
+            <span style={{ fontSize: '0.82rem', color: '#6B7C72' }}>Event Registration</span>
           </div>
           <button
             type="button"
@@ -104,9 +109,9 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#94A3B8',
+              backgroundColor: '#F4EFEB',
+              border: '1px solid #E8E2D6',
+              color: '#475569',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -126,9 +131,9 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
                   width: '56px',
                   height: '56px',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                  border: '2px solid #10B981',
-                  color: '#10B981',
+                  backgroundColor: '#EBF5F0',
+                  border: '2px solid #1E6B4E',
+                  color: '#1E6B4E',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -137,10 +142,10 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
               >
                 <CheckCircle2 size={32} />
               </div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#14261C', marginBottom: '8px' }}>
                 Registration Confirmed!
               </h3>
-              <p style={{ color: '#94A3B8', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '20px' }}>
+              <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '20px' }}>
                 You have been registered for <strong>{event.title}</strong>. A calendar invite and prep materials will be sent to <strong>{email}</strong>.
               </p>
               <button
@@ -155,26 +160,26 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               <div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#00F0FF', marginBottom: '6px' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#164E3D', marginBottom: '6px' }}>
                   {event.title}
                 </h3>
-                <p style={{ color: '#94A3B8', fontSize: '0.88rem', lineHeight: 1.5 }}>
+                <p style={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.5, margin: '0 0 10px 0' }}>
                   {event.description}
                 </p>
-                <div style={{ display: 'flex', gap: '16px', marginTop: '10px', fontSize: '0.82rem', color: '#CBD5E1' }}>
+                <div style={{ display: 'flex', gap: '16px', fontSize: '0.82rem', color: '#6B7C72' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Calendar size={14} color="#00F0FF" />
+                    <Calendar size={14} color="#1D58A6" />
                     <span>{event.date}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <MapPin size={14} color="#10B981" />
+                    <MapPin size={14} color="#1E6B4E" />
                     <span>Virtual / Live Stream</span>
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>Full Name *</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>Full Name *</label>
                 <input
                   type="text"
                   required
@@ -185,16 +190,16 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
                     height: '42px',
                     padding: '0 14px',
                     borderRadius: '8px',
-                    backgroundColor: '#060B1C',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    color: '#FFFFFF',
+                    backgroundColor: '#FFFFFF',
+                    border: '1.5px solid #D5CCC0',
+                    color: '#14261C',
                     fontSize: '0.9rem',
                   }}
                 />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>Email Address *</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>Email Address *</label>
                 <input
                   type="email"
                   required
@@ -205,16 +210,16 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
                     height: '42px',
                     padding: '0 14px',
                     borderRadius: '8px',
-                    backgroundColor: '#060B1C',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    color: '#FFFFFF',
+                    backgroundColor: '#FFFFFF',
+                    border: '1.5px solid #D5CCC0',
+                    color: '#14261C',
                     fontSize: '0.9rem',
                   }}
                 />
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>I am registering as *</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>I am registering as *</label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                   {[
                     { id: 'student', label: 'Student' },
@@ -228,9 +233,9 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
                       style={{
                         padding: '8px',
                         borderRadius: '6px',
-                        backgroundColor: role === r.id ? 'rgba(0, 240, 255, 0.2)' : 'rgba(30, 41, 59, 0.5)',
-                        border: role === r.id ? '1px solid #00F0FF' : '1px solid rgba(255, 255, 255, 0.1)',
-                        color: role === r.id ? '#00F0FF' : '#94A3B8',
+                        backgroundColor: role === r.id ? '#EBF5F0' : '#FFFFFF',
+                        border: role === r.id ? '1.5px solid #1E6B4E' : '1.5px solid #D5CCC0',
+                        color: role === r.id ? '#164E3D' : '#475569',
                         fontWeight: role === r.id ? 700 : 500,
                         fontSize: '0.82rem',
                         cursor: 'pointer',
@@ -244,15 +249,10 @@ export const EventRegisterModal: React.FC<EventRegisterModalProps> = ({
 
               <button
                 type="submit"
+                className="btn-primary"
                 style={{
                   height: '44px',
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #00F0FF 0%, #00F5A0 100%)',
-                  color: '#020617',
-                  fontWeight: 800,
-                  fontSize: '0.92rem',
-                  border: 'none',
-                  cursor: 'pointer',
                   marginTop: '6px',
                   display: 'flex',
                   alignItems: 'center',

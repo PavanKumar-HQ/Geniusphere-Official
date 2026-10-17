@@ -289,10 +289,10 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
               {[
-                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#0284C7', bg: 'rgba(48, 178, 231, 0.12)', icon: '🤖' },
-                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#D97706', bg: 'rgba(253, 185, 19, 0.15)', icon: '💳' },
-                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#6366F1', bg: 'rgba(99, 102, 241, 0.12)', icon: '⚡' },
-                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#15803D', bg: 'rgba(117, 181, 67, 0.15)', icon: '🤝' },
+                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#1D58A6', bg: 'var(--brand-blue-surface)', icon: '🤖' },
+                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#B45309', bg: 'var(--brand-quest-surface)', icon: '💳' },
+                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#1E6B4E', bg: 'var(--brand-surface)', icon: '⚡' },
+                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#164E3D', bg: 'var(--brand-surface)', icon: '🤝' },
               ].map((trk) => {
                 const selected = tracks.includes(trk.id);
                 return (
@@ -308,7 +308,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                       backgroundColor: selected ? trk.bg : 'var(--bg-canvas)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
-                      boxShadow: selected ? `0 4px 12px ${trk.color}25` : 'none',
+                      boxShadow: selected ? '0 1px 3px rgba(20, 38, 28, 0.1)' : 'none',
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>

@@ -35,42 +35,46 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(2, 6, 23, 0.85)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        inset: 0,
+        backgroundColor: 'rgba(20, 38, 28, 0.5)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
         zIndex: 1000,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '16px',
       }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleResetAndClose();
+      }}
     >
       <div
         style={{
           width: '100%',
           maxWidth: '580px',
-          backgroundColor: '#0B132B',
-          border: '1px solid rgba(0, 240, 255, 0.25)',
-          borderRadius: '20px',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.15)',
+          backgroundColor: '#FAF7F2',
+          border: '1.5px solid #D5CCC0',
+          borderRadius: '16px',
+          boxShadow: '0 20px 45px rgba(22, 78, 61, 0.16)',
           overflow: 'hidden',
-          color: '#FFFFFF',
+          color: 'var(--text-primary)',
           display: 'flex',
           flexDirection: 'column',
           maxHeight: '90vh',
         }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
           style={{
             padding: '20px 24px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid #E8E2D6',
+            backgroundColor: '#FFFFFF',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -79,11 +83,11 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(0, 240, 255, 0.15)',
-                color: '#00F0FF',
+                backgroundColor: '#EBF5F0',
+                color: '#164E3D',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -92,10 +96,10 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               <Megaphone size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1rem', color: '#FFFFFF' }}>
+              <div style={{ fontWeight: 800, fontSize: '1rem', color: '#14261C' }}>
                 Genius Representative Program
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94A3B8' }}>
+              <div style={{ fontSize: '0.75rem', color: '#6B7C72' }}>
                 Campus Student Leadership Initiative
               </div>
             </div>
@@ -107,9 +111,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: 'rgba(30, 41, 59, 0.6)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#94A3B8',
+              backgroundColor: '#F4EFEB',
+              border: '1px solid #E8E2D6',
+              color: '#475569',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -129,9 +133,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                   width: '56px',
                   height: '56px',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                  border: '2px solid #10B981',
-                  color: '#10B981',
+                  backgroundColor: '#EBF5F0',
+                  border: '2px solid #1E6B4E',
+                  color: '#1E6B4E',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -140,10 +144,10 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               >
                 <CheckCircle2 size={32} />
               </div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#14261C', marginBottom: '8px' }}>
                 Application Submitted!
               </h3>
-              <p style={{ color: '#94A3B8', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '20px' }}>
+              <p style={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '20px' }}>
                 Thank you for applying to represent Geniusphere at <strong>{institution}</strong>. Our student relations team will review your profile and reach out via <strong>{email}</strong> within 3 business days.
               </p>
               <button
@@ -157,15 +161,15 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ padding: '12px 14px', borderRadius: '10px', backgroundColor: 'rgba(0, 240, 255, 0.08)', border: '1px solid rgba(0, 240, 255, 0.2)' }}>
-                <div style={{ fontSize: '0.8rem', color: '#22D3EE', fontWeight: 600 }}>
-                  Perks: Official swag kits • Event funding • Direct recommendation letters from Pavan Kumar S. • Early access to verified labs.
+              <div style={{ padding: '12px 14px', borderRadius: '10px', backgroundColor: '#EEF5FC', border: '1px solid #C2DBF6' }}>
+                <div style={{ fontSize: '0.8rem', color: '#1D58A6', fontWeight: 600 }}>
+                  Perks: Official curriculum kits • Campus event support • Letters of recommendation • Early access to verified STEM sandboxes.
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>Full Name *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>Full Name *</label>
                   <input
                     type="text"
                     required
@@ -176,16 +180,16 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#060B1C',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      color: '#FFFFFF',
+                      backgroundColor: '#FFFFFF',
+                      border: '1.5px solid #D5CCC0',
+                      color: '#14261C',
                       fontSize: '0.88rem',
                     }}
                   />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>Email *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>Email *</label>
                   <input
                     type="email"
                     required
@@ -196,9 +200,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#060B1C',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      color: '#FFFFFF',
+                      backgroundColor: '#FFFFFF',
+                      border: '1.5px solid #D5CCC0',
+                      color: '#14261C',
                       fontSize: '0.88rem',
                     }}
                   />
@@ -207,7 +211,7 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
 
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>College / University Name *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>College / University Name *</label>
                   <input
                     type="text"
                     required
@@ -218,16 +222,16 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#060B1C',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      color: '#FFFFFF',
+                      backgroundColor: '#FFFFFF',
+                      border: '1.5px solid #D5CCC0',
+                      color: '#14261C',
                       fontSize: '0.88rem',
                     }}
                   />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>Major & Year *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>Major & Year *</label>
                   <input
                     type="text"
                     required
@@ -238,9 +242,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#060B1C',
-                      border: '1px solid rgba(255, 255, 255, 0.15)',
-                      color: '#FFFFFF',
+                      backgroundColor: '#FFFFFF',
+                      border: '1.5px solid #D5CCC0',
+                      color: '#14261C',
                       fontSize: '0.88rem',
                     }}
                   />
@@ -248,7 +252,7 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 600, color: '#CBD5E1' }}>Why do you want to represent Geniusphere? *</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#14261C' }}>Why do you want to represent Geniusphere? *</label>
                 <textarea
                   required
                   rows={3}
@@ -258,9 +262,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                   style={{
                     padding: '10px 12px',
                     borderRadius: '8px',
-                    backgroundColor: '#060B1C',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    color: '#FFFFFF',
+                    backgroundColor: '#FFFFFF',
+                    border: '1.5px solid #D5CCC0',
+                    color: '#14261C',
                     fontSize: '0.88rem',
                     resize: 'none',
                   }}
@@ -269,15 +273,10 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
 
               <button
                 type="submit"
+                className="btn-primary"
                 style={{
                   height: '44px',
                   borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #00F0FF 0%, #00F5A0 100%)',
-                  color: '#020617',
-                  fontWeight: 800,
-                  fontSize: '0.92rem',
-                  border: 'none',
-                  cursor: 'pointer',
                   marginTop: '4px',
                   display: 'flex',
                   alignItems: 'center',

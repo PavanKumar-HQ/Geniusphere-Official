@@ -143,19 +143,19 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
       style={{
         borderRadius: 'var(--radius-xl)',
         overflow: 'hidden',
-        border: '2px solid rgba(48, 178, 231, 0.45)',
-        boxShadow: '0 25px 50px -12px rgba(48, 178, 231, 0.25), 0 10px 20px -5px rgba(23, 43, 77, 0.1)',
+        border: '1.5px solid var(--border-strong)',
+        boxShadow: 'var(--shadow-md)',
         backgroundColor: 'var(--bg-surface)',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      {/* Top Header & Simulation Selector */}
+      {/* Top Header & Simulation Selector: Deep Scholarly Forest Green */}
       <div
         style={{
           padding: '14px 20px',
-          borderBottom: '1px solid rgba(56, 189, 248, 0.25)',
-          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+          borderBottom: '1px solid #0F382B',
+          backgroundColor: '#164E3D',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -169,12 +169,11 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+              backgroundColor: 'rgba(255, 255, 255, 0.15)',
               color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 10px rgba(48, 178, 231, 0.4)',
             }}
           >
             <Sparkles size={18} />
@@ -183,13 +182,13 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#FFFFFF', letterSpacing: '0.02em' }}>
               LIVE INTERACTIVE SANDBOX
             </div>
-            <div style={{ fontSize: '0.74rem', color: '#94A3B8' }}>
-              Real-time in-browser computational engine
+            <div style={{ fontSize: '0.74rem', color: '#C4E3D4' }}>
+              Zero-install browser WebAssembly computational engine
             </div>
           </div>
         </div>
 
-        {/* Live Status Pill with Glowing Green Dot */}
+        {/* Live Status Pill with Gentle Green Dot */}
         <div
           style={{
             display: 'flex',
@@ -197,23 +196,23 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             gap: '8px',
             padding: '4px 12px',
             borderRadius: '20px',
-            background: 'rgba(34, 197, 94, 0.15)',
-            border: '1px solid rgba(34, 197, 94, 0.35)',
+            backgroundColor: 'rgba(255, 255, 255, 0.12)',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
           }}
         >
           <span className="pulse-dot-green" />
-          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#4ADE80', letterSpacing: '0.03em' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#EBF5F0', letterSpacing: '0.03em' }}>
             ACTIVE ENGINE
           </span>
         </div>
       </div>
 
-      {/* Mode Navigation Tabs with Vibrant Active Pills */}
+      {/* Mode Navigation Tabs with Grounded Paper Tabs */}
       <div
         style={{
           display: 'flex',
           borderBottom: '1px solid var(--border-subtle)',
-          backgroundColor: '#F8FAFC',
+          backgroundColor: 'var(--bg-surface-subdued)',
           padding: '8px 12px',
           gap: '8px',
           overflowX: 'auto',
@@ -223,12 +222,10 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
           type="button"
           onClick={() => setActiveMode('ai')}
           style={{
-            padding: '7px 14px',
-            border: 'none',
+            padding: '6px 14px',
             borderRadius: '20px',
-            background: activeMode === 'ai'
-              ? 'linear-gradient(135deg, #0284C7 0%, #30B2E7 50%, #6366F1 100%)'
-              : 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: activeMode === 'ai' ? '#1E6B4E' : '#FFFFFF',
+            border: activeMode === 'ai' ? '1px solid #16533C' : '1px solid var(--border-subtle)',
             color: activeMode === 'ai' ? '#FFFFFF' : 'var(--text-secondary)',
             fontWeight: activeMode === 'ai' ? 800 : 600,
             fontSize: '0.82rem',
@@ -237,7 +234,6 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             alignItems: 'center',
             gap: '6px',
             whiteSpace: 'nowrap',
-            boxShadow: activeMode === 'ai' ? '0 3px 10px rgba(48, 178, 231, 0.35)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >
@@ -249,13 +245,11 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
           type="button"
           onClick={() => setActiveMode('blockchain')}
           style={{
-            padding: '7px 14px',
-            border: 'none',
+            padding: '6px 14px',
             borderRadius: '20px',
-            background: activeMode === 'blockchain'
-              ? 'linear-gradient(135deg, #F59E0B 0%, #FDB913 50%, #FF8A00 100%)'
-              : 'rgba(0, 0, 0, 0.05)',
-            color: activeMode === 'blockchain' ? '#172B4D' : 'var(--text-secondary)',
+            backgroundColor: activeMode === 'blockchain' ? '#B45309' : '#FFFFFF',
+            border: activeMode === 'blockchain' ? '1px solid #92400E' : '1px solid var(--border-subtle)',
+            color: activeMode === 'blockchain' ? '#FFFFFF' : 'var(--text-secondary)',
             fontWeight: activeMode === 'blockchain' ? 800 : 600,
             fontSize: '0.82rem',
             cursor: 'pointer',
@@ -263,7 +257,6 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             alignItems: 'center',
             gap: '6px',
             whiteSpace: 'nowrap',
-            boxShadow: activeMode === 'blockchain' ? '0 3px 10px rgba(253, 185, 19, 0.4)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >
@@ -275,12 +268,10 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
           type="button"
           onClick={() => setActiveMode('iot')}
           style={{
-            padding: '7px 14px',
-            border: 'none',
+            padding: '6px 14px',
             borderRadius: '20px',
-            background: activeMode === 'iot'
-              ? 'linear-gradient(135deg, #10B981 0%, #75B543 50%, #059669 100%)'
-              : 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: activeMode === 'iot' ? '#237A59' : '#FFFFFF',
+            border: activeMode === 'iot' ? '1px solid #1A6045' : '1px solid var(--border-subtle)',
             color: activeMode === 'iot' ? '#FFFFFF' : 'var(--text-secondary)',
             fontWeight: activeMode === 'iot' ? 800 : 600,
             fontSize: '0.82rem',
@@ -289,7 +280,6 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             alignItems: 'center',
             gap: '6px',
             whiteSpace: 'nowrap',
-            boxShadow: activeMode === 'iot' ? '0 3px 10px rgba(117, 181, 67, 0.35)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >
@@ -301,12 +291,10 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
           type="button"
           onClick={() => setActiveMode('security')}
           style={{
-            padding: '7px 14px',
-            border: 'none',
+            padding: '6px 14px',
             borderRadius: '20px',
-            background: activeMode === 'security'
-              ? 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)'
-              : 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: activeMode === 'security' ? '#1D58A6' : '#FFFFFF',
+            border: activeMode === 'security' ? '1px solid #154584' : '1px solid var(--border-subtle)',
             color: activeMode === 'security' ? '#FFFFFF' : 'var(--text-secondary)',
             fontWeight: activeMode === 'security' ? 800 : 600,
             fontSize: '0.82rem',
@@ -315,7 +303,6 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             alignItems: 'center',
             gap: '6px',
             whiteSpace: 'nowrap',
-            boxShadow: activeMode === 'security' ? '0 3px 10px rgba(99, 102, 241, 0.35)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >
@@ -327,12 +314,10 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
           type="button"
           onClick={() => setActiveMode('finance')}
           style={{
-            padding: '7px 14px',
-            border: 'none',
+            padding: '6px 14px',
             borderRadius: '20px',
-            background: activeMode === 'finance'
-              ? 'linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)'
-              : 'rgba(0, 0, 0, 0.05)',
+            backgroundColor: activeMode === 'finance' ? '#164E3D' : '#FFFFFF',
+            border: activeMode === 'finance' ? '1px solid #0F382B' : '1px solid var(--border-subtle)',
             color: activeMode === 'finance' ? '#FFFFFF' : 'var(--text-secondary)',
             fontWeight: activeMode === 'finance' ? 800 : 600,
             fontSize: '0.82rem',
@@ -341,7 +326,6 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
             alignItems: 'center',
             gap: '6px',
             whiteSpace: 'nowrap',
-            boxShadow: activeMode === 'finance' ? '0 3px 10px rgba(244, 63, 94, 0.35)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >

@@ -160,7 +160,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
             <span>{userProgress.streak_days}-Day Streak</span>
           </div>
           <div className="xp-pill" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>
-            <Zap size={13} color="#00F5A0" />
+            <Zap size={13} color="#1D58A6" />
             <span>{userProgress.xp} XP</span>
           </div>
         </div>

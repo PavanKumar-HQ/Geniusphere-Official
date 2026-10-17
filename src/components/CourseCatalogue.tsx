@@ -197,7 +197,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 <span className="topic-hashtag-pill">
                   #{course.slug.split('-')[0].charAt(0).toUpperCase() + course.slug.split('-')[0].slice(1)}
                 </span>
-                <span className="topic-hashtag-pill" style={{ color: '#38BDF8', borderColor: 'rgba(56, 189, 248, 0.25)' }}>
+                <span className="topic-hashtag-pill" style={{ color: 'var(--brand-blue)', borderColor: 'var(--brand-blue-border)' }}>
                   #10Sims
                 </span>
               </div>

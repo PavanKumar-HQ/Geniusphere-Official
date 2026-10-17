@@ -351,12 +351,12 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                   width: '34px',
                   height: '34px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
+                  backgroundColor: 'var(--brand-quest-surface)',
+                  color: 'var(--brand-quest)',
+                  border: '1px solid var(--brand-quest-border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#172B4D',
-                  boxShadow: '0 3px 10px rgba(253, 185, 19, 0.4)',
                 }}
               >
                 <Trophy size={18} />
@@ -396,9 +396,9 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                   style={{
                     padding: '10px',
                     borderRadius: 'var(--radius-md)',
-                    background: 'linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%)',
-                    border: '1.5px solid #22C55E',
-                    color: '#15803D',
+                    backgroundColor: 'var(--brand-surface)',
+                    border: '1.5px solid var(--brand-primary)',
+                    color: 'var(--brand-forest)',
                     fontSize: '0.86rem',
                     fontWeight: 800,
                     textAlign: 'center',
@@ -406,7 +406,6 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '6px',
-                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)',
                   }}
                 >
                   <Check size={18} strokeWidth={3} />
@@ -425,8 +424,8 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '320px',
               maxWidth: '320px',
               flex: '0 0 auto',
-              borderTop: '4px solid #0284C7',
-              boxShadow: '0 10px 25px -5px rgba(48, 178, 231, 0.18)',
+              borderTop: '4px solid #1D58A6',
+              boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
@@ -439,12 +438,12 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                   width: '34px',
                   height: '34px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+                  backgroundColor: 'var(--brand-blue-surface)',
+                  color: 'var(--brand-blue)',
+                  border: '1px solid var(--brand-blue-border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFFFFF',
-                  boxShadow: '0 3px 10px rgba(48, 178, 231, 0.4)',
                 }}
               >
                 <Lightbulb size={18} />
@@ -488,13 +487,13 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '350px',
               maxWidth: '350px',
               flex: '0 0 auto',
-              borderTop: '4px solid #8B5CF6',
-              boxShadow: '0 10px 25px -5px rgba(139, 92, 246, 0.18)',
+              borderTop: '4px solid #1E6B4E',
+              boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="tag-pill tag-pill-purple" style={{ fontSize: '0.72rem' }}>
+              <span className="tag-pill tag-pill-emerald" style={{ fontSize: '0.72rem' }}>
                 BRAIN TEASER ({teaserIndex + 1}/{teasers.length})
               </span>
               <div
@@ -502,12 +501,12 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                   width: '34px',
                   height: '34px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+                  backgroundColor: 'var(--brand-surface)',
+                  color: 'var(--brand-forest)',
+                  border: '1px solid var(--brand-border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFFFFF',
-                  boxShadow: '0 3px 10px rgba(139, 92, 246, 0.4)',
                 }}
               >
                 <Brain size={18} />
@@ -601,13 +600,13 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '310px',
               maxWidth: '310px',
               flex: '0 0 auto',
-              borderTop: '4px solid #F43F5E',
-              boxShadow: '0 10px 25px -5px rgba(244, 63, 94, 0.18)',
+              borderTop: '4px solid #B45309',
+              boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="tag-pill tag-pill-coral" style={{ fontSize: '0.72rem' }}>
+              <span className="tag-pill tag-pill-gold" style={{ fontSize: '0.72rem' }}>
                 WORD OF THE DAY
               </span>
               <div
@@ -615,12 +614,12 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                   width: '34px',
                   height: '34px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)',
+                  backgroundColor: 'var(--brand-quest-surface)',
+                  color: 'var(--brand-quest)',
+                  border: '1px solid var(--brand-quest-border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFFFFF',
-                  boxShadow: '0 3px 10px rgba(244, 63, 94, 0.4)',
                 }}
               >
                 <BookOpen size={18} />
@@ -628,7 +627,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
             </div>
 
             <div style={{ marginTop: '8px' }}>
-              <div style={{ fontSize: '0.74rem', color: '#F43F5E', fontWeight: 800, marginBottom: '2px', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '0.74rem', color: '#B45309', fontWeight: 800, marginBottom: '2px', letterSpacing: '0.04em' }}>
                 DOMAIN: {currentWord.domain.toUpperCase()}
               </div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -664,13 +663,13 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '330px',
               maxWidth: '330px',
               flex: '0 0 auto',
-              borderTop: '4px solid #10B981',
-              boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.18)',
+              borderTop: '4px solid #1D58A6',
+              boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="tag-pill tag-pill-emerald" style={{ fontSize: '0.72rem' }}>
+              <span className="tag-pill tag-pill-sky" style={{ fontSize: '0.72rem' }}>
                 CODE DETECTIVE
               </span>
               <div
@@ -678,12 +677,12 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                   width: '34px',
                   height: '34px',
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #10B981 0%, #75B543 100%)',
+                  backgroundColor: 'var(--brand-blue-surface)',
+                  color: 'var(--brand-blue)',
+                  border: '1px solid var(--brand-blue-border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#FFFFFF',
-                  boxShadow: '0 3px 10px rgba(16, 185, 129, 0.4)',
                 }}
               >
                 <Terminal size={18} />
@@ -696,16 +695,16 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               </div>
               <div
                 style={{
-                  backgroundColor: '#0F172A',
-                  color: '#38BDF8',
+                  backgroundColor: '#F4EFEB',
+                  color: '#164E3D',
                   padding: '10px 12px',
                   borderRadius: 'var(--radius-md)',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  border: '1.5px solid #D5CCC0',
                   fontFamily: 'var(--font-mono)',
                   fontSize: '0.82rem',
                   fontWeight: 700,
                   marginBottom: '10px',
-                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.25)',
+                  boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)',
                 }}
               >
                 [1, 2, 3].map(x =&gt; x * 2).filter(x =&gt; x &gt; 2)

@@ -89,20 +89,19 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '6px 16px',
+                padding: '5px 14px',
                 borderRadius: 'var(--radius-full)',
-                background: 'linear-gradient(135deg, rgba(48, 178, 231, 0.15) 0%, rgba(99, 102, 241, 0.12) 100%)',
-                border: '1.5px solid rgba(48, 178, 231, 0.4)',
-                color: '#0369A1',
+                backgroundColor: 'var(--brand-surface)',
+                border: '1px solid var(--brand-border)',
+                color: 'var(--brand-forest)',
                 fontSize: '0.82rem',
-                fontWeight: 800,
-                boxShadow: '0 2px 10px rgba(48, 178, 231, 0.2)',
+                fontWeight: 700,
               }}
             >
               <span className="pulse-dot pulse-dot-green" />
               <span
                 style={{
-                  background: 'linear-gradient(135deg, #10B981, #059669)',
+                  backgroundColor: '#1E6B4E',
                   color: '#FFFFFF',
                   padding: '2px 7px',
                   borderRadius: '4px',
@@ -116,7 +115,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               <span>Evidence-Backed Practical Skills • India 2026</span>
             </div>
 
-            {/* Headline with Radiant Gradient Accents */}
+            {/* Headline: Clean, Crisp Scholarly Typography */}
             <h1
               style={{
                 fontSize: 'clamp(2.4rem, 4.4vw, 3.6rem)',
@@ -127,7 +126,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 margin: 0,
               }}
             >
-              <span className="gradient-text-sky-indigo">Practical skills</span>, taught in class, <span className="gradient-text-gold-emerald">measured clearly.</span>
+              <span style={{ color: '#164E3D' }}>Practical skills</span>, taught in class,{' '}
+              <span style={{ color: '#1D58A6' }}>measured clearly.</span>
             </h1>
 
             {/* Supporting summary matching Research Study USP */}
@@ -255,30 +255,30 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 {
                   id: 'school',
                   label: 'Schools & PU Colleges (Ages 14–18)',
-                  activeBg: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+                  activeBg: '#1E6B4E',
                   color: '#FFFFFF',
-                  glow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+                  activeBorder: '#16533C',
                 },
                 {
                   id: 'college',
                   label: 'Colleges & Universities (Ages 18+)',
-                  activeBg: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                  activeBg: '#1D58A6',
                   color: '#FFFFFF',
-                  glow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                  activeBorder: '#154584',
                 },
                 {
                   id: 'teacher',
                   label: 'Teachers & Educators',
-                  activeBg: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
-                  color: '#172B4D',
-                  glow: '0 4px 14px rgba(253, 185, 19, 0.4)',
+                  activeBg: '#237A59',
+                  color: '#FFFFFF',
+                  activeBorder: '#1A6045',
                 },
                 {
                   id: 'parent',
                   label: 'Parents & Guardians',
-                  activeBg: 'linear-gradient(135deg, #75B543 0%, #10B981 100%)',
+                  activeBg: '#B45309',
                   color: '#FFFFFF',
-                  glow: '0 4px 14px rgba(117, 181, 67, 0.35)',
+                  activeBorder: '#92400E',
                 },
               ].map((tab) => {
                 const isActive = audienceTab === tab.id;
@@ -288,17 +288,16 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     type="button"
                     onClick={() => setAudienceTab(tab.id as any)}
                     style={{
-                      padding: '10px 20px',
+                      padding: '8px 18px',
                       borderRadius: 'var(--radius-full)',
-                      border: isActive ? '1px solid rgba(255, 255, 255, 0.3)' : '1.5px solid var(--border-strong)',
-                      background: isActive ? tab.activeBg : '#FFFFFF',
-                      color: isActive ? tab.color : 'var(--text-primary)',
+                      border: isActive ? `1.5px solid ${tab.activeBorder}` : '1.5px solid var(--border-subtle)',
+                      backgroundColor: isActive ? tab.activeBg : '#FFFFFF',
+                      color: isActive ? tab.color : 'var(--text-secondary)',
                       fontWeight: isActive ? 800 : 600,
-                      fontSize: '0.88rem',
+                      fontSize: '0.86rem',
                       cursor: 'pointer',
-                      boxShadow: isActive ? tab.glow : '0 1px 3px rgba(23, 43, 77, 0.04)',
-                      transition: 'all 0.2s ease',
-                      transform: isActive ? 'scale(1.02)' : 'none',
+                      boxShadow: isActive ? '0 1px 3px rgba(20, 38, 28, 0.12)' : 'var(--shadow-xs)',
+                      transition: 'all 0.15s ease',
                     }}
                   >
                     {tab.label}
@@ -512,12 +511,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 50%, #6366F1 100%)',
-                    color: '#FFFFFF',
+                    backgroundColor: 'var(--brand-blue-surface)',
+                    color: 'var(--brand-blue)',
+                    border: '1px solid var(--brand-blue-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 14px rgba(48, 178, 231, 0.4)',
                   }}
                 >
                   <Cpu size={24} />
@@ -534,8 +533,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
                 <span className="tag-pill tag-pill-sky">🤖 AI Literacy</span>
-                <span className="tag-pill tag-pill-purple">🛡️ Web Security</span>
-                <span className="tag-pill tag-pill-indigo">⚡ Algorithms</span>
+                <span className="tag-pill tag-pill-indigo">🛡️ Web Security</span>
+                <span className="tag-pill tag-pill-sky">⚡ Algorithms</span>
                 <span className="tag-pill tag-pill-emerald">📡 IoT Sensors</span>
               </div>
               <button
@@ -556,8 +555,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                borderTop: '5px solid #FDB913',
-                boxShadow: 'var(--shadow-md)',
+                borderTop: '4px solid #B45309',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -567,12 +566,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
-                    color: '#172B4D',
+                    backgroundColor: 'var(--brand-quest-surface)',
+                    color: 'var(--brand-quest)',
+                    border: '1px solid var(--brand-quest-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 14px rgba(253, 185, 19, 0.4)',
                   }}
                 >
                   <TrendingUp size={24} />
@@ -588,7 +587,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 Everyday money management, UPI scam defense, monthly student budgeting, compounding SIP wealth models, and entrepreneurship cash flows.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
-                <span className="tag-pill tag-pill-coral">📱 UPI Fraud Defense</span>
+                <span className="tag-pill tag-pill-gold">📱 UPI Fraud Defense</span>
                 <span className="tag-pill tag-pill-emerald">📈 Student SIPs</span>
                 <span className="tag-pill tag-pill-gold">💳 Monthly Budgeting</span>
                 <span className="tag-pill tag-pill-sky">🔒 Ethical Education</span>
@@ -611,8 +610,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                borderTop: '5px solid #75B543',
-                boxShadow: 'var(--shadow-md)',
+                borderTop: '4px solid #1E6B4E',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -622,12 +621,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #75B543 0%, #10B981 100%)',
-                    color: '#FFFFFF',
+                    backgroundColor: 'var(--brand-surface)',
+                    color: 'var(--brand-forest)',
+                    border: '1px solid var(--brand-border)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 4px 14px rgba(117, 181, 67, 0.4)',
                   }}
                 >
                   <Briefcase size={24} />
@@ -693,7 +692,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #0284C7',
+                  borderTop: '4px solid #1D58A6',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -702,14 +701,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+                    backgroundColor: '#1D58A6',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)',
+                    boxShadow: '0 2px 6px rgba(29, 88, 166, 0.25)',
                   }}
                 >
                   1
@@ -727,7 +726,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #75B543',
+                  borderTop: '4px solid #1E6B4E',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -736,14 +735,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #75B543 0%, #10B981 100%)',
+                    backgroundColor: '#1E6B4E',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 4px 12px rgba(117, 181, 67, 0.35)',
+                    boxShadow: '0 2px 6px rgba(30, 107, 78, 0.25)',
                   }}
                 >
                   2
@@ -761,7 +760,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #FDB913',
+                  borderTop: '4px solid #B45309',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -770,14 +769,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
-                    color: '#172B4D',
+                    backgroundColor: '#B45309',
+                    color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 4px 12px rgba(253, 185, 19, 0.4)',
+                    boxShadow: '0 2px 6px rgba(180, 83, 9, 0.25)',
                   }}
                 >
                   3
@@ -795,7 +794,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #6366F1',
+                  borderTop: '4px solid #164E3D',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -804,14 +803,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                    backgroundColor: '#164E3D',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.35)',
+                    boxShadow: '0 2px 6px rgba(22, 78, 61, 0.25)',
                   }}
                 >
                   4
@@ -957,12 +956,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '36px',
                     height: '36px',
                     borderRadius: '10px',
-                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                    backgroundColor: '#1E6B4E',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#FFFFFF',
-                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                    boxShadow: '0 2px 6px rgba(30, 107, 78, 0.25)',
                   }}
                 >
                   <Shield size={20} />
@@ -1010,37 +1009,37 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               style={{
                 padding: '28px',
                 borderRadius: 'var(--radius-lg)',
-                background: 'linear-gradient(145deg, #0F172A 0%, #1E293B 100%)',
-                border: '1px solid rgba(56, 189, 248, 0.25)',
-                boxShadow: '0 12px 30px rgba(15, 23, 42, 0.4)',
+                backgroundColor: '#FFFFFF',
+                border: '1.5px solid #C4E3D4',
+                boxShadow: '0 4px 16px rgba(22, 78, 61, 0.08)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '14px',
-                color: '#F8FAFC',
+                color: 'var(--text-primary)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38BDF8', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#164E3D', letterSpacing: '0.05em' }}>
                   DPDP ACT 2023 COMPLIANCE LEDGER
                 </span>
                 <span className="tag-pill tag-pill-emerald" style={{ fontSize: '0.68rem', padding: '1px 7px' }}>
                   VERIFIED
                 </span>
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#F1F5F9' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)' }}>
                 <strong>Scope:</strong> Classroom-managed cohorts across Karnataka, Maharashtra, Delhi NCR, and pan-India.
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#94A3B8', lineHeight: 1.6 }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                 • <strong>Lawful Basis:</strong> Educational public interest & recorded parental consent<br />
                 • <strong>Data Retention:</strong> 1 academic year or until cohort deprovisioning<br />
                 • <strong>Hosting:</strong> Indian sovereign server infrastructure with TLS 1.3 encryption
               </div>
-              <div style={{ paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div style={{ paddingTop: '10px', borderTop: '1px solid #E8E2D6', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   className="btn-outline"
                   onClick={() => onNavigate('parent')}
-                  style={{ height: '34px', fontSize: '0.78rem', padding: '0 14px', borderColor: 'rgba(255, 255, 255, 0.2)', color: '#F8FAFC' }}
+                  style={{ height: '34px', fontSize: '0.78rem', padding: '0 14px' }}
                 >
                   <span>Open Parent Portal</span>
                 </button>
@@ -1048,7 +1047,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   type="button"
                   className="btn-outline"
                   onClick={() => onNavigate('audit')}
-                  style={{ height: '34px', fontSize: '0.78rem', padding: '0 14px', borderColor: 'rgba(255, 255, 255, 0.2)', color: '#F8FAFC' }}
+                  style={{ height: '34px', fontSize: '0.78rem', padding: '0 14px' }}
                 >
                   <span>Inspect Audit Ledger</span>
                 </button>
@@ -1066,9 +1065,9 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           style={{
             padding: '48px 36px',
             borderRadius: 'var(--radius-xl)',
-            background: 'linear-gradient(145deg, #0F172A 0%, #1E293B 50%, #0B1E38 100%)',
-            border: '2px solid rgba(56, 189, 248, 0.35)',
-            boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.6), 0 0 30px rgba(56, 189, 248, 0.15)',
+            backgroundColor: '#164E3D',
+            border: '2px solid #0F382B',
+            boxShadow: '0 16px 40px -10px rgba(22, 78, 61, 0.35)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -1079,79 +1078,66 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             overflow: 'hidden',
           }}
         >
-          {/* Subtle ambient light accents inside dark card */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '-80px',
-              right: '-80px',
-              width: '260px',
-              height: '260px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '-80px',
-              left: '-80px',
-              width: '260px',
-              height: '260px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(253, 185, 19, 0.15) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }}
-          />
-
           <div style={{ maxWidth: '720px', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span className="tag-pill tag-pill-gold" style={{ fontSize: '0.78rem', fontWeight: 800 }}>
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '9999px', backgroundColor: '#FEF7EA', color: '#B45309', border: '1px solid #FCE7C3' }}>
                 ⚡ 2026 PILOT ADOPTION COHORTS
               </span>
             </div>
-            <h2 style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.5rem)', fontWeight: 900, margin: '0 0 12px 0', letterSpacing: '-0.02em', color: '#FFFFFF' }}>
+            <h2 style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.5rem)', fontWeight: 900, margin: '0 0 12px 0', letterSpacing: '-0.02em', color: '#FAF7F2' }}>
               Join the 4–8 Week Institutional Pilot Program
             </h2>
-            <p style={{ color: '#94A3B8', fontSize: '1.02rem', lineHeight: 1.65, margin: 0 }}>
+            <p style={{ color: '#D1E7DD', fontSize: '1.02rem', lineHeight: 1.65, margin: 0 }}>
               Equip your school or college with ready-to-teach curriculum kits, teacher training, zero-install browser sandboxes, and exportable institutional evidence-of-learning reports.
             </p>
           </div>
 
-          {/* Pilot Target Metrics Grid with Vibrant Glowing Numbers */}
+          {/* Pilot Target Metrics Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', width: '100%', maxWidth: '880px', position: 'relative', zIndex: 1 }}>
-            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(56, 189, 248, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#38BDF8', textShadow: '0 0 16px rgba(56, 189, 248, 0.45)' }}>≥ 70%</div>
-              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Student Activation</div>
-              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Target Benchmark</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#BAE6FD' }}>≥ 70%</div>
+              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Student Activation</div>
+              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Target Benchmark</div>
             </div>
 
-            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(52, 211, 153, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#34D399', textShadow: '0 0 16px rgba(52, 211, 153, 0.45)' }}>≥ 60%</div>
-              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Sandbox Completion</div>
-              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Outcome Metric</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#A7F3D0' }}>≥ 60%</div>
+              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Sandbox Completion</div>
+              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Outcome Metric</div>
             </div>
 
-            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(251, 191, 36, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FBBF24', textShadow: '0 0 16px rgba(251, 191, 36, 0.45)' }}>4–8 Wks</div>
-              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Cohort Duration</div>
-              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Structured Term</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FDE68A' }}>4–8 Wks</div>
+              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Cohort Duration</div>
+              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Structured Term</div>
             </div>
 
-            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(251, 113, 133, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FB7185', textShadow: '0 0 16px rgba(251, 113, 133, 0.45)' }}>₹0 Free</div>
-              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Zero-Cost Pilot Phase</div>
-              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Institutional Grant</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FECDD3' }}>₹0 Free</div>
+              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Zero-Cost Pilot Phase</div>
+              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Institutional Grant</div>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', position: 'relative', zIndex: 1 }}>
             <button
               type="button"
-              className="btn-quest"
               onClick={() => setPilotModalOpen(true)}
-              style={{ height: '48px', padding: '0 28px', fontSize: '1rem', fontWeight: 800 }}
+              style={{
+                height: '48px',
+                padding: '0 28px',
+                fontSize: '1rem',
+                fontWeight: 800,
+                backgroundColor: '#FAF7F2',
+                color: '#164E3D',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              }}
             >
               <School size={18} />
               <span>Apply for Pilot Cohort</span>
@@ -1160,9 +1146,22 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
             <button
               type="button"
-              className="btn-outline"
               onClick={() => onNavigate('schoolkit')}
-              style={{ height: '48px', padding: '0 22px', fontSize: '1rem', borderColor: 'rgba(255, 255, 255, 0.35)', color: '#FFFFFF', backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
+              style={{
+                height: '48px',
+                padding: '0 22px',
+                fontSize: '1rem',
+                fontWeight: 700,
+                borderColor: 'rgba(255, 255, 255, 0.4)',
+                color: '#FAF7F2',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
               <FileText size={18} />
               <span>Inspect School Kit</span>
