@@ -6,7 +6,9 @@ import {
   Play,
   ArrowRight,
   ArrowLeft,
+  Clock,
 } from 'lucide-react';
+import { SimulationLabModal } from './SimulationLabModal';
 
 interface CourseCatalogueProps {
   db: InMemoryDatabase;
@@ -24,6 +26,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   const [search, setSearch] = useState('');
   const [selectedDomain, setSelectedDomain] = useState<string>(initialDomain);
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
+  const [simLabOpen, setSimLabOpen] = useState(false);
+  const [simLabCourseTitle, setSimLabCourseTitle] = useState('Cybersecurity & Defensive Web Security');
 
   const courses = db.getCourses({
     search,
@@ -167,56 +171,82 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               onClick={() => onSelectCourse(course.slug)}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className={`badge ${course.domain === 'technology' ? 'badge-brand' : course.domain === 'coding' ? 'badge-accent' : course.domain === 'finance' ? 'badge-warning' : 'badge-neutral'}`}>
+                <span className="category-tag-pill">
                   {course.domain.toUpperCase()}
                 </span>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  <BookOpen size={16} />
-                </span>
+                <button
+                  type="button"
+                  className="syllabus-circle-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectCourse(course.slug);
+                  }}
+                  title="View Course Syllabus"
+                >
+                  <BookOpen size={17} />
+                </button>
               </div>
 
               <h3>{course.title}</h3>
 
               <p>{course.summary}</p>
 
-              {/* Tags */}
-              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: '0.75rem', color: '#94A3B8', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '2px 8px', borderRadius: '4px' }}>
-                  #{course.domain}
+              {/* Tags matching Image 1 */}
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <span className="topic-hashtag-pill">
+                  #{course.domain === 'technology' ? 'Tech' : course.domain === 'coding' ? 'Programming' : course.domain === 'finance' ? 'Finance' : 'Career'}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#94A3B8', backgroundColor: 'rgba(255, 255, 255, 0.08)', padding: '2px 8px', borderRadius: '4px' }}>
-                  #{course.level}
+                <span className="topic-hashtag-pill">
+                  #{course.slug.split('-')[0].charAt(0).toUpperCase() + course.slug.split('-')[0].slice(1)}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#34D399', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                  #10Videos
-                </span>
-                <span style={{ fontSize: '0.75rem', color: '#22D3EE', backgroundColor: 'rgba(6, 182, 212, 0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                  #Sandbox
+                <span className="topic-hashtag-pill" style={{ color: '#38BDF8', borderColor: 'rgba(56, 189, 248, 0.25)' }}>
+                  #10Sims
                 </span>
               </div>
 
-              {/* Bottom row matching reference */}
+              {/* Bottom row matching reference Image 1 */}
               <div className="course-card-footer">
                 <span className="modules-badge">
-                  <Play size={14} style={{ color: '#00F5A0' }} />
-                  <span>{course.modules.length} Modules</span>
+                  <Clock size={16} />
+                  <span>10 Modules</span>
                 </span>
-                <button
-                  type="button"
-                  className="arrow-action-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectCourse(course.slug);
-                  }}
-                  title="Open Course"
-                >
-                  <ArrowRight size={16} />
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <button
+                    type="button"
+                    className="play-sim-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSimLabCourseTitle(course.title);
+                      setSimLabOpen(true);
+                    }}
+                    title="Launch Interactive Simulation Lab (10 SVG Sims)"
+                  >
+                    <Play size={16} fill="currentColor" />
+                  </button>
+                  <button
+                    type="button"
+                    className="arrow-action-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectCourse(course.slug);
+                    }}
+                    title="Open Course"
+                  >
+                    <ArrowRight size={20} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* Interactive Simulation Lab Modal (Cyber Lab Reference Image 2) */}
+      <SimulationLabModal
+        isOpen={simLabOpen}
+        onClose={() => setSimLabOpen(false)}
+        courseTitle={simLabCourseTitle}
+      />
     </div>
   );
 };

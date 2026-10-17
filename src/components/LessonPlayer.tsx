@@ -4,6 +4,7 @@ import { Lesson, CourseEnrollment, Certificate } from '../types';
 import { ConceptSvgAnimation } from './ConceptSvgAnimation';
 import { InteractiveSandbox } from './InteractiveSandbox';
 import { CertificateModal } from './CertificateModal';
+import { SimulationLabModal } from './SimulationLabModal';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -44,6 +45,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
   const [earnedCertificate, setEarnedCertificate] = useState<Certificate | null>(null);
+  const [simLabOpen, setSimLabOpen] = useState(false);
 
   // Quiz submission state for current lesson
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
@@ -357,6 +359,30 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   <TerminalIcon size={15} />
                   <span>3. Sandbox Simulation (+100 XP)</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSimLabOpen(true)}
+                  style={{
+                    height: '38px',
+                    padding: '0 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(0, 240, 255, 0.12)',
+                    color: '#00F0FF',
+                    fontWeight: 700,
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: '1px solid rgba(0, 240, 255, 0.35)',
+                    cursor: 'pointer',
+                    boxShadow: '0 0 10px rgba(0, 240, 255, 0.15)',
+                  }}
+                  title="Launch Cyber / Threat Simulation Lab (10 SVG Sims)"
+                >
+                  <Cpu size={15} />
+                  <span>Interactive Cyber Lab (10 SVG Sims)</span>
+                </button>
               </div>
             </div>
 
@@ -571,6 +597,13 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
       <CertificateModal
         certificate={earnedCertificate}
         onClose={() => setEarnedCertificate(null)}
+      />
+
+      {/* Interactive Simulation Lab Modal (Cyber Lab Reference Image 2) */}
+      <SimulationLabModal
+        isOpen={simLabOpen}
+        onClose={() => setSimLabOpen(false)}
+        courseTitle={course.title}
       />
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { CourseEnrollment, Certificate } from '../types';
 import { CertificateModal } from './CertificateModal';
+import { SimulationLabModal } from './SimulationLabModal';
 import {
   ArrowLeft,
   BookOpen,
@@ -35,6 +36,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
     course ? db.getCourseEnrollment(currentUserId, course.id) : null
   );
   const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
+  const [simLabOpen, setSimLabOpen] = useState(false);
 
   if (!course) {
     return (
@@ -147,6 +149,26 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                 <span>View Verified Certificate</span>
               </button>
             )}
+
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => setSimLabOpen(true)}
+              style={{
+                height: '44px',
+                padding: '0 18px',
+                fontSize: '0.9rem',
+                border: '1px solid #00F0FF',
+                color: '#00F0FF',
+                boxShadow: '0 0 12px rgba(0, 240, 255, 0.2)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <Cpu size={18} />
+              <span>Launch Simulation Lab (10 SVG Sims)</span>
+            </button>
 
             {course.is_published ? (
               <button
@@ -285,6 +307,13 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
       <CertificateModal
         certificate={activeCertificate}
         onClose={() => setActiveCertificate(null)}
+      />
+
+      {/* Interactive Simulation Lab Modal (Cyber Lab Reference Image 2) */}
+      <SimulationLabModal
+        isOpen={simLabOpen}
+        onClose={() => setSimLabOpen(false)}
+        courseTitle={course.title}
       />
     </div>
   );
