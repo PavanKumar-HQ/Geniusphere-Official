@@ -13,6 +13,8 @@ import {
   Play,
   Code,
   Sparkles,
+  Search,
+  GraduationCap,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -23,9 +25,24 @@ interface HomepageProps {
 
 export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [homeSearch, setHomeSearch] = useState<string>('');
+  const [homeDomain, setHomeDomain] = useState<string>('all');
+  const [homeDifficulty, setHomeDifficulty] = useState<string>('all');
 
-  const featuredCourses = db.getCourses({ publishedOnly: true });
+  const allPublishedCourses = db.getCourses({ publishedOnly: true });
   const learningPaths = db.getLearningPaths();
+
+  // Filter courses for in-page course discovery
+  const filteredCourses = allPublishedCourses.filter((course) => {
+    const matchesSearch =
+      !homeSearch.trim() ||
+      course.title.toLowerCase().includes(homeSearch.toLowerCase()) ||
+      course.summary.toLowerCase().includes(homeSearch.toLowerCase()) ||
+      course.subject.toLowerCase().includes(homeSearch.toLowerCase());
+    const matchesDomain = homeDomain === 'all' || course.domain === homeDomain;
+    const matchesDifficulty = homeDifficulty === 'all' || course.level === homeDifficulty;
+    return matchesSearch && matchesDomain && matchesDifficulty;
+  });
 
   const toggleFaq = (idx: number) => {
     setActiveFaq(activeFaq === idx ? null : idx);
@@ -34,6 +51,94 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
   const formatModules = (count: number) => {
     return `${count} ${count === 1 ? 'module' : 'modules'}`;
   };
+
+  // 21 Canonical Frequently Asked Questions
+  const faqList = [
+    {
+      q: '1. What is Geniusphere?',
+      a: 'Geniusphere is an evidence-backed education platform delivering practical curriculum in technology, coding, finance, and professional skills for independent learners and educational institutions.',
+    },
+    {
+      q: '2. Who can use Geniusphere?',
+      a: 'Independent learners, school and college students, teachers, educational institutions, and parents/guardians seeking practical, verifiable skills.',
+    },
+    {
+      q: '3. Which subjects are available?',
+      a: '27 reconciled curricular subjects across four core domains: Technology (8 subjects), Coding & Programming (7 subjects), Finance (7 subjects), and Professional Skills (5 subjects).',
+    },
+    {
+      q: '4. Are courses self-paced?',
+      a: 'Yes. All courses support self-paced learning for independent students, while teachers can establish structured assignment schedules and due dates for classroom cohorts.',
+    },
+    {
+      q: '5. How do interactive labs work?',
+      a: 'Labs execute in lightweight WebAssembly sandboxes (such as SQLite-WASM) in your browser for responsive experimentation, and evaluate queries against server-side test suites for authoritative grading.',
+    },
+    {
+      q: '6. How does SQL Lab 101 work?',
+      a: 'Lab 101 demonstrates SQL injection defense. Learners replace vulnerable string concatenation with parameterized prepared statements (?), and submit queries to a 5-assertion challenge evaluation.',
+    },
+    {
+      q: '7. How do classroom join codes work?',
+      a: 'Teachers generate 8-character cryptographic alphanumeric join codes with a 14-day validity window. Students enter the code to enroll directly into their school cohort, and teachers can revoke codes at any time.',
+    },
+    {
+      q: '8. Can schools and colleges use Geniusphere?',
+      a: 'Yes. Educational institutions can create institutional workspaces with multi-tenant isolation, onboard educators, provision classrooms, and monitor cohort progress.',
+    },
+    {
+      q: '9. How do teachers assign work?',
+      a: 'Teachers select courses or interactive labs from the curriculum, set due dates and instructions in the Teacher Workspace, and distribute assignments directly to enrolled classrooms.',
+    },
+    {
+      q: '10. How is student progress recorded?',
+      a: 'Progress is recorded per lesson, quiz, and lab attempt. Completed lessons, quiz scores, and lab submission hashes are persisted in the database.',
+    },
+    {
+      q: '11. How are quizzes and assignments graded?',
+      a: 'Quizzes are evaluated against server-side answer keys, and lab challenges execute in isolated test environments. Clients cannot forge or manipulate scores.',
+    },
+    {
+      q: '12. How are achievements and certificates earned?',
+      a: 'Achievements are awarded only after achieving qualifying scores on verified lab challenges and completing course modules. Completed submissions generate cryptographic SHA-256 validation hashes.',
+    },
+    {
+      q: '13. Can students use Geniusphere on mobile devices?',
+      a: 'Yes. The platform is built as a responsive progressive web app (PWA) with touch-safe controls (>=44px), optimized layout down to 360px viewports, and lightweight CodeMirror 6 editors.',
+    },
+    {
+      q: '14. Can learners resume their progress on another device?',
+      a: 'Yes. Authenticated learner progress, enrolled courses, and earned lab submissions synchronize with the database.',
+    },
+    {
+      q: '15. What is SchoolKit?',
+      a: 'SchoolKit is an educator resource pack providing operational guidelines, classroom onboarding instructions, curriculum resources, and student safety guidance for schools and colleges.',
+    },
+    {
+      q: '16. What is the Resume Builder?',
+      a: 'The Resume Builder is a student tool that formats technical resumes and automatically integrates verified course completions and lab achievement scores (with SHA-256 hashes) into exportable JSON and print documents.',
+    },
+    {
+      q: '17. How is student information protected?',
+      a: 'Student information is protected through strict database authorization boundaries, tenant-isolated schemas, column-level update restrictions, and immutable audit logs.',
+    },
+    {
+      q: '18. How does guardian consent work where required?',
+      a: 'For minor accounts, accounts are placed in pending consent status until verified by a parent or guardian via email verification and consent confirmation.',
+    },
+    {
+      q: '19. How can an institution get started?',
+      a: 'Institutions can access the Educator SchoolKit, review the deployment guidelines, establish an institutional tenant, and onboard verified teachers.',
+    },
+    {
+      q: '20. How can a user contact Geniusphere?',
+      a: 'Users and educational partners can reach out via the institutional support portal or email support@geniusphere.tech for pilot onboarding and technical support.',
+    },
+    {
+      q: '21. What features are currently available?',
+      a: 'Currently available: the complete 27-subject course catalogue, interactive lesson player with quizzes, SQL Defense Lab 101 with server grading, Classroom Manager with join codes, Teacher Gradebook, Technical Resume Builder, Educator SchoolKit, Parent Consent Portal, and Audit Trail.',
+    },
+  ];
 
   return (
     <div style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)', minHeight: '100vh' }}>
@@ -102,19 +207,22 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
             <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
               Four Core Disciplines
             </span>
+            <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+              27 Reconciled Subjects
+            </span>
           </div>
         </div>
       </div>
 
       {/* ============================================================ */}
-      {/* 2. STRONG HERO SECTION                                       */}
+      {/* 2. SECTION 1: HERO                                           */}
       {/* ============================================================ */}
       <section style={{ padding: '72px 24px 64px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'center' }}>
           <div>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '20px' }}>
               <Sparkles size={15} />
-              <span>PRACTICAL EDUCATION PLATFORM</span>
+              <span>EVIDENCE-BACKED EDUCATION PLATFORM</span>
             </div>
 
             <h1
@@ -140,7 +248,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 maxWidth: '540px',
               }}
             >
-              Master modern technology, write real code, understand the mechanics of money, and build practical professional skills through hands-on challenges and evidence-backed achievements.
+              Explore practical technology, understand how money works, build professional skills, and strengthen your coding abilities through hands-on learning.
             </p>
 
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap' }}>
@@ -161,7 +269,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 style={{ height: '48px', padding: '0 22px', fontSize: '0.95rem' }}
               >
                 <Terminal size={18} />
-                <span>Try Interactive Lab</span>
+                <span>Try SQL Lab 101</span>
               </button>
             </div>
           </div>
@@ -221,7 +329,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
       </section>
 
       {/* ============================================================ */}
-      {/* 3. FOUR CLEAR LEARNING-AREA CARDS                            */}
+      {/* 3. SECTION 2: FOUR CLEAR LEARNING AREAS                      */}
       {/* ============================================================ */}
       <section style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
@@ -331,7 +439,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
       </section>
 
       {/* ============================================================ */}
-      {/* 4. LEARNING BY DOING (THE 4-STEP CYCLE)                      */}
+      {/* 4. SECTION 3: LEARNING METHOD                                */}
       {/* ============================================================ */}
       <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '44px' }}>
@@ -347,7 +455,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
           <div className="card" style={{ borderLeft: '4px solid var(--brand-primary)' }}>
             <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--brand-primary)', marginBottom: '8px' }}>01</div>
-            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Learn Concepts</h3>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Learn Through Lessons</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
               Read structured lessons, analyze technical threat models, and study architectural trade-offs without unnecessary jargon.
             </p>
@@ -365,30 +473,30 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
             <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--warning)', marginBottom: '8px' }}>03</div>
             <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Solve Challenges</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-              Apply defensive patterns, write parameterized templates, and test against adversarial attack payloads.
+              Apply defensive patterns, write parameterized templates, and solve practical challenges against adversarial payloads.
             </p>
           </div>
 
           <div className="card" style={{ borderLeft: '4px solid #4F46E5' }}>
             <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#4F46E5', marginBottom: '8px' }}>04</div>
-            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Prove Competency</h3>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '8px' }}>Prove Verified Skills</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5 }}>
-              Receive authoritative server grading and build an evidence-backed portfolio with verifiable completion records.
+              Receive authoritative server grading and build an evidence-backed portfolio with cryptographic completion records.
             </p>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 5. DISCOVERABLE FEATURED COURSES                             */}
+      {/* 5. SECTION 4: COURSE DISCOVERY                               */}
       {/* ============================================================ */}
       <section style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '28px' }}>
             <div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Featured Curriculum</h2>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Find your next learning challenge.</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-                Flagship courses with interactive modules, lesson quizzes, and practical exercises.
+                Explore published courses with structured modules, real lesson content, and hands-on exercises.
               </p>
             </div>
             <button
@@ -396,13 +504,73 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
               className="btn-outline"
               onClick={() => onNavigate('catalogue')}
             >
-              <span>Explore All 27 Courses</span>
+              <span>View All 27 Courses</span>
               <ChevronRight size={16} />
             </button>
           </div>
 
+          {/* In-Page Course Filters & Search */}
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '28px' }}>
+            <div style={{ flex: '1 1 260px', position: 'relative' }}>
+              <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+              <input
+                type="text"
+                value={homeSearch}
+                onChange={(e) => setHomeSearch(e.target.value)}
+                placeholder="Search courses by keyword (e.g. SQL, AI, Finance, Loops)..."
+                style={{
+                  width: '100%',
+                  padding: '9px 12px 9px 36px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-strong)',
+                  backgroundColor: 'var(--bg-surface-subdued)',
+                  fontSize: '0.88rem',
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {[
+                { id: 'all', label: 'All Subjects' },
+                { id: 'technology', label: 'Technology' },
+                { id: 'coding', label: 'Coding' },
+                { id: 'finance', label: 'Finance' },
+                { id: 'professional', label: 'Professional' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setHomeDomain(tab.id)}
+                  className={homeDomain === tab.id ? 'btn-primary' : 'btn-secondary'}
+                  style={{ height: '36px', padding: '0 14px', fontSize: '0.82rem' }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+
+              <select
+                value={homeDifficulty}
+                onChange={(e) => setHomeDifficulty(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-strong)',
+                  backgroundColor: 'var(--bg-surface-subdued)',
+                  fontSize: '0.82rem',
+                }}
+                aria-label="Filter difficulty"
+              >
+                <option value="all">All Difficulties</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Filtered Courses Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-            {featuredCourses.map((course) => (
+            {filteredCourses.slice(0, 6).map((course) => (
               <div key={course.id} className="card-elevated" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
@@ -418,7 +586,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                     )}
                   </div>
 
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>{course.title}</h3>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '8px' }}>{course.title}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
                     {course.summary}
                   </p>
@@ -440,11 +608,23 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
               </div>
             ))}
           </div>
+
+          <div style={{ textAlign: 'center', marginTop: '32px' }}>
+            <button
+              type="button"
+              className="btn-outline"
+              onClick={() => onNavigate('catalogue')}
+              style={{ padding: '0 24px', height: '42px', fontSize: '0.9rem' }}
+            >
+              <span>Explore All 27 Curricular Subjects in Full Catalogue</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 6. INTERACTIVE LAB SECTION FEATURING LAB 101                 */}
+      {/* 6. SECTION 5: INTERACTIVE LABS (FEATURING LAB 101)           */}
       {/* ============================================================ */}
       <section id="labs" style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '32px' }}>
@@ -462,16 +642,16 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                 <span className="badge badge-brand">WEB DEFENSE</span>
-                <span className="badge badge-success">AVAILABLE NOW</span>
+                <span className="badge badge-success">OPERATIONAL NOW</span>
               </div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
                 Lab 101: SQL Parameterization & Injection Defense
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                Defeat authentication bypass vulnerabilities by implementing native parameter placeholders and testing against 5 attack payloads.
+                Defeat authentication bypass vulnerabilities by implementing native positional parameter placeholders (?) and testing against 5 attack payloads.
               </p>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                Runtime: <strong>Client-side SQLite-WASM Sandbox</strong> • Score: <strong>100 pts</strong>
+                Runtime: <strong>Client-side SQLite-WASM Sandbox</strong> • Evaluation: <strong>Server-Authoritative (100 pts)</strong>
               </div>
             </div>
 
@@ -482,7 +662,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
               style={{ width: '100%', height: '40px' }}
             >
               <Play size={16} />
-              <span>Launch Lab Workspace</span>
+              <span>Launch Lab 101 Workspace</span>
             </button>
           </div>
 
@@ -516,7 +696,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
       </section>
 
       {/* ============================================================ */}
-      {/* 7. CONCISE SECTION FOR LEARNING PATHS                        */}
+      {/* 7. SECTION 6: CONCISE LEARNING PATHS                         */}
       {/* ============================================================ */}
       <section id="paths" style={{ backgroundColor: 'var(--bg-surface)', padding: '60px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
@@ -558,38 +738,38 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
       </section>
 
       {/* ============================================================ */}
-      {/* 8. FOR SCHOOLS, TEACHERS & CLASSROOMS                        */}
+      {/* 8. SECTION 7: SCHOOLS AND COLLEGES                           */}
       {/* ============================================================ */}
       <section id="schools" style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px', alignItems: 'center' }}>
           <div>
             <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
-              Classroom & Institutional Management
+              Institutional Workflows
             </div>
             <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '16px' }}>
-              Engineered for Real Schools & Colleges
+              Bring structured, practical learning into the classroom.
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6, marginBottom: '24px' }}>
-              Geniusphere empowers educators to organize cohorts, distribute structured labs, review authentic submissions, and track class mastery with robust multi-tenant isolation.
+              Geniusphere empowers educational institutions to organize cohorts, distribute structured labs, review authentic submissions, and track class mastery with robust multi-tenant isolation.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '28px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <span style={{ fontSize: '0.9rem' }}>
-                  <strong>Cryptographic Join Codes:</strong> Unpredictable random alphanumeric codes with 14-day expiration and teacher revocation.
+                  <strong>Classroom Creation & Join Codes:</strong> Unpredictable random alphanumeric codes with 14-day expiration and teacher revocation.
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <span style={{ fontSize: '0.9rem' }}>
-                  <strong>Gradebook Review:</strong> Real teacher dashboard displaying submission timestamps, attempt counts, and server scores.
+                  <strong>Lab & Course Assignments:</strong> Teachers distribute structured challenges with due dates directly to class cohorts.
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                 <CheckCircle2 size={18} color="var(--success)" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <span style={{ fontSize: '0.9rem' }}>
-                  <strong>Parental Oversight:</strong> Verifiable consent mechanisms and minor data protections.
+                  <strong>Assessment & Progress Feedback:</strong> Review student attempt counts, server-verified scores, and tamper-evident submission hashes.
                 </span>
               </div>
             </div>
@@ -602,29 +782,21 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 style={{ height: '44px', padding: '0 20px', fontSize: '0.9rem' }}
               >
                 <School size={16} />
-                <span>Classroom Manager</span>
-              </button>
-              <button
-                type="button"
-                className="btn-outline"
-                onClick={() => onNavigate('schoolkit')}
-                style={{ height: '44px', padding: '0 20px', fontSize: '0.9rem' }}
-              >
-                <span>Educator SchoolKit</span>
+                <span>Explore School Programs</span>
               </button>
             </div>
           </div>
 
           <div className="card" style={{ padding: '24px', backgroundColor: 'var(--bg-surface)' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '14px' }}>The Institutional Flow</h3>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '14px' }}>The Institutional Lifecycle</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>1.</span>
-                <span>Institution establishes workspace and adds verified teachers.</span>
+                <span>Institution establishes workspace and adds verified faculty.</span>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>2.</span>
-                <span>Teacher provisions course section and generates secure join code.</span>
+                <span>Teacher provisions classroom section and generates secure Crockford Base32 join code.</span>
               </div>
               <div style={{ display: 'flex', gap: '10px' }}>
                 <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>3.</span>
@@ -640,103 +812,209 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
       </section>
 
       {/* ============================================================ */}
-      {/* 9. STUDENT TOOLS: RESUME BUILDER & SCHOOLKIT                 */}
+      {/* 9. SECTION 8: EDUCATORS                                      */}
       {/* ============================================================ */}
       <section style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Practical Learning Tools</h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto' }}>
-              Functional utilities to help learners prove their skills and help institutions deploy coursework.
-            </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', marginBottom: '32px' }}>
+            <div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
+                Faculty Resources
+              </div>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Tools for educators.</h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+                Classroom management, assignment distribution, server-side grading, and SchoolKit guidelines.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => onNavigate('gradebook')}
+              style={{ height: '42px', fontSize: '0.9rem' }}
+            >
+              <GraduationCap size={16} />
+              <span>Explore Educator Tools</span>
+            </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-            {/* Tool 1: Resume Builder */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                  <Award size={22} color="var(--brand-primary)" />
-                </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Technical Resume Builder</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                  Build structured technical resumes with auto-discovered verified achievements from completed labs (including integrity hashes) and export clean JSON or print-ready versions.
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={() => onNavigate('resume-builder')}
-                style={{ height: '40px', fontSize: '0.875rem' }}
-              >
-                Open Resume Builder
-              </button>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <div className="card" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px' }}>Classroom Management</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Generate, revoke, or expire classroom join codes in real time. Manage student rosters with zero duplicate enrollments.
+              </p>
             </div>
 
-            {/* Tool 2: SchoolKit */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-                  <School size={22} color="var(--success)" />
-                </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Educator SchoolKit</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
-                  Operational guidelines, safeguarding protocols, and a downloadable JSON Educator Pack covering multi-tenant architecture and join-code policies.
-                </p>
-              </div>
+            <div className="card" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px' }}>Assignment Distribution</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Assign Lab 101 or specific curriculum modules with due dates and rubric criteria to entire student cohorts.
+              </p>
+            </div>
 
-              <button
-                type="button"
-                className="btn-outline"
-                onClick={() => onNavigate('schoolkit')}
-                style={{ height: '40px', fontSize: '0.875rem' }}
-              >
-                Open SchoolKit Guide
-              </button>
+            <div className="card" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px' }}>Live Teacher Gradebook</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Inspect student submission timestamps, passed assertion counts, and SHA-256 integrity hashes from server evaluations.
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '8px' }}>SchoolKit Guidelines</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Downloadable implementation handbook covering multi-tenant architecture, student safety, and curriculum standards.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 10. COMPACT FAQ, FINAL CTA & CLEAN FOOTER                    */}
+      {/* 10. SECTION 9: STUDENT TOOLS                                 */}
       {/* ============================================================ */}
-      <section style={{ padding: '64px 24px', maxWidth: '840px', margin: '0 auto' }}>
+      <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Frequently Asked Questions</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
-            Straightforward answers about our courses, interactive labs, and platform functionality.
+          <h2 style={{ fontSize: '2rem', fontWeight: 800 }}>Student Practical Tools</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '600px', margin: '0 auto' }}>
+            Functional utilities to help learners prove their skills and build verifiable career assets.
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {[
-            {
-              q: 'Who can use Geniusphere?',
-              a: 'Geniusphere is built for independent students, teachers, schools, and colleges seeking practical education in technology, coding, finance, and career skills.',
-            },
-            {
-              q: 'Are the courses self-paced?',
-              a: 'Yes. Independent learners can explore courses and complete lessons at their own speed. In classroom mode, teachers can configure assignment schedules and deadlines.',
-            },
-            {
-              q: 'How do the interactive labs work?',
-              a: 'Labs run in lightweight WebAssembly environments (like SQLite-WASM) in your browser for instant experimentation, while evaluations are sent to the server for authoritative grading.',
-            },
-            {
-              q: 'How do classroom join codes work?',
-              a: 'Teachers generate 8-character cryptographic join codes with a 14-day validity period. Students enter the code to enroll directly into their school cohort.',
-            },
-            {
-              q: 'How are achievements verified?',
-              a: 'Achievements are earned only by passing defined automated test assertions. Completed lab submissions generate cryptographic hashes that prevent client-side score forgery.',
-            },
-            {
-              q: 'How is learner privacy protected?',
-              a: 'Minor accounts require parental consent verification, and personal progress is protected through strict database authorization boundaries.',
-            },
-          ].map((faq, idx) => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+          {/* Tool 1: Resume Builder */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <Award size={22} color="var(--brand-primary)" />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Technical Resume Builder</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                Build structured technical resumes with auto-discovered verified achievements from completed labs (including integrity hashes) and export clean JSON or print-ready versions.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => onNavigate('resume-builder')}
+              style={{ height: '40px', fontSize: '0.875rem' }}
+            >
+              Open Resume Builder
+            </button>
+          </div>
+
+          {/* Tool 2: Student Portfolio */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <Briefcase size={22} color="#4F46E5" />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Student Portfolio</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                Curate evidence-backed project artifacts, deployment links, and code repositories into a professional technical showcase.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="btn-outline"
+              onClick={() => onNavigate('resume-builder')}
+              style={{ height: '40px', fontSize: '0.875rem' }}
+            >
+              View Portfolio Assets
+            </button>
+          </div>
+
+          {/* Tool 3: Verified Achievements */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <CheckCircle2 size={22} color="var(--warning)" />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Verified Learning Achievements</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                Tamper-evident achievement records backed by server-authoritative challenge assertions and immutable database submissions.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="btn-outline"
+              onClick={() => onNavigate('lab')}
+              style={{ height: '40px', fontSize: '0.875rem' }}
+            >
+              Verify Achievements
+            </button>
+          </div>
+
+          {/* Tool 4: SchoolKit for Educators */}
+          <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                <School size={22} color="var(--success)" />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>SchoolKit for Educators</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.5, marginBottom: '16px' }}>
+                Operational guidelines, safeguarding protocols, and a downloadable JSON Educator Pack covering multi-tenant architecture and join-code policies.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="btn-outline"
+              onClick={() => onNavigate('schoolkit')}
+              style={{ height: '40px', fontSize: '0.875rem' }}
+            >
+              Open SchoolKit Guide
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 11. SECTION 10: ABOUT GENIUSPHERE                            */}
+      {/* ============================================================ */}
+      <section id="about" style={{ backgroundColor: 'var(--bg-surface)', padding: '64px 24px', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+        <div style={{ maxWidth: '880px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+            Educational Mission
+          </div>
+          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '18px' }}>
+            About Geniusphere
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '28px' }}>
+            Geniusphere was founded on a simple conviction: modern students need practical, hands-on understanding of technology, computing, money, and professional communication that traditional textbooks do not adequately cover.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', textAlign: 'left' }}>
+            <div className="card" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '6px' }}>Evidence-Based Pedagogy</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                We believe mastery is proven through writing real code, executing queries, solving real challenges, and defending systems against adversarial inputs.
+              </p>
+            </div>
+            <div className="card" style={{ padding: '20px' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '6px' }}>Accessible & Safe</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                Engineered with zero commercial advertising trackers, respectful minor safeguarding, warm light visual aesthetics, and responsive layout across mobile and desktop.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 12. SECTION 11: 21 FREQUENTLY ASKED QUESTIONS                */}
+      {/* ============================================================ */}
+      <section style={{ padding: '64px 24px', maxWidth: '880px', margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Frequently Asked Questions</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>
+            Accurate answers about our curriculum, interactive laboratories, and platform policies.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {faqList.map((faq, idx) => (
             <div key={idx} className="card" style={{ padding: '16px 20px', cursor: 'pointer' }} onClick={() => toggleFaq(idx)}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
                 <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{faq.q}</span>
@@ -752,14 +1030,16 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
         </div>
       </section>
 
-      {/* Final Call to Action */}
+      {/* ============================================================ */}
+      {/* 13. SECTION 12: FINAL CTA & FUNCTIONAL FOOTER                */}
+      {/* ============================================================ */}
       <section style={{ backgroundColor: 'var(--brand-primary)', color: '#FFF', padding: '60px 24px', textAlign: 'center' }}>
         <div style={{ maxWidth: '720px', margin: '0 auto' }}>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#FFF', marginBottom: '14px' }}>
-            Ready to explore real learning?
+            Ready to build practical skills?
           </h2>
           <p style={{ fontSize: '1.05rem', color: '#E0E7FF', lineHeight: 1.6, marginBottom: '28px' }}>
-            Discover our complete 27-subject curriculum or test your skills in the interactive SQL defense lab.
+            Explore the courses, try an interactive lab, and turn your completed work into evidence of what you can do.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <button
@@ -777,7 +1057,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 fontSize: '0.95rem',
               }}
             >
-              Browse Course Catalogue
+              Explore Courses
             </button>
             <button
               type="button"
@@ -794,7 +1074,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 fontSize: '0.95rem',
               }}
             >
-              Launch Lab 101
+              Try Lab 101
             </button>
           </div>
         </div>
@@ -898,7 +1178,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 onClick={() => onNavigate('catalogue')}
                 style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
               >
-                Course Catalogue
+                Explore Courses
               </button>
               <button
                 type="button"
@@ -906,6 +1186,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate }) => {
                 style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
               >
                 Learning Paths
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('classrooms')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                For Schools & Colleges
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('schoolkit')}
+                style={{ background: 'none', border: 'none', color: '#A1A1AA', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+              >
+                For Educators
               </button>
             </div>
           </div>
