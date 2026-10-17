@@ -328,68 +328,88 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
           <div
             className="funzone-card"
             style={{
-              minWidth: '300px',
-              maxWidth: '300px',
+              minWidth: '310px',
+              maxWidth: '310px',
               flex: '0 0 auto',
-              borderTop: '3px solid var(--brand-primary)',
+              borderTop: '4px solid #FDB913',
+              boxShadow: '0 10px 25px -5px rgba(253, 185, 19, 0.18)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
+                <span className="tag-pill tag-pill-gold" style={{ fontSize: '0.72rem' }}>
                   DAILY QUEST
                 </span>
-                <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                  <Clock size={11} />
+                <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '3px', fontWeight: 600 }}>
+                  <Clock size={12} />
                   <span>Resets in 12h</span>
                 </span>
               </div>
-              <Trophy size={18} color="var(--brand-primary)" />
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#172B4D',
+                  boxShadow: '0 3px 10px rgba(253, 185, 19, 0.4)',
+                }}
+              >
+                <Trophy size={18} />
+              </div>
             </div>
 
-            <div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
+            <div style={{ marginTop: '8px' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
                 Micro-Learner
               </h3>
-              <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+              <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55 }}>
                 Watch 1 video lesson or test an interactive concept simulation today.
               </p>
             </div>
 
-            <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', fontSize: 'var(--text-meta)' }}>
-                <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>REWARD</span>
-                <span style={{ fontWeight: 800, color: 'var(--brand-accent)' }}>+25 XP</span>
+            <div style={{ marginTop: 'auto', paddingTop: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', fontSize: 'var(--text-meta)' }}>
+                <span style={{ color: 'var(--text-muted)', fontWeight: 700, letterSpacing: '0.04em' }}>QUEST REWARD</span>
+                <span className="xp-pill" style={{ padding: '3px 10px', fontSize: '0.78rem' }}>
+                  <Zap size={13} />
+                  <span>+25 XP</span>
+                </span>
               </div>
 
               {!questCompleted ? (
                 <button
                   type="button"
                   onClick={handleCompleteQuest}
-                  className="btn-primary"
-                  style={{ width: '100%', height: '38px', fontSize: '0.85rem' }}
+                  className="btn-quest"
+                  style={{ width: '100%', height: '40px', fontSize: '0.88rem', fontWeight: 800 }}
                 >
-                  <Zap size={14} />
+                  <Zap size={15} />
                   <span>Complete Challenge</span>
                 </button>
               ) : (
                 <div
                   style={{
-                    padding: '8px',
-                    borderRadius: 'var(--radius-sm)',
-                    backgroundColor: 'var(--success-bg)',
-                    border: '1px solid var(--success-border)',
-                    color: 'var(--success)',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
+                    padding: '10px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%)',
+                    border: '1.5px solid #22C55E',
+                    color: '#15803D',
+                    fontSize: '0.86rem',
+                    fontWeight: 800,
                     textAlign: 'center',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '6px',
+                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)',
                   }}
                 >
-                  <Check size={16} />
+                  <Check size={18} strokeWidth={3} />
                   <span>Completed (+25 XP Added!)</span>
                 </div>
               )}
@@ -405,21 +425,37 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '320px',
               maxWidth: '320px',
               flex: '0 0 auto',
-              borderTop: '3px solid var(--brand-accent)',
+              borderTop: '4px solid #0284C7',
+              boxShadow: '0 10px 25px -5px rgba(48, 178, 231, 0.18)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="tag-pill tag-pill-sky" style={{ fontSize: '0.72rem' }}>
                 TRIVIA • {currentFact.tag.toUpperCase()}
               </span>
-              <Lightbulb size={18} color="var(--brand-accent)" />
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  boxShadow: '0 3px 10px rgba(48, 178, 231, 0.4)',
+                }}
+              >
+                <Lightbulb size={18} />
+              </div>
             </div>
 
-            <div>
-              <div style={{ fontSize: 'var(--text-meta)', color: 'var(--brand-accent)', fontWeight: 700, marginBottom: '4px' }}>
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ fontSize: '0.74rem', color: '#0284C7', fontWeight: 800, marginBottom: '4px', letterSpacing: '0.04em' }}>
                 {currentFact.year} MILESTONE
               </div>
-              <h3 style={{ fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
+              <h3 style={{ fontSize: '1.12rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
                 {currentFact.title}
               </h3>
               <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.55 }}>
@@ -427,18 +463,18 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               </p>
             </div>
 
-            <div style={{ marginTop: 'auto', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)' }}>
+            <div style={{ marginTop: 'auto', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', fontWeight: 600 }}>
                 Fact {factIndex + 1} of {triviaFacts.length}
               </span>
               <button
                 type="button"
                 onClick={() => setFactIndex((prev) => (prev + 1) % triviaFacts.length)}
                 className="btn-outline"
-                style={{ height: '32px', padding: '0 10px', fontSize: '0.78rem' }}
+                style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', fontWeight: 700 }}
               >
                 <span>Next Trivia</span>
-                <ChevronRight size={13} />
+                <ChevronRight size={14} />
               </button>
             </div>
           </div>
@@ -449,49 +485,65 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
           <div
             className="funzone-card"
             style={{
-              minWidth: '340px',
-              maxWidth: '340px',
+              minWidth: '350px',
+              maxWidth: '350px',
               flex: '0 0 auto',
-              borderTop: '3px solid var(--warning)',
+              borderTop: '4px solid #8B5CF6',
+              boxShadow: '0 10px 25px -5px rgba(139, 92, 246, 0.18)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <span className="badge badge-warning" style={{ fontSize: '0.7rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="tag-pill tag-pill-purple" style={{ fontSize: '0.72rem' }}>
                 BRAIN TEASER ({teaserIndex + 1}/{teasers.length})
               </span>
-              <Brain size={18} color="var(--warning)" />
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  boxShadow: '0 3px 10px rgba(139, 92, 246, 0.4)',
+                }}
+              >
+                <Brain size={18} />
+              </div>
             </div>
 
-            <div>
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 10px 0' }}>
+            <div style={{ marginTop: '8px' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 10px 0' }}>
                 {currentTeaser.question}
               </h3>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {currentTeaser.options.map((option, optIdx) => {
                   let optStyle: React.CSSProperties = {
-                    padding: '8px 10px',
-                    borderRadius: 'var(--radius-sm)',
-                    border: '1px solid var(--border-subtle)',
+                    padding: '9px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1.5px solid var(--border-subtle)',
                     backgroundColor: 'var(--bg-canvas)',
                     fontSize: '0.82rem',
                     textAlign: 'left',
                     cursor: 'pointer',
                     color: 'var(--text-primary)',
-                    fontWeight: 500,
+                    fontWeight: 600,
                     transition: 'all 0.15s ease',
                   };
 
                   if (selectedOption !== null) {
                     if (optIdx === currentTeaser.correctIndex) {
-                      optStyle.backgroundColor = 'var(--success-bg)';
-                      optStyle.borderColor = 'var(--success-border)';
-                      optStyle.color = 'var(--success)';
-                      optStyle.fontWeight = 700;
+                      optStyle.backgroundColor = '#DCFCE7';
+                      optStyle.borderColor = '#22C55E';
+                      optStyle.color = '#15803D';
+                      optStyle.fontWeight = 800;
                     } else if (selectedOption === optIdx) {
-                      optStyle.backgroundColor = 'var(--danger-bg)';
-                      optStyle.borderColor = 'var(--danger-border)';
-                      optStyle.color = 'var(--danger)';
+                      optStyle.backgroundColor = '#FFE4E6';
+                      optStyle.borderColor = '#F43F5E';
+                      optStyle.color = '#BE123C';
                     }
                   }
 
@@ -512,28 +564,30 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
             {teaserFeedback && (
               <div
                 style={{
-                  fontSize: '0.78rem',
-                  lineHeight: 1.45,
-                  padding: '6px 8px',
-                  borderRadius: 'var(--radius-sm)',
-                  backgroundColor: teaserFeedback.isCorrect ? 'var(--success-bg)' : 'var(--warning-bg)',
-                  color: teaserFeedback.isCorrect ? 'var(--success)' : 'var(--warning)',
-                  fontWeight: 600,
+                  fontSize: '0.8rem',
+                  lineHeight: 1.5,
+                  padding: '8px 10px',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: teaserFeedback.isCorrect ? '#DCFCE7' : '#FEF3C7',
+                  border: teaserFeedback.isCorrect ? '1px solid #86EFAC' : '1px solid #FDE68A',
+                  color: teaserFeedback.isCorrect ? '#15803D' : '#92400E',
+                  fontWeight: 700,
+                  marginTop: '8px',
                 }}
               >
                 {teaserFeedback.message}
               </div>
             )}
 
-            <div style={{ marginTop: 'auto', paddingTop: '8px', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ marginTop: 'auto', paddingTop: '10px', display: 'flex', justifyContent: 'flex-end' }}>
               <button
                 type="button"
                 onClick={handleNextTeaser}
                 className="btn-outline"
-                style={{ height: '30px', padding: '0 10px', fontSize: '0.76rem' }}
+                style={{ height: '32px', padding: '0 12px', fontSize: '0.78rem', fontWeight: 700 }}
               >
                 <span>Next Teaser</span>
-                <ChevronRight size={13} />
+                <ChevronRight size={14} />
               </button>
             </div>
           </div>
@@ -544,21 +598,37 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
           <div
             className="funzone-card"
             style={{
-              minWidth: '300px',
-              maxWidth: '300px',
+              minWidth: '310px',
+              maxWidth: '310px',
               flex: '0 0 auto',
-              borderTop: '3px solid var(--brand-primary)',
+              borderTop: '4px solid #F43F5E',
+              boxShadow: '0 10px 25px -5px rgba(244, 63, 94, 0.18)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="tag-pill tag-pill-coral" style={{ fontSize: '0.72rem' }}>
                 WORD OF THE DAY
               </span>
-              <BookOpen size={18} color="var(--brand-primary)" />
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #F43F5E 0%, #FB7185 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  boxShadow: '0 3px 10px rgba(244, 63, 94, 0.4)',
+                }}
+              >
+                <BookOpen size={18} />
+              </div>
             </div>
 
-            <div>
-              <div style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', fontWeight: 600, marginBottom: '2px' }}>
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ fontSize: '0.74rem', color: '#F43F5E', fontWeight: 800, marginBottom: '2px', letterSpacing: '0.04em' }}>
                 DOMAIN: {currentWord.domain.toUpperCase()}
               </div>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -569,18 +639,18 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               </p>
             </div>
 
-            <div style={{ marginTop: 'auto', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)' }}>
+            <div style={{ marginTop: 'auto', paddingTop: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', fontWeight: 600 }}>
                 Term {wordIndex + 1} of {wordList.length}
               </span>
               <button
                 type="button"
                 onClick={() => setWordIndex((prev) => (prev + 1) % wordList.length)}
                 className="btn-outline"
-                style={{ height: '32px', padding: '0 10px', fontSize: '0.78rem' }}
+                style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', fontWeight: 700 }}
               >
                 <span>Next Term</span>
-                <ChevronRight size={13} />
+                <ChevronRight size={14} />
               </button>
             </div>
           </div>
@@ -591,28 +661,57 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
           <div
             className="funzone-card"
             style={{
-              minWidth: '320px',
-              maxWidth: '320px',
+              minWidth: '330px',
+              maxWidth: '330px',
               flex: '0 0 auto',
-              borderTop: '3px solid var(--brand-secondary)',
+              borderTop: '4px solid #10B981',
+              boxShadow: '0 10px 25px -5px rgba(16, 185, 129, 0.18)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <span className="badge badge-brand" style={{ fontSize: '0.7rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="tag-pill tag-pill-emerald" style={{ fontSize: '0.72rem' }}>
                 CODE DETECTIVE
               </span>
-              <Terminal size={18} color="var(--brand-secondary)" />
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #10B981 0%, #75B543 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  boxShadow: '0 3px 10px rgba(16, 185, 129, 0.4)',
+                }}
+              >
+                <Terminal size={18} />
+              </div>
             </div>
 
-            <div>
-              <div style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', marginBottom: '6px' }}>
+            <div style={{ marginTop: '8px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 600 }}>
                 Predict runtime output array:
               </div>
-              <div style={{ backgroundColor: 'var(--editor-bg)', padding: '8px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', marginBottom: '10px' }}>
+              <div
+                style={{
+                  backgroundColor: '#0F172A',
+                  color: '#38BDF8',
+                  padding: '10px 12px',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  marginBottom: '10px',
+                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.25)',
+                }}
+              >
                 [1, 2, 3].map(x =&gt; x * 2).filter(x =&gt; x &gt; 2)
               </div>
 
-              <div style={{ display: 'flex', gap: '6px' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
                 {['[2, 4, 6]', '[4, 6]', '[1, 2, 3]'].map((val, idx) => {
                   const isCorrect = idx === 1;
                   const isChosen = codePuzzleOption === idx;
@@ -623,19 +722,23 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                       onClick={() => setCodePuzzleOption(idx)}
                       style={{
                         flex: 1,
-                        padding: '6px 4px',
-                        borderRadius: 'var(--radius-sm)',
-                        border: '1px solid var(--border-subtle)',
+                        padding: '8px 4px',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1.5px solid var(--border-subtle)',
                         backgroundColor: isChosen
-                          ? isCorrect ? 'var(--success-bg)' : 'var(--danger-bg)'
+                          ? isCorrect ? '#DCFCE7' : '#FFE4E6'
                           : 'var(--bg-canvas)',
+                        borderColor: isChosen
+                          ? isCorrect ? '#22C55E' : '#F43F5E'
+                          : 'var(--border-subtle)',
                         color: isChosen
-                          ? isCorrect ? 'var(--success)' : 'var(--danger)'
+                          ? isCorrect ? '#15803D' : '#BE123C'
                           : 'var(--text-primary)',
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '0.76rem',
-                        fontWeight: 700,
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
                         cursor: 'pointer',
+                        transition: 'all 0.15s ease',
                       }}
                     >
                       {val}
@@ -645,7 +748,17 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               </div>
 
               {codePuzzleOption !== null && (
-                <div style={{ fontSize: '0.75rem', marginTop: '8px', color: codePuzzleOption === 1 ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
+                <div
+                  style={{
+                    fontSize: '0.78rem',
+                    marginTop: '8px',
+                    color: codePuzzleOption === 1 ? '#15803D' : '#BE123C',
+                    backgroundColor: codePuzzleOption === 1 ? '#DCFCE7' : '#FFE4E6',
+                    padding: '6px 10px',
+                    borderRadius: '6px',
+                    fontWeight: 700,
+                  }}
+                >
                   {codePuzzleOption === 1 ? '✓ Correct! Double gives [2, 4, 6], filter (>2) keeps [4, 6].' : '✗ Try again! First double elements, then keep only elements > 2.'}
                 </div>
               )}
@@ -656,10 +769,10 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                 type="button"
                 onClick={() => onNavigate('labs')}
                 className="btn-outline"
-                style={{ height: '30px', padding: '0 10px', fontSize: '0.76rem' }}
+                style={{ height: '32px', padding: '0 12px', fontSize: '0.78rem', fontWeight: 700 }}
               >
                 <span>More Code Labs</span>
-                <ChevronRight size={13} />
+                <ChevronRight size={14} />
               </button>
             </div>
           </div>

@@ -287,12 +287,12 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
             <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '8px' }}>
               Select Focus Curriculum Tracks (Min. 1) *
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
               {[
-                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security' },
-                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs' },
-                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes' },
-                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership' },
+                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#0284C7', bg: 'rgba(48, 178, 231, 0.12)', icon: '🤖' },
+                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#D97706', bg: 'rgba(253, 185, 19, 0.15)', icon: '💳' },
+                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#6366F1', bg: 'rgba(99, 102, 241, 0.12)', icon: '⚡' },
+                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#15803D', bg: 'rgba(117, 181, 67, 0.15)', icon: '🤝' },
               ].map((trk) => {
                 const selected = tracks.includes(trk.id);
                 return (
@@ -301,19 +301,28 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                     type="button"
                     onClick={() => toggleTrack(trk.id)}
                     style={{
-                      padding: '10px',
-                      borderRadius: '8px',
+                      padding: '12px',
+                      borderRadius: '10px',
                       textAlign: 'left',
-                      border: selected ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                      backgroundColor: selected ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                      border: selected ? `2px solid ${trk.color}` : '1.5px solid var(--border-subtle)',
+                      backgroundColor: selected ? trk.bg : 'var(--bg-canvas)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
+                      boxShadow: selected ? `0 4px 12px ${trk.color}25` : 'none',
                     }}
                   >
-                    <div style={{ fontWeight: 700, fontSize: '0.82rem', color: selected ? 'var(--brand-primary)' : 'var(--text-primary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '1.1rem' }}>{trk.icon}</span>
+                      {selected && (
+                        <span style={{ fontSize: '0.68rem', fontWeight: 800, color: trk.color, backgroundColor: '#FFFFFF', padding: '1px 6px', borderRadius: '10px', border: `1px solid ${trk.color}` }}>
+                          SELECTED
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontWeight: 800, fontSize: '0.85rem', color: selected ? trk.color : 'var(--text-primary)' }}>
                       {trk.label}
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
                       {trk.desc}
                     </div>
                   </button>

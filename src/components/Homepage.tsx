@@ -52,16 +52,22 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       {/* ============================================================ */}
       {/* 1. HERO SECTION (2-Column Responsive with Live Sandbox)       */}
       {/* ============================================================ */}
+      {/* ============================================================ */}
+      {/* 1. HERO SECTION (2-Column Responsive with Live Sandbox)       */}
+      {/* ============================================================ */}
       <section
+        className="hero-ambient-mesh"
         style={{
-          padding: '48px 24px 56px',
-          maxWidth: '1240px',
-          margin: '0 auto',
+          padding: '48px 24px 64px',
           width: '100%',
+          borderBottom: '1px solid rgba(48, 178, 231, 0.15)',
+          position: 'relative',
         }}
       >
         <div
           style={{
+            maxWidth: '1240px',
+            margin: '0 auto',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
             gap: '40px',
@@ -77,76 +83,87 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               gap: '20px',
             }}
           >
-            {/* Status Badge */}
+            {/* Status Badge with Live Pulse */}
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '6px 14px',
+                padding: '6px 16px',
                 borderRadius: 'var(--radius-full)',
-                backgroundColor: 'var(--brand-surface)',
-                border: '1px solid var(--brand-border)',
-                color: 'var(--brand-primary)',
-                fontSize: 'var(--text-meta)',
-                fontWeight: 700,
+                background: 'linear-gradient(135deg, rgba(48, 178, 231, 0.15) 0%, rgba(99, 102, 241, 0.12) 100%)',
+                border: '1.5px solid rgba(48, 178, 231, 0.4)',
+                color: '#0369A1',
+                fontSize: '0.82rem',
+                fontWeight: 800,
+                boxShadow: '0 2px 10px rgba(48, 178, 231, 0.2)',
               }}
             >
-              <Shield size={14} />
-              <span>Evidence-Backed Education Platform • India Pilot Ready</span>
+              <span className="pulse-dot pulse-dot-green" />
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #10B981, #059669)',
+                  color: '#FFFFFF',
+                  padding: '2px 7px',
+                  borderRadius: '4px',
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.04em',
+                }}
+              >
+                PILOT READY
+              </span>
+              <span>Evidence-Backed Practical Skills • India 2026</span>
             </div>
 
-            {/* Headline matching Research Study Section 6 */}
+            {/* Headline with Radiant Gradient Accents */}
             <h1
               style={{
-                fontSize: 'clamp(2.4rem, 4.2vw, 3.4rem)',
-                fontWeight: 800,
+                fontSize: 'clamp(2.4rem, 4.4vw, 3.6rem)',
+                fontWeight: 900,
                 lineHeight: 1.15,
                 letterSpacing: '-0.03em',
                 color: 'var(--text-primary)',
                 margin: 0,
               }}
             >
-              Practical skills, taught in class, measured clearly.
+              <span className="gradient-text-sky-indigo">Practical skills</span>, taught in class, <span className="gradient-text-gold-emerald">measured clearly.</span>
             </h1>
 
             {/* Supporting summary matching Research Study USP */}
             <p
               style={{
-                fontSize: '1.05rem',
-                lineHeight: 1.6,
+                fontSize: '1.08rem',
+                lineHeight: 1.65,
                 color: 'var(--text-secondary)',
                 margin: 0,
                 maxWidth: '560px',
               }}
             >
-              For schools, PU colleges, colleges, and independent learners. An India-first practical skills platform for Technology, Finance, and Professional Skills—with teacher-controlled cohorts, zero-install browser sandboxes, and safeguarding-first analytics.
+              For schools, PU colleges, universities, and independent learners. An India-first practical skills ecosystem for Technology, Finance, and Professional Skills—with teacher-controlled cohorts, zero-install browser sandboxes, and safeguarding-first analytics.
             </p>
 
-            {/* Gamification Ribbon */}
+            {/* Gamification Ribbon with Fiery & Cosmic Pills */}
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div className="streak-pill">
-                <Flame size={14} />
+                <Flame size={16} />
                 <span>{userProgress.streak_days}-Day Streak</span>
               </div>
               <div className="xp-pill">
-                <Zap size={14} />
+                <Zap size={16} />
                 <span>{userProgress.xp.toLocaleString()} XP Points</span>
               </div>
               <button
                 type="button"
                 onClick={() => onNavigate('leaderboard')}
+                className="rank-pill"
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--brand-primary)',
                   cursor: 'pointer',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  display: 'flex',
+                  border: 'none',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  padding: 0,
+                  gap: '6px',
                 }}
               >
                 <Trophy size={14} />
@@ -155,26 +172,34 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               </button>
             </div>
 
-            {/* Primary Action Buttons */}
+            {/* Micro-Features Colorful Chips */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '0.76rem', fontWeight: 700 }}>
+              <span className="tag-pill tag-pill-sky">⚡ Zero-Install Wasm</span>
+              <span className="tag-pill tag-pill-gold">🛡️ Safe for Minors</span>
+              <span className="tag-pill tag-pill-emerald">📊 Exportable Outcomes</span>
+              <span className="tag-pill tag-pill-indigo">🇮🇳 CBSE & AICTE Ready</span>
+            </div>
+
+            {/* Primary Action Buttons with Vibrant Gradients */}
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '4px' }}>
               <button
                 type="button"
                 className="btn-primary"
                 onClick={() => setPilotModalOpen(true)}
-                style={{ height: '44px', padding: '0 22px', fontSize: 'var(--text-body)' }}
+                style={{ height: '46px', padding: '0 24px', fontSize: '0.96rem' }}
               >
-                <School size={16} />
+                <School size={17} />
                 <span>Book a 20-min Pilot Demo</span>
                 <ArrowRight size={16} />
               </button>
 
               <button
                 type="button"
-                className="btn-secondary"
+                className="btn-quest"
                 onClick={() => onNavigate('labs')}
-                style={{ height: '44px', padding: '0 20px', fontSize: 'var(--text-body)' }}
+                style={{ height: '46px', padding: '0 22px', fontSize: '0.96rem' }}
               >
-                <Terminal size={16} />
+                <Terminal size={17} />
                 <span>Explore 12 Sandboxes</span>
               </button>
 
@@ -182,16 +207,16 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 type="button"
                 className="btn-outline"
                 onClick={() => onNavigate('catalogue')}
-                style={{ height: '44px', padding: '0 18px', fontSize: 'var(--text-body)' }}
+                style={{ height: '46px', padding: '0 20px', fontSize: '0.96rem' }}
               >
-                <BookOpen size={16} />
+                <BookOpen size={17} />
                 <span>Browse 27 Courses</span>
               </button>
             </div>
           </div>
 
           {/* Right Column: Live Hero Animation Sandbox with 5 modes */}
-          <div>
+          <div style={{ position: 'relative' }}>
             <HeroAnimationSandbox
               onLaunchLab={(slug) => onNavigate('lab-workspace', slug)}
             />
@@ -224,405 +249,581 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             </p>
           </div>
 
-          {/* Audience Tabs */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '28px' }}>
-            {[
-              { id: 'school', label: 'Schools & PU Colleges (Ages 14–18)' },
-              { id: 'college', label: 'Colleges & Universities (Ages 18+)' },
-              { id: 'teacher', label: 'Teachers & Educators' },
-              { id: 'parent', label: 'Parents & Guardians' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setAudienceTab(tab.id as any)}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 'var(--radius-full)',
-                  border: '1px solid',
-                  borderColor: audienceTab === tab.id ? 'var(--brand-primary)' : 'var(--border-subtle)',
-                  backgroundColor: audienceTab === tab.id ? 'var(--brand-surface)' : 'var(--bg-canvas)',
-                  color: audienceTab === tab.id ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: audienceTab === tab.id ? 700 : 500,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content Cards */}
-          <div className="card" style={{ padding: '32px', backgroundColor: 'var(--bg-canvas)' }}>
-            {audienceTab === 'school' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                    School & PU College Cohorts (Grades 9–12)
-                  </h3>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-                    Bridging foundational board syllabi with digital hygiene, foundational programming logic, UPI scam awareness, and ethical habits.
-                  </p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>DPDP Act 2023 Compliant:</strong> Verifiable parental consent ledger for all minors.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Quiet-Hours Safeguarding:</strong> Zero intrusive alerts between 8 PM and 8 AM.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Low-Bandwidth Friendly:</strong> Runs smoothly on older computer lab machines.</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {audienceTab === 'college' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                    Undergraduate & Professional Campuses
-                  </h3>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-                    Career-aligned engineering sandboxes, real-world FinTech workflows, personal tax/budgeting, and resume-ready credentials.
-                  </p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Proof of Mastery:</strong> Cryptographically verified completion certificates.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Placement Cell Reporting:</strong> Exportable cohort competency matrix.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Applied Sandboxes:</strong> AI models, distributed ledgers, and web security.</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {audienceTab === 'teacher' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
-                    Teachers & Faculty Champions
-                  </h3>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-                    Launch practical classes in under 5 minutes without installation or IT department dependencies.
-                  </p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Ready-to-Teach Kits:</strong> Starter slides, discussion guides, and rubrics.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Auto-Graded Checks:</strong> Instant visibility into student attempt quality.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>8-Character Join Codes:</strong> No student signups required for classroom labs.</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {audienceTab === 'parent' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    Parents & Lawful Guardians
-                  </h3>
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-                    Peace of mind through ethical education: zero behavioral ad surveillance, verifiable consent, and progress visibility.
-                  </p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Zero Ad Profiling:</strong> No behavioral tracking or third-party ad pixels.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Consent Management:</strong> Review or withdraw consent at any time.</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <CheckCircle2 size={16} color="var(--success)" />
-                    <span><strong>Transparent Milestones:</strong> Real skills learned instead of game addiction.</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* 3. THREE CORE SKILL PILLARS (Section 4 & 6 of Research)      */}
-      {/* ============================================================ */}
-      <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto', width: '100%' }}>
-        <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 36px' }}>
-          <h2 style={{ fontSize: 'var(--text-section-title)', fontWeight: 800, marginBottom: '8px' }}>
-            Three Core Practical Skill Pillars
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0 }}>
-            Structured around high-impact competencies needed for the 21st-century Indian economy.
-          </p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-          {/* Pillar 1: Technology */}
-          <div
-            className="card"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              borderTop: '4px solid var(--brand-primary)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ padding: '8px', borderRadius: '6px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)' }}>
-                <Cpu size={22} />
-              </div>
-              <span className="badge badge-brand">{getDomainCount('technology') + getDomainCount('coding')} Courses</span>
+            {/* Audience Tabs with Dedicated Vibrant Colors */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '28px' }}>
+              {[
+                {
+                  id: 'school',
+                  label: 'Schools & PU Colleges (Ages 14–18)',
+                  activeBg: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+                  color: '#FFFFFF',
+                  glow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+                },
+                {
+                  id: 'college',
+                  label: 'Colleges & Universities (Ages 18+)',
+                  activeBg: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                  color: '#FFFFFF',
+                  glow: '0 4px 14px rgba(99, 102, 241, 0.35)',
+                },
+                {
+                  id: 'teacher',
+                  label: 'Teachers & Educators',
+                  activeBg: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
+                  color: '#172B4D',
+                  glow: '0 4px 14px rgba(253, 185, 19, 0.4)',
+                },
+                {
+                  id: 'parent',
+                  label: 'Parents & Guardians',
+                  activeBg: 'linear-gradient(135deg, #75B543 0%, #10B981 100%)',
+                  color: '#FFFFFF',
+                  glow: '0 4px 14px rgba(117, 181, 67, 0.35)',
+                },
+              ].map((tab) => {
+                const isActive = audienceTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setAudienceTab(tab.id as any)}
+                    style={{
+                      padding: '10px 20px',
+                      borderRadius: 'var(--radius-full)',
+                      border: isActive ? '1px solid rgba(255, 255, 255, 0.3)' : '1.5px solid var(--border-strong)',
+                      background: isActive ? tab.activeBg : '#FFFFFF',
+                      color: isActive ? tab.color : 'var(--text-primary)',
+                      fontWeight: isActive ? 800 : 600,
+                      fontSize: '0.88rem',
+                      cursor: 'pointer',
+                      boxShadow: isActive ? tab.glow : '0 1px 3px rgba(23, 43, 77, 0.04)',
+                      transition: 'all 0.2s ease',
+                      transform: isActive ? 'scale(1.02)' : 'none',
+                    }}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
             </div>
-            <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>
-              Technology & Programming Logic
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              Browser-executable coding sandboxes, AI perception fundamentals, distributed blockchain ledgers, and defensive cybersecurity pipelines.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
-              {['AI Literacy', 'Web Security', 'Algorithms', 'IoT Sensors'].map((tag) => (
-                <span key={tag} style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '4px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="btn-outline"
-              onClick={() => onNavigate('catalogue', 'technology')}
-              style={{ height: '36px', fontSize: 'var(--text-meta)', marginTop: 'auto' }}
+
+            {/* Tab Content Cards with Distinct Colored Top Bar */}
+            <div
+              className="card"
+              style={{
+                padding: '36px',
+                backgroundColor: '#FFFFFF',
+                borderTop:
+                  audienceTab === 'school'
+                    ? '4px solid #0284C7'
+                    : audienceTab === 'college'
+                    ? '4px solid #6366F1'
+                    : audienceTab === 'teacher'
+                    ? '4px solid #FDB913'
+                    : '4px solid #75B543',
+                boxShadow: 'var(--shadow-md)',
+              }}
             >
-              <span>Explore Tech Tracks</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
+              {audienceTab === 'school' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'center' }}>
+                  <div>
+                    <span className="tag-pill tag-pill-sky" style={{ marginBottom: '10px' }}>
+                      GRADES 9–12 & PU COLLEGES
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
+                      School & PU College Cohorts (Ages 14–18)
+                    </h3>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+                      Bridging foundational board syllabi with digital hygiene, foundational programming logic, UPI scam awareness, and ethical habits.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#0284C7" />
+                      </div>
+                      <span><strong>DPDP Act 2023 Compliant:</strong> Verifiable parental consent ledger for all minors.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#D97706" />
+                      </div>
+                      <span><strong>Quiet-Hours Safeguarding:</strong> Zero intrusive alerts between 9 PM and 8 AM IST.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#15803D" />
+                      </div>
+                      <span><strong>Low-Bandwidth Friendly:</strong> Runs smoothly on older computer lab machines.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-          {/* Pillar 2: Applied Indian Finance */}
-          <div
-            className="card"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              borderTop: '4px solid var(--warning)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ padding: '8px', borderRadius: '6px', backgroundColor: 'var(--warning-bg)', color: 'var(--warning-text)' }}>
-                <TrendingUp size={22} />
-              </div>
-              <span className="badge badge-warning">{getDomainCount('finance')} Courses</span>
-            </div>
-            <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>
-              Applied Indian Finance & Safety
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              Everyday money management, UPI scam defense, monthly student budgeting, compounding SIP wealth models, and entrepreneurship cash flows.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
-              {['UPI Safety', 'Student SIPs', 'Budgeting', 'No Personalized Advice'].map((tag) => (
-                <span key={tag} style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '4px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="btn-outline"
-              onClick={() => onNavigate('catalogue', 'finance')}
-              style={{ height: '36px', fontSize: 'var(--text-meta)', marginTop: 'auto' }}
-            >
-              <span>Explore Finance Tracks</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
+              {audienceTab === 'college' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'center' }}>
+                  <div>
+                    <span className="tag-pill tag-pill-indigo" style={{ marginBottom: '10px' }}>
+                      DEGREE, DIPLOMA & UNIVERSITIES
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
+                      Undergraduate & Professional Campuses (Ages 18+)
+                    </h3>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+                      Career-aligned engineering sandboxes, real-world FinTech workflows, personal tax/budgeting, and resume-ready credentials.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#4338CA" />
+                      </div>
+                      <span><strong>Proof of Mastery:</strong> Cryptographically verified completion certificates.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#F3E8FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#7E22CE" />
+                      </div>
+                      <span><strong>Placement Cell Reporting:</strong> Exportable cohort competency matrix.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#15803D" />
+                      </div>
+                      <span><strong>Applied Sandboxes:</strong> AI models, distributed ledgers, and web security.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-          {/* Pillar 3: Professional Skills */}
-          <div
-            className="card"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              borderTop: '4px solid var(--brand-secondary)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ padding: '8px', borderRadius: '6px', backgroundColor: 'rgba(117, 181, 67, 0.12)', color: 'var(--brand-secondary)' }}>
-                <Briefcase size={22} />
-              </div>
-              <span className="badge badge-neutral">{getDomainCount('professional')} Courses</span>
-            </div>
-            <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>
-              Professional & Career Readiness
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              High-impact communication, scientific problem-solving, collaboration, resume construction, and executive workplace prioritization.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '4px' }}>
-              {['Communication', 'Resume Builder', 'Collaboration', 'Problem Solving'].map((tag) => (
-                <span key={tag} style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '4px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className="btn-outline"
-              onClick={() => onNavigate('catalogue', 'professional')}
-              style={{ height: '36px', fontSize: 'var(--text-meta)', marginTop: 'auto' }}
-            >
-              <span>Explore Professional Skills</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-      </section>
+              {audienceTab === 'teacher' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'center' }}>
+                  <div>
+                    <span className="tag-pill tag-pill-gold" style={{ marginBottom: '10px' }}>
+                      TEACHER COHORT CONTROLS
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
+                      Teachers & Faculty Champions
+                    </h3>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+                      Launch practical classes in under 5 minutes without installation or IT department dependencies.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#B45309" />
+                      </div>
+                      <span><strong>Ready-to-Teach Kits:</strong> Starter slides, discussion guides, and rubrics.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#15803D" />
+                      </div>
+                      <span><strong>Auto-Graded Checks:</strong> Instant visibility into student attempt quality.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#0284C7" />
+                      </div>
+                      <span><strong>8-Character Join Codes:</strong> No student signups required for classroom labs.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
-      {/* ============================================================ */}
-      {/* 4. HOW LEARNING WORKS (4-Step Flow - Section 6 of Research)  */}
-      {/* ============================================================ */}
-      <section
-        style={{
-          backgroundColor: 'var(--bg-surface)',
-          borderTop: '1px solid var(--border-subtle)',
-          borderBottom: '1px solid var(--border-subtle)',
-          padding: '64px 24px',
-        }}
-      >
-        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+              {audienceTab === 'parent' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'center' }}>
+                  <div>
+                    <span className="tag-pill tag-pill-emerald" style={{ marginBottom: '10px' }}>
+                      SAFEGUARDING FIRST
+                    </span>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
+                      Parents & Lawful Guardians
+                    </h3>
+                    <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
+                      Peace of mind through ethical education: zero behavioral ad surveillance, verifiable consent, and progress visibility.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#15803D" />
+                      </div>
+                      <span><strong>Zero Ad Profiling:</strong> No behavioral tracking or third-party ad pixels.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#0284C7" />
+                      </div>
+                      <span><strong>Consent Management:</strong> Review or withdraw consent at any time.</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#B45309" />
+                      </div>
+                      <span><strong>Transparent Milestones:</strong> Real skills learned instead of game addiction.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* ============================================================ */}
+        {/* 3. THREE CORE SKILL PILLARS (Section 4 & 6 of Research)      */}
+        {/* ============================================================ */}
+        <section
+          className="section-ambient-mesh"
+          style={{ padding: '72px 24px', maxWidth: '1240px', margin: '0 auto', width: '100%' }}
+        >
           <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 40px' }}>
-            <h2 style={{ fontSize: 'var(--text-section-title)', fontWeight: 800, marginBottom: '8px' }}>
-              How Practical Learning Works in Class
+            <span
+              className="tag-pill tag-pill-purple"
+              style={{ marginBottom: '10px' }}
+            >
+              COMPREHENSIVE CURRICULUM TRACKS
+            </span>
+            <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', fontWeight: 900, marginBottom: '10px' }}>
+              Three Practical Skill Pillars
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0 }}>
-              A 4-step workflow connecting classroom instruction with verifiable evidence of learning.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.02rem', margin: 0 }}>
+              Structured around high-impact competencies needed for India's 21st-century modern economy.
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
-            {/* Step 1 */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--brand-surface)',
-                  color: 'var(--brand-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                }}
-              >
-                1
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px' }}>
+            {/* Pillar 1: Technology */}
+            <div
+              className="card"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                borderTop: '5px solid #0284C7',
+                boxShadow: 'var(--shadow-md)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 50%, #6366F1 100%)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 14px rgba(48, 178, 231, 0.4)',
+                  }}
+                >
+                  <Cpu size={24} />
+                </div>
+                <span className="tag-pill tag-pill-sky">
+                  {getDomainCount('technology') + getDomainCount('coding')} Courses
+                </span>
               </div>
-              <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>Teacher Creates Cohort</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Faculty members create a class cohort in under 5 minutes and generate a secure 8-character joining code.
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                Technology & Programming Logic
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                Browser-executable coding sandboxes, AI perception fundamentals, distributed blockchain ledgers, and defensive cybersecurity pipelines.
               </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
+                <span className="tag-pill tag-pill-sky">🤖 AI Literacy</span>
+                <span className="tag-pill tag-pill-purple">🛡️ Web Security</span>
+                <span className="tag-pill tag-pill-indigo">⚡ Algorithms</span>
+                <span className="tag-pill tag-pill-emerald">📡 IoT Sensors</span>
+              </div>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => onNavigate('catalogue', 'technology')}
+                style={{ height: '40px', fontSize: '0.88rem', marginTop: 'auto' }}
+              >
+                <span>Explore Tech Tracks</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
 
-            {/* Step 2 */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--brand-accent-surface)',
-                  color: 'var(--brand-accent)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                }}
-              >
-                2
+            {/* Pillar 2: Applied Indian Finance */}
+            <div
+              className="card"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                borderTop: '5px solid #FDB913',
+                boxShadow: 'var(--shadow-md)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
+                    color: '#172B4D',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 14px rgba(253, 185, 19, 0.4)',
+                  }}
+                >
+                  <TrendingUp size={24} />
+                </div>
+                <span className="tag-pill tag-pill-gold">
+                  {getDomainCount('finance')} Courses
+                </span>
               </div>
-              <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>Students Join Safely</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Learners join using the code. Minors under 18 route through verified parental consent per DPDP Act standards.
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                Applied Indian Finance & Safety
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                Everyday money management, UPI scam defense, monthly student budgeting, compounding SIP wealth models, and entrepreneurship cash flows.
               </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
+                <span className="tag-pill tag-pill-coral">📱 UPI Fraud Defense</span>
+                <span className="tag-pill tag-pill-emerald">📈 Student SIPs</span>
+                <span className="tag-pill tag-pill-gold">💳 Monthly Budgeting</span>
+                <span className="tag-pill tag-pill-sky">🔒 Ethical Education</span>
+              </div>
+              <button
+                type="button"
+                className="btn-quest"
+                onClick={() => onNavigate('catalogue', 'finance')}
+                style={{ height: '40px', fontSize: '0.88rem', marginTop: 'auto' }}
+              >
+                <span>Explore Finance Tracks</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
 
-            {/* Step 3 */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--warning-bg)',
-                  color: 'var(--warning-text)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                }}
-              >
-                3
+            {/* Pillar 3: Professional Skills */}
+            <div
+              className="card"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+                borderTop: '5px solid #75B543',
+                boxShadow: 'var(--shadow-md)',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #75B543 0%, #10B981 100%)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 4px 14px rgba(117, 181, 67, 0.4)',
+                  }}
+                >
+                  <Briefcase size={24} />
+                </div>
+                <span className="tag-pill tag-pill-emerald">
+                  {getDomainCount('professional')} Courses
+                </span>
               </div>
-              <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>Practice in Browser Sandboxes</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Students complete hands-on parameter simulations, UPI safety checks, and coding tasks directly in the browser.
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                Professional & Career Readiness
+              </h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                High-impact workplace communication, scientific problem-solving, collaboration, ATS resume construction, and team prioritization.
               </p>
-            </div>
-
-            {/* Step 4 */}
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'rgba(117, 181, 67, 0.15)',
-                  color: 'var(--brand-secondary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                }}
-              >
-                4
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
+                <span className="tag-pill tag-pill-purple">💬 Communication</span>
+                <span className="tag-pill tag-pill-indigo">📄 ATS Resume Builder</span>
+                <span className="tag-pill tag-pill-emerald">🤝 Team Collaboration</span>
+                <span className="tag-pill tag-pill-gold">🎯 Problem Solving</span>
               </div>
-              <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, margin: 0 }}>Evidence of Learning</h3>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                Teachers and institutions receive exportable outcome reports tracking completion, attempt quality, and skill mastery.
-              </p>
+              <button
+                type="button"
+                className="btn-questioning"
+                onClick={() => onNavigate('catalogue', 'professional')}
+                style={{ height: '40px', fontSize: '0.88rem', marginTop: 'auto' }}
+              >
+                <span>Explore Career Tracks</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* ============================================================ */}
+        {/* 4. HOW LEARNING WORKS (4-Step Flow - Section 6 of Research)  */}
+        {/* ============================================================ */}
+        <section
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderTop: '1px solid var(--border-subtle)',
+            borderBottom: '1px solid var(--border-subtle)',
+            padding: '72px 24px',
+          }}
+        >
+          <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 44px' }}>
+              <span className="tag-pill tag-pill-sky" style={{ marginBottom: '10px' }}>
+                PEDAGOGICAL METHODOLOGY
+              </span>
+              <h2 style={{ fontSize: 'clamp(1.75rem, 3vw, 2.25rem)', fontWeight: 900, marginBottom: '10px' }}>
+                How Practical Learning Works in Class
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.02rem', margin: 0 }}>
+                A 4-step workflow connecting classroom instruction with verifiable evidence of learning.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
+              {/* Step 1 */}
+              <div
+                className="card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  borderTop: '4px solid #0284C7',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #0284C7 0%, #30B2E7 100%)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '1.15rem',
+                    boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)',
+                  }}
+                >
+                  1
+                </div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Teacher Creates Cohort</h3>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  Faculty members create a class cohort in under 5 minutes and generate a secure 8-character joining code.
+                </p>
+              </div>
+
+              {/* Step 2 */}
+              <div
+                className="card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  borderTop: '4px solid #75B543',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #75B543 0%, #10B981 100%)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '1.15rem',
+                    boxShadow: '0 4px 12px rgba(117, 181, 67, 0.35)',
+                  }}
+                >
+                  2
+                </div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Students Join Safely</h3>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  Learners join using the code. Minors under 18 route through verified parental consent per DPDP Act standards.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div
+                className="card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  borderTop: '4px solid #FDB913',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #FDB913 0%, #FF8A00 100%)',
+                    color: '#172B4D',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '1.15rem',
+                    boxShadow: '0 4px 12px rgba(253, 185, 19, 0.4)',
+                  }}
+                >
+                  3
+                </div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Practice in Sandboxes</h3>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  Students complete hands-on parameter simulations, UPI safety checks, and coding tasks directly in the browser.
+                </p>
+              </div>
+
+              {/* Step 4 */}
+              <div
+                className="card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '14px',
+                  borderTop: '4px solid #6366F1',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '1.15rem',
+                    boxShadow: '0 4px 12px rgba(99, 102, 241, 0.35)',
+                  }}
+                >
+                  4
+                </div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Evidence of Learning</h3>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  Teachers and institutions receive exportable outcome reports tracking completion, attempt quality, and skill mastery.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
       {/* ============================================================ */}
       {/* 5. INTERACTIVE LABS SHOWCASE (12 Approved Labs)               */}
@@ -653,55 +854,65 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-          {allLabs.slice(0, 4).map((lab) => (
-            <div
-              key={lab.id}
-              className="card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '14px',
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <span className="badge badge-brand" style={{ textTransform: 'capitalize' }}>
-                    {lab.category}
-                  </span>
-                  <span className="badge badge-neutral" style={{ textTransform: 'capitalize' }}>
-                    {lab.interaction_type}
-                  </span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+          {allLabs.slice(0, 4).map((lab) => {
+            const isTech = lab.category === 'technology' || lab.category === 'coding';
+            const isFinance = lab.category === 'finance';
+            const topColor = isTech ? '#0284C7' : isFinance ? '#FDB913' : '#75B543';
+            const tagClass = isTech ? 'tag-pill-sky' : isFinance ? 'tag-pill-gold' : 'tag-pill-emerald';
+
+            return (
+              <div
+                key={lab.id}
+                className="card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                  borderTop: `4px solid ${topColor}`,
+                  boxShadow: 'var(--shadow-sm)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <span className={`tag-pill ${tagClass}`} style={{ textTransform: 'capitalize' }}>
+                      {lab.category}
+                    </span>
+                    <span className="tag-pill tag-pill-indigo" style={{ textTransform: 'capitalize' }}>
+                      {lab.interaction_type}
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)' }}>
+                    {lab.title}
+                  </h3>
+
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.55, margin: 0 }}>
+                    {lab.summary}
+                  </p>
                 </div>
 
-                <h3 style={{ fontSize: 'var(--text-card-title)', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>
-                  {lab.title}
-                </h3>
+                <div style={{ paddingTop: '14px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                    <Clock size={14} />
+                    <span>{lab.duration_minutes} min simulation</span>
+                  </span>
 
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                  {lab.summary}
-                </p>
+                  <button
+                    type="button"
+                    className="btn-primary"
+                    style={{ height: '36px', padding: '0 14px', fontSize: '0.82rem' }}
+                    onClick={() => onNavigate('lab-workspace', lab.slug)}
+                  >
+                    <span>Launch Lab</span>
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
               </div>
-
-              <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 'var(--text-meta)', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Clock size={13} />
-                  <span>{lab.duration_minutes} min</span>
-                </span>
-
-                <button
-                  type="button"
-                  className="btn-primary"
-                  style={{ height: '34px', padding: '0 12px', fontSize: 'var(--text-meta)' }}
-                  onClick={() => onNavigate('lab-workspace', lab.slug)}
-                >
-                  <span>Launch Lab</span>
-                  <ArrowRight size={12} />
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -729,42 +940,67 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           <div
             className="card"
             style={{
-              padding: '36px',
-              backgroundColor: 'var(--bg-canvas)',
-              border: '2px solid var(--brand-border)',
+              padding: '40px',
+              backgroundColor: '#FFFFFF',
+              border: '2px solid rgba(117, 181, 67, 0.4)',
+              boxShadow: 'var(--glow-green), var(--shadow-md)',
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: '32px',
+              gap: '36px',
               alignItems: 'center',
             }}
           >
             <div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--brand-primary)', fontSize: 'var(--text-meta)', fontWeight: 700, marginBottom: '8px' }}>
-                <Shield size={16} />
-                <span>DATA PROTECTION & SAFEGUARDING</span>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#FFFFFF',
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                  }}
+                >
+                  <Shield size={20} />
+                </div>
+                <span className="tag-pill tag-pill-emerald">
+                  DPDP ACT 2023 COMPLIANT
+                </span>
               </div>
-              <h2 style={{ fontSize: 'var(--text-section-title)', fontWeight: 800, marginBottom: '12px' }}>
+              <h2 style={{ fontSize: 'var(--text-section-title)', fontWeight: 900, marginBottom: '12px', color: 'var(--text-primary)' }}>
                 Safeguarding Minors by Design
               </h2>
-              <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', lineHeight: 1.6, marginBottom: '20px' }}>
-                Geniusphere is engineered specifically for Indian schools and PU colleges under the mandate of the <strong>Digital Personal Data Protection (DPDP) Act 2023</strong>.
+              <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', lineHeight: 1.6, marginBottom: '22px' }}>
+                Geniusphere is engineered specifically for Indian schools and PU colleges under the strict mandate of the <strong>Digital Personal Data Protection (DPDP) Act 2023</strong>.
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Check size={16} color="var(--success)" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Check size={14} color="#15803D" strokeWidth={3} />
+                  </div>
                   <span><strong>Zero Behavioral Tracking:</strong> No targeted ads, marketing pixels, or commercial profiling of children.</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Check size={16} color="var(--success)" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Check size={14} color="#15803D" strokeWidth={3} />
+                  </div>
                   <span><strong>Verifiable Parental Consent:</strong> Transparent parent portal with auditable consent ledgers for under-18 learners.</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Check size={16} color="var(--success)" />
-                  <span><strong>Quiet-Hours Enforcement:</strong> Educational notifications are restricted between 8 PM and 8 AM to protect student rest.</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Check size={14} color="#15803D" strokeWidth={3} />
+                  </div>
+                  <span><strong>Quiet-Hours Enforcement:</strong> Educational notifications restricted between 8 PM and 8 AM to protect student rest.</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Check size={16} color="var(--success)" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '22px', height: '22px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Check size={14} color="#15803D" strokeWidth={3} />
+                  </div>
                   <span><strong>Data Protection Officer:</strong> Designated privacy office contact at <code>dpo@geniusphere.tech</code>.</span>
                 </div>
               </div>
@@ -772,32 +1008,39 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
             <div
               style={{
-                padding: '24px',
+                padding: '28px',
                 borderRadius: 'var(--radius-lg)',
-                backgroundColor: 'var(--editor-bg)',
-                border: '1px solid var(--border-subtle)',
+                background: 'linear-gradient(145deg, #0F172A 0%, #1E293B 100%)',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                boxShadow: '0 12px 30px rgba(15, 23, 42, 0.4)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '12px',
+                gap: '14px',
+                color: '#F8FAFC',
               }}
             >
-              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--brand-primary)', letterSpacing: '0.04em' }}>
-                DPDP ACT 2023 COMPLIANCE SUMMARY
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38BDF8', letterSpacing: '0.05em' }}>
+                  DPDP ACT 2023 COMPLIANCE LEDGER
+                </span>
+                <span className="tag-pill tag-pill-emerald" style={{ fontSize: '0.68rem', padding: '1px 7px' }}>
+                  VERIFIED
+                </span>
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+              <div style={{ fontSize: '0.85rem', color: '#F1F5F9' }}>
                 <strong>Scope:</strong> Classroom-managed cohorts across Karnataka, Maharashtra, Delhi NCR, and pan-India.
               </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                • Lawful Basis: Educational public interest & recorded parental consent<br />
-                • Data Retention: 1 academic year or until cohort deprovisioning<br />
-                • Hosting: Indian server infrastructure with encrypted transit (TLS 1.3)
+              <div style={{ fontSize: '0.82rem', color: '#94A3B8', lineHeight: 1.6 }}>
+                • <strong>Lawful Basis:</strong> Educational public interest & recorded parental consent<br />
+                • <strong>Data Retention:</strong> 1 academic year or until cohort deprovisioning<br />
+                • <strong>Hosting:</strong> Indian sovereign server infrastructure with TLS 1.3 encryption
               </div>
-              <div style={{ paddingTop: '8px', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '10px' }}>
+              <div style={{ paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   className="btn-outline"
                   onClick={() => onNavigate('parent')}
-                  style={{ height: '32px', fontSize: '0.75rem', padding: '0 12px' }}
+                  style={{ height: '34px', fontSize: '0.78rem', padding: '0 14px', borderColor: 'rgba(255, 255, 255, 0.2)', color: '#F8FAFC' }}
                 >
                   <span>Open Parent Portal</span>
                 </button>
@@ -805,7 +1048,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   type="button"
                   className="btn-outline"
                   onClick={() => onNavigate('audit')}
-                  style={{ height: '32px', fontSize: '0.75rem', padding: '0 12px' }}
+                  style={{ height: '34px', fontSize: '0.78rem', padding: '0 14px', borderColor: 'rgba(255, 255, 255, 0.2)', color: '#F8FAFC' }}
                 >
                   <span>Inspect Audit Ledger</span>
                 </button>
@@ -816,77 +1059,112 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       </section>
 
       {/* ============================================================ */}
-      {/* 8. INSTITUTIONAL PILOT PROGRAM (Section 14 & 17)             */}
+      {/* 8. INSTITUTIONAL PILOT PROGRAM (Flagship Showcase Card)      */}
       {/* ============================================================ */}
       <section style={{ padding: '64px 24px', maxWidth: '1240px', margin: '0 auto', width: '100%' }}>
         <div
           style={{
-            padding: '40px',
+            padding: '48px 36px',
             borderRadius: 'var(--radius-xl)',
-            backgroundColor: 'var(--bg-surface)',
-            border: '2px solid var(--border-subtle)',
+            background: 'linear-gradient(145deg, #0F172A 0%, #1E293B 50%, #0B1E38 100%)',
+            border: '2px solid rgba(56, 189, 248, 0.35)',
+            boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.6), 0 0 30px rgba(56, 189, 248, 0.15)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center',
-            gap: '24px',
+            gap: '28px',
+            color: '#FFFFFF',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
-          <div style={{ maxWidth: '680px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--brand-primary)', fontSize: 'var(--text-meta)', fontWeight: 700, marginBottom: '8px' }}>
-              <School size={16} />
-              <span>PILOT ADOPTION COHORTS</span>
+          {/* Subtle ambient light accents inside dark card */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-80px',
+              right: '-80px',
+              width: '260px',
+              height: '260px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-80px',
+              left: '-80px',
+              width: '260px',
+              height: '260px',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(253, 185, 19, 0.15) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          <div style={{ maxWidth: '720px', position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <span className="tag-pill tag-pill-gold" style={{ fontSize: '0.78rem', fontWeight: 800 }}>
+                ⚡ 2026 PILOT ADOPTION COHORTS
+              </span>
             </div>
-            <h2 style={{ fontSize: 'var(--text-section-title)', fontWeight: 800, margin: '0 0 10px 0' }}>
+            <h2 style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.5rem)', fontWeight: 900, margin: '0 0 12px 0', letterSpacing: '-0.02em', color: '#FFFFFF' }}>
               Join the 4–8 Week Institutional Pilot Program
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', lineHeight: 1.6, margin: 0 }}>
-              Equip your school or college with ready-to-teach curriculum kits, teacher training, zero-install browser sandboxes, and an institutional evidence-of-learning report.
+            <p style={{ color: '#94A3B8', fontSize: '1.02rem', lineHeight: 1.65, margin: 0 }}>
+              Equip your school or college with ready-to-teach curriculum kits, teacher training, zero-install browser sandboxes, and exportable institutional evidence-of-learning reports.
             </p>
           </div>
 
-          {/* Pilot Target Metrics Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', width: '100%', maxWidth: '840px' }}>
-            <div style={{ padding: '16px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--brand-primary)' }}>≥ 70%</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>Student Activation Target</div>
+          {/* Pilot Target Metrics Grid with Vibrant Glowing Numbers */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', width: '100%', maxWidth: '880px', position: 'relative', zIndex: 1 }}>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(56, 189, 248, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#38BDF8', textShadow: '0 0 16px rgba(56, 189, 248, 0.45)' }}>≥ 70%</div>
+              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Student Activation</div>
+              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Target Benchmark</div>
             </div>
 
-            <div style={{ padding: '16px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--success)' }}>≥ 60%</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>Sandbox Completion Target</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(52, 211, 153, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#34D399', textShadow: '0 0 16px rgba(52, 211, 153, 0.45)' }}>≥ 60%</div>
+              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Sandbox Completion</div>
+              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Outcome Metric</div>
             </div>
 
-            <div style={{ padding: '16px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--brand-secondary)' }}>4–8 Wks</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>Cohort Duration</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(251, 191, 36, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FBBF24', textShadow: '0 0 16px rgba(251, 191, 36, 0.45)' }}>4–8 Wks</div>
+              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Cohort Duration</div>
+              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Structured Term</div>
             </div>
 
-            <div style={{ padding: '16px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
-              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>₹0</div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>Zero-Cost Pilot Phase</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(251, 113, 133, 0.35)', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FB7185', textShadow: '0 0 16px rgba(251, 113, 133, 0.45)' }}>₹0 Free</div>
+              <div style={{ fontSize: '0.82rem', color: '#E2E8F0', fontWeight: 600, marginTop: '4px' }}>Zero-Cost Pilot Phase</div>
+              <div style={{ fontSize: '0.72rem', color: '#94A3B8', marginTop: '2px' }}>Institutional Grant</div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center', position: 'relative', zIndex: 1 }}>
             <button
               type="button"
-              className="btn-primary"
+              className="btn-quest"
               onClick={() => setPilotModalOpen(true)}
-              style={{ height: '46px', padding: '0 24px', fontSize: 'var(--text-body)' }}
+              style={{ height: '48px', padding: '0 28px', fontSize: '1rem', fontWeight: 800 }}
             >
-              <School size={16} />
+              <School size={18} />
               <span>Apply for Pilot Cohort</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={17} />
             </button>
 
             <button
               type="button"
               className="btn-outline"
               onClick={() => onNavigate('schoolkit')}
-              style={{ height: '46px', padding: '0 20px', fontSize: 'var(--text-body)' }}
+              style={{ height: '48px', padding: '0 22px', fontSize: '1rem', borderColor: 'rgba(255, 255, 255, 0.35)', color: '#FFFFFF', backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
             >
-              <FileText size={16} />
+              <FileText size={18} />
               <span>Inspect School Kit</span>
             </button>
           </div>
