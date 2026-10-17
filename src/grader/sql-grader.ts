@@ -10,7 +10,13 @@ let SQLInstance: SqlJsStatic | null = null;
 
 export async function getSqlJsInstance(): Promise<SqlJsStatic> {
   if (!SQLInstance) {
-    SQLInstance = await initSqlJs();
+    if (typeof window !== 'undefined') {
+      SQLInstance = await initSqlJs({
+        locateFile: (file: string) => `/${file}`,
+      });
+    } else {
+      SQLInstance = await initSqlJs();
+    }
   }
   return SQLInstance;
 }
