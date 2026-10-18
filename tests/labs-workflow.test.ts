@@ -10,15 +10,15 @@ describe('Labs & Simulation Engine Acceptance Suite', () => {
   });
 
   describe('1. Approved Lab Catalogue & Data Contract', () => {
-    it('initializes all 12 approved labs across Technology, Finance, and Coding', () => {
+    it('initializes all 13 approved labs across Technology, Finance, and Coding', () => {
       const labs = db.getLabDefinitions();
-      expect(labs.length).toBe(12);
+      expect(labs.length).toBe(13);
 
       const techLabs = labs.filter((l) => l.category === 'technology');
       const finLabs = labs.filter((l) => l.category === 'finance');
       const codingLabs = labs.filter((l) => l.category === 'coding');
 
-      expect(techLabs.length).toBe(6);
+      expect(techLabs.length).toBe(7);
       expect(finLabs.length).toBe(3);
       expect(codingLabs.length).toBe(3);
     });
@@ -27,8 +27,8 @@ describe('Labs & Simulation Engine Acceptance Suite', () => {
       const simulations = db.getLabDefinitions({ interaction_type: 'simulation' });
       const sandboxes = db.getLabDefinitions({ interaction_type: 'sandbox' });
 
-      // Simulations: T1, T2, T3, T4, F1, F2, F3 (7)
-      expect(simulations.length).toBe(7);
+      // Simulations: T1, T2, T3, T4, T7, F1, F2, F3 (8)
+      expect(simulations.length).toBe(8);
       // Sandboxes: T5, T6, C1, C2, C3 (5)
       expect(sandboxes.length).toBe(5);
 

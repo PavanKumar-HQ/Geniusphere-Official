@@ -313,6 +313,8 @@ export interface Submission {
   };
   sync_status: SyncStatus;
   submitted_at: string;
+  teacher_feedback?: string;
+  reviewed_at?: string;
 }
 
 export interface AuditEvent {

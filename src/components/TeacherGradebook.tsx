@@ -21,6 +21,12 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [actionMessage, setActionMessage] = useState<string | null>(null);
 
+  // Teacher Review Drawer State
+  const [reviewModalSub, setReviewModalSub] = useState<Submission | null>(null);
+  const [reviewScore, setReviewScore] = useState<number>(100);
+  const [reviewPassed, setReviewPassed] = useState<boolean>(true);
+  const [reviewFeedback, setReviewFeedback] = useState<string>('');
+
   const selectedClass = teacherClassrooms.find((c) => c.id === selectedClassId);
 
   // Get assignments in selected class
@@ -80,6 +86,27 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
       setTimeout(() => setActionMessage(null), 3500);
     } catch (err: any) {
       setActionMessage(`Error: ${err.message}`);
+    }
+  };
+
+  const handleSaveReview = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewModalSub) return;
+
+    try {
+      db.reviewSubmissionByTeacher(
+        teacherId,
+        reviewModalSub.id,
+        reviewScore,
+        reviewPassed,
+        reviewFeedback
+      );
+
+      setActionMessage('Submission evaluated and teacher feedback recorded successfully!');
+      setReviewModalSub(null);
+      setTimeout(() => setActionMessage(null), 3500);
+    } catch (err: any) {
+      setActionMessage(`Error reviewing submission: ${err.message}`);
     }
   };
 
@@ -194,6 +221,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
                   <th style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)' }}>Attempts</th>
                   <th style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)' }}>Server Score</th>
                   <th style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)' }}>Integrity Hash</th>
+                  <th style={{ padding: '10px 14px', borderBottom: '1px solid var(--border-subtle)' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -234,6 +262,25 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
                       </td>
                       <td style={{ padding: '12px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         {latestSub ? latestSub.submission_hash.substring(0, 16) + '...' : '—'}
+                      </td>
+                      <td style={{ padding: '12px 14px' }}>
+                        {latestSub ? (
+                          <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => {
+                              setReviewModalSub(latestSub);
+                              setReviewScore(latestSub.score);
+                              setReviewPassed(latestSub.passed);
+                              setReviewFeedback(latestSub.teacher_feedback || '');
+                            }}
+                            style={{ height: '30px', fontSize: '0.78rem', padding: '0 10px' }}
+                          >
+                            Review Work
+                          </button>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>—</span>
+                        )}
                       </td>
                     </tr>
                   );
@@ -312,6 +359,127 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
                 </button>
                 <button type="submit" className="btn-primary">
                   Publish Assignment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Teacher Review & Qualitative Feedback */}
+      {reviewModalSub && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(38, 53, 42, 0.45)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+          zIndex: 1000,
+        }}>
+          <div className="card-elevated" style={{ width: '100%', maxWidth: '580px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Review Student Submission</h3>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Student: {db.users.get(reviewModalSub.student_id)?.full_name} • Attempt #{reviewModalSub.attempt_number}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setReviewModalSub(null)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--text-muted)' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveReview} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Submitted Content Preview */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px' }}>
+                  Submitted Work & Payload:
+                </label>
+                <div style={{
+                  backgroundColor: 'var(--bg-canvas)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.82rem',
+                  maxHeight: '140px',
+                  overflowY: 'auto',
+                }}>
+                  {reviewModalSub.submitted_query || 'Completed interactive simulation parameters.'}
+                </div>
+              </div>
+
+              {/* Verification Details */}
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <strong>Automated Engine Result:</strong> {reviewModalSub.verification_log?.details || 'All automated assertions evaluated.'}
+              </div>
+
+              {/* Grading Controls */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>
+                    Score (0 - 100)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={reviewScore}
+                    onChange={(e) => setReviewScore(Number(e.target.value))}
+                    required
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>
+                    Status Outcome
+                  </label>
+                  <select
+                    value={reviewPassed ? 'passed' : 'needs_revision'}
+                    onChange={(e) => setReviewPassed(e.target.value === 'passed')}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', backgroundColor: '#FFFFFF' }}
+                  >
+                    <option value="passed">Passed (Proficient)</option>
+                    <option value="needs_revision">Needs Revision</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Qualitative Feedback */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 700, marginBottom: '4px' }}>
+                  Qualitative Teacher Feedback & Guidance:
+                </label>
+                <textarea
+                  rows={3}
+                  value={reviewFeedback}
+                  onChange={(e) => setReviewFeedback(e.target.value)}
+                  placeholder="e.g. Excellent threat identification on the collect request. Next time, verify the VPA acquiring bank suffix."
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              {/* Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setReviewModalSub(null)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Save Evaluation & Send Feedback
                 </button>
               </div>
             </form>

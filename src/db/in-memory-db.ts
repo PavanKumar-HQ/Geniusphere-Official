@@ -72,6 +72,7 @@ export class InMemoryDatabase {
 
   constructor() {
     this.seedDefaultData();
+    this.hydrateState();
   }
 
   /**
@@ -632,6 +633,7 @@ export class InMemoryDatabase {
     };
 
     this.submissions.set(submission.id, submission);
+    this.persistState();
     return submission;
   }
 
@@ -660,12 +662,66 @@ export class InMemoryDatabase {
     };
 
     this.submissions.set(submissionId, updated);
+    this.persistState();
     return updated;
   }
 
   // Client attempts to alter score directly -> RLS Policy Violation
   updateSubmissionByClient(_callerUserId: string, _submissionId: string): void {
     throw new DatabaseError('RLS Policy Denied: Submissions are immutable to standard clients', '42501', 403);
+  }
+
+  /**
+   * Teacher reviews submission, awards verified score, and attaches qualitative feedback
+   * Protected by classroom-level RLS
+   */
+  reviewSubmissionByTeacher(
+    teacherUserId: string,
+    submissionId: string,
+    score: number,
+    passed: boolean,
+    feedback: string
+  ): Submission {
+    const sub = this.submissions.get(submissionId);
+    if (!sub) {
+      throw new DatabaseError('Submission not found', '23503', 404);
+    }
+
+    const assign = this.assignments.get(sub.assignment_id);
+    if (!assign) {
+      throw new DatabaseError('Associated assignment not found', '23503', 404);
+    }
+
+    const isTeacher = this.isClassroomTeacher(teacherUserId, assign.classroom_id);
+    if (!isTeacher && !this.isPlatformSuperadmin(teacherUserId)) {
+      throw new DatabaseError('RLS Policy Denied: Only assigned classroom teachers may review submissions', '42501', 403);
+    }
+
+    const updated: Submission = {
+      ...sub,
+      score: Math.max(0, Math.min(100, score)),
+      passed,
+      teacher_feedback: feedback.trim(),
+      reviewed_at: new Date().toISOString(),
+      sync_status: 'SERVER_CONFIRMED',
+    };
+
+    this.submissions.set(submissionId, updated);
+
+    // Audit log the teacher review event
+    this.logAuditEvent({
+      organization_id: this.classrooms.get(assign.classroom_id)?.organization_id || null,
+      actor_id: teacherUserId,
+      action_type: 'TEACHER_SUBMISSION_REVIEWED',
+      resource_type: 'submission',
+      resource_id: submissionId,
+      ip_address: null,
+      user_agent: null,
+      details: { score, passed, feedback_length: feedback.length, student_id: sub.student_id },
+    });
+
+    this.persistState();
+    return updated;
   }
 
   // Get Submissions with RLS (Student self, Classroom teacher, Verified parent)
@@ -1312,6 +1368,7 @@ export class InMemoryDatabase {
     };
 
     this.labAttempts.set(record.id, record);
+    this.persistState();
 
     // If passed, award XP (only once per lab to prevent duplicate inflation)
     if (result.passed) {
@@ -1338,6 +1395,54 @@ export class InMemoryDatabase {
     return Array.from(this.labAttempts.values()).some(
       (a) => a.user_id === userId && a.lab_id === labId && a.passed
     );
+  }
+
+  /**
+   * Persists mutated transactional entities to localStorage if available
+   */
+  public persistState(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      const state = {
+        submissions: Array.from(this.submissions.entries()),
+        assignments: Array.from(this.assignments.entries()),
+        classrooms: Array.from(this.classrooms.entries()),
+        enrollments: Array.from(this.enrollments.entries()),
+        labAttempts: Array.from(this.labAttempts.entries()),
+      };
+      window.localStorage.setItem('geniusphere_db_v1', JSON.stringify(state));
+    } catch {
+      // Gracefully ignore storage quota errors
+    }
+  }
+
+  /**
+   * Hydrates previous session entities from localStorage if available
+   */
+  public hydrateState(): void {
+    if (typeof window === 'undefined' || !window.localStorage) return;
+    try {
+      const raw = window.localStorage.getItem('geniusphere_db_v1');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      if (Array.isArray(state.submissions)) {
+        for (const [k, v] of state.submissions) this.submissions.set(k, v);
+      }
+      if (Array.isArray(state.assignments)) {
+        for (const [k, v] of state.assignments) this.assignments.set(k, v);
+      }
+      if (Array.isArray(state.classrooms)) {
+        for (const [k, v] of state.classrooms) this.classrooms.set(k, v);
+      }
+      if (Array.isArray(state.enrollments)) {
+        for (const [k, v] of state.enrollments) this.enrollments.set(k, v);
+      }
+      if (Array.isArray(state.labAttempts)) {
+        for (const [k, v] of state.labAttempts) this.labAttempts.set(k, v);
+      }
+    } catch {
+      // Gracefully ignore hydration errors
+    }
   }
 }
 

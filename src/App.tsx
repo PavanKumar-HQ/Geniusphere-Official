@@ -19,6 +19,11 @@ import { InstitutionAdminWorkspace } from './components/InstitutionAdminWorkspac
 import { PlatformAdminWorkspace } from './components/PlatformAdminWorkspace';
 import { LabCatalogue } from './components/LabCatalogue';
 import { SharedLabWorkspace } from './components/SharedLabWorkspace';
+import { ScamDefenseJourney } from './components/ScamDefenseJourney';
+import { CIEAuditMatrix } from './components/CIEAuditMatrix';
+import { BackupExportModal } from './components/BackupExportModal';
+import { VectorScratchpadOverlay } from './components/VectorScratchpadOverlay';
+import { VisualDiagramStudio } from './components/VisualDiagramStudio';
 import {
   ShieldCheck,
   BookOpen,
@@ -32,6 +37,12 @@ import {
   Video,
   Info,
   Terminal,
+  Download,
+  Smartphone,
+  Monitor,
+  Edit3,
+  Zap,
+  Flame,
 } from 'lucide-react';
 
 export type AppView =
@@ -52,7 +63,10 @@ export type AppView =
   | 'resume-builder'
   | 'schoolkit'
   | 'parent'
-  | 'audit';
+  | 'audit'
+  | 'scam-defense'
+  | 'cie-audit'
+  | 'diagram-studio';
 
 export const App: React.FC = () => {
   // Single persistent in-memory database instance for genuine state progression
@@ -65,6 +79,7 @@ export const App: React.FC = () => {
     { id: 'user-parent-1', name: 'Sunita Patel (Guardian of Aarav)', role: 'guardian', badge: 'Parent' },
     { id: 'user-admin-1', name: 'Principal Verma (Institution Admin)', role: 'institution_admin', badge: 'Inst Admin' },
     { id: 'user-superadmin-1', name: 'Platform Superadmin (System Operations)', role: 'superadmin', badge: 'Superadmin' },
+    { id: 'user-cie-auditor', name: 'Dr. Suresh Kumar (CIE Reviewer, PESU)', role: 'auditor', badge: 'CIE Audit' },
   ];
 
   const [currentUserId, setCurrentUserId] = useState<string>('user-student-1');
@@ -76,6 +91,13 @@ export const App: React.FC = () => {
   const [selectedLabSlug, setSelectedLabSlug] = useState<string>('ai-classification-playground');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Viewport Simulator State (Desktop 100% vs Mobile PWA Frame 390px)
+  const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
+
+  // Sovereign Backup & Notes Overlay Modals
+  const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
+  const [scratchpadOpen, setScratchpadOpen] = useState<boolean>(false);
 
   // Auth Modal State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -118,7 +140,10 @@ export const App: React.FC = () => {
       view === 'schoolkit' ||
       view === 'student-dashboard' ||
       view === 'institution-workspace' ||
-      view === 'platform-workspace'
+      view === 'platform-workspace' ||
+      view === 'scam-defense' ||
+      view === 'cie-audit' ||
+      view === 'diagram-studio'
     ) {
       setCurrentView(view as AppView);
     }
@@ -154,22 +179,22 @@ export const App: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-canvas)' }}>
-      {/* Top Hairline Rule: Academic Forest Green */}
+      {/* Top Hairline Rule: Fresh Green */}
       <div
         style={{
           height: '3px',
-          backgroundColor: '#1E6B4E',
+          backgroundColor: '#43A85B',
           width: '100%',
         }}
       />
 
       {/* ============================================================ */}
-      {/* 0. LIVE DEMONSTRATION & MULTI-TENANT EVALUATION BAR          */}
+      {/* 0. PERSISTENT TELEMETRY, GOVERNANCE & SIMULATOR BAR         */}
       {/* ============================================================ */}
       <div
         style={{
-          backgroundColor: '#F5EFE6',
-          color: '#14261C',
+          backgroundColor: '#FAFAF4',
+          color: '#26352A',
           fontSize: '0.78rem',
           padding: '6px 20px',
           display: 'flex',
@@ -177,168 +202,176 @@ export const App: React.FC = () => {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '10px',
-          borderBottom: '1px solid #E2D9CC',
+          borderBottom: '1px solid rgba(38, 53, 42, 0.12)',
           zIndex: 101,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Performance & Sync Pill */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: '#1E6B4E',
-              color: '#FFFFFF',
-              fontWeight: 800,
-              padding: '2px 8px',
+              backgroundColor: '#E5F0DF',
+              color: '#26352A',
+              fontWeight: 700,
+              padding: '3px 10px',
               borderRadius: '12px',
-              fontSize: '0.68rem',
-              letterSpacing: '0.04em',
+              fontSize: '0.72rem',
+              border: '1px solid rgba(38, 53, 42, 0.12)',
             }}
           >
-            <span className="pulse-dot-green" />
-            <span>DEMO READY</span>
+            <Zap size={13} color="#43A85B" />
+            <span>Snapshot Loaded: 14ms (IDB)</span>
+            <span style={{ color: 'rgba(38, 53, 42, 0.35)' }}>•</span>
+            <span style={{ color: '#43A85B' }}>Sync: Verified</span>
+            <span style={{ color: 'rgba(38, 53, 42, 0.35)' }}>•</span>
+            <span>24h Auto-Backup: Active</span>
           </div>
-          <span style={{ color: '#64748B' }}>Active Persona:</span>
-          <span style={{ fontWeight: 800, color: '#164E3D', letterSpacing: '0.01em' }}>
-            {currentUser.name.split(' (')[0]} ({currentUser.role.toUpperCase()})
-          </span>
+
+          {/* Gamification Pill: Streak in Lime with Charcoal text */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              backgroundColor: '#D9F477',
+              color: '#26352A',
+              fontWeight: 800,
+              padding: '3px 10px',
+              borderRadius: '12px',
+              fontSize: '0.72rem',
+            }}
+            title="Consistent Student Streak"
+          >
+            <Flame size={13} color="#26352A" />
+            <span>12 Days</span>
+            <span style={{ opacity: 0.4 }}>|</span>
+            <span>2,450 XP</span>
+          </div>
         </div>
 
-        {/* Quick Role & View Switchers for Live Demonstration */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-          <span style={{ color: '#64748B', marginRight: '2px' }}>Quick Demo:</span>
+        {/* Action Controls & Simulator Switches */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          {/* Viewport Simulator Toggle (390px Mobile vs 100% Desktop) */}
+          <div style={{ display: 'inline-flex', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(38, 53, 42, 0.18)' }}>
+            <button
+              type="button"
+              onClick={() => setViewportMode('desktop')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '3px 8px',
+                fontSize: '0.72rem',
+                border: 'none',
+                backgroundColor: viewportMode === 'desktop' ? '#43A85B' : '#FFFFFF',
+                color: viewportMode === 'desktop' ? '#FAFAF4' : '#26352A',
+                fontWeight: viewportMode === 'desktop' ? 800 : 500,
+                cursor: 'pointer',
+              }}
+              title="Desktop Studio View"
+            >
+              <Monitor size={12} />
+              <span>Studio 100%</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewportMode('mobile')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '3px 8px',
+                fontSize: '0.72rem',
+                border: 'none',
+                backgroundColor: viewportMode === 'mobile' ? '#43A85B' : '#FFFFFF',
+                color: viewportMode === 'mobile' ? '#FAFAF4' : '#26352A',
+                fontWeight: viewportMode === 'mobile' ? 800 : 500,
+                cursor: 'pointer',
+              }}
+              title="Mobile PWA Touch Frame (390px)"
+            >
+              <Smartphone size={12} />
+              <span>PWA 390px</span>
+            </button>
+          </div>
+
+          {/* Sovereign Backup Drawer Button */}
           <button
             type="button"
-            onClick={() => handleNavigate('home')}
+            onClick={() => setBackupModalOpen(true)}
             style={{
-              backgroundColor: currentView === 'home' ? '#1E6B4E' : '#FFFFFF',
-              border: currentView === 'home' ? '1px solid #16533C' : '1px solid #D5CCC0',
-              color: currentView === 'home' ? '#FFFFFF' : '#334155',
-              borderRadius: '6px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'home' ? 800 : 600,
+              fontWeight: 600,
+              backgroundColor: '#FFFFFF',
+              border: '1px solid rgba(38, 53, 42, 0.18)',
+              borderRadius: '6px',
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
+              color: '#26352A',
             }}
           >
-            Home
+            <Download size={12} />
+            <span>Backup / Export</span>
           </button>
+
+          {/* Vector Notes Overlay Toggle */}
           <button
             type="button"
-            onClick={() => handleNavigate('catalogue')}
+            onClick={() => setScratchpadOpen(!scratchpadOpen)}
             style={{
-              backgroundColor: currentView === 'catalogue' ? '#1E6B4E' : '#FFFFFF',
-              border: currentView === 'catalogue' ? '1px solid #16533C' : '1px solid #D5CCC0',
-              color: currentView === 'catalogue' ? '#FFFFFF' : '#334155',
-              borderRadius: '6px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
               padding: '3px 9px',
               fontSize: '0.74rem',
-              fontWeight: currentView === 'catalogue' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            Courses (27)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleNavigate('labs')}
-            style={{
-              backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? '#B45309' : '#FFFFFF',
-              border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid #92400E' : '1px solid #D5CCC0',
-              color: currentView === 'labs' || currentView === 'lab-workspace' ? '#FFFFFF' : '#334155',
+              fontWeight: 600,
+              backgroundColor: scratchpadOpen ? '#E5F0DF' : '#FFFFFF',
+              border: '1px solid rgba(38, 53, 42, 0.18)',
               borderRadius: '6px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
+              color: '#26352A',
             }}
           >
-            12 Interactive Labs
+            <Edit3 size={12} />
+            <span>Vector Overlay</span>
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              setCurrentUserId('user-student-1');
-              handleNavigate('student-dashboard');
+
+          {/* Persona Switcher Quick Dropdown */}
+          <select
+            value={currentUserId}
+            onChange={(e) => {
+              const newId = e.target.value;
+              setCurrentUserId(newId);
+              if (newId === 'user-cie-auditor') setCurrentView('cie-audit');
+              else if (newId === 'user-teacher-1') setCurrentView('gradebook');
+              else if (newId === 'user-parent-1') setCurrentView('parent');
+              else if (newId === 'user-admin-1') setCurrentView('institution-workspace');
+              else if (newId === 'user-superadmin-1') setCurrentView('platform-workspace');
+              else if (newId === 'user-student-1') setCurrentView('student-dashboard');
             }}
             style={{
-              backgroundColor: currentView === 'student-dashboard' ? '#1D58A6' : '#FFFFFF',
-              border: currentView === 'student-dashboard' ? '1px solid #154584' : '1px solid #D5CCC0',
-              color: currentView === 'student-dashboard' ? '#FFFFFF' : '#334155',
+              padding: '3px 8px',
               borderRadius: '6px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: currentView === 'student-dashboard' ? 800 : 600,
+              border: '1px solid rgba(38, 53, 42, 0.18)',
+              backgroundColor: '#FFFFFF',
+              fontWeight: 700,
+              fontSize: '0.72rem',
+              color: '#26352A',
               cursor: 'pointer',
-              transition: 'all 0.15s ease',
             }}
           >
-            Student Workspace
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setCurrentUserId('user-teacher-1');
-              handleNavigate('gradebook');
-            }}
-            style={{
-              backgroundColor: currentView === 'gradebook' ? '#237A59' : '#FFFFFF',
-              border: currentView === 'gradebook' ? '1px solid #1A6045' : '1px solid #D5CCC0',
-              color: currentView === 'gradebook' ? '#FFFFFF' : '#334155',
-              borderRadius: '6px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: currentView === 'gradebook' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            Teacher Gradebook
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setCurrentUserId('user-guardian-1');
-              handleNavigate('parent');
-            }}
-            style={{
-              backgroundColor: currentView === 'parent' ? '#164E3D' : '#FFFFFF',
-              border: currentView === 'parent' ? '1px solid #0F382B' : '1px solid #D5CCC0',
-              color: currentView === 'parent' ? '#FFFFFF' : '#334155',
-              borderRadius: '6px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: currentView === 'parent' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            Parent Oversight
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setCurrentUserId('user-admin-1');
-              handleNavigate('platform-workspace');
-            }}
-            style={{
-              backgroundColor: currentView === 'platform-workspace' ? '#334155' : '#FFFFFF',
-              border: currentView === 'platform-workspace' ? '1px solid #1E293B' : '1px solid #D5CCC0',
-              color: currentView === 'platform-workspace' ? '#FFFFFF' : '#334155',
-              borderRadius: '6px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: currentView === 'platform-workspace' ? 800 : 600,
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            Platform Admin
-          </button>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.badge}: {u.name.split(' (')[0]}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -484,10 +517,10 @@ export const App: React.FC = () => {
                 type="button"
                 onClick={() => handleNavigate('labs')}
                 style={{
-                  backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-quest-surface)' : 'transparent',
-                  border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid var(--brand-quest-border)' : '1px solid transparent',
+                  backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-quest-text)' : 'var(--text-secondary)',
+                  color: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-primary)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -500,12 +533,66 @@ export const App: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => handleNavigate('scam-defense')}
+                style={{
+                  backgroundColor: currentView === 'scam-defense' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'scam-defense' ? '1px solid var(--brand-border)' : '1px solid transparent',
+                  padding: '7px 14px',
+                  color: currentView === 'scam-defense' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  fontWeight: currentView === 'scam-defense' ? 800 : 600,
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                Scam Defense
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('diagram-studio')}
+                style={{
+                  backgroundColor: currentView === 'diagram-studio' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'diagram-studio' ? '1px solid var(--brand-border)' : '1px solid transparent',
+                  padding: '7px 14px',
+                  color: currentView === 'diagram-studio' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  fontWeight: currentView === 'diagram-studio' ? 800 : 600,
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                Studio
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('cie-audit')}
+                style={{
+                  backgroundColor: currentView === 'cie-audit' ? 'var(--brand-surface)' : 'transparent',
+                  border: currentView === 'cie-audit' ? '1px solid var(--brand-border)' : '1px solid transparent',
+                  padding: '7px 14px',
+                  color: currentView === 'cie-audit' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  fontWeight: currentView === 'cie-audit' ? 800 : 600,
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                CIE Audit
+              </button>
+
+              <button
+                type="button"
                 onClick={() => handleNavigate('resources')}
                 style={{
                   backgroundColor: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-surface)' : 'transparent',
                   border: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-forest)' : 'var(--text-secondary)',
+                  color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-primary)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -523,7 +610,7 @@ export const App: React.FC = () => {
                   backgroundColor: currentView === 'about' ? 'var(--brand-surface)' : 'transparent',
                   border: currentView === 'about' ? '1px solid var(--brand-border)' : '1px solid transparent',
                   padding: '7px 14px',
-                  color: currentView === 'about' ? 'var(--brand-forest)' : 'var(--text-secondary)',
+                  color: currentView === 'about' ? 'var(--brand-primary)' : 'var(--text-secondary)',
                   fontWeight: currentView === 'about' ? 800 : 600,
                   borderRadius: '8px',
                   fontSize: '0.9rem',
@@ -840,20 +927,70 @@ export const App: React.FC = () => {
       <main
         style={{
           flex: 1,
-          padding: currentView === 'home' || currentView === 'lab-workspace' ? '0' : '28px 24px',
-          maxWidth: currentView === 'home' || currentView === 'lab-workspace' ? '100%' : '1280px',
+          padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 24px',
+          maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1280px',
           margin: '0 auto',
           width: '100%',
         }}
       >
-        {currentView === 'home' && (
-          <Homepage
-            key={`home-${currentUserId}-${refreshTrigger}`}
-            db={db}
-            onNavigate={handleNavigate}
-            currentUserId={currentUserId}
-          />
-        )}
+        <div
+          style={
+            viewportMode === 'mobile'
+              ? {
+                  maxWidth: '390px',
+                  margin: '24px auto',
+                  borderRadius: '36px',
+                  border: '8px solid #26352A',
+                  boxShadow: '0 20px 40px rgba(38, 53, 42, 0.25)',
+                  overflow: 'hidden',
+                  backgroundColor: '#FAFAF4',
+                  minHeight: '844px',
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }
+              : { width: '100%' }
+          }
+        >
+          {viewportMode === 'mobile' && (
+            <div
+              style={{
+                height: '24px',
+                backgroundColor: '#26352A',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#FAFAF4',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+              }}
+            >
+              <div
+                style={{
+                  width: '110px',
+                  height: '14px',
+                  backgroundColor: '#1E2B22',
+                  borderRadius: '0 0 10px 10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#43A85B' }} />
+                <div style={{ width: '32px', height: '3px', borderRadius: '2px', backgroundColor: '#3A4E40' }} />
+              </div>
+            </div>
+          )}
+
+          {currentView === 'home' && (
+            <Homepage
+              key={`home-${currentUserId}-${refreshTrigger}`}
+              db={db}
+              onNavigate={handleNavigate}
+              currentUserId={currentUserId}
+            />
+          )}
 
         {currentView === 'catalogue' && (
           <CourseCatalogue
@@ -1024,6 +1161,35 @@ export const App: React.FC = () => {
             onOpenGradebook={() => handleNavigate('gradebook')}
           />
         )}
+
+        {currentView === 'scam-defense' && (
+          <ScamDefenseJourney
+            key={`scam-defense-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            currentUserId={currentUserId}
+            onNavigateBack={() => handleNavigate('home')}
+            onViewPortfolio={() => handleNavigate('student-dashboard')}
+          />
+        )}
+
+        {currentView === 'cie-audit' && (
+          <CIEAuditMatrix
+            key={`cie-audit-${refreshTrigger}`}
+            db={db}
+            onNavigateHome={() => handleNavigate('home')}
+            onLaunchLab={(slug) => {
+              setSelectedLabSlug(slug);
+              setCurrentView('lab-workspace');
+            }}
+          />
+        )}
+
+        {currentView === 'diagram-studio' && (
+          <VisualDiagramStudio
+            key={`diagram-studio-${refreshTrigger}`}
+          />
+        )}
+        </div>
       </main>
 
       {/* ============================================================ */}
@@ -1152,6 +1318,23 @@ export const App: React.FC = () => {
           </div>
         </footer>
       )}
+
+      {/* ============================================================ */}
+      {/* 6. SOVEREIGN BACKUP & LORIEN VECTOR OVERLAY MODALS           */}
+      {/* ============================================================ */}
+      <BackupExportModal
+        isOpen={backupModalOpen}
+        onClose={() => setBackupModalOpen(false)}
+        db={db}
+        currentUserId={currentUserId}
+        onRestoreSuccess={() => setRefreshTrigger((v) => v + 1)}
+      />
+
+      <VectorScratchpadOverlay
+        isOpen={scratchpadOpen}
+        onClose={() => setScratchpadOpen(false)}
+        labKey={selectedLabSlug || 'global'}
+      />
     </div>
   );
 };

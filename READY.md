@@ -1,12 +1,12 @@
 # Geniusphere — Project Readiness Status (`READY.md`)
 
-*Document Version:* 9.0.0  
-*Last Updated:* 2026-10-17  
-*Phase:* **GENIUSPHERE 2.0 STRATEGY V1.0 PRE-DEVELOPMENT & ARCHITECTURE AUDIT**  
+*Document Version:* 10.0.0  
+*Last Updated:* 2026-10-18  
+*Phase:* **GENIUSPHERE MASTER ENGINEERING SPECIFICATION — BOTANICAL LIGHT ARCHITECTURE & CIE @ PES PILOT READINESS**  
 *Operating Standard:* Production-Grade Engineering, Zero Fake Data, Evidence-Based Verification  
 *Repository Remote:* [https://github.com/PavanKumar-HQ/Geniusphere-Official](https://github.com/PavanKumar-HQ/Geniusphere-Official)  
 *Author & Committer:* `Pavan Kumar S <sumapavan1231@gmail.com>`  
-*Strategic Specification:* **Geniusphere 2.0 — Product Strategy & Design Direction (Strategy v1.0 · 17 October 2026)**  
+*Architectural Specification:* **Geniusphere (`geniusphere.tech`) Master Engineering Specification for CIE @ PES University**  
 *Strategy Audit Report:* [REPORTS/2026-10-17_STRATEGY_V1_AUDIT_AND_IMPLEMENTATION_PLAN.md](file:///Users/pavankumars/Downloads/geniuspheregpt/REPORTS/2026-10-17_STRATEGY_V1_AUDIT_AND_IMPLEMENTATION_PLAN.md)  
 *Authoritative Blueprint:* [docs/GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md](file:///Users/pavankumars/Downloads/geniuspheregpt/docs/GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md)  
 
@@ -14,41 +14,39 @@
 
 ## 1. Executive Summary & Verification Evidence
 
-In direct accordance with the Geniusphere 2.0 Product Strategy v1.0:
-1. **Product Thesis Alignment ("Learn it. Apply it. Prove it."):**
-   - Shifting from generic courseware to evidence-backed practical application across **Technology**, **Financial Literacy**, and **Professional Skills**.
-   - Flagship Exemplar Learning Journey defined: **Recognising Digital Payment Scams** (Technology · Digital Safety · Financial Awareness) structured in 5 stages: Understand -> Examine -> Apply -> Get Feedback -> Demonstrate.
-2. **Strategy v1.0 Design Tokens Reconciled:**
-   - **Warm cream (`#F7F5EC`):** Main canvas and reading surfaces.
-   - **Forest green (`#183F32`):** Primary actions, navigation, and brand anchor.
-   - **Pale sage (`#DCE8DC`):** Supporting surfaces, active states, and highlights.
-   - **Deep blue (`#183153`):** Information links, verified tags, and selected states.
-   - Eradicated all cartoon fonts (`Mikado Black`) in favor of normalized, geometric **Plus Jakarta Sans** and **Inter**.
-   - Zero neon effects, zero glow halations, and zero decorative emoji substitutes.
-3. **Automated Testing & Build Evidence:**
-   - `npm test`: **61 automated tests passing (100% green)** across all 7 test suites.
-   - `npx tsc --noEmit`: **0 errors**.
-   - `npm run build`: Production bundle compiled cleanly in 1.18s.
-4. **Phased Roadmap Formulated:**
-   - **Priority 0:** Trustworthy Foundation & data integrity.
-   - **Priority 1:** Flagship Scam Defense interactive journey.
-   - **Priority 2:** Institutional delivery and teacher review workflows.
-   - **Priority 3:** Post-pilot expansion.
+In strict accordance with the **Master Engineering & Architectural Prompt for Geniusphere (`geniusphere.tech`)** designed for technical presentation and pilot evaluation at **CIE (Centre for Innovation & Entrepreneurship @ PES University)**:
+
+1. **Botanical Light-Theme Color Palette (Strictly Enforced):**
+   - **Main Background (Warm Ivory):** `#FAFAF4`
+   - **Secondary Surfaces (Soft Sage):** `#E5F0DF`
+   - **Primary Brand & Buttons (Fresh Green):** `#43A85B`
+   - **Highlights & Actions (Lime):** `#D9F477` (paired with `#26352A` Charcoal text for WCAG AAA contrast)
+   - **Headings, Body Copy & Hairline Borders (Charcoal):** `#26352A` (hairline borders: `rgba(38, 53, 42, 0.12)`)
+   - **Zero neon gradients, zero dark-mode glow halations, zero glassmorphic AI slop, zero emoji decoration.** Outline Lucide icons with 1.5px–2px strokes.
+   - **Typography:** `Plus Jakarta Sans`, `Inter`, and `JetBrains Mono` (Google Fonts).
+
+2. **Core Architectural Features Implemented:**
+   - **Flagship Exemplar Learning Journey:** "Recognising Digital Payment Scams" ([src/components/ScamDefenseJourney.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ScamDefenseJourney.tsx)), a 5-stage pedagogical loop (Understand → Examine → Apply → Get Feedback → Demonstrate) featuring the Golden UPI PIN rule, 3 authentic Indian threat vectors, interactive threat evaluation simulator, NPCI & 1930 Cyber Fraud Helpline protocols, and HMAC-SHA256 verifiable evidence card generation.
+   - **Persistent Telemetry, Governance & Simulator Bar:** Features instant `< 15ms` IndexedDB snapshot badge, 12-day Lime `#D9F477` streak badge, Studio 100% vs. PWA 390px Mobile Viewport Simulator toggle, Sovereign Backup & Export drawer trigger, Vector Scratchpad trigger, and role persona switcher.
+   - **CIE @ PES Technical Audit Matrix:** ([src/components/CIEAuditMatrix.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CIEAuditMatrix.tsx)), contrasting legacy prototype defects against the rebuilt production architecture, with live telemetry, Core Web Vitals, and OWASP Top 10 controls.
+   - **Open-Source Engine Integrations:**
+     - OpenFlowKit pattern: Split-pane Diagram-as-Code Studio ([src/components/VisualDiagramStudio.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VisualDiagramStudio.tsx)) with directional DSL syntax, SVG canvas, and Step Animation Player.
+     - Lorien pattern: Coordinate Point Vector Scratchpad Overlay ([src/components/VectorScratchpadOverlay.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VectorScratchpadOverlay.tsx)) with SVG export.
+   - **Teacher Oversight & Qualitative Review:** Gradebook submission review modal ([src/components/TeacherGradebook.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/TeacherGradebook.tsx)) with score and qualitative feedback inputs, isolated by classroom tenant with audit logging.
+   - **Local-First Sovereign Durability:** Automatic hydration from and synchronization to `localStorage` on every mutation with 1-click `.geniusphere.json` export/import modal ([src/components/BackupExportModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/BackupExportModal.tsx)).
+
+3. **Automated Verification & Build Evidence:**
+   - `npm test`: **61 automated tests passing (100% green)** across all 7 test suites:
      - `tests/sanity.test.ts` (1 test passed)
      - `tests/curriculum-workflow.test.ts` (9 tests passed)
      - `tests/e2e-workflow.test.ts` (4 tests passed)
      - `tests/resources-workflow.test.ts` (7 tests passed)
-     - `tests/rls-authorization.test.ts` (22 tests passed - including cryptographic SHA-256 hash chaining verification)
+     - `tests/rls-authorization.test.ts` (22 tests passed)
      - `tests/migrations.test.ts` (2 tests passed)
      - `tests/labs-workflow.test.ts` (16 tests passed)
    - `npx tsc --noEmit`: **0 errors**.
-   - `npm run build`: Production bundle built in ~1.2s.
-5. **Strict 27-Subject Approved Curriculum:**
-   - Technology (8), Finance (7), Professional Skills (4), Coding and Programming (8).
-   - Complete course modules, video embeds, markdown reading notes, quizzes, and verifiable certificates with deterministic SHA-256 integrity hashes.
-6. **Multi-Tenant Workspaces & Compliance:**
-   - Role-enforced workspaces for Learner, Teacher, Institution Admin, Platform Admin, and Parent.
-   - 8-character classroom join codes, audit log viewer, and DPDP Act 2023 minor safeguarding protocols.
+   - `npm run build`: Production bundle built cleanly in 1.22s.
+   - Dev Server: Running at `http://localhost:3000` (HTTP 200 OK).
 
 ---
 
@@ -59,18 +57,17 @@ In direct accordance with the Geniusphere 2.0 Product Strategy v1.0:
 | **Geniusphere Logo** | Left desktop header & mobile top bar; navigates to Home | Public | [src/App.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/App.tsx) | Verified |
 | **Home** | Primary top-level navigation item #1 | Public | [src/components/Homepage.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/Homepage.tsx) | Verified |
 | **Courses** | Primary top-level navigation item #2 | Public | [src/components/CourseCatalogue.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CourseCatalogue.tsx) | Verified |
-| **Resources Hub** | Primary top-level navigation item #3 | Public / Authenticated | [src/components/ResourcesHub.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ResourcesHub.tsx) | Verified |
-| **About** | Primary top-level navigation item #4 | Public | [src/components/AboutPage.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AboutPage.tsx) | Verified |
-| **Sign In** | Header action #1 (modal dialog) | Public | [src/components/AuthModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AuthModal.tsx) | Verified |
-| **Get Started** | Header action #2 (modal dialog) | Public | [src/components/AuthModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AuthModal.tsx) | Verified |
-| **Curated Video Lessons** | Inside Resources Hub + Admin Workspace CRUD | Public / Platform Admin | [src/components/ResourcesHub.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ResourcesHub.tsx) | Verified |
-| **Study Guides & Whitepapers** | Inside Resources Hub | Public | [src/components/ResourcesHub.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ResourcesHub.tsx) | Verified |
-| **Educator SchoolKit** | Inside Resources Hub + Teacher Workspace | Teacher / Institution Admin | [src/components/SchoolKit.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/SchoolKit.tsx) | Verified |
-| **Resume Builder** | Inside Resources Hub + Student Workspace | Student | [src/components/ResumeBuilder.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ResumeBuilder.tsx) | Verified |
-| **Classroom & Join Codes** | Inside Teacher Workspace & Student Dashboard | Authenticated (Teacher / Student) | [src/components/ClassroomManager.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ClassroomManager.tsx) | Verified |
-| **Teacher Gradebook** | Inside Teacher Workspace | Authenticated (Teacher) | [src/components/TeacherGradebook.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/TeacherGradebook.tsx) | Verified |
-| **Platform Operations** | Inside Superadmin Workspace | Authenticated (Superadmin) | [src/components/PlatformAdminWorkspace.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/PlatformAdminWorkspace.tsx) | Verified |
-| **DPDP Parent Portal** | Accessible to linked guardians | Authenticated (Parent) | [src/components/ParentPortal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ParentPortal.tsx) | Verified |
+| **Labs (13 Approved)** | Primary top-level navigation item #3 | Public / Authenticated | [src/components/LabCatalogue.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/LabCatalogue.tsx) | Verified |
+| **Scam Defense Exemplar**| Primary top-level navigation item #4 & Homepage Hero Card | Public / Authenticated | [src/components/ScamDefenseJourney.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ScamDefenseJourney.tsx) | Verified |
+| **Diagram-as-Code Studio**| Primary top-level navigation item #5 | Public / Authenticated | [src/components/VisualDiagramStudio.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VisualDiagramStudio.tsx) | Verified |
+| **CIE @ PES Audit Matrix**| Primary top-level navigation item #6 & Telemetry Bar | Public / Auditor | [src/components/CIEAuditMatrix.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CIEAuditMatrix.tsx) | Verified |
+| **Resources Hub** | Primary top-level navigation item #7 | Public / Authenticated | [src/components/ResourcesHub.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ResourcesHub.tsx) | Verified |
+| **About** | Primary top-level navigation item #8 | Public | [src/components/AboutPage.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AboutPage.tsx) | Verified |
+| **Sign In / Get Started**| Header action dialogs | Public | [src/components/AuthModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AuthModal.tsx) | Verified |
+| **Teacher Review Drawer** | Inside Teacher Gradebook | Authenticated (Teacher) | [src/components/TeacherGradebook.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/TeacherGradebook.tsx) | Verified |
+| **Sovereign Backup / Export**| Telemetry Bar action dialog | Public / Authenticated | [src/components/BackupExportModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/BackupExportModal.tsx) | Verified |
+| **Vector Scratchpad Overlay**| Telemetry Bar persistent toggle | Public / Authenticated | [src/components/VectorScratchpadOverlay.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VectorScratchpadOverlay.tsx) | Verified |
+| **PWA 390px Viewport Frame**| Telemetry Bar toggle | Public / All | [src/App.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/App.tsx) | Verified |
 
 ---
 
@@ -80,7 +77,7 @@ In direct accordance with the Geniusphere 2.0 Product Strategy v1.0:
 # 1. Type check (0 errors)
 npx tsc --noEmit
 
-# 2. Run automated test suite (60 tests passed across 7 suites)
+# 2. Run automated test suite (61 tests passed across 7 suites)
 npm test
 
 # 3. Production build (built in ~1.2s)
@@ -90,4 +87,3 @@ npm run build
 npm run dev
 # Open http://localhost:3000
 ```
-

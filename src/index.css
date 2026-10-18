@@ -10,34 +10,45 @@
   --font-display-brand: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
 
-  /* Strategy v1.0 Authoritative Design Tokens (17 Oct 2026) */
-  --brand-forest: #183F32;               /* Forest Green: Primary actions & navigation */
-  --brand-primary: #183F32;              /* Active Living Forest Green */
-  --brand-primary-bright: #1E4E3E;
-  --brand-primary-hover: #122E25;
-  --brand-surface: #DCE8DC;              /* Pale Sage: Supporting surfaces & highlights */
-  --brand-border: #C4D8C4;
+  /* Master Botanical & Academic Light Palette (CIE Verified) */
+  --bg-canvas: #FAFAF4;                  /* Main Background: Warm Ivory */
+  --bg-surface: #FFFFFF;                 /* Pure White Surface / Canvas Cards */
+  --bg-surface-subdued: #E5F0DF;         /* Secondary Surfaces: Soft Sage */
+  --bg-surface-elevated: #FFFFFF;
 
-  --brand-blue: #183153;                 /* Deep Blue: Links, information & selected states */
-  --brand-blue-hover: #102138;
-  --brand-blue-surface: #EDF3F9;          /* Soft Sky Tint */
-  --brand-blue-border: #CBD8E6;
-  --brand-qurious-sky: #183153;
+  --brand-primary: #43A85B;              /* Primary Brand & Buttons: Fresh Green */
+  --brand-primary-bright: #43A85B;
+  --brand-primary-hover: #388E4C;
+  --brand-primary-active: #2E763F;
+  --brand-forest: #43A85B;
 
-  --brand-quest: #B45309;                /* Warm Amber Highlighter */
-  --brand-quest-hover: #92400E;
-  --brand-quest-surface: #FEF7EA;        /* Warm Parchment Amber Tint */
-  --brand-quest-border: #FCE7C3;
+  --brand-surface: #E5F0DF;              /* Secondary Surfaces: Soft Sage */
+  --brand-border: rgba(38, 53, 42, 0.12); /* Subtle Structural Hairline */
+  --border-subtle: rgba(38, 53, 42, 0.12);
+  --border-strong: rgba(38, 53, 42, 0.22);
+
+  --brand-lime: #D9F477;                 /* Highlights, Streaks & Pulses: Lime */
+  --brand-lime-text: #26352A;            /* Charcoal text on lime for WCAG AAA */
+
+  --brand-blue: #2B5E63;                 /* Deep Sage Teal for Secondary Information */
+  --brand-blue-hover: #1E464A;
+  --brand-blue-surface: #E5EFF0;
+  --brand-blue-border: #C8DFE1;
+
+  --brand-quest: #D97706;                /* Warm Amber */
+  --brand-quest-hover: #B45309;
+  --brand-quest-surface: #FEF3C7;
+  --brand-quest-border: #FDE68A;
   --brand-quest-text: #92400E;
-  --brand-joy-of-quest: #B45309;
+  --brand-joy-of-quest: #D97706;
 
-  --brand-accent: #183F32;
-  --brand-accent-hover: #122E25;
-  --brand-accent-surface: #DCE8DC;
-  --brand-accent-border: #C4D8C4;
-  --brand-always-questioning: #183F32;
+  --brand-accent: #43A85B;
+  --brand-accent-hover: #388E4C;
+  --brand-accent-surface: #E5F0DF;
+  --brand-accent-border: rgba(38, 53, 42, 0.12);
+  --brand-always-questioning: #43A85B;
 
   /* Typography Sizing Tokens */
   --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
@@ -47,37 +58,31 @@
   --text-body: 0.9375rem;                           /* 14-16px */
   --text-meta: 0.8125rem;                           /* 12-13px */
 
-  /* Strategy v1.0 Warm Cream Canvas System */
-  --bg-canvas: #F7F5EC;                  /* Warm Cream Canvas & Reading Surfaces */
-  --bg-surface: #FFFFFF;                 /* Crisp Pure White Surface / Notebook Pages */
-  --bg-surface-subdued: #EFECE1;         /* Subtle Parchment Reading Tint */
-  --bg-surface-elevated: #FFFFFF;
-
-  --border-subtle: #E2DFD2;              /* Soft Warm Ruled Lines */
-  --border-strong: #CDC7B5;              /* Defined Notebook Border */
-
-  /* Text & Ink Typography (Clear Contrast, Softer than Harsh Black) */
-  --text-primary: #14261C;               /* Deep Scholarly Forest Ink */
-  --text-secondary: #475569;             /* Refined Slate Body Copy */
-  --text-muted: #6B7C72;                 /* Gentle Sage Gray for Metadata */
-  --text-inverse: #FFFFFF;
+  /* Text & Ink Typography (Charcoal) */
+  --text-primary: #26352A;               /* Headings, Body Text & Labels: Charcoal */
+  --text-secondary: #4A5B4F;             /* Muted Charcoal Body Copy */
+  --text-muted: #6B7C70;                 /* Gentle Charcoal for Metadata */
+  --text-inverse: #FAFAF4;
 
   /* Selected State */
-  --selected-bg: #EBF5F0;
+  --selected-bg: #E5F0DF;
 
   /* Semantic State Colors */
-  --success: #164E3D;
-  --success-bg: #EBF5F0;
-  --success-border: #C4E3D4;
-  --success-text: #164E3D;
+  --success: #43A85B;
+  --success-bg: #E5F0DF;
+  --success-border: #C8E3BF;
+  --success-text: #26352A;
 
-  --warning: #92400E;
-  --warning-bg: #FEF7EA;
-  --warning-border: #FCE7C3;
+  --warning: #D97706;                    /* Warm Amber */
+  --warning-bg: #FEF3C7;
+  --warning-border: #FDE68A;
   --warning-text: #92400E;
 
-  --error: #B91C1C;
-  --danger: #B91C1C;
+  --error: #DC2626;                      /* Crisp Crimson */
+  --danger: #DC2626;
+  --danger-bg: #FEE2E2;
+  --danger-border: #FECACA;
+  --danger-text: #991B1B;
   --danger-bg: #FEF2F2;
   --danger-border: #FECACA;
   --danger-text: #B91C1C;

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
-import { FunZoneSection } from './FunZoneSection';
 import { HeroAnimationSandbox } from './HeroAnimationSandbox';
 import { PilotApplicationModal } from './PilotApplicationModal';
 import {
   Shield,
+  ShieldCheck,
   ArrowRight,
   Terminal,
   CheckCircle2,
@@ -19,6 +19,9 @@ import {
   FileText,
   Check,
   Sparkles,
+  Lock,
+  Award,
+  PlayCircle,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -27,7 +30,7 @@ interface HomepageProps {
   currentUserId: string;
 }
 
-export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId }) => {
+export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId: _currentUserId }) => {
   const publishedCourses = db.getCourses({ publishedOnly: true });
   const allLabs = db.getLabDefinitions();
 
@@ -892,13 +895,302 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       </section>
 
       {/* ============================================================ */}
-      {/* 6. INTERACTIVE FUN ZONE (Auto-Scrolling & Uniform Cards)     */}
+      {/* 6. FLAGSHIP EXEMPLAR: RECOGNISING DIGITAL PAYMENT SCAMS      */}
       {/* ============================================================ */}
-      <FunZoneSection
-        db={db}
-        currentUserId={currentUserId}
-        onNavigate={onNavigate}
-      />
+      <section
+        style={{
+          backgroundColor: '#FAFAF4',
+          borderTop: '1px solid rgba(38, 53, 42, 0.12)',
+          borderBottom: '1px solid rgba(38, 53, 42, 0.12)',
+          padding: '72px 24px',
+        }}
+      >
+        <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+          {/* Section Header */}
+          <div style={{ marginBottom: '36px', textAlign: 'center', maxWidth: '780px', margin: '0 auto 40px' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '5px 14px',
+                borderRadius: '9999px',
+                backgroundColor: '#E5F0DF',
+                color: '#26352A',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                marginBottom: '14px',
+                border: '1px solid rgba(38, 53, 42, 0.12)',
+              }}
+            >
+              <ShieldCheck size={14} color="#43A85B" />
+              <span>FLAGSHIP PILOT EXEMPLAR • NCERT / RBI / NPCI ALIGNED</span>
+            </div>
+            <h2
+              style={{
+                fontSize: 'clamp(1.9rem, 3.2vw, 2.6rem)',
+                fontWeight: 800,
+                color: '#26352A',
+                letterSpacing: '-0.02em',
+                margin: '0 0 14px',
+              }}
+            >
+              Recognising Digital Payment Scams
+            </h2>
+            <p style={{ fontSize: '1.02rem', color: '#4A5B4F', lineHeight: 1.65, margin: 0 }}>
+              The foundational practical capability every student in India must master before conducting online transactions. Experience our complete 5-stage pedagogical loop with zero mock data.
+            </p>
+          </div>
+
+          {/* Master 5-Stage Interactive Hero Card */}
+          <div
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '16px',
+              border: '1px solid rgba(38, 53, 42, 0.14)',
+              boxShadow: '0 4px 20px rgba(38, 53, 42, 0.06)',
+              padding: '36px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '32px',
+            }}
+          >
+            {/* Top Row: Context & Action */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '20px',
+                borderBottom: '1px solid rgba(38, 53, 42, 0.08)',
+                paddingBottom: '24px',
+              }}
+            >
+              <div style={{ maxWidth: '640px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span
+                    style={{
+                      backgroundColor: '#D9F477',
+                      color: '#26352A',
+                      fontWeight: 800,
+                      fontSize: '0.72rem',
+                      padding: '3px 8px',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    LAB ID: lab-sec-scam-defense
+                  </span>
+                  <span style={{ fontSize: '0.78rem', color: '#4A5B4F' }}>• Estimated: 25 mins • Minor Safeguarded</span>
+                </div>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#26352A', margin: 0 }}>
+                  5-Stage Pedagogical Loop: Understand → Examine → Apply → Get Feedback → Demonstrate
+                </h3>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('scam-defense')}
+                  style={{
+                    backgroundColor: '#43A85B',
+                    color: '#FAFAF4',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '12px 24px',
+                    fontWeight: 700,
+                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+                  }}
+                >
+                  <PlayCircle size={18} />
+                  <span>Launch Scam Defense Exemplar</span>
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* 5 Stages Pipeline Flow */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '16px',
+              }}
+            >
+              {/* Stage 1 */}
+              <div
+                style={{
+                  backgroundColor: '#FAFAF4',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  border: '1px solid rgba(38, 53, 42, 0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#43A85B' }}>STAGE 1</span>
+                  <Lock size={15} color="#43A85B" />
+                </div>
+                <strong style={{ fontSize: '0.96rem', color: '#26352A' }}>Understand</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4A5B4F', lineHeight: 1.5 }}>
+                  The Inviolable Golden Rule: UPI PIN is <em>never</em> entered to receive money.
+                </p>
+              </div>
+
+              {/* Stage 2 */}
+              <div
+                style={{
+                  backgroundColor: '#FAFAF4',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  border: '1px solid rgba(38, 53, 42, 0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#43A85B' }}>STAGE 2</span>
+                  <FileText size={15} color="#43A85B" />
+                </div>
+                <strong style={{ fontSize: '0.96rem', color: '#26352A' }}>Examine</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4A5B4F', lineHeight: 1.5 }}>
+                  3 authentic Indian threat vectors: OLX QR reverse pay, Electricity APK & fake refunds.
+                </p>
+              </div>
+
+              {/* Stage 3 */}
+              <div
+                style={{
+                  backgroundColor: '#FAFAF4',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  border: '1px solid rgba(38, 53, 42, 0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#43A85B' }}>STAGE 3</span>
+                  <Terminal size={15} color="#43A85B" />
+                </div>
+                <strong style={{ fontSize: '0.96rem', color: '#26352A' }}>Apply</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4A5B4F', lineHeight: 1.5 }}>
+                  Interactive Threat Simulator with live decision logging and PIN interceptor.
+                </p>
+              </div>
+
+              {/* Stage 4 */}
+              <div
+                style={{
+                  backgroundColor: '#FAFAF4',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  border: '1px solid rgba(38, 53, 42, 0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#43A85B' }}>STAGE 4</span>
+                  <ShieldCheck size={15} color="#43A85B" />
+                </div>
+                <strong style={{ fontSize: '0.96rem', color: '#26352A' }}>Get Feedback</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4A5B4F', lineHeight: 1.5 }}>
+                  Deterministic NPCI compliance evaluation and 1930 Cyber Helpline action protocol.
+                </p>
+              </div>
+
+              {/* Stage 5 */}
+              <div
+                style={{
+                  backgroundColor: '#FAFAF4',
+                  borderRadius: '10px',
+                  padding: '20px',
+                  border: '1px solid rgba(38, 53, 42, 0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#43A85B' }}>STAGE 5</span>
+                  <Award size={15} color="#43A85B" />
+                </div>
+                <strong style={{ fontSize: '0.96rem', color: '#26352A' }}>Demonstrate</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#4A5B4F', lineHeight: 1.5 }}>
+                  HMAC-SHA256 evidence card generated and permanently saved to student portfolio.
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Access to Technical Audit & Visual Studio */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '12px',
+                paddingTop: '20px',
+                borderTop: '1px solid rgba(38, 53, 42, 0.08)',
+                backgroundColor: '#E5F0DF',
+                margin: '-12px -36px -36px -36px',
+                padding: '20px 36px',
+                borderRadius: '0 0 16px 16px',
+              }}
+            >
+              <div style={{ fontSize: '0.85rem', color: '#26352A', fontWeight: 600 }}>
+                Presenting to CIE Evaluation Committee @ PES University?
+              </div>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('cie-audit')}
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid rgba(38, 53, 42, 0.18)',
+                    color: '#26352A',
+                    padding: '7px 14px',
+                    borderRadius: '6px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  View CIE Technical Audit Matrix
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('diagram-studio')}
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid rgba(38, 53, 42, 0.18)',
+                    color: '#26352A',
+                    padding: '7px 14px',
+                    borderRadius: '6px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Open Diagram-as-Code Studio
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ============================================================ */}
       {/* 7. SAFEGUARDING & DPDP ACT COMPLIANCE (Section 11)           */}
@@ -917,8 +1209,9 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             style={{
               padding: '40px',
               backgroundColor: '#FFFFFF',
-              border: '2px solid rgba(117, 181, 67, 0.4)',
-              boxShadow: 'var(--glow-green), var(--shadow-md)',
+              border: '1px solid rgba(38, 53, 42, 0.12)',
+              borderRadius: '12px',
+              boxShadow: '0 4px 16px rgba(38, 53, 42, 0.05)',
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
               gap: '36px',
