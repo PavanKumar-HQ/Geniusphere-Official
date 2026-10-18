@@ -94,6 +94,7 @@ export const App: React.FC = () => {
 
   // Viewport Simulator State (Desktop 100% vs Mobile PWA Frame 390px)
   const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [devToolbarVisible, setDevToolbarVisible] = useState<boolean>(false);
 
   // Sovereign Backup & Notes Overlay Modals
   const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
@@ -189,10 +190,11 @@ export const App: React.FC = () => {
       />
 
       {/* ============================================================ */}
-      {/* 0. PERSISTENT TELEMETRY, GOVERNANCE & SIMULATOR BAR         */}
+      {/* 0. PERSISTENT TELEMETRY, GOVERNANCE & SIMULATOR BAR (DEV MODE)*/}
       {/* ============================================================ */}
-      <div
-        style={{
+      {devToolbarVisible && (
+        <div
+          style={{
           backgroundColor: '#FAFAF4',
           color: '#26352A',
           fontSize: '0.78rem',
@@ -374,18 +376,18 @@ export const App: React.FC = () => {
           </select>
         </div>
       </div>
+      )}
 
       {/* ============================================================ */}
-      {/* 1. TOP PRIMARY NAVIGATION BAR                                */}
+      {/* 1. TOP PRIMARY NAVIGATION BAR (CLEAN, DESIGN BOARD 1)        */}
       {/* ============================================================ */}
       <header
         style={{
-          backgroundColor: '#FFFFFF',
-          borderBottom: '1px solid var(--border-subtle)',
+          backgroundColor: '#FAFAF4',
+          borderBottom: '1px solid #E5F0DF',
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          boxShadow: '0 2px 8px rgba(20, 38, 28, 0.04)',
         }}
       >
         <div
@@ -393,7 +395,7 @@ export const App: React.FC = () => {
             maxWidth: '1280px',
             margin: '0 auto',
             padding: '0 24px',
-            height: '68px',
+            height: '70px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -401,235 +403,157 @@ export const App: React.FC = () => {
           }}
         >
           {/* LEFT: GENIUSPHERE BRAND LOGO */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            type="button"
+            onClick={() => handleNavigate('home')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              textAlign: 'left',
+            }}
+          >
+            <div
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '50%',
+                backgroundColor: '#43A85B',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#FFFFFF',
+                boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+              }}
+            >
+              <ShieldCheck size={22} />
+            </div>
+            <div>
+              <span
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontSize: '1.35rem',
+                  fontWeight: 800,
+                  letterSpacing: '-0.02em',
+                  color: '#26352A',
+                  display: 'block',
+                  lineHeight: 1.1,
+                }}
+              >
+                Geniusphere
+              </span>
+              <span style={{ fontSize: '0.72rem', color: '#6A7D70', fontWeight: 600 }}>
+                Learn it. Apply it. Prove it.
+              </span>
+            </div>
+          </button>
+
+          {/* CENTER: CLEAN NAVIGATION LINKS */}
+          <nav
+            className="desktop-nav-links"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
             <button
               type="button"
               onClick={() => handleNavigate('home')}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                background: 'none',
+                backgroundColor: currentView === 'home' ? '#E5F0DF' : 'transparent',
                 border: 'none',
+                padding: '8px 16px',
+                color: currentView === 'home' ? '#26352A' : '#3A4E40',
+                fontWeight: currentView === 'home' ? 800 : 600,
+                borderRadius: '100px',
+                fontSize: '0.92rem',
                 cursor: 'pointer',
-                padding: 0,
-                textAlign: 'left',
+                transition: 'all 0.15s ease',
               }}
             >
-              <div
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '10px',
-                  backgroundColor: 'var(--brand-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#FFFFFF',
-                  boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
-                }}
-              >
-                <ShieldCheck size={24} />
-              </div>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-display-brand)',
-                      fontSize: '1.25rem',
-                      fontWeight: 700,
-                      letterSpacing: '-0.02em',
-                      color: 'var(--text-primary)',
-                    }}
-                  >
-                    GENIUSPHERE
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.68rem',
-                      fontWeight: 800,
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      backgroundColor: 'var(--brand-lime)',
-                      color: 'var(--brand-lime-text)',
-                      border: '1px solid rgba(38, 53, 42, 0.14)',
-                    }}
-                  >
-                    PILOT 2026
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                  Evidence-Backed Education Platform
-                </div>
-              </div>
+              Home
             </button>
-          </div>
 
-          {/* RIGHT: PRIMARY NAVIGATION LINKS & ACTIONS (DESKTOP) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Desktop Navigation Links */}
-            <nav
-              className="desktop-nav-links"
+            <button
+              type="button"
+              onClick={() => handleNavigate('catalogue')}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                marginRight: '8px',
+                backgroundColor: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '#E5F0DF' : 'transparent',
+                border: 'none',
+                padding: '8px 16px',
+                color: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '#26352A' : '#3A4E40',
+                fontWeight: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 800 : 600,
+                borderRadius: '100px',
+                fontSize: '0.92rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
-              <button
-                type="button"
-                onClick={() => handleNavigate('home')}
-                style={{
-                  backgroundColor: currentView === 'home' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'home' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'home' ? 'var(--brand-forest)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'home' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Home
-              </button>
+              Courses
+            </button>
 
-              <button
-                type="button"
-                onClick={() => handleNavigate('catalogue')}
-                style={{
-                  backgroundColor: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'var(--brand-forest)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Courses
-              </button>
+            <button
+              type="button"
+              onClick={() => handleNavigate('labs')}
+              style={{
+                backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? '#E5F0DF' : 'transparent',
+                border: 'none',
+                padding: '8px 16px',
+                color: currentView === 'labs' || currentView === 'lab-workspace' ? '#26352A' : '#3A4E40',
+                fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
+                borderRadius: '100px',
+                fontSize: '0.92rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Labs & Projects
+            </button>
 
-              <button
-                type="button"
-                onClick={() => handleNavigate('labs')}
-                style={{
-                  backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'labs' || currentView === 'lab-workspace' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'labs' || currentView === 'lab-workspace' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Labs
-              </button>
+            <button
+              type="button"
+              onClick={() => handleNavigate('resources')}
+              style={{
+                backgroundColor: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '#E5F0DF' : 'transparent',
+                border: 'none',
+                padding: '8px 16px',
+                color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '#26352A' : '#3A4E40',
+                fontWeight: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 800 : 600,
+                borderRadius: '100px',
+                fontSize: '0.92rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Resources
+            </button>
+          </nav>
 
-              <button
-                type="button"
-                onClick={() => handleNavigate('scam-defense')}
-                style={{
-                  backgroundColor: currentView === 'scam-defense' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'scam-defense' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'scam-defense' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'scam-defense' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Scam Defense
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('diagram-studio')}
-                style={{
-                  backgroundColor: currentView === 'diagram-studio' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'diagram-studio' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'diagram-studio' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'diagram-studio' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Studio
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('cie-audit')}
-                style={{
-                  backgroundColor: currentView === 'cie-audit' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'cie-audit' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'cie-audit' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'cie-audit' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                CIE Audit
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('resources')}
-                style={{
-                  backgroundColor: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Resources
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('about')}
-                style={{
-                  backgroundColor: currentView === 'about' ? 'var(--brand-surface)' : 'transparent',
-                  border: currentView === 'about' ? '1px solid var(--brand-border)' : '1px solid transparent',
-                  padding: '7px 14px',
-                  color: currentView === 'about' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                  fontWeight: currentView === 'about' ? 800 : 600,
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                About
-              </button>
-            </nav>
-
-            {/* Authenticated Role Workspace Button */}
+          {/* RIGHT: AUTH & ACTIVE ROLE WORKSPACE */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Active User Workspace Quick-Link */}
             {isLearner && (
               <button
                 type="button"
-                className={currentView === 'student-dashboard' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => handleNavigate('student-dashboard')}
-                style={{ height: '36px', fontSize: '0.82rem', padding: '0 12px' }}
-                title="Open Student Dashboard"
+                style={{
+                  backgroundColor: currentView === 'student-dashboard' ? '#43A85B' : '#E5F0DF',
+                  color: currentView === 'student-dashboard' ? '#FFFFFF' : '#26352A',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '7px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                }}
               >
                 <BookOpen size={14} />
                 <span>My Learning</span>
@@ -639,10 +563,20 @@ export const App: React.FC = () => {
             {isTeacher && (
               <button
                 type="button"
-                className={currentView === 'gradebook' || currentView === 'classrooms' ? 'btn-accent' : 'btn-secondary'}
                 onClick={() => handleNavigate('gradebook')}
-                style={{ height: '36px', fontSize: '0.82rem', padding: '0 12px' }}
-                title="Open Teacher Gradebook & Classrooms"
+                style={{
+                  backgroundColor: currentView === 'gradebook' || currentView === 'classrooms' ? '#43A85B' : '#E5F0DF',
+                  color: currentView === 'gradebook' || currentView === 'classrooms' ? '#FFFFFF' : '#26352A',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '7px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                }}
               >
                 <GraduationCap size={15} />
                 <span>Teacher Workspace</span>
@@ -652,44 +586,51 @@ export const App: React.FC = () => {
             {isInstAdmin && (
               <button
                 type="button"
-                className={currentView === 'institution-workspace' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => handleNavigate('institution-workspace')}
-                style={{ height: '36px', fontSize: '0.82rem', padding: '0 12px' }}
-                title="Open Institution Admin Workspace"
+                style={{
+                  backgroundColor: currentView === 'institution-workspace' ? '#43A85B' : '#E5F0DF',
+                  color: currentView === 'institution-workspace' ? '#FFFFFF' : '#26352A',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '7px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                }}
               >
                 <School size={14} />
                 <span>Admin Console</span>
               </button>
             )}
 
-            {isSuperadmin && (
-              <button
-                type="button"
-                className={currentView === 'platform-workspace' ? 'btn-primary' : 'btn-secondary'}
-                onClick={() => handleNavigate('platform-workspace')}
-                style={{ height: '36px', fontSize: '0.82rem', padding: '0 12px' }}
-                title="Open Platform Operations"
-              >
-                <Shield size={14} />
-                <span>Platform Ops</span>
-              </button>
-            )}
-
             {isGuardian && (
               <button
                 type="button"
-                className={currentView === 'parent' ? 'btn-primary' : 'btn-secondary'}
                 onClick={() => handleNavigate('parent')}
-                style={{ height: '36px', fontSize: '0.82rem', padding: '0 12px' }}
-                title="Open Parent Oversight Portal"
+                style={{
+                  backgroundColor: currentView === 'parent' ? '#43A85B' : '#E5F0DF',
+                  color: currentView === 'parent' ? '#FFFFFF' : '#26352A',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '7px 16px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                }}
               >
                 <Users size={14} />
                 <span>Parent Portal</span>
               </button>
             )}
 
-            {/* Persona Switcher Dropdown (Evaluation & Workflow Verification) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', margin: '0 4px' }}>
+            {/* Single Clean Persona Selector Pill */}
+            <div style={{ position: 'relative' }}>
               <select
                 value={currentUserId}
                 onChange={(e) => {
@@ -703,47 +644,45 @@ export const App: React.FC = () => {
                   else if (userObj?.role === 'learner') setCurrentView('student-dashboard');
                 }}
                 style={{
-                  padding: '6px 8px',
-                  borderRadius: '6px',
-                  border: '1px solid var(--border-strong)',
-                  backgroundColor: 'var(--bg-canvas)',
-                  fontWeight: 600,
-                  fontSize: '0.78rem',
-                  color: 'var(--text-primary)',
+                  padding: '6px 12px',
+                  borderRadius: '100px',
+                  border: '1px solid #E5F0DF',
+                  backgroundColor: '#FFFFFF',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  color: '#26352A',
                   cursor: 'pointer',
-                  maxWidth: '160px',
+                  outline: 'none',
                 }}
                 aria-label="Switch User Persona"
               >
                 {users.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.badge}: {u.name.split(' (')[0]}
+                    👤 {u.name.split(' (')[0]} ({u.badge})
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Authentication Buttons: Sign In & Get Started */}
+            {/* CTA Button: Get Started */}
             <button
               type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setAuthModalMode('signin');
-                setAuthModalOpen(true);
-              }}
-              style={{ height: '36px', fontSize: '0.82rem', padding: '0 12px' }}
-            >
-              Sign In
-            </button>
-
-            <button
-              type="button"
-              className="btn-primary"
               onClick={() => {
                 setAuthModalMode('getstarted');
                 setAuthModalOpen(true);
               }}
-              style={{ height: '36px', fontSize: '0.82rem', padding: '0 14px' }}
+              style={{
+                backgroundColor: '#43A85B',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '100px',
+                padding: '8px 20px',
+                fontSize: '0.88rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(67, 168, 91, 0.2)',
+                transition: 'all 0.15s ease',
+              }}
             >
               Get Started
             </button>
@@ -751,19 +690,22 @@ export const App: React.FC = () => {
             {/* Mobile Menu Hamburger Toggle */}
             <button
               type="button"
-              className="btn-secondary"
+              className="mobile-menu-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               style={{
-                display: 'inline-flex',
+                background: 'none',
+                border: '1px solid #E5F0DF',
+                borderRadius: '8px',
                 padding: '6px',
-                height: '36px',
-                width: '36px',
+                cursor: 'pointer',
+                display: 'none',
                 alignItems: 'center',
                 justifyContent: 'center',
+                color: '#26352A',
               }}
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -1313,7 +1255,24 @@ export const App: React.FC = () => {
               <span>•</span>
               <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
               <span>•</span>
-              <span>27 Curricular Courses • 12 Interactive Labs</span>
+              <span>40 Canonical Courses • 3 Learning Streams • 10 Interactive Labs</span>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => setDevToolbarVisible(!devToolbarVisible)}
+                style={{
+                  background: 'none',
+                  border: '1px solid #E5F0DF',
+                  borderRadius: '100px',
+                  padding: '3px 10px',
+                  color: '#43A85B',
+                  fontSize: '0.72rem',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                }}
+              >
+                ⚡ {devToolbarVisible ? 'Hide Developer Toolbar' : 'Dev / Auditor Mode'}
+              </button>
             </div>
           </div>
         </footer>

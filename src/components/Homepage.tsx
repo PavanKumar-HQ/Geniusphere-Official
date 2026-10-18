@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { HeroAnimationSandbox } from './HeroAnimationSandbox';
 import { PilotApplicationModal } from './PilotApplicationModal';
+import { MascotSphere } from './MascotSphere';
 import {
   Shield,
   ShieldCheck,
@@ -18,10 +19,10 @@ import {
   ChevronUp,
   FileText,
   Check,
-  Sparkles,
   Lock,
   Award,
   PlayCircle,
+  BookOpen,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -36,6 +37,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
   const [pilotModalOpen, setPilotModalOpen] = useState(false);
   const [audienceTab, setAudienceTab] = useState<'school' | 'college' | 'teacher' | 'parent'>('school');
+  const [heroMode, setHeroMode] = useState<'student' | 'sandbox'>('student');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const getDomainCount = (domain: string) => {
@@ -52,14 +54,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       {/* 1. HERO SECTION (2-Column Responsive with Live Sandbox)       */}
       {/* ============================================================ */}
       {/* ============================================================ */}
-      {/* 1. HERO SECTION (2-Column Responsive with Live Sandbox)       */}
+      {/* 1. HERO SECTION (CLEAN & EDITORIAL, DESIGN BOARD 1)          */}
       {/* ============================================================ */}
       <section
-        className="hero-ambient-mesh"
         style={{
-          padding: '48px 24px 64px',
+          padding: '56px 24px 72px',
           width: '100%',
-          borderBottom: '1px solid rgba(48, 178, 231, 0.15)',
+          backgroundColor: '#FAFAF4',
+          borderBottom: '1px solid #E5F0DF',
           position: 'relative',
         }}
       >
@@ -69,137 +71,311 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             margin: '0 auto',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-            gap: '40px',
+            gap: '48px',
             alignItems: 'center',
           }}
         >
-          {/* Left Column: Mission, Value Prop, CTAs */}
+          {/* Left Column: Clean Mission, Value Prop, CTAs (Design Board 1) */}
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-start',
-              gap: '20px',
+              gap: '24px',
             }}
           >
-            {/* Clean Status Eyebrow */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '6px 14px',
-                borderRadius: '9999px',
-                backgroundColor: '#E5F0DF',
-                border: '1px solid rgba(38, 53, 42, 0.14)',
-                color: '#26352A',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                letterSpacing: '0.03em',
-              }}
-            >
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#43A85B' }} />
-              <span>EVIDENCE-BACKED EDUCATION • INDIA 2026</span>
-            </div>
-
-            {/* Headline: Space Grotesk Bold, Charcoal */}
+            {/* Headline: Space Grotesk Bold, Fresh Green highlight */}
             <h1
               style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: 'clamp(2.5rem, 4.4vw, 3.75rem)',
-                fontWeight: 700,
-                lineHeight: 1.12,
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 'clamp(2.6rem, 5vw, 4rem)',
+                fontWeight: 800,
+                lineHeight: 1.14,
                 letterSpacing: '-0.03em',
                 color: '#26352A',
                 margin: 0,
               }}
             >
-              Practical skills, taught in class,{' '}
-              <span style={{ color: '#43A85B' }}>measured clearly.</span>
+              Build real skills <br />
+              for a <span style={{ color: '#43A85B' }}>brighter future</span>
             </h1>
 
-            {/* Supporting Summary */}
+            {/* Supporting Subtitle */}
             <p
               style={{
-                fontSize: '1.08rem',
-                lineHeight: 1.68,
-                color: '#4A5B4F',
+                fontSize: '1.15rem',
+                lineHeight: 1.6,
+                color: '#3A4E40',
                 margin: 0,
-                maxWidth: '560px',
+                maxWidth: '520px',
+                fontWeight: 500,
               }}
             >
-              An India-first practical skills ecosystem for schools, PU colleges, and universities. Hands-on Technology, Applied Finance, and Professional Competencies—with teacher-managed cohorts, zero-install browser sandboxes, and DPDP-compliant safeguarding.
+              Learn practical skills, complete hands-on activities, get certified and grow — at your pace.
             </p>
 
-            {/* Primary Action Buttons */}
+            {/* Primary Action Buttons (Pill design matching Design Board 1) */}
             <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
               <button
                 type="button"
-                className="btn-primary"
-                onClick={() => setPilotModalOpen(true)}
+                onClick={() => onNavigate('catalogue')}
                 style={{
-                  height: '48px',
-                  padding: '0 26px',
-                  fontSize: '0.96rem',
-                  fontWeight: 700,
-                  borderRadius: '8px',
+                  backgroundColor: '#43A85B',
+                  color: '#FFFFFF',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  padding: '14px 28px',
+                  borderRadius: '100px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(67, 168, 91, 0.25)',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <School size={17} />
-                <span>Book a 20-min Pilot Demo</span>
+                <span>Explore Courses</span>
                 <ArrowRight size={16} />
               </button>
 
               <button
                 type="button"
-                className="btn-secondary"
-                onClick={() => onNavigate('labs')}
+                onClick={() => setPilotModalOpen(true)}
                 style={{
-                  height: '48px',
-                  padding: '0 22px',
-                  fontSize: '0.96rem',
+                  backgroundColor: '#FFFFFF',
+                  color: '#26352A',
+                  fontSize: '1rem',
                   fontWeight: 700,
-                  borderRadius: '8px',
+                  padding: '14px 26px',
+                  borderRadius: '100px',
+                  border: '1.5px solid #E5F0DF',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <Terminal size={17} color="#43A85B" />
-                <span>Explore 12 Sandboxes</span>
+                For Institutions
               </button>
             </div>
 
-            {/* Refined Institutional Verification Badges */}
+            {/* 3 Clean Value Pillars below (matching Design Board 1) */}
             <div
               style={{
                 display: 'flex',
+                gap: '24px',
                 alignItems: 'center',
-                gap: '20px',
                 flexWrap: 'wrap',
-                paddingTop: '12px',
-                borderTop: '1px solid rgba(38, 53, 42, 0.12)',
+                paddingTop: '16px',
+                borderTop: '1px solid #E5F0DF',
                 width: '100%',
                 maxWidth: '560px',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#4A5B4F', fontWeight: 600 }}>
-                <CheckCircle2 size={15} color="#43A85B" />
-                <span>CBSE & AICTE Aligned</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    backgroundColor: '#E5F0DF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#43A85B',
+                    flexShrink: 0,
+                  }}
+                >
+                  <BookOpen size={18} />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Learn</div>
+                  <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Expert-designed courses</div>
+                </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#4A5B4F', fontWeight: 600 }}>
-                <Shield size={15} color="#43A85B" />
-                <span>DPDP Act 2023 Compliant</span>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    backgroundColor: '#E5F0DF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#43A85B',
+                    flexShrink: 0,
+                  }}
+                >
+                  <CheckCircle2 size={18} />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Apply</div>
+                  <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Hands-on labs & projects</div>
+                </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#4A5B4F', fontWeight: 600 }}>
-                <Sparkles size={15} color="#43A85B" />
-                <span>Zero-Install Wasm</span>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    backgroundColor: '#E5F0DF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#43A85B',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Award size={18} />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Prove</div>
+                  <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Certificates & credentials</div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Live Hero Animation Sandbox with 5 modes */}
-          <div style={{ position: 'relative' }}>
-            <HeroAnimationSandbox
-              onLaunchLab={(slug) => onNavigate('lab-workspace', slug)}
-            />
+          {/* Right Column: Editorial Student Visual & Interactive Sandbox Toggle */}
+          <div
+            style={{
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            {/* Mode switcher tabs (Subtle and clean at top) */}
+            <div
+              style={{
+                display: 'inline-flex',
+                backgroundColor: '#E5F0DF',
+                padding: '3px',
+                borderRadius: '100px',
+                marginBottom: '16px',
+                gap: '4px',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setHeroMode('student')}
+                style={{
+                  border: 'none',
+                  backgroundColor: heroMode === 'student' ? '#FFFFFF' : 'transparent',
+                  color: heroMode === 'student' ? '#26352A' : '#6A7D70',
+                  fontWeight: heroMode === 'student' ? 800 : 600,
+                  padding: '6px 16px',
+                  borderRadius: '100px',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: heroMode === 'student' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                Student Story
+              </button>
+              <button
+                type="button"
+                onClick={() => setHeroMode('sandbox')}
+                style={{
+                  border: 'none',
+                  backgroundColor: heroMode === 'sandbox' ? '#FFFFFF' : 'transparent',
+                  color: heroMode === 'sandbox' ? '#26352A' : '#6A7D70',
+                  fontWeight: heroMode === 'sandbox' ? 800 : 600,
+                  padding: '6px 16px',
+                  borderRadius: '100px',
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                  boxShadow: heroMode === 'sandbox' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                Interactive Sandbox Preview
+              </button>
+            </div>
+
+            {heroMode === 'student' ? (
+              <div
+                style={{
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: '460px',
+                  borderRadius: '24px',
+                  overflow: 'hidden',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #E5F0DF',
+                  boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
+                }}
+              >
+                <img
+                  src="/images/student_hero.jpg"
+                  alt="Geniusphere Student"
+                  style={{
+                    width: '100%',
+                    height: '440px',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                />
+
+                {/* Playful Editorial Sticker (matching Design Board 1) */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: '#D9F477',
+                    color: '#26352A',
+                    padding: '6px 16px',
+                    borderRadius: '12px',
+                    fontFamily: 'Space Grotesk, sans-serif',
+                    fontWeight: 800,
+                    fontSize: '0.92rem',
+                    transform: 'rotate(4deg)',
+                    boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
+                  }}
+                >
+                  Real Skills. Real Opportunities.
+                </div>
+
+                {/* Mascot Greeting Tag */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: '20px',
+                    left: '20px',
+                    backgroundColor: 'rgba(250, 250, 244, 0.95)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid #E5F0DF',
+                    padding: '10px 16px',
+                    borderRadius: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <MascotSphere pose="happy" size={44} />
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.86rem', color: '#26352A' }}>
+                      Learn by doing
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: '#6A7D70' }}>
+                      Verified browser sandboxes
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ width: '100%', maxWidth: '520px' }}>
+                <HeroAnimationSandbox
+                  onLaunchLab={(slug) => onNavigate('lab-workspace', slug)}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
