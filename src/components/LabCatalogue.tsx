@@ -15,6 +15,7 @@ export interface LabCatalogueProps {
   currentUserId: string;
   onSelectLab: (slug: string) => void;
   onNavigateHome: () => void;
+  onOpenCodingSandbox?: () => void;
 }
 
 export const LabCatalogue: React.FC<LabCatalogueProps> = ({
@@ -22,6 +23,7 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
   currentUserId,
   onSelectLab,
   onNavigateHome,
+  onOpenCodingSandbox,
 }) => {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -80,6 +82,77 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
         </div>
         <MascotSphere pose="coding" size={96} speechBubble="Ready to run code in the sandbox?" />
       </div>
+
+      {/* Flagship Multi-Language Coding Sandbox Banner */}
+      <div
+        className="card"
+        style={{
+          background: 'linear-gradient(135deg, #F2F8EF 0%, #FFFFFF 100%)',
+          border: '2px solid #43A85B',
+          borderRadius: '16px',
+          padding: '24px 28px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '20px',
+          boxShadow: '0 4px 16px rgba(67, 168, 91, 0.12)',
+        }}
+      >
+        <div style={{ maxWidth: '720px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              backgroundColor: '#43A85B',
+              color: '#FFFFFF',
+              padding: '3px 10px',
+              borderRadius: '100px',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              marginBottom: '10px',
+            }}
+          >
+            <span>⚡ Flagship Sandbox • Python 3.12 &amp; C Compiler</span>
+          </div>
+          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#26352A', margin: '0 0 8px 0' }}>
+            Multi-Language In-Browser Coding Sandbox
+          </h2>
+          <p style={{ margin: 0, color: '#4A5B4F', fontSize: '0.92rem', lineHeight: 1.5 }}>
+            Directly test and compile <strong>Python</strong> (functions, loops, math, algorithms) and <strong>C Language</strong> (pointers, printf formatting, buffer boundary checks) with live terminal stdout feedback and zero setup.
+          </p>
+        </div>
+
+        {onOpenCodingSandbox && (
+          <button
+            type="button"
+            onClick={onOpenCodingSandbox}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: '#43A85B',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '100px',
+              padding: '12px 24px',
+              fontWeight: 800,
+              fontSize: '0.92rem',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(67, 168, 91, 0.28)',
+              transition: 'background 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#38944f')}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#43A85B')}
+          >
+            <span>Launch Python &amp; C Sandbox</span>
+            <ArrowRight size={16} />
+          </button>
+        )}
+      </div>
+
 
       {/* Filter and Search Bar */}
       <div

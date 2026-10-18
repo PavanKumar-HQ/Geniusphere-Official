@@ -965,14 +965,21 @@ tr:hover td {
 }
 
 .sidebar-nav-btn.active {
-  background-color: #E5F0DF;
-  color: #26352A;
-  font-weight: 800;
+  background-color: #43A85B !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 14px rgba(67, 168, 91, 0.32);
 }
 
 .sidebar-nav-btn.active svg {
-  color: #43A85B !important;
+  color: #FFFFFF !important;
 }
+
+.sidebar-nav-btn.active:hover {
+  background-color: #38944f !important;
+  color: #FFFFFF !important;
+}
+
 
 .platform-main-content {
   flex: 1;

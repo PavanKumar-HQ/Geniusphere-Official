@@ -28,6 +28,10 @@ import { MascotSphere } from './components/MascotSphere';
 import { CertificateModal } from './components/CertificateModal';
 import { SoftwareAuthScreen } from './components/SoftwareAuthScreen';
 import { SoftwareUserGuideModal } from './components/SoftwareUserGuideModal';
+import { MultiLanguageCodeSandbox } from './components/MultiLanguageCodeSandbox';
+import { SectionContextBar } from './components/SectionContextBar';
+import { CertificatesView } from './components/CertificatesView';
+import { Certificate } from './types';
 import {
   ShieldCheck,
   BookOpen,
@@ -46,6 +50,7 @@ import {
   ArrowRight,
   Sparkles,
   LogOut,
+  Code2,
 } from 'lucide-react';
 
 export type AppView =
@@ -55,6 +60,8 @@ export type AppView =
   | 'lesson-player'
   | 'labs'
   | 'lab-workspace'
+  | 'code-sandbox'
+  | 'certificates'
   | 'resources'
   | 'leaderboard'
   | 'about'
@@ -102,6 +109,7 @@ export const App: React.FC = () => {
   const [globalSearch, setGlobalSearch] = useState('');
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [userGuideOpen, setUserGuideOpen] = useState<boolean>(false);
 
@@ -121,6 +129,8 @@ export const App: React.FC = () => {
 
   const allCourses = useMemo(() => db.getCanonicalCourses(), [db, refreshTrigger]);
   const allLabs = useMemo(() => db.getLabDefinitions(), [db]);
+  const selectedCourse = useMemo(() => db.getCourseBySlug(selectedCourseSlug), [db, selectedCourseSlug]);
+  const selectedLab = useMemo(() => allLabs.find(l => l.slug === selectedLabSlug), [allLabs, selectedLabSlug]);
 
   const matchingCourses = useMemo(() => {
     if (!globalSearch.trim()) return [];
@@ -156,6 +166,8 @@ export const App: React.FC = () => {
       setCurrentView('catalogue');
     } else if (
       view === 'home' ||
+      view === 'code-sandbox' ||
+      view === 'certificates' ||
       view === 'resources' ||
       view === 'leaderboard' ||
       view === 'about' ||
@@ -814,6 +826,15 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
+                  onClick={() => handleNavigate('code-sandbox')}
+                  className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                >
+                  <Code2 size={18} />
+                  <span>Coding Sandbox (Python & C)</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => handleNavigate('institution-workspace')}
                   className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
                 >
@@ -823,11 +844,8 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setCertificateModalOpen(true);
-                    setSidebarOpen(false);
-                  }}
-                  className="sidebar-nav-btn"
+                  onClick={() => handleNavigate('certificates')}
+                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
                 >
                   <Award size={18} />
                   <span>Certificate Registry</span>
@@ -896,6 +914,15 @@ export const App: React.FC = () => {
 
                   <button
                     type="button"
+                    onClick={() => handleNavigate('code-sandbox')}
+                    className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                  >
+                    <Code2 size={18} />
+                    <span>Coding Sandbox (Python & C)</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleNavigate('leaderboard')}
                     className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
                   >
@@ -914,11 +941,8 @@ export const App: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() => {
-                      setCertificateModalOpen(true);
-                      setSidebarOpen(false);
-                    }}
-                    className="sidebar-nav-btn"
+                    onClick={() => handleNavigate('certificates')}
+                    className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
                   >
                     <Award size={18} />
                     <span>Certificates</span>
@@ -1081,10 +1105,25 @@ export const App: React.FC = () => {
 
         {/* MAIN WORKSPACE CONTENT */}
         <div className="platform-main-content">
+          <SectionContextBar
+            currentView={currentView}
+            courseTitle={selectedCourse?.title}
+            labTitle={selectedLab?.title}
+            onNavigate={handleNavigate}
+            onBack={() => {
+              if (currentView === 'course-detail' || currentView === 'lesson-player') {
+                handleNavigate('catalogue');
+              } else if (currentView === 'lab-workspace') {
+                handleNavigate('labs');
+              } else {
+                handleNavigate('home');
+              }
+            }}
+          />
           <main
             style={{
               flex: 1,
-              padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '32px 28px',
+              padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 28px 80px',
               maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1320px',
               margin: '0 auto',
               width: '100%',
@@ -1125,6 +1164,27 @@ export const App: React.FC = () => {
               setCurrentView('lab-workspace');
             }}
             onNavigateHome={() => handleNavigate('home')}
+            onOpenCodingSandbox={() => handleNavigate('code-sandbox')}
+          />
+        )}
+
+        {currentView === 'code-sandbox' && (
+          <MultiLanguageCodeSandbox
+            key={`code-sandbox-${refreshTrigger}`}
+            initialLanguage="python"
+          />
+        )}
+
+        {currentView === 'certificates' && (
+          <CertificatesView
+            key={`certs-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            currentUserId={currentUserId}
+            onOpenCertificateModal={(cert) => {
+              setSelectedCertificate(cert);
+              setCertificateModalOpen(true);
+            }}
+            onNavigateCourses={() => handleNavigate('catalogue')}
           />
         )}
 
@@ -1308,20 +1368,22 @@ export const App: React.FC = () => {
       {certificateModalOpen && (
         <CertificateModal
           certificate={
+            selectedCertificate ||
             db.getUserCertificates(currentUserId)[0] || {
-              id: 'cert-sample-ai',
+              id: 'cert-cybersec-2026',
               user_id: currentUserId,
-              course_id: 'course-ai-fund',
-              course_title: 'Artificial Intelligence Literacy',
+              course_id: 'course-web-sec',
+              course_title: 'Defensive Web Security & Zero-Trust Architecture',
               student_name: currentUser.name.split(' (')[0],
-              verification_hash: '9f8e7d6c5b4a3210fedcba9876543210',
-              issued_at: new Date().toISOString(),
-              credential_url: 'https://verify.geniusphere.tech/c/ai-literacy',
-              metadata: {
-                score_achieved: 100,
-                learning_stream: 'Technology & Digital Skills',
-                curriculum_version: '2026.1',
-              },
+              verification_hash: 'sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
+              issue_date: '2026-03-15',
+              grade: 98,
+              skills_acquired: [
+                'Zero-Trust Architecture',
+                'OWASP Top 10 Defense',
+                'CSRF & Token Validation',
+                'Cryptographic Key Management',
+              ],
             }
           }
           onClose={() => setCertificateModalOpen(false)}
