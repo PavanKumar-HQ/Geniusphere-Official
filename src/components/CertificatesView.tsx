@@ -114,7 +114,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
         <MascotSphere
           pose="celebrating"
           size={84}
-          speechBubble="Every certificate you earn proves genuine hands-on mastery! 🎖️"
+          speechBubble="Every certificate you earn proves genuine hands-on mastery!"
         />
       </div>
 

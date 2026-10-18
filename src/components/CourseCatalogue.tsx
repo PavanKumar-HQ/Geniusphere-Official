@@ -11,21 +11,14 @@ import {
   Users,
   Award,
   CheckCircle2,
-  ChevronRight,
   Sparkles,
   Terminal,
-  ShieldCheck,
   GraduationCap,
-  Box,
-  Wifi,
-  IndianRupee,
-  Wallet,
-  Landmark,
-  CreditCard,
-  MessageCircle,
-  Mic,
-  Lightbulb,
-  Crown,
+  Search,
+  X,
+  Grid,
+  Layers,
+  Filter,
 } from 'lucide-react';
 
 interface CourseCatalogueProps {
@@ -48,30 +41,19 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       : 'all'
   );
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
-  const [expandedStreams, setExpandedStreams] = useState<Record<string, boolean>>({
-    technology: false,
-    finance: false,
-    professional: false,
-  });
+  const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grid');
 
   const streams = db.getCanonicalStreams();
   const allCanonicalCourses = db.getCanonicalCourses();
 
-  // Filtered courses for search or individual stream view
+  // Filtered courses for search or filter selection
   const filteredCourses = db.getCanonicalCourses({
     stream: selectedStream === 'all' ? undefined : selectedStream,
     search: search.trim() ? search : undefined,
     level: selectedLevel === 'all' ? undefined : selectedLevel,
   });
 
-  const toggleStreamExpand = (streamId: string) => {
-    setExpandedStreams((prev) => ({
-      ...prev,
-      [streamId]: !prev[streamId],
-    }));
-  };
-
-  const getStreamIcon = (streamId: string, size: number = 20) => {
+  const getStreamIcon = (streamId: string, size: number = 18) => {
     switch (streamId) {
       case 'technology':
         return <Cpu size={size} />;
@@ -84,41 +66,50 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
     }
   };
 
-  const getCourseItemIcon = (streamId: string, idx: number) => {
-    if (streamId === 'technology') {
-      const icons = [
-        <Cpu key="cpu" size={17} />,
-        <Sparkles key="sp" size={17} />,
-        <Terminal key="tm" size={17} />,
-        <Box key="bx" size={17} />,
-        <Wifi key="wf" size={17} />,
-        <ShieldCheck key="sc" size={17} />,
-      ];
-      return icons[idx % icons.length];
+  const getStreamMeta = (streamId: string) => {
+    switch (streamId) {
+      case 'technology':
+        return {
+          label: 'Technology & Digital Skills',
+          color: '#265430',
+          bg: '#E5F0DF',
+          accent: '#43A85B',
+          borderColor: '#CDE5C4',
+        };
+      case 'finance':
+        return {
+          label: 'Financial Literacy & Economy',
+          color: '#344E11',
+          bg: '#F2F9DE',
+          accent: '#82C424',
+          borderColor: '#DCEEB2',
+        };
+      case 'professional':
+        return {
+          label: 'Professional & Life Skills',
+          color: '#1E4633',
+          bg: '#E7F4EE',
+          accent: '#348B60',
+          borderColor: '#C7E7D9',
+        };
+      default:
+        return {
+          label: 'General Curriculum',
+          color: '#26352A',
+          bg: '#F0F4EC',
+          accent: '#43A85B',
+          borderColor: '#E0EADB',
+        };
     }
-    if (streamId === 'finance') {
-      const icons = [
-        <IndianRupee key="inr" size={17} />,
-        <Wallet key="wal" size={17} />,
-        <Landmark key="lm" size={17} />,
-        <CreditCard key="cc" size={17} />,
-        <ShieldCheck key="sc2" size={17} />,
-        <Coins key="co" size={17} />,
-      ];
-      return icons[idx % icons.length];
-    }
-    const icons = [
-      <Clock key="cl" size={17} />,
-      <MessageCircle key="mc" size={17} />,
-      <Mic key="mic" size={17} />,
-      <Lightbulb key="lb" size={17} />,
-      <Crown key="cr" size={17} />,
-      <Users key="us" size={17} />,
-    ];
-    return icons[idx % icons.length];
   };
 
-  const isBrowsingAllWithoutSearch = selectedStream === 'all' && !search.trim() && selectedLevel === 'all';
+  const hasActiveFilters = selectedStream !== 'all' || selectedLevel !== 'all' || search.trim() !== '';
+
+  const resetFilters = () => {
+    setSearch('');
+    setSelectedStream('all');
+    setSelectedLevel('all');
+  };
 
   return (
     <div
@@ -128,28 +119,29 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         padding: '32px 24px 80px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '36px',
+        gap: '32px',
       }}
     >
       {/* ================================================================ */}
-      {/* TOP HEADER SECTION WITH MASCOT & STAT BADGES (Design Board 2) */}
+      {/* TOP HERO HEADER SECTION WITH STUDYING MASCOT & STAT BADGES       */}
       {/* ================================================================ */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1.4fr 1.1fr 1fr',
+          gridTemplateColumns: 'minmax(320px, 1.4fr) minmax(200px, 0.9fr) minmax(260px, 1fr)',
           gap: '28px',
           alignItems: 'center',
           backgroundColor: '#FAFAF4',
           borderRadius: '24px',
-          padding: '36px 36px 28px',
+          padding: '32px 36px 28px',
           border: '1px solid #E5F0DF',
           position: 'relative',
           overflow: 'hidden',
+          boxShadow: '0 4px 20px rgba(38, 53, 42, 0.03)',
         }}
       >
         {/* Left: Titles & Mission Statement */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <div>
             <span
               style={{
@@ -160,19 +152,19 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 borderRadius: '100px',
                 backgroundColor: '#E5F0DF',
                 color: '#26352A',
-                fontSize: '0.8rem',
+                fontSize: '0.78rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
                 marginBottom: '10px',
               }}
             >
-              <Sparkles size={13} color="#43A85B" /> Practical Skills Platform
+              <Sparkles size={13} color="#43A85B" /> Canonical Skills Curriculum
             </span>
             <h1
               style={{
-                fontSize: '2.75rem',
-                fontWeight: 800,
+                fontSize: '2.5rem',
+                fontWeight: 900,
                 color: '#26352A',
                 letterSpacing: '-0.03em',
                 margin: 0,
@@ -186,30 +178,30 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
 
           <h2
             style={{
-              fontSize: '1.25rem',
+              fontSize: '1.15rem',
               fontWeight: 700,
               color: '#43A85B',
               margin: 0,
             }}
           >
-            Choose your path. Build real skills.
+            Choose your learning path. Master real-world capabilities.
           </h2>
 
           <p
             style={{
               color: '#3A4E40',
-              fontSize: '0.98rem',
+              fontSize: '0.94rem',
               lineHeight: 1.55,
               margin: 0,
               maxWidth: '520px',
             }}
           >
-            Explore our curated 40-course curriculum across Technology, Finance and Professional Skills.
-            Learn at your own pace, with hands-on practice, real projects and meaningful feedback.
+            Explore our curated 40-course syllabus across Technology, Applied Indian Finance, and Career Readiness.
+            Every course features hands-on exercises, browser sandboxes, and verified milestone certification.
           </p>
         </div>
 
-        {/* Center: Mascot Sphere with Playful Angled Quote */}
+        {/* Center: Mascot Sphere with Cap & Glowing Digital Book */}
         <div
           style={{
             display: 'flex',
@@ -222,35 +214,42 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '-12px',
-              left: '10px',
-              transform: 'rotate(-7deg)',
-              fontFamily: 'Space Grotesk, cursive, sans-serif',
+              top: '-10px',
+              left: '12px',
+              transform: 'rotate(-5deg)',
+              fontFamily: 'Space Grotesk, sans-serif',
               fontWeight: 800,
-              fontSize: '1.05rem',
+              fontSize: '0.92rem',
               color: '#26352A',
               backgroundColor: '#D9F477',
-              padding: '4px 12px',
+              padding: '5px 14px',
               borderRadius: '12px',
               boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
               zIndex: 2,
+              whiteSpace: 'nowrap',
             }}
           >
-            Small steps. Big dreams.
+            Small steps. Giant leaps.
           </div>
-          <MascotSphere pose="happy" size={170} />
+          <MascotSphere
+            pose="studying"
+            size={160}
+            animated={true}
+            interactive={true}
+          />
         </div>
 
-        {/* Far Right: Stacked Stat Badges matching Design Board 2 */}
+        {/* Far Right: Stat Highlights matching Enterprise SaaS Standard */}
         <div
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
+            gap: '10px',
             backgroundColor: '#FFFFFF',
-            padding: '20px',
+            padding: '18px 20px',
             borderRadius: '18px',
             border: '1px solid #E5F0DF',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -267,11 +266,11 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 flexShrink: 0,
               }}
             >
-              <Users size={18} />
+              <Cpu size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>3 Learning Streams</div>
-              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Structured career pathways</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>3 Learning Streams</div>
+              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>Technology, Finance & Careers</div>
             </div>
           </div>
 
@@ -292,8 +291,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               <BookOpen size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>40+ Courses</div>
-              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Modular, self-paced learning</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>40 Full Courses</div>
+              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>180+ verified lessons & quizzes</div>
             </div>
           </div>
 
@@ -314,8 +313,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               <Terminal size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>Hands-on Labs & Projects</div>
-              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Interactive browser execution</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Interactive Sandboxes</div>
+              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>Python 3.12 & C Compiler live</div>
             </div>
           </div>
 
@@ -336,342 +335,510 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               <Award size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>Earn Verifiable Certificates</div>
-              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Cryptographic verification hash</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Verifiable Credentials</div>
+              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>SHA-256 tamper-proof hash</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* ================================================================ */}
-      {/* FILTER CONTROLS (Shown when searching or filtering)              */}
+      {/* INTERACTIVE NAVIGATION & FILTER HUB                              */}
+      {/* Always visible, clear, and spacious                              */}
       {/* ================================================================ */}
-      {!isBrowsingAllWithoutSearch ? (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          backgroundColor: '#FFFFFF',
+          padding: '20px 24px',
+          borderRadius: '20px',
+          border: '1px solid #E5F0DF',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+        }}
+      >
+        {/* Stream Selector Navigation Tabs */}
         <div
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            gap: '16px',
-            backgroundColor: '#FFFFFF',
-            padding: '20px 24px',
-            borderRadius: '16px',
-            border: '1px solid #E5F0DF',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '12px',
+            borderBottom: '1px solid #EEF3E9',
+            paddingBottom: '16px',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '16px',
-            }}
-          >
-            {/* Stream Filter Pills */}
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => setSelectedStream('all')}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {/* All Courses Tab */}
+            <button
+              type="button"
+              onClick={() => setSelectedStream('all')}
+              style={{
+                padding: '9px 18px',
+                borderRadius: '100px',
+                border: 'none',
+                backgroundColor: selectedStream === 'all' ? '#43A85B' : '#F1F6EC',
+                color: selectedStream === 'all' ? '#FFFFFF' : '#26352A',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.15s ease',
+                boxShadow: selectedStream === 'all' ? '0 2px 8px rgba(67, 168, 91, 0.28)' : 'none',
+              }}
+            >
+              <GraduationCap size={16} />
+              <span>All Courses</span>
+              <span
                 style={{
-                  backgroundColor: selectedStream === 'all' ? '#43A85B' : '#E5F0DF',
-                  color: selectedStream === 'all' ? '#FFFFFF' : '#26352A',
-                  border: 'none',
+                  backgroundColor: selectedStream === 'all' ? 'rgba(255,255,255,0.25)' : '#E0ECD8',
+                  padding: '2px 8px',
+                  borderRadius: '100px',
+                  fontSize: '0.75rem',
                   fontWeight: 700,
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
                 }}
               >
-                All Streams ({allCanonicalCourses.length})
-              </button>
+                {allCanonicalCourses.length}
+              </span>
+            </button>
 
-              {streams.map((s) => (
+            {/* Stream Specific Tabs */}
+            {streams.map((s) => {
+              const isSelected = selectedStream === s.id;
+              return (
                 <button
                   key={s.id}
                   type="button"
                   onClick={() => setSelectedStream(s.id)}
                   style={{
-                    backgroundColor: selectedStream === s.id ? '#43A85B' : '#E5F0DF',
-                    color: selectedStream === s.id ? '#FFFFFF' : '#26352A',
+                    padding: '9px 18px',
+                    borderRadius: '100px',
                     border: 'none',
-                    fontWeight: 700,
-                    padding: '8px 16px',
-                    borderRadius: '20px',
+                    backgroundColor: isSelected ? '#43A85B' : '#F1F6EC',
+                    color: isSelected ? '#FFFFFF' : '#26352A',
+                    fontWeight: 800,
+                    fontSize: '0.88rem',
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px',
+                    gap: '8px',
+                    transition: 'all 0.15s ease',
+                    boxShadow: isSelected ? '0 2px 8px rgba(67, 168, 91, 0.28)' : 'none',
+                  }}
+                >
+                  {getStreamIcon(s.id, 16)}
+                  <span>{s.title}</span>
+                  <span
+                    style={{
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#E0ECD8',
+                      padding: '2px 8px',
+                      borderRadius: '100px',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    {s.courses.length}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* View Mode Switcher: Grid vs Grouped */}
+          {selectedStream === 'all' && !search.trim() && selectedLevel === 'all' && (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#F1F6EC',
+                borderRadius: '100px',
+                padding: '3px',
+                border: '1px solid #E2EEDB',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                title="Continuous Grid View"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '100px',
+                  border: 'none',
+                  backgroundColor: viewMode === 'grid' ? '#FFFFFF' : 'transparent',
+                  color: viewMode === 'grid' ? '#26352A' : '#6A7D70',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  boxShadow: viewMode === 'grid' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                }}
+              >
+                <Grid size={14} />
+                <span>Grid View</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setViewMode('grouped')}
+                title="Grouped by Stream Sections"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '100px',
+                  border: 'none',
+                  backgroundColor: viewMode === 'grouped' ? '#FFFFFF' : 'transparent',
+                  color: viewMode === 'grouped' ? '#26352A' : '#6A7D70',
+                  fontWeight: 700,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  boxShadow: viewMode === 'grouped' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                }}
+              >
+                <Layers size={14} />
+                <span>Stream Sections</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Search & Difficulty Filter Sub-bar */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '14px',
+          }}
+        >
+          {/* Real-time Search Box */}
+          <div
+            style={{
+              position: 'relative',
+              flex: '1 1 320px',
+              maxWidth: '480px',
+            }}
+          >
+            <Search
+              size={16}
+              style={{
+                position: 'absolute',
+                left: '14px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#6A7D70',
+              }}
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search courses, skills, Python, UPI, AI, Resume..."
+              style={{
+                width: '100%',
+                padding: '10px 38px 10px 40px',
+                borderRadius: '100px',
+                border: '1px solid #D6E6CF',
+                backgroundColor: '#FAFBF9',
+                fontSize: '0.88rem',
+                color: '#26352A',
+                outline: 'none',
+                transition: 'border-color 0.15s ease, background-color 0.15s ease',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#43A85B';
+                e.currentTarget.style.backgroundColor = '#FFFFFF';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#D6E6CF';
+                e.currentTarget.style.backgroundColor = '#FAFBF9';
+              }}
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#6A7D70',
+                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Difficulty Level Pills */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#6A7D70', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Filter size={13} /> Level:
+            </span>
+            {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((lvl) => {
+              const isLvlSelected = selectedLevel === lvl;
+              return (
+                <button
+                  key={lvl}
+                  type="button"
+                  onClick={() => setSelectedLevel(lvl)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '100px',
+                    border: '1px solid',
+                    borderColor: isLvlSelected ? '#43A85B' : '#E2EEDB',
+                    backgroundColor: isLvlSelected ? '#E5F0DF' : '#FFFFFF',
+                    color: isLvlSelected ? '#1B4022' : '#556D5C',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    textTransform: 'capitalize',
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  {getStreamIcon(s.id, 14)}
-                  <span>
-                    {s.title} ({s.courses.length})
-                  </span>
+                  {lvl === 'all' ? 'All Levels' : lvl}
                 </button>
-              ))}
-            </div>
+              );
+            })}
 
-            {/* Clear Filters Button */}
-            <button
-              type="button"
-              onClick={() => {
-                setSearch('');
-                setSelectedStream('all');
-                setSelectedLevel('all');
-              }}
-              style={{
-                background: 'none',
-                border: '1px solid #E5F0DF',
-                borderRadius: '100px',
-                padding: '6px 14px',
-                fontSize: '0.82rem',
-                color: '#6A7D70',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              Reset to 3 Streams View
-            </button>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                style={{
+                  background: 'none',
+                  border: '1px solid #D6E6CF',
+                  borderRadius: '100px',
+                  padding: '6px 12px',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  color: '#6A7D70',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  marginLeft: '4px',
+                }}
+              >
+                <X size={12} /> Clear
+              </button>
+            )}
           </div>
         </div>
-      ) : null}
+      </div>
+
+      {/* Course Count / Active Filter Feedback */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
+        <span style={{ fontSize: '0.94rem', color: '#556D5C' }}>
+          Showing <strong>{filteredCourses.length}</strong> {filteredCourses.length === 1 ? 'course' : 'courses'}
+          {selectedStream !== 'all' && (
+            <span> in <strong>{streams.find((s) => s.id === selectedStream)?.title}</strong></span>
+          )}
+          {selectedLevel !== 'all' && (
+            <span> at <strong>{selectedLevel}</strong> level</span>
+          )}
+          {search.trim() && (
+            <span> matching &ldquo;<strong>{search}</strong>&rdquo;</span>
+          )}
+        </span>
+
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={resetFilters}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#43A85B',
+              fontWeight: 700,
+              fontSize: '0.86rem',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            }}
+          >
+            Reset all filters
+          </button>
+        )}
+      </div>
 
       {/* ================================================================ */}
-      {/* 3-COLUMN STREAM LAYOUT (When "All Streams" is active)             */}
-      {/* Exactly mirrors Design Board 2 (media_1792296532547.jpg)         */}
+      {/* ZERO RESULTS EMPTY STATE                                         */}
       {/* ================================================================ */}
-      {isBrowsingAllWithoutSearch ? (
+      {filteredCourses.length === 0 ? (
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '24px',
-            alignItems: 'start',
+            backgroundColor: '#FFFFFF',
+            borderRadius: '24px',
+            padding: '64px 24px',
+            textAlign: 'center',
+            border: '1px solid #E5F0DF',
+            boxShadow: '0 4px 20px rgba(38, 53, 42, 0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
+          <MascotSphere pose="idea" size={130} />
+          <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#26352A', margin: '20px 0 8px' }}>
+            No courses found
+          </h3>
+          <p style={{ color: '#6A7D70', fontSize: '0.95rem', marginBottom: '24px', maxWidth: '440px', lineHeight: 1.5 }}>
+            We couldn&rsquo;t find courses matching &ldquo;{search}&rdquo;. Try using broader terms like &ldquo;Python&rdquo;, &ldquo;Finance&rdquo;, or &ldquo;Safety&rdquo;.
+          </p>
+          <button
+            type="button"
+            onClick={resetFilters}
+            style={{
+              backgroundColor: '#43A85B',
+              color: '#FFFFFF',
+              fontWeight: 800,
+              border: 'none',
+              padding: '12px 28px',
+              borderRadius: '100px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.92rem',
+              boxShadow: '0 2px 8px rgba(67, 168, 91, 0.28)',
+            }}
+          >
+            <span>Show All 40 Courses</span>
+            <ArrowRight size={16} />
+          </button>
+        </div>
+      ) : selectedStream === 'all' && viewMode === 'grouped' && !search.trim() && selectedLevel === 'all' ? (
+        /* ================================================================ */
+        /* GROUPED BY STREAM SECTIONS (Generous, full-width rows)           */
+        /* ================================================================ */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
           {streams.map((stream) => {
-            const isExpanded = expandedStreams[stream.id];
-            const displayedCourses = isExpanded ? stream.courses : stream.courses.slice(0, 5);
-
+            const streamMeta = getStreamMeta(stream.id);
             return (
               <div
                 key={stream.id}
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '24px',
-                  border: '1px solid #E5F0DF',
-                  overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
-                  boxShadow: '0 4px 20px rgba(38, 53, 42, 0.05)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  gap: '20px',
                 }}
               >
-                {/* Stream Header */}
+                {/* Stream Section Header */}
                 <div
                   style={{
-                    backgroundColor: stream.id === 'finance' ? '#F4FBE4' : '#EBF5E9',
-                    padding: '24px 22px 20px',
-                    borderBottom: '1px solid #E5F0DF',
+                    backgroundColor: streamMeta.bg,
+                    border: `1px solid ${streamMeta.borderColor}`,
+                    borderRadius: '20px',
+                    padding: '24px 28px',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: '14px',
-                    position: 'relative',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '16px',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <div
                       style={{
-                        width: '46px',
-                        height: '46px',
-                        borderRadius: '50%',
-                        backgroundColor: stream.id === 'finance' ? '#9EDD38' : '#43A85B',
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '14px',
+                        backgroundColor: '#FFFFFF',
+                        color: streamMeta.accent,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: stream.id === 'finance' ? '#17341B' : '#FFFFFF',
-                        boxShadow:
-                          stream.id === 'finance'
-                            ? '0 4px 10px rgba(158, 221, 56, 0.35)'
-                            : '0 4px 10px rgba(67, 168, 91, 0.28)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                        border: `1px solid ${streamMeta.borderColor}`,
                       }}
                     >
-                      {getStreamIcon(stream.id, 22)}
+                      {getStreamIcon(stream.id, 24)}
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedStream(stream.id)}
-                      style={{
-                        backgroundColor: '#D9F477',
-                        color: '#26352A',
-                        border: 'none',
-                        borderRadius: '100px',
-                        padding: '5px 14px',
-                        fontSize: '0.8rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        transition: 'transform 0.15s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateX(2px)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateX(0)';
-                      }}
-                    >
-                      <span>{stream.courses.length} Courses</span>
-                      <ArrowRight size={13} />
-                    </button>
-                  </div>
-
-                  <div>
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontSize: '1.25rem',
-                        fontWeight: 800,
-                        color: '#26352A',
-                        fontFamily: 'Space Grotesk, sans-serif',
-                        letterSpacing: '-0.01em',
-                        lineHeight: 1.25,
-                      }}
-                    >
-                      {stream.title}
-                    </h3>
-                    <p
-                      style={{
-                        margin: '5px 0 0',
-                        fontSize: '0.88rem',
-                        color: '#556D5C',
-                        lineHeight: 1.35,
-                      }}
-                    >
-                      {stream.summary}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Course List Items */}
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {displayedCourses.map((c, idx) => (
-                    <div
-                      key={c.id}
-                      onClick={() => onSelectCourse(c.slug)}
-                      style={{
-                        padding: '16px 20px',
-                        borderBottom: '1px solid #F0F4EC',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '14px',
-                        cursor: 'pointer',
-                        transition: 'background-color 0.15s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F8FAF6';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                      }}
-                    >
-                      <div
+                    <div>
+                      <h2
                         style={{
-                          width: '38px',
-                          height: '38px',
-                          borderRadius: '50%',
-                          backgroundColor: stream.id === 'finance' ? '#EDF8D8' : '#E5F0DF',
-                          color: stream.id === 'finance' ? '#4A7F18' : '#3B8E50',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
+                          margin: 0,
+                          fontSize: '1.45rem',
+                          fontWeight: 800,
+                          color: streamMeta.color,
+                          fontFamily: 'Space Grotesk, sans-serif',
+                          letterSpacing: '-0.02em',
                         }}
                       >
-                        {getCourseItemIcon(stream.id, idx)}
-                      </div>
-
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                          style={{
-                            fontWeight: 700,
-                            fontSize: '0.94rem',
-                            color: '#26352A',
-                            lineHeight: 1.3,
-                          }}
-                        >
-                          {c.title}
-                        </div>
-                        <div
-                          style={{
-                            fontSize: '0.82rem',
-                            color: '#6A7D70',
-                            marginTop: '3px',
-                            lineHeight: 1.35,
-                          }}
-                        >
-                          {c.summary}
-                        </div>
-                        <div
-                          style={{
-                            display: 'flex',
-                            gap: '8px',
-                            alignItems: 'center',
-                            fontSize: '0.75rem',
-                            color: '#556D5C',
-                            marginTop: '6px',
-                            fontWeight: 600,
-                          }}
-                        >
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <BookOpen size={12} color="#43A85B" /> {c.modules_count} modules
-                          </span>
-                          <span>•</span>
-                          <span>{c.duration_hours}h</span>
-                          <span>•</span>
-                          <span style={{ textTransform: 'capitalize' }}>{c.difficulty}</span>
-                        </div>
-                      </div>
-
-                      <ChevronRight size={18} color="#9DB5A4" />
+                        {stream.title}
+                      </h2>
+                      <p
+                        style={{
+                          margin: '4px 0 0',
+                          fontSize: '0.9rem',
+                          color: '#496150',
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {stream.summary}
+                      </p>
                     </div>
-                  ))}
-                </div>
+                  </div>
 
-                {/* Bottom View All Button */}
-                <div style={{ padding: '16px 20px', backgroundColor: '#FAFAF4', textAlign: 'center' }}>
                   <button
                     type="button"
-                    onClick={() => toggleStreamExpand(stream.id)}
+                    onClick={() => {
+                      setSelectedStream(stream.id);
+                      window.scrollTo({ top: 380, behavior: 'smooth' });
+                    }}
                     style={{
-                      backgroundColor: '#EEF6EB',
-                      border: '1px solid #DCEADA',
-                      color: '#26352A',
+                      backgroundColor: '#FFFFFF',
+                      color: streamMeta.color,
+                      border: `1px solid ${streamMeta.borderColor}`,
                       borderRadius: '100px',
-                      padding: '9px 22px',
+                      padding: '8px 18px',
                       fontSize: '0.84rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '6px',
-                      transition: 'all 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#E0EFDC';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#EEF6EB';
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                     }}
                   >
-                    <span>
-                      {isExpanded ? `Show fewer courses` : `View all ${stream.courses.length} courses`}
-                    </span>
+                    <span>View all {stream.courses.length} courses</span>
                     <ArrowRight size={14} />
                   </button>
+                </div>
+
+                {/* Stream Courses Grid */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                    gap: '22px',
+                  }}
+                >
+                  {allCanonicalCourses
+                    .filter((c) => c.domain === stream.id)
+                    .map((course) => (
+                      <CourseCard
+                        key={course.id}
+                        course={course}
+                        streamMeta={streamMeta}
+                        onSelectCourse={onSelectCourse}
+                      />
+                    ))}
                 </div>
               </div>
             );
@@ -679,210 +846,32 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         </div>
       ) : (
         /* ================================================================ */
-        /* FILTERED OR SEARCH RESULTS GRID */
+        /* CONTINUOUS SPACIOUS COURSE GRID                                  */
+        /* Clean, high-legibility cards with breathing room                 */
         /* ================================================================ */
-        <div>
-          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.92rem', color: '#6A7D70' }}>
-              Showing <strong>{filteredCourses.length}</strong> matching courses
-            </span>
-            {(selectedStream !== 'all' || selectedLevel !== 'all' || search.trim()) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedStream('all');
-                  setSelectedLevel('all');
-                  setSearch('');
-                }}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#43A85B',
-                  fontWeight: 700,
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                }}
-              >
-                Reset all filters
-              </button>
-            )}
-          </div>
-
-          {filteredCourses.length === 0 ? (
-            <div
-              style={{
-                backgroundColor: '#FFFFFF',
-                borderRadius: '16px',
-                padding: '64px 20px',
-                textAlign: 'center',
-                border: '1px solid #E5F0DF',
-              }}
-            >
-              <MascotSphere pose="thinking" size={120} />
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#26352A', margin: '16px 0 8px' }}>
-                No courses matched your search
-              </h3>
-              <p style={{ color: '#6A7D70', fontSize: '0.95rem', marginBottom: '20px' }}>
-                Try adjusting your search terms or difficulty filter.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearch('');
-                  setSelectedStream('all');
-                  setSelectedLevel('all');
-                }}
-                style={{
-                  backgroundColor: '#43A85B',
-                  color: '#FFFFFF',
-                  fontWeight: 700,
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '100px',
-                  cursor: 'pointer',
-                }}
-              >
-                Show All Courses
-              </button>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                gap: '24px',
-              }}
-            >
-              {filteredCourses.map((course: Course) => (
-                <div
-                  key={course.id}
-                  onClick={() => onSelectCourse(course.slug)}
-                  style={{
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: '20px',
-                    border: '1px solid #E5F0DF',
-                    padding: '24px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    gap: '16px',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.06)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span
-                        style={{
-                          backgroundColor: '#E5F0DF',
-                          color: '#26352A',
-                          padding: '4px 10px',
-                          borderRadius: '100px',
-                          fontSize: '0.75rem',
-                          fontWeight: 800,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                        }}
-                      >
-                        {course.domain}
-                      </span>
-                      <span
-                        style={{
-                          backgroundColor: '#FAFAF4',
-                          color: '#43A85B',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {course.level}
-                      </span>
-                    </div>
-
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontSize: '1.2rem',
-                        fontWeight: 800,
-                        color: '#26352A',
-                        lineHeight: 1.3,
-                        fontFamily: 'Space Grotesk, sans-serif',
-                      }}
-                    >
-                      {course.title}
-                    </h3>
-
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: '0.88rem',
-                        color: '#3A4E40',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {course.summary}
-                    </p>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      borderTop: '1px solid #F0F4EC',
-                      paddingTop: '14px',
-                    }}
-                  >
-                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: '#6A7D70' }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                        <Clock size={14} /> {course.duration_hours}h
-                      </span>
-                      <span>•</span>
-                      <span>{course.modules.length} Modules</span>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectCourse(course.slug);
-                      }}
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '50%',
-                        backgroundColor: '#43A85B',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <ArrowRight size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gap: '22px',
+          }}
+        >
+          {filteredCourses.map((course: Course) => {
+            const streamMeta = getStreamMeta(course.domain);
+            return (
+              <CourseCard
+                key={course.id}
+                course={course}
+                streamMeta={streamMeta}
+                onSelectCourse={onSelectCourse}
+              />
+            );
+          })}
         </div>
       )}
 
       {/* ================================================================ */}
-      {/* BOTTOM CTA & TESTIMONIAL BANNER (Matching Design Board 2)        */}
+      {/* BOTTOM CTA & TESTIMONIAL BANNER (Design Board 2)                 */}
       {/* ================================================================ */}
       <div
         style={{
@@ -890,37 +879,38 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '20px',
           alignItems: 'stretch',
+          marginTop: '12px',
         }}
       >
-        {/* 1. Left Card: Ready to start your journey? */}
+        {/* 1. Left Card: Ready to start your journey? with Idea Mascot */}
         <div
           style={{
             backgroundColor: '#FFFFFF',
             borderRadius: '20px',
             border: '1px solid #E5F0DF',
-            padding: '24px 28px',
+            padding: '24px 26px',
             display: 'flex',
             alignItems: 'center',
             gap: '18px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
           }}
         >
-          <MascotSphere pose="happy" size={90} />
+          <MascotSphere pose="idea" size={90} animated={true} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div>
               <h3
                 style={{
                   margin: 0,
-                  fontSize: '1.25rem',
+                  fontSize: '1.2rem',
                   fontWeight: 800,
                   color: '#26352A',
                   fontFamily: 'Space Grotesk, sans-serif',
                 }}
               >
-                Ready to start your journey?
+                Ready to level up your skills?
               </h3>
-              <p style={{ margin: '4px 0 0', color: '#6A7D70', fontSize: '0.84rem' }}>
-                Join thousands of learners building skills for a better future.
+              <p style={{ margin: '4px 0 0', color: '#6A7D70', fontSize: '0.84rem', lineHeight: 1.45 }}>
+                Master industry-grade concepts through self-paced learning and practical simulations.
               </p>
             </div>
             <div>
@@ -934,24 +924,25 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   backgroundColor: '#43A85B',
                   color: '#FFFFFF',
                   fontWeight: 800,
-                  padding: '8px 20px',
+                  padding: '8px 18px',
                   borderRadius: '100px',
                   border: 'none',
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  fontSize: '0.86rem',
+                  fontSize: '0.84rem',
+                  boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
                 }}
               >
-                <span>Explore all courses</span>
+                <span>Browse all 40 courses</span>
                 <ArrowRight size={14} />
               </button>
             </div>
           </div>
         </div>
 
-        {/* 2. Center Card: 4 Feature Pillars */}
+        {/* 2. Center Card: 4 Feature Pillars with Icons */}
         <div
           style={{
             backgroundColor: '#FFFFFF',
@@ -976,25 +967,25 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
               <Terminal size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Hands-on projects & labs</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Hands-on code labs</div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
               <Users size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Expert feedback</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Interactive quizzes</div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
               <Award size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Certificates & recognition</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Tamper-proof certs</div>
           </div>
         </div>
 
-        {/* 3. Right Card: Editorial Student Testimonial with Photo */}
+        {/* 3. Right Card: Editorial Student Testimonial */}
         <div
           style={{
             backgroundColor: '#26352A',
@@ -1010,7 +1001,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           }}
         >
           <div style={{ flex: 1, zIndex: 1 }}>
-            <span style={{ color: '#D9F477', fontSize: '1.6rem', lineHeight: 1, fontFamily: 'serif' }}>“</span>
+            <span style={{ color: '#D9F477', fontSize: '1.6rem', lineHeight: 1, fontFamily: 'serif' }}>&ldquo;</span>
             <p
               style={{
                 fontSize: '0.85rem',
@@ -1040,6 +1031,201 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             }}
           />
         </div>
+      </div>
+    </div>
+  );
+};
+
+/* ========================================================================= */
+/* INDIVIDUAL COURSE CARD COMPONENT                                          */
+/* Spacious, high readability, clean hover effects                           */
+/* ========================================================================= */
+interface CourseCardProps {
+  course: Course;
+  streamMeta: {
+    label: string;
+    color: string;
+    bg: string;
+    accent: string;
+    borderColor: string;
+  };
+  onSelectCourse: (slug: string) => void;
+}
+
+const CourseCard: React.FC<CourseCardProps> = ({
+  course,
+  streamMeta,
+  onSelectCourse,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Check if course has lab or coding lesson
+  const hasHandsOnLab = Boolean(
+    course.modules?.some((m) =>
+      m.lessons?.some((l) => l.title.toLowerCase().includes('lab') || l.title.toLowerCase().includes('sandbox'))
+    )
+  );
+
+  return (
+    <div
+      onClick={() => onSelectCourse(course.slug)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: '20px',
+        border: `1.5px solid ${isHovered ? streamMeta.accent : '#E8EFE5'}`,
+        padding: '24px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        gap: '16px',
+        cursor: 'pointer',
+        boxShadow: isHovered
+          ? '0 10px 28px rgba(38, 53, 42, 0.08)'
+          : '0 2px 8px rgba(38, 53, 42, 0.02)',
+        transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
+        transition: 'transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease',
+      }}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Top Badges Row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span
+            style={{
+              backgroundColor: streamMeta.bg,
+              color: streamMeta.color,
+              border: `1px solid ${streamMeta.borderColor}`,
+              padding: '4px 10px',
+              borderRadius: '100px',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              letterSpacing: '0.03em',
+            }}
+          >
+            {course.domain}
+          </span>
+
+          <span
+            style={{
+              backgroundColor: '#F5F8F3',
+              color: '#556D5C',
+              padding: '3px 9px',
+              borderRadius: '6px',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              textTransform: 'capitalize',
+            }}
+          >
+            {course.level}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h3
+          style={{
+            margin: 0,
+            fontSize: '1.2rem',
+            fontWeight: 800,
+            color: isHovered ? streamMeta.accent : '#223427',
+            lineHeight: 1.3,
+            fontFamily: 'Space Grotesk, sans-serif',
+            transition: 'color 0.15s ease',
+          }}
+        >
+          {course.title}
+        </h3>
+
+        {/* Summary Description */}
+        <p
+          style={{
+            margin: 0,
+            fontSize: '0.88rem',
+            color: '#4B5E50',
+            lineHeight: 1.5,
+            display: '-webkit-box',
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
+          {course.summary}
+        </p>
+
+        {/* Interactive Lab Highlight Tag if applicable */}
+        {hasHandsOnLab && (
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              backgroundColor: '#EDF8EE',
+              color: '#286B37',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              width: 'fit-content',
+            }}
+          >
+            <Terminal size={12} />
+            <span>Interactive Lab Included</span>
+          </div>
+        )}
+      </div>
+
+      {/* Card Footer: Metadata and Action Button */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderTop: '1px solid #F0F4EC',
+          paddingTop: '14px',
+          marginTop: '4px',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <Clock size={13} color="#43A85B" /> {course.duration_hours}h
+          </span>
+          <span>•</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <BookOpen size={13} color="#43A85B" /> {course.modules.length} modules
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectCourse(course.slug);
+          }}
+          style={{
+            backgroundColor: isHovered ? '#43A85B' : '#EBF5E9',
+            color: isHovered ? '#FFFFFF' : '#26352A',
+            border: 'none',
+            borderRadius: '100px',
+            padding: '7px 16px',
+            fontSize: '0.82rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <span>Explore Syllabus</span>
+          <ArrowRight
+            size={13}
+            style={{
+              transform: isHovered ? 'translateX(2px)' : 'translateX(0)',
+              transition: 'transform 0.15s ease',
+            }}
+          />
+        </button>
       </div>
     </div>
   );

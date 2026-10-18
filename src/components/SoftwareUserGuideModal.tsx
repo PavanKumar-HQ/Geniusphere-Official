@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle2, BookOpen } from 'lucide-react';
 import { MascotSphere, MascotExpression } from './MascotSphere';
 
 interface SoftwareUserGuideModalProps {
@@ -167,7 +167,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                 fontWeight: 800,
               }}
             >
-              📖
+              <BookOpen size={18} />
             </div>
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.15rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>

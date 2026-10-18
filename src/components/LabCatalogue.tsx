@@ -115,7 +115,10 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
               marginBottom: '10px',
             }}
           >
-            <span>⚡ Flagship Sandbox • Python 3.12 &amp; C Compiler</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <Terminal size={12} />
+              <span>Flagship Sandbox • Python 3.12 &amp; C Compiler</span>
+            </span>
           </div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#26352A', margin: '0 0 8px 0' }}>
             Multi-Language In-Browser Coding Sandbox

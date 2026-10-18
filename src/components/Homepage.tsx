@@ -23,6 +23,13 @@ import {
   Award,
   PlayCircle,
   BookOpen,
+  Smartphone,
+  CreditCard,
+  MessageSquare,
+  Target,
+  Code2,
+  Wifi,
+  Bot,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -580,10 +587,22 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 Browser-executable coding sandboxes, AI perception fundamentals, distributed blockchain ledgers, and defensive cybersecurity pipelines.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
-                <span className="tag-pill tag-pill-sky">🤖 AI Literacy</span>
-                <span className="tag-pill tag-pill-indigo">🛡️ Web Security</span>
-                <span className="tag-pill tag-pill-sky">⚡ Algorithms</span>
-                <span className="tag-pill tag-pill-emerald">📡 IoT Sensors</span>
+                <span className="tag-pill tag-pill-sky" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Bot size={13} />
+                  <span>AI Literacy</span>
+                </span>
+                <span className="tag-pill tag-pill-indigo" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <ShieldCheck size={13} />
+                  <span>Web Security</span>
+                </span>
+                <span className="tag-pill tag-pill-sky" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Code2 size={13} />
+                  <span>Algorithms</span>
+                </span>
+                <span className="tag-pill tag-pill-emerald" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Wifi size={13} />
+                  <span>IoT Sensors</span>
+                </span>
               </div>
               <button
                 type="button"
@@ -635,10 +654,22 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 Everyday money management, UPI scam defense, monthly student budgeting, compounding SIP wealth models, and entrepreneurship cash flows.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
-                <span className="tag-pill tag-pill-gold">📱 UPI Fraud Defense</span>
-                <span className="tag-pill tag-pill-emerald">📈 Student SIPs</span>
-                <span className="tag-pill tag-pill-gold">💳 Monthly Budgeting</span>
-                <span className="tag-pill tag-pill-sky">🔒 Ethical Education</span>
+                <span className="tag-pill tag-pill-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Smartphone size={13} />
+                  <span>UPI Fraud Defense</span>
+                </span>
+                <span className="tag-pill tag-pill-emerald" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <TrendingUp size={13} />
+                  <span>Student SIPs</span>
+                </span>
+                <span className="tag-pill tag-pill-gold" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <CreditCard size={13} />
+                  <span>Monthly Budgeting</span>
+                </span>
+                <span className="tag-pill tag-pill-sky" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Lock size={13} />
+                  <span>Ethical Education</span>
+                </span>
               </div>
               <button
                 type="button"
@@ -690,10 +721,22 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 High-impact workplace communication, scientific problem-solving, collaboration, ATS resume construction, and team prioritization.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
-                <span className="tag-pill tag-pill-emerald">💬 Communication</span>
-                <span className="tag-pill tag-pill-lime">📄 ATS Resume Builder</span>
-                <span className="tag-pill tag-pill-emerald">🤝 Team Collaboration</span>
-                <span className="tag-pill tag-pill-lime">🎯 Problem Solving</span>
+                <span className="tag-pill tag-pill-emerald" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <MessageSquare size={13} />
+                  <span>Communication</span>
+                </span>
+                <span className="tag-pill tag-pill-lime" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <FileText size={13} />
+                  <span>ATS Resume Builder</span>
+                </span>
+                <span className="tag-pill tag-pill-emerald" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Users size={13} />
+                  <span>Team Collaboration</span>
+                </span>
+                <span className="tag-pill tag-pill-lime" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  <Target size={13} />
+                  <span>Problem Solving</span>
+                </span>
               </div>
               <button
                 type="button"

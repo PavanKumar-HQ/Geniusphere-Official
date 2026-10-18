@@ -190,7 +190,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 fontFamily: 'Space Grotesk, sans-serif',
               }}
             >
-              Good morning, {user?.full_name?.split(' ')[0] || 'Learner'}! 👋
+              Good morning, {user?.full_name?.split(' ')[0] || 'Learner'}!
             </h1>
             <p style={{ color: '#6A7D70', fontSize: '0.95rem', margin: 0 }}>
               Keep going. You're making great progress building practical, verified skills.

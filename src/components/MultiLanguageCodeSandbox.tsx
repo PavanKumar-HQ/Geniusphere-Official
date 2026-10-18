@@ -6,6 +6,8 @@ import {
   Check,
   Terminal,
   FileCode,
+  Code2,
+  Cpu,
 } from 'lucide-react';
 import { CodeEditor } from './CodeEditor';
 import { MascotSphere } from './MascotSphere';
@@ -192,7 +194,8 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               boxShadow: language === 'python' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
             }}
           >
-            <span>🐍 Python (v3.12)</span>
+            <Code2 size={16} />
+            <span>Python 3.12</span>
           </button>
 
           <button
@@ -214,7 +217,8 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               boxShadow: language === 'c' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
             }}
           >
-            <span>⚡ C Language (GCC)</span>
+            <Cpu size={16} />
+            <span>C Language (GCC)</span>
           </button>
         </div>
       </div>

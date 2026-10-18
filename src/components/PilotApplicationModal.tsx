@@ -9,6 +9,10 @@ import {
   FileText,
   Sparkles,
   ArrowRight,
+  Bot,
+  CreditCard,
+  Terminal,
+  Users,
 } from 'lucide-react';
 
 export interface PilotApplicationModalProps {
@@ -289,10 +293,10 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
               {[
-                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#43A85B', bg: '#E5F0DF', icon: '🤖' },
-                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#43A85B', bg: '#E5F0DF', icon: '💳' },
-                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#43A85B', bg: '#E5F0DF', icon: '⚡' },
-                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#43A85B', bg: '#E5F0DF', icon: '🤝' },
+                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#43A85B', bg: '#E5F0DF', icon: <Bot size={20} color="#43A85B" /> },
+                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#43A85B', bg: '#E5F0DF', icon: <CreditCard size={20} color="#43A85B" /> },
+                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#43A85B', bg: '#E5F0DF', icon: <Terminal size={20} color="#43A85B" /> },
+                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#43A85B', bg: '#E5F0DF', icon: <Users size={20} color="#43A85B" /> },
               ].map((trk) => {
                 const selected = tracks.includes(trk.id);
                 return (
@@ -312,7 +316,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '1.1rem' }}>{trk.icon}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{trk.icon}</div>
                       {selected && (
                         <span style={{ fontSize: '0.68rem', fontWeight: 800, color: trk.color, backgroundColor: '#FFFFFF', padding: '1px 6px', borderRadius: '10px', border: `1px solid ${trk.color}` }}>
                           SELECTED

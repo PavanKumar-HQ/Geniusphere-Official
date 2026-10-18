@@ -13,6 +13,7 @@ import {
   Award,
 } from 'lucide-react';
 import { InMemoryDatabase } from '../db/in-memory-db';
+import { MascotSphere } from './MascotSphere';
 
 export interface ScamDefenseJourneyProps {
   db: InMemoryDatabase;
@@ -258,29 +259,39 @@ export const ScamDefenseJourney: React.FC<ScamDefenseJourneyProps> = ({
           </div>
         </div>
 
-        {/* Main Title & Thesis */}
-        <div style={{ marginBottom: '28px' }}>
-          <h1
-            style={{
-              fontSize: 'clamp(1.75rem, 3vw, 2.35rem)',
-              fontWeight: 900,
-              color: 'var(--text-primary)',
-              letterSpacing: '-0.03em',
-              marginBottom: '8px',
-            }}
-          >
-            Recognising Digital Payment Scams
-          </h1>
-          <p
-            style={{
-              fontSize: '1rem',
-              color: 'var(--text-secondary)',
-              lineHeight: 1.5,
-              maxWidth: '820px',
-            }}
-          >
-            Master practical defense against UPI fraud, spoofed bank alerts, and fake refund traps through a 5-stage interactive workflow: <em>Understand → Examine → Apply → Get Feedback → Demonstrate.</em>
-          </p>
+        {/* Main Title & Thesis with Shield Mascot */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap', marginBottom: '28px' }}>
+          <div>
+            <h1
+              style={{
+                fontSize: 'clamp(1.75rem, 3vw, 2.35rem)',
+                fontWeight: 900,
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.03em',
+                marginBottom: '8px',
+              }}
+            >
+              Recognising Digital Payment Scams
+            </h1>
+            <p
+              style={{
+                fontSize: '1rem',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.5,
+                maxWidth: '760px',
+                margin: 0,
+              }}
+            >
+              Master practical defense against UPI fraud, spoofed bank alerts, and fake refund traps through a 5-stage interactive workflow: <em>Understand → Examine → Apply → Get Feedback → Demonstrate.</em>
+            </p>
+          </div>
+
+          <MascotSphere
+            pose="shield"
+            size={96}
+            speechBubble="Defense matrix active: Never enter a UPI PIN to receive money!"
+            animated={true}
+          />
         </div>
 
         {/* 5-Stage Stepper Navigation */}

@@ -588,12 +588,18 @@ export const App: React.FC = () => {
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
-                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎓 Welcome to Geniusphere Suite</div>
-                      <div style={{ color: '#6A7D70' }}>Explore 40 canonical courses, hands-on sandboxes, and gradebooks.</div>
+                      <div style={{ fontWeight: 700, color: '#26352A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <GraduationCap size={15} color="#43A85B" />
+                        <span>Welcome to Geniusphere Suite</span>
+                      </div>
+                      <div style={{ color: '#6A7D70', marginTop: '2px' }}>Explore 40 canonical courses, hands-on sandboxes, and gradebooks.</div>
                     </div>
                     <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
-                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎖️ Verified Credentials Active</div>
-                      <div style={{ color: '#6A7D70' }}>Certificates include tamper-proof SHA-256 integrity hashes.</div>
+                      <div style={{ fontWeight: 700, color: '#26352A', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Award size={15} color="#43A85B" />
+                        <span>Verified Credentials Active</span>
+                      </div>
+                      <div style={{ color: '#6A7D70', marginTop: '2px' }}>Certificates include tamper-proof SHA-256 integrity hashes.</div>
                     </div>
                   </div>
                 </div>
@@ -658,8 +664,18 @@ export const App: React.FC = () => {
                 >
                   <div style={{ borderBottom: '1px solid #E5F0DF', paddingBottom: '10px', marginBottom: '12px' }}>
                     <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>{currentUser.name.split(' (')[0]}</div>
-                    <div style={{ fontSize: '0.74rem', color: '#43A85B', fontWeight: 600, marginTop: '2px' }}>
-                      {isTeacher ? '🎓 Faculty & Educator Portal' : '👤 Student Learner Portal'}
+                    <div style={{ fontSize: '0.74rem', color: '#43A85B', fontWeight: 600, marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      {isTeacher ? (
+                        <>
+                          <GraduationCap size={13} />
+                          <span>Faculty & Educator Portal</span>
+                        </>
+                      ) : (
+                        <>
+                          <Users size={13} />
+                          <span>Student Learner Portal</span>
+                        </>
+                      )}
                     </div>
                   </div>
 

@@ -69,7 +69,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
           <MascotSphere
             pose="celebrating"
             size={76}
-            speechBubble="Milestone Unlocked! Official verified credential earned! 🎉"
+            speechBubble="Milestone Unlocked! Official verified credential earned!"
           />
         </div>
 

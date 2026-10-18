@@ -3,13 +3,18 @@ import React, { useState } from 'react';
 export type MascotExpression =
   | 'happy'
   | 'thinking'
+  | 'idea'
   | 'celebrating'
   | 'encouraging'
   | 'guidance'
   | 'loading'
   | 'coding'
   | 'teaching'
-  | 'celebrating_certificate';
+  | 'celebrating_certificate'
+  | 'studying'
+  | 'learning'
+  | 'shield'
+  | 'security';
 
 interface MascotSphereProps {
   pose?: MascotExpression;
@@ -32,67 +37,97 @@ interface PoseAsset {
 
 const POSE_ASSETS: Record<MascotExpression, PoseAsset> = {
   happy: {
-    webp: '/images/mascot/mascot_happy.webp',
+    webp: '/images/mascot/mascot_happy.png',
     png: '/images/mascot/mascot_happy.png',
     alt: 'Geniusphere Mascot Sphere smiling and waving',
     speechFallback: 'Hello! Ready to level up your skills today?',
   },
   encouraging: {
-    webp: '/images/mascot/mascot_happy.webp',
+    webp: '/images/mascot/mascot_happy.png',
     png: '/images/mascot/mascot_happy.png',
     alt: 'Geniusphere Mascot Sphere giving encouragement',
     speechFallback: 'Small steps every day lead to giant leaps!',
   },
   coding: {
-    webp: '/images/mascot/mascot_laptop.webp',
+    webp: '/images/mascot/mascot_laptop.png',
     png: '/images/mascot/mascot_laptop.png',
     alt: 'Geniusphere Mascot Sphere coding on a glowing laptop',
     speechFallback: 'Writing code and running test assertions!',
   },
   loading: {
-    webp: '/images/mascot/mascot_laptop.webp',
+    webp: '/images/mascot/mascot_laptop.png',
     png: '/images/mascot/mascot_laptop.png',
     alt: 'Geniusphere Mascot Sphere working diligently',
     speechFallback: 'Crunching data in the cloud sandbox...',
   },
   celebrating: {
-    webp: '/images/mascot/mascot_celebrating.webp',
+    webp: '/images/mascot/mascot_celebrating.png',
     png: '/images/mascot/mascot_celebrating.png',
     alt: 'Geniusphere Mascot Sphere cheering in celebration with confetti',
-    speechFallback: 'Incredible work! Milestone unlocked! 🎉',
+    speechFallback: 'Incredible work! Milestone unlocked!',
   },
   celebrating_certificate: {
-    webp: '/images/mascot/mascot_celebrating.webp',
+    webp: '/images/mascot/mascot_celebrating.png',
     png: '/images/mascot/mascot_celebrating.png',
     alt: 'Geniusphere Mascot Sphere celebrating certificate earned',
-    speechFallback: 'Verified credential earned! So proud of you! 🎓',
+    speechFallback: 'Verified credential earned! So proud of you!',
   },
   teaching: {
-    webp: '/images/mascot/mascot_teaching.webp',
+    webp: '/images/mascot/mascot_teaching.png',
     png: '/images/mascot/mascot_teaching.png',
     alt: 'Geniusphere Mascot Sphere educator with glasses and pointer stick',
     speechFallback: 'Welcome to class! Let us explore the core concepts.',
   },
   guidance: {
-    webp: '/images/mascot/mascot_teaching.webp',
+    webp: '/images/mascot/mascot_teaching.png',
     png: '/images/mascot/mascot_teaching.png',
     alt: 'Geniusphere Mascot Sphere guiding the student step by step',
     speechFallback: 'Here is a helpful tip to guide your solution!',
   },
+  studying: {
+    webp: '/images/mascot/mascot_studying.png',
+    png: '/images/mascot/mascot_studying.png',
+    alt: 'Geniusphere Mascot Sphere studying with cap and glowing digital textbook',
+    speechFallback: 'Every module you master unlocks genuine real-world capability.',
+  },
+  learning: {
+    webp: '/images/mascot/mascot_studying.png',
+    png: '/images/mascot/mascot_studying.png',
+    alt: 'Geniusphere Mascot Sphere reading coursework',
+    speechFallback: 'Deep focus mode active. Keep building your knowledge!',
+  },
+  shield: {
+    webp: '/images/mascot/mascot_shield.png',
+    png: '/images/mascot/mascot_shield.png',
+    alt: 'Geniusphere Mascot Sphere holding glowing cybersecurity defense shield',
+    speechFallback: 'Defense matrix active. Zero-trust architecture verified!',
+  },
+  security: {
+    webp: '/images/mascot/mascot_shield.png',
+    png: '/images/mascot/mascot_shield.png',
+    alt: 'Geniusphere Mascot Sphere security sentinel',
+    speechFallback: 'All cryptographic and verification protocols intact.',
+  },
+  idea: {
+    webp: '/images/mascot/mascot_idea.png',
+    png: '/images/mascot/mascot_idea.png',
+    alt: 'Geniusphere Mascot Sphere thinking with glowing lightbulb idea above head',
+    speechFallback: 'Aha! Here is a brilliant algorithmic insight.',
+  },
   thinking: {
-    webp: '/images/mascot/mascot_teaching.webp',
-    png: '/images/mascot/mascot_teaching.png',
+    webp: '/images/mascot/mascot_idea.png',
+    png: '/images/mascot/mascot_idea.png',
     alt: 'Geniusphere Mascot Sphere pondering thoughtfully',
-    speechFallback: 'Hmm, let us think about this problem together...',
+    speechFallback: 'Analyzing the problem parameters carefully...',
   },
 };
 
 const FUN_QUOTES = [
-  'Curiosity is your superpower! 🚀',
-  'Practice makes progress, not perfection! ✨',
-  'Every expert was once a beginner! 🌱',
-  'Coding is like magic, but real! 💻',
-  'You have got this! Keep going! 🌟',
+  'Curiosity is your superpower!',
+  'Practice makes progress, not perfection!',
+  'Every expert was once a beginner!',
+  'Coding is like magic, but real!',
+  'You have got this! Keep going!',
 ];
 
 export const MascotSphere: React.FC<MascotSphereProps> = ({
