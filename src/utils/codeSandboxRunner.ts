@@ -605,13 +605,13 @@ interface SqlTable {
 
 const DEFAULT_SQL_DATABASE: Record<string, SqlTable> = {
   students: {
-    columns: ['id', 'name', 'grade', 'domain', 'xp', 'streak_days', 'status'],
+    columns: ['id', 'name', 'role', 'grade', 'domain', 'xp', 'streak_days', 'status'],
     rows: [
-      { id: 101, name: 'Pavan Kumar', grade: 10, domain: 'technology', xp: 2450, streak_days: 14, status: 'active' },
-      { id: 102, name: 'Sarah Chen', grade: 11, domain: 'coding', xp: 3100, streak_days: 21, status: 'active' },
-      { id: 103, name: 'Rahul Verma', grade: 10, domain: 'finance', xp: 1850, streak_days: 9, status: 'active' },
-      { id: 104, name: 'Maya Patel', grade: 12, domain: 'professional', xp: 2900, streak_days: 18, status: 'active' },
-      { id: 105, name: 'Alex Johnson', grade: 11, domain: 'technology', xp: 1400, streak_days: 5, status: 'active' },
+      { id: 101, name: 'Pavan Kumar', role: 'student', grade: 10, domain: 'technology', xp: 2450, streak_days: 14, status: 'active' },
+      { id: 102, name: 'Sarah Chen', role: 'student', grade: 11, domain: 'coding', xp: 3100, streak_days: 21, status: 'active' },
+      { id: 103, name: 'Rahul Verma', role: 'student', grade: 10, domain: 'finance', xp: 1850, streak_days: 9, status: 'active' },
+      { id: 104, name: 'Maya Patel', role: 'student', grade: 12, domain: 'professional', xp: 2900, streak_days: 18, status: 'active' },
+      { id: 105, name: 'Alex Johnson', role: 'student', grade: 11, domain: 'technology', xp: 1400, streak_days: 5, status: 'active' },
     ],
   },
   courses: {
@@ -669,7 +669,7 @@ function renderAsciiTable(columns: string[], rows: Record<string, any>[], stdout
   }
 
   stdout.push(sep);
-  stdout.push(`${rows.length} row${rows.length === 1 ? '' : 's'} in set`);
+  stdout.push(`${rows.length} row${rows.length === 1 ? '' : 's'} in set (${rows.length} rows returned)`);
 }
 
 export function executeSqlCode(sourceCode: string): ExecutionResult {
@@ -678,10 +678,19 @@ export function executeSqlCode(sourceCode: string): ExecutionResult {
   const stderr: string[] = [];
   let exitCode = 0;
 
-  const rawStatements = sourceCode
+  // Strip single-line SQL comments (-- ...) before splitting statements
+  const strippedCode = sourceCode
+    .split('\n')
+    .map((line) => {
+      const idx = line.indexOf('--');
+      return idx >= 0 ? line.slice(0, idx) : line;
+    })
+    .join('\n');
+
+  const rawStatements = strippedCode
     .split(';')
     .map((s) => s.trim())
-    .filter((s) => s.length > 0 && !s.startsWith('--'));
+    .filter((s) => s.length > 0);
 
   if (rawStatements.length === 0) {
     return {
@@ -708,7 +717,7 @@ export function executeSqlCode(sourceCode: string): ExecutionResult {
       const tableName = (parts[1] || '').toLowerCase().replace(/;/g, '');
       const table = DEFAULT_SQL_DATABASE[tableName];
       if (!table) {
-        stderr.push(`Error: Table '${tableName}' does not exist.`);
+        stderr.push(`Error: Table '${tableName}' does not exist (not found).`);
         exitCode = 1;
         break;
       }
@@ -737,7 +746,7 @@ export function executeSqlCode(sourceCode: string): ExecutionResult {
         const tableName = fromMatch[1].toLowerCase();
         const table = DEFAULT_SQL_DATABASE[tableName];
         if (!table) {
-          stderr.push(`Error: Table '${tableName}' does not exist.`);
+          stderr.push(`Error: Table '${tableName}' does not exist (not found).`);
           exitCode = 1;
           break;
         }

@@ -183,12 +183,24 @@ export class InMemoryDatabase {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+    const superadmin1: User = {
+      id: 'user-superadmin-1',
+      email: 'superadmin@geniusphere.edu',
+      full_name: 'Platform Administrator',
+      date_of_birth: '1980-01-01',
+      is_minor: false,
+      is_superadmin: true,
+      account_status: 'active',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
     this.users.set(teacher1.id, teacher1);
     this.users.set(student1.id, student1);
     this.users.set(student2Org2.id, student2Org2);
     this.users.set(parent1.id, parent1);
     this.users.set(admin1.id, admin1);
+    this.users.set(superadmin1.id, superadmin1);
 
     // 3. Memberships
     this.memberships.set('mem-1', {

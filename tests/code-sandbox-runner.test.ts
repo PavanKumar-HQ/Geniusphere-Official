@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   executePythonCode,
   executeCCode,
+  executeJavaScriptCode,
+  executeSqlCode,
   STARTER_TEMPLATES,
 } from '../src/utils/codeSandboxRunner';
 
@@ -125,13 +127,89 @@ int main() {
     });
   });
 
+  describe('JavaScript (ES6+) Engine Tests', () => {
+    it('executes console.log, arrays, and arrow functions', () => {
+      const code = `
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(x => x * 2);
+console.log('Doubled:', doubled.join(', '));
+`;
+      const res = executeJavaScriptCode(code);
+      expect(res.hasErrors).toBe(false);
+      expect(res.exitCode).toBe(0);
+      expect(res.stdout.some((l) => l.includes('Doubled: 2, 4, 6, 8, 10'))).toBe(true);
+    });
+
+    it('evaluates classes and object methods cleanly', () => {
+      const code = `
+class Calculator {
+  add(a, b) { return a + b; }
+}
+const calc = new Calculator();
+console.log('Sum:', calc.add(15, 27));
+`;
+      const res = executeJavaScriptCode(code);
+      expect(res.hasErrors).toBe(false);
+      expect(res.stdout.some((l) => l.includes('Sum: 42'))).toBe(true);
+    });
+
+    it('captures errors gracefully without crashing runtime', () => {
+      const badCode = `
+throw new Error("Explicit test fault");
+`;
+      const res = executeJavaScriptCode(badCode);
+      expect(res.hasErrors).toBe(true);
+      expect(res.exitCode).toBe(1);
+      expect(res.stderr.some((l) => l.includes('Explicit test fault'))).toBe(true);
+    });
+  });
+
+  describe('Relational SQL Engine Tests', () => {
+    it('executes SELECT * queries with ASCII table formatting', () => {
+      const sql = 'SELECT * FROM students LIMIT 2;';
+      const res = executeSqlCode(sql);
+      expect(res.hasErrors).toBe(false);
+      expect(res.exitCode).toBe(0);
+      expect(res.stdout.some((l) => l.includes('Pavan Kumar'))).toBe(true);
+      expect(res.stdout.some((l) => l.includes('rows returned'))).toBe(true);
+    });
+
+    it('supports WHERE filtering in SQL queries', () => {
+      const sql = "SELECT name, role FROM students WHERE role = 'student';";
+      const res = executeSqlCode(sql);
+      expect(res.hasErrors).toBe(false);
+      expect(res.stdout.some((l) => l.includes('student'))).toBe(true);
+    });
+
+    it('supports SHOW TABLES schema exploration', () => {
+      const sql = 'SHOW TABLES;';
+      const res = executeSqlCode(sql);
+      expect(res.hasErrors).toBe(false);
+      expect(res.stdout.some((l) => l.includes('students'))).toBe(true);
+      expect(res.stdout.some((l) => l.includes('courses'))).toBe(true);
+      expect(res.stdout.some((l) => l.includes('lab_attempts'))).toBe(true);
+    });
+
+    it('handles non-existent table errors cleanly', () => {
+      const sql = 'SELECT * FROM non_existent_table;';
+      const res = executeSqlCode(sql);
+      expect(res.hasErrors).toBe(true);
+      expect(res.exitCode).toBe(1);
+      expect(res.stderr.some((l) => l.includes('non_existent_table'))).toBe(true);
+    });
+  });
+
   describe('Starter Templates Quality', () => {
-    it('has valid starter templates for both Python and C', () => {
+    it('has valid starter templates for Python, C, JavaScript, and SQL', () => {
       const pythonTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'python');
       const cTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'c');
+      const jsTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'javascript');
+      const sqlTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'sql');
 
       expect(pythonTemplates.length).toBeGreaterThanOrEqual(3);
       expect(cTemplates.length).toBeGreaterThanOrEqual(3);
+      expect(jsTemplates.length).toBeGreaterThanOrEqual(2);
+      expect(sqlTemplates.length).toBeGreaterThanOrEqual(2);
 
       // Verify all Python starter templates execute without errors
       pythonTemplates.forEach((tpl) => {
@@ -144,6 +222,22 @@ int main() {
       // Verify all C starter templates execute without errors
       cTemplates.forEach((tpl) => {
         const res = executeCCode(tpl.code);
+        expect(res.hasErrors).toBe(false);
+        expect(res.exitCode).toBe(0);
+        expect(res.stdout.length).toBeGreaterThan(0);
+      });
+
+      // Verify all JavaScript starter templates execute without errors
+      jsTemplates.forEach((tpl) => {
+        const res = executeJavaScriptCode(tpl.code);
+        expect(res.hasErrors).toBe(false);
+        expect(res.exitCode).toBe(0);
+        expect(res.stdout.length).toBeGreaterThan(0);
+      });
+
+      // Verify all SQL starter templates execute without errors
+      sqlTemplates.forEach((tpl) => {
+        const res = executeSqlCode(tpl.code);
         expect(res.hasErrors).toBe(false);
         expect(res.exitCode).toBe(0);
         expect(res.stdout.length).toBeGreaterThan(0);

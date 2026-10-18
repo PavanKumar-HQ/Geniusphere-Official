@@ -271,4 +271,82 @@ describe('Geniusphere Curriculum, Enrollment, Quiz & Classroom Join Code Workflo
       expect(studentSubmissions[0].score).toBe(100);
     });
   });
+
+  describe('10 Educational Video Masterclasses & Platform Admin Content Suite', () => {
+    it('populates exactly 10 verified educational masterclass video lessons across domains', () => {
+      const videos = db.getVideoLessons();
+      expect(videos.length).toBe(10);
+
+      // Verify specific educational video IDs from MIT, Harvard CS50, 3Blue1Brown, Ray Dalio, Khan Academy, etc.
+      const videoIds = videos.map((v) => v.youtube_id);
+      expect(videoIds).toContain('0mCsluv5FXA'); // MIT Web Security
+      expect(videoIds).toContain('wjZofJX0v4M'); // 3Blue1Brown Neural Networks
+      expect(videoIds).toContain('8mAITcNt710'); // Harvard CS50
+      expect(videoIds).toContain('PHe0bXAIuk0'); // Ray Dalio Economics
+      expect(videoIds).toContain('b4b8ktEV4Bg'); // Computerphile SHA-256
+      expect(videoIds).toContain('Rm6p-o4uQ_g'); // Khan Academy Compound Interest
+      expect(videoIds).toContain('eWRfhZUzrAc'); // freeCodeCamp Python
+      expect(videoIds).toContain('Q3TzZzLzDqw'); // IBM IoT & MQTT
+      expect(videoIds).toContain('D5phvOX_t-U'); // Stanford GSB Communication
+      expect(videoIds).toContain('X1u3K-z5S2A'); // NPCI Fraud Defense
+
+      // Verify no rickroll or placeholder exists
+      expect(videoIds).not.toContain('dQw4w9WgXcQ');
+    });
+
+    it('enables administrators to dynamically publish courses with modules, lessons, and audit events', () => {
+      const initialCount = db.getCourses().length;
+
+      const newCourse = db.createCourse({
+        title: 'Zero Knowledge Cryptography & zk-SNARKs',
+        domain: 'technology',
+        subject: 'Applied Cryptography',
+        level: 'advanced',
+        duration_hours: 8,
+        summary: 'Mathematical foundations of zero-knowledge proofs and arithmetic circuits.',
+        initialModuleTitle: 'Module 1: Polynomial Commitments & QAPs',
+        initialLessonTitle: 'Lesson 1: Homomorphic Verification Mechanics',
+        initialVideoId: 'b4b8ktEV4Bg',
+        addedByUserId: 'user-superadmin-1',
+      });
+
+      expect(newCourse.id).toBeDefined();
+      expect(newCourse.slug).toBe('zero-knowledge-cryptography-zk-snarks');
+      expect(newCourse.modules.length).toBe(1);
+      expect(newCourse.modules[0].lessons.length).toBe(1);
+      expect(newCourse.modules[0].lessons[0].video_id).toBe('b4b8ktEV4Bg');
+
+      // Verify course count incremented in catalog
+      expect(db.getCourses().length).toBe(initialCount + 1);
+      expect(db.getCourseById(newCourse.id)?.title).toBe('Zero Knowledge Cryptography & zk-SNARKs');
+
+      // Verify cryptographic audit event was emitted
+      const audits = db.getAuditEvents('user-superadmin-1');
+      const courseCreatedAudit = audits.find(
+        (a) => a.action_type === 'course_published' && a.resource_id === newCourse.id
+      );
+      expect(courseCreatedAudit).toBeDefined();
+    });
+
+    it('retrieves comprehensive student profiles, progress states, and lab attempt histories', () => {
+      const student = db.getUserById('user-student-1');
+      expect(student).not.toBeNull();
+      expect(student?.full_name).toBe('Aarav Patel');
+
+      // Check student progress and award XP
+      const initialProgress = db.getUserProgress('user-student-1');
+      const startingXp = initialProgress.xp;
+
+      const updatedProgress = db.awardXp('user-student-1', 150, 'Admin Merit Award');
+      expect(updatedProgress.xp).toBe(startingXp + 150);
+
+      // Verify student enrollments
+      const enrollments = db.getUserEnrollments('user-student-1');
+      expect(Array.isArray(enrollments)).toBe(true);
+
+      // Verify lab attempts retrieval
+      const attempts = db.getLabAttempts('user-student-1');
+      expect(Array.isArray(attempts)).toBe(true);
+    });
+  });
 });
