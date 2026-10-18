@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { InMemoryDatabase } from './db/in-memory-db';
 import { Homepage } from './components/Homepage';
 import { CourseCatalogue } from './components/CourseCatalogue';
@@ -31,6 +31,12 @@ import { SoftwareUserGuideModal } from './components/SoftwareUserGuideModal';
 import { MultiLanguageCodeSandbox } from './components/MultiLanguageCodeSandbox';
 import { SectionContextBar } from './components/SectionContextBar';
 import { CertificatesView } from './components/CertificatesView';
+import { ThemeSettingsModal } from './components/ThemeSettingsModal';
+import {
+  ThemeId,
+  getStoredTheme,
+  initThemeEngine,
+} from './utils/themeEngine';
 import { Certificate } from './types';
 import {
   ShieldCheck,
@@ -45,6 +51,8 @@ import {
   Search,
   Bell,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Folder,
   Award,
   ArrowRight,
@@ -52,6 +60,9 @@ import {
   LogOut,
   Code2,
   ShieldAlert,
+  Palette,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 export type AppView =
@@ -113,6 +124,53 @@ export const App: React.FC = () => {
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [userGuideOpen, setUserGuideOpen] = useState<boolean>(false);
+
+  // Theme & Appearance Palette State (10 Themes)
+  const [currentTheme, setCurrentTheme] = useState<ThemeId>(() => getStoredTheme());
+  const [themeModalOpen, setThemeModalOpen] = useState<boolean>(false);
+
+  // Desktop Collapsible Sidebar Rail State (Persisted in localStorage)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('geniusphere_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Initialize Theme Engine and System Scheme Listeners
+  useEffect(() => {
+    const cleanup = initThemeEngine();
+    return cleanup;
+  }, []);
+
+  // Keyboard shortcut: ⌘+B or Ctrl+B toggles sidebar collapse rail
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        setIsSidebarCollapsed((prev) => {
+          const next = !prev;
+          try {
+            localStorage.setItem('geniusphere_sidebar_collapsed', String(next));
+          } catch {}
+          return next;
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('geniusphere_sidebar_collapsed', String(next));
+      } catch {}
+      return next;
+    });
+  };
 
 
   // Sovereign Backup & Notes Overlay Modals
@@ -243,14 +301,14 @@ export const App: React.FC = () => {
       {/* ============================================================ */}
       <header
         style={{
-          backgroundColor: '#FFFFFF',
-          borderTop: '3px solid #43A85B',
-          borderBottom: '1px solid #E5F0DF',
+          backgroundColor: 'var(--bg-surface)',
+          borderTop: '3px solid var(--brand-primary)',
+          borderBottom: '1px solid var(--border-subtle)',
           position: 'sticky',
           top: 0,
           zIndex: 100,
           height: '70px',
-          boxShadow: '0 2px 8px rgba(38, 53, 42, 0.04)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
         }}
       >
         <div
@@ -264,26 +322,50 @@ export const App: React.FC = () => {
             gap: '20px',
           }}
         >
-          {/* LEFT: MOBILE TOGGLE & GENIUSPHERE BRAND LOGO */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* LEFT: MOBILE TOGGLE, DESKTOP RAIL TOGGLE & GENIUSPHERE BRAND LOGO */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             {/* Mobile / Drawer Toggle Button */}
             <button
               type="button"
               onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="mobile-only-toggle"
               style={{
                 background: 'none',
-                border: '1px solid #E5F0DF',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '8px',
                 padding: '6px',
                 cursor: 'pointer',
-                display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#26352A',
+                color: 'var(--text-primary)',
+                backgroundColor: 'var(--bg-surface)',
               }}
-              aria-label="Toggle Navigation Sidebar"
+              aria-label="Toggle Mobile Navigation Drawer"
             >
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+
+            {/* Desktop Sidebar Rail Collapse Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleSidebarCollapse}
+              className="desktop-only-toggle"
+              style={{
+                background: 'none',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '8px',
+                padding: '6px',
+                cursor: 'pointer',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text-primary)',
+                backgroundColor: 'var(--bg-surface)',
+                transition: 'all 0.15s ease',
+              }}
+              title={isSidebarCollapsed ? 'Expand Sidebar (⌘+B)' : 'Collapse Sidebar to Rail (⌘+B)'}
+              aria-label="Toggle Desktop Sidebar Rail"
+            >
+              {isSidebarCollapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
             </button>
 
             <button
@@ -305,7 +387,7 @@ export const App: React.FC = () => {
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
-                  backgroundColor: '#43A85B',
+                  backgroundColor: 'var(--brand-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -321,7 +403,7 @@ export const App: React.FC = () => {
                   fontSize: '1.4rem',
                   fontWeight: 800,
                   letterSpacing: '-0.02em',
-                  color: '#26352A',
+                  color: 'var(--text-primary)',
                   lineHeight: 1.1,
                 }}
               >
@@ -493,8 +575,32 @@ export const App: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT: USER GUIDE, NOTIFICATIONS BELL & USER AVATAR PILL (Design Board 2) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+          {/* RIGHT: THEME PICKER, USER GUIDE, NOTIFICATIONS BELL & USER AVATAR PILL (Design Board 2) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
+            {/* Theme & Palette Picker Trigger (10 Styles) */}
+            <button
+              type="button"
+              onClick={() => setThemeModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: 'var(--bg-surface-subdued)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '100px',
+                padding: '6px 14px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Customize Appearance & Theme (10 Curated Palettes: Light, Dark, Sepia, OLED, etc.)"
+            >
+              <Palette size={16} color="var(--brand-primary)" />
+              <span className="theme-btn-label">Theme</span>
+            </button>
+
             {/* Interactive User Guide Button with Mascot */}
             <button
               type="button"
@@ -503,21 +609,15 @@ export const App: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                backgroundColor: '#FAFAF4',
-                border: '1px solid #E5F0DF',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '100px',
                 padding: '5px 14px',
                 fontSize: '0.8rem',
                 fontWeight: 700,
-                color: '#26352A',
+                color: 'var(--text-primary)',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#E5F0DF';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#FAFAF4';
               }}
               title="Launch Interactive Software User Guide"
             >
@@ -740,6 +840,31 @@ export const App: React.FC = () => {
                       <Sparkles size={16} color="#43A85B" />
                       <span>Software User Guide</span>
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setThemeModalOpen(true);
+                      }}
+                      style={{
+                        padding: '9px 12px',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border-subtle)',
+                        backgroundColor: 'var(--bg-surface)',
+                        color: 'var(--text-primary)',
+                        fontWeight: 600,
+                        fontSize: '0.8rem',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <Palette size={16} color="var(--brand-primary)" />
+                      <span>Appearance & Theme Palette</span>
+                    </button>
                   </div>
 
                   <button
@@ -786,17 +911,120 @@ export const App: React.FC = () => {
           />
         )}
 
-        {/* LEFT SIDEBAR NAVIGATION RAIL */}
-        <aside className={`platform-sidebar ${sidebarOpen ? 'open' : ''}`}>
-          <div>
+        {/* LEFT SIDEBAR NAVIGATION RAIL (Collapsible Desktop Mini-Rail + Mobile Off-Canvas Drawer) */}
+        <aside className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+          {/* Mobile Drawer Top Header (Only visible on mobile screens) */}
+          <div
+            className="sidebar-mobile-drawer-header"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '16px 18px',
+              borderBottom: '1px solid var(--border-subtle)',
+              backgroundColor: 'var(--bg-surface)',
+              marginBottom: '12px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--brand-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                }}
+              >
+                <ShieldCheck size={18} />
+              </div>
+              <span style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                Geniusphere
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-surface-subdued)',
+                color: 'var(--text-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+              aria-label="Close navigation drawer"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Desktop Mini-Rail Header & Collapse Toggle */}
+          <div
+            className="sidebar-desktop-collapse-header"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
+              marginBottom: '12px',
+              padding: isSidebarCollapsed ? '0 0 10px' : '0 4px 10px',
+              borderBottom: '1px solid var(--border-subtle)',
+            }}
+          >
+            {!isSidebarCollapsed && (
+              <span
+                className="sidebar-section-title"
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: 'var(--text-muted)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.06em',
+                }}
+              >
+                {isTeacher ? 'Faculty Portal' : 'Navigation'}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={toggleSidebarCollapse}
+              className="sidebar-collapse-btn"
+              title={isSidebarCollapsed ? 'Expand Sidebar Rail (⌘+B)' : 'Collapse Sidebar to Rail (⌘+B)'}
+              style={{
+                background: 'none',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '8px',
+                width: '28px',
+                height: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: 'var(--text-secondary)',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {isSidebarCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+            </button>
+          </div>
+
+          <div style={{ flex: 1 }}>
             {isTeacher ? (
               /* TEACHER / EDUCATOR DEDICATED NAVIGATION RAIL */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div
+                  className="sidebar-section-title"
                   style={{
                     fontSize: '0.72rem',
                     fontWeight: 800,
-                    color: '#43A85B',
+                    color: 'var(--brand-primary)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                     padding: '0 16px 8px',
@@ -809,81 +1037,100 @@ export const App: React.FC = () => {
                   type="button"
                   onClick={() => handleNavigate('gradebook')}
                   className={`sidebar-nav-btn ${currentView === 'gradebook' ? 'active' : ''}`}
+                  title="Class Gradebook"
                 >
                   <Users size={18} />
-                  <span>Class Gradebook</span>
+                  <span className="sidebar-label">Class Gradebook</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('classrooms')}
                   className={`sidebar-nav-btn ${currentView === 'classrooms' ? 'active' : ''}`}
+                  title="Manage Classes"
                 >
                   <School size={18} />
-                  <span>Manage Classes</span>
+                  <span className="sidebar-label">Manage Classes</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('catalogue')}
                   className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                  title="Curriculum & Courses"
                 >
                   <BookOpen size={18} />
-                  <span>Curriculum & Courses</span>
+                  <span className="sidebar-label">Curriculum & Courses</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('labs')}
                   className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                  title="Lab Environments"
                 >
                   <Terminal size={18} />
-                  <span>Lab Environments</span>
+                  <span className="sidebar-label">Lab Environments</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('code-sandbox')}
                   className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                  title="Coding Sandbox (Python, C, JS, SQL)"
                 >
                   <Code2 size={18} />
-                  <span>Coding Sandbox (Python, C, JS, SQL)</span>
+                  <span className="sidebar-label">Coding Sandbox (Python, C)</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('institution-workspace')}
                   className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                  title="Institution Workspace"
                 >
                   <ShieldCheck size={18} />
-                  <span>Institution Workspace</span>
+                  <span className="sidebar-label">Institution Workspace</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('platform-workspace')}
                   className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+                  title="Platform Admin & Content"
                 >
                   <ShieldAlert size={18} />
-                  <span>Platform Admin & Content</span>
+                  <span className="sidebar-label">Platform Admin & Content</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('certificates')}
                   className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                  title="Certificate Registry"
                 >
                   <Award size={18} />
-                  <span>Certificate Registry</span>
+                  <span className="sidebar-label">Certificate Registry</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('resources')}
                   className={`sidebar-nav-btn ${currentView === 'resources' ? 'active' : ''}`}
+                  title="Teaching Resources"
                 >
                   <Folder size={18} />
-                  <span>Teaching Resources</span>
+                  <span className="sidebar-label">Teaching Resources</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setThemeModalOpen(true)}
+                  className="sidebar-nav-btn"
+                  title="Appearance & Theme Palette"
+                >
+                  <Palette size={18} />
+                  <span className="sidebar-label">Theme Settings</span>
                 </button>
 
                 <button
@@ -893,9 +1140,10 @@ export const App: React.FC = () => {
                     setSidebarOpen(false);
                   }}
                   className="sidebar-nav-btn"
+                  title="Software User Guide"
                 >
                   <Sparkles size={18} />
-                  <span>Software User Guide</span>
+                  <span className="sidebar-label">Software User Guide</span>
                 </button>
               </div>
             ) : (
@@ -906,72 +1154,90 @@ export const App: React.FC = () => {
                     type="button"
                     onClick={() => handleNavigate('home')}
                     className={`sidebar-nav-btn ${currentView === 'home' ? 'active' : ''}`}
+                    title="Home"
                   >
                     <Home size={18} />
-                    <span>Home</span>
+                    <span className="sidebar-label">Home</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('catalogue')}
                     className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'active' : ''}`}
+                    title="Courses"
                   >
                     <BookOpen size={18} />
-                    <span>Courses</span>
+                    <span className="sidebar-label">Courses</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('student-dashboard')}
                     className={`sidebar-nav-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
+                    title="My Learning"
                   >
                     <GraduationCap size={18} />
-                    <span>My Learning</span>
+                    <span className="sidebar-label">My Learning</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('labs')}
                     className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                    title="Labs & Projects"
                   >
                     <Terminal size={18} />
-                    <span>Labs & Projects</span>
+                    <span className="sidebar-label">Labs & Projects</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('code-sandbox')}
                     className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                    title="Coding Sandbox (Python & C)"
                   >
                     <Code2 size={18} />
-                    <span>Multi-Language Sandbox</span>
+                    <span className="sidebar-label">Coding Sandbox (Python & C)</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('leaderboard')}
                     className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
+                    title="Community"
                   >
                     <Users size={18} />
-                    <span>Community</span>
+                    <span className="sidebar-label">Community</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('resources')}
                     className={`sidebar-nav-btn ${currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'active' : ''}`}
+                    title="Resources"
                   >
                     <Folder size={18} />
-                    <span>Resources</span>
+                    <span className="sidebar-label">Resources</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleNavigate('certificates')}
                     className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                    title="Certificates"
                   >
                     <Award size={18} />
-                    <span>Certificates</span>
+                    <span className="sidebar-label">Certificates</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setThemeModalOpen(true)}
+                    className="sidebar-nav-btn"
+                    title="Appearance & Theme Palette"
+                  >
+                    <Palette size={18} />
+                    <span className="sidebar-label">Theme Settings</span>
                   </button>
 
                   <button
@@ -981,9 +1247,10 @@ export const App: React.FC = () => {
                       setSidebarOpen(false);
                     }}
                     className="sidebar-nav-btn"
+                    title="Software User Guide"
                   >
                     <Sparkles size={18} />
-                    <span>Software User Guide</span>
+                    <span className="sidebar-label">Software User Guide</span>
                   </button>
 
                   <button
@@ -993,19 +1260,21 @@ export const App: React.FC = () => {
                       setSidebarOpen(false);
                     }}
                     className="sidebar-nav-btn"
+                    title="Notifications"
                   >
                     <Bell size={18} />
-                    <span>Notifications</span>
+                    <span className="sidebar-label">Notifications</span>
                   </button>
                 </div>
 
                 {/* For Institutions Group */}
-                <div style={{ marginTop: '24px' }}>
+                <div style={{ marginTop: '20px' }}>
                   <div
+                    className="sidebar-section-title"
                     style={{
                       fontSize: '0.72rem',
                       fontWeight: 800,
-                      color: '#6A7D70',
+                      color: 'var(--text-muted)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                       padding: '0 16px 8px',
@@ -1018,27 +1287,30 @@ export const App: React.FC = () => {
                       type="button"
                       onClick={() => handleNavigate('institution-workspace')}
                       className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                      title="Institution Workspace"
                     >
                       <School size={18} />
-                      <span>Institution Workspace</span>
+                      <span className="sidebar-label">Institution Workspace</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleNavigate('classrooms')}
                       className={`sidebar-nav-btn ${currentView === 'classrooms' || currentView === 'gradebook' ? 'active' : ''}`}
+                      title="Manage Classes"
                     >
                       <Users size={18} />
-                      <span>Manage Classes</span>
+                      <span className="sidebar-label">Manage Classes</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => handleNavigate('platform-workspace')}
                       className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+                      title="Platform Admin & Content"
                     >
                       <ShieldAlert size={18} />
-                      <span>Platform Admin & Content</span>
+                      <span className="sidebar-label">Platform Admin & Content</span>
                     </button>
                   </div>
                 </div>
@@ -1048,91 +1320,99 @@ export const App: React.FC = () => {
 
           {/* Bottom Mascot Encouragement Widget (matching Design Board 2) */}
           <div
+            className="sidebar-mascot-card"
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
-              border: '1px solid #E5F0DF',
-              padding: '16px',
-              marginTop: '20px',
+              border: '1px solid var(--border-subtle)',
+              padding: isSidebarCollapsed ? '8px' : '16px',
+              marginTop: '16px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+              transition: 'all 0.15s ease',
             }}
           >
             {isTeacher ? (
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <MascotSphere pose="teaching" size={40} />
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
+                  <MascotSphere pose="teaching" size={isSidebarCollapsed ? 30 : 40} />
+                  <div className="sidebar-mascot-card-text">
+                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                       Educator Suite
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: '#6A7D70', lineHeight: 1.25 }}>
-                      Class 10-A: 24 students enrolled, 82% course completion.
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
+                      Class 10-A: 24 students enrolled, 82% completion.
                     </div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('gradebook')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#43A85B',
-                      fontWeight: 800,
-                      fontSize: '0.78rem',
-                      cursor: 'pointer',
-                      padding: 0,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '3px',
-                    }}
-                  >
-                    <span>Open Gradebook</span>
-                    <ArrowRight size={12} />
-                  </button>
-                </div>
+                {!isSidebarCollapsed && (
+                  <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('gradebook')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--brand-primary)',
+                        fontWeight: 800,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                      }}
+                    >
+                      <span>Open Gradebook</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <MascotSphere pose="happy" size={38} />
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
+                  <MascotSphere pose="happy" size={isSidebarCollapsed ? 28 : 38} />
+                  <div className="sidebar-mascot-card-text">
+                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                       Keep going!
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: '#6A7D70', lineHeight: 1.25 }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
                       Every skill you learn builds a bigger you.
                     </div>
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div style={{ width: '100%', height: '6px', backgroundColor: '#E5F0DF', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
-                  <div style={{ width: '60%', height: '100%', backgroundColor: '#43A85B', borderRadius: '100px' }} />
-                </div>
+                {!isSidebarCollapsed && (
+                  <div className="sidebar-mascot-card-text">
+                    {/* Progress Bar */}
+                    <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
+                      <div style={{ width: '60%', height: '100%', backgroundColor: 'var(--brand-primary)', borderRadius: '100px' }} />
+                    </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#6A7D70', fontWeight: 600 }}>3/5 courses</span>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('student-dashboard')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#43A85B',
-                      fontWeight: 800,
-                      fontSize: '0.78rem',
-                      cursor: 'pointer',
-                      padding: 0,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '2px',
-                    }}
-                  >
-                    <span>Continue</span>
-                    <ArrowRight size={12} />
-                  </button>
-                </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>3/5 courses</span>
+                      <button
+                        type="button"
+                        onClick={() => handleNavigate('student-dashboard')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--brand-primary)',
+                          fontWeight: 800,
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          padding: 0,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '2px',
+                        }}
+                      >
+                        <span>Continue</span>
+                        <ArrowRight size={12} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1593,6 +1873,14 @@ export const App: React.FC = () => {
         onClose={() => setUserGuideOpen(false)}
         isTeacher={isTeacher}
         onNavigate={(view) => handleNavigate(view)}
+      />
+
+      {/* 7. APPEARANCE & THEME PALETTE SETTINGS MODAL (10 THEMES) */}
+      <ThemeSettingsModal
+        isOpen={themeModalOpen}
+        onClose={() => setThemeModalOpen(false)}
+        currentTheme={currentTheme}
+        onThemeChange={(newTheme) => setCurrentTheme(newTheme)}
       />
     </div>
   );

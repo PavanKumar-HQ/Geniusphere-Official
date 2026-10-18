@@ -133,6 +133,254 @@
   --min-touch-target: 44px;
 }
 
+/* ====================================================================
+   Geniusphere 10-Theme Palette Token Engine
+   ==================================================================== */
+
+/* 1. Light (Default) — Warm Ivory + Sage + Forest Green */
+:root,
+html[data-theme='light'] {
+  --bg-canvas: #FAFAF4;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subdued: #E5F0DF;
+  --bg-surface-elevated: #FFFFFF;
+  --brand-primary: #43A85B;
+  --brand-primary-bright: #43A85B;
+  --brand-primary-hover: #388E4C;
+  --brand-primary-active: #2E763F;
+  --brand-forest: #43A85B;
+  --brand-surface: #E5F0DF;
+  --brand-border: rgba(38, 53, 42, 0.12);
+  --border-subtle: rgba(38, 53, 42, 0.12);
+  --border-strong: rgba(38, 53, 42, 0.22);
+  --brand-lime: #D9F477;
+  --brand-lime-text: #26352A;
+  --text-primary: #26352A;
+  --text-secondary: #4A5B4F;
+  --text-muted: #6B7C70;
+  --text-inverse: #FAFAF4;
+  --selected-bg: #E5F0DF;
+  --editor-bg: #F8F6F0;
+  --sidebar-bg: #FAFAF4;
+  --sidebar-border: #E5F0DF;
+}
+
+/* 2. Dark — Charcoal + Deep Forest Green + Muted Lime */
+html[data-theme='dark'] {
+  --bg-canvas: #121914;
+  --bg-surface: #1B241E;
+  --bg-surface-subdued: #243228;
+  --bg-surface-elevated: #26362B;
+  --brand-primary: #43A85B;
+  --brand-primary-bright: #52C76E;
+  --brand-primary-hover: #4FC46B;
+  --brand-primary-active: #388E4C;
+  --brand-forest: #43A85B;
+  --brand-surface: #1F2E23;
+  --brand-border: rgba(240, 253, 244, 0.14);
+  --border-subtle: rgba(240, 253, 244, 0.14);
+  --border-strong: rgba(240, 253, 244, 0.26);
+  --brand-lime: #D9F477;
+  --brand-lime-text: #121914;
+  --text-primary: #F0FDF4;
+  --text-secondary: #C5D9C9;
+  --text-muted: #8EA895;
+  --text-inverse: #121914;
+  --selected-bg: #243228;
+  --editor-bg: #141C16;
+  --sidebar-bg: #162019;
+  --sidebar-border: rgba(240, 253, 244, 0.12);
+}
+
+/* 3. Sepia — Warm cream + parchment + olive */
+html[data-theme='sepia'] {
+  --bg-canvas: #FBF0D9;
+  --bg-surface: #FFF9ED;
+  --bg-surface-subdued: #F2E3C6;
+  --bg-surface-elevated: #FFF9ED;
+  --brand-primary: #687F3B;
+  --brand-primary-bright: #7C9945;
+  --brand-primary-hover: #576B31;
+  --brand-primary-active: #475828;
+  --brand-forest: #687F3B;
+  --brand-surface: #F2E3C6;
+  --brand-border: rgba(51, 43, 29, 0.15);
+  --border-subtle: rgba(51, 43, 29, 0.15);
+  --border-strong: rgba(51, 43, 29, 0.28);
+  --brand-lime: #D4DE85;
+  --brand-lime-text: #332B1D;
+  --text-primary: #332B1D;
+  --text-secondary: #5C4E35;
+  --text-muted: #807050;
+  --text-inverse: #FFF9ED;
+  --selected-bg: #F2E3C6;
+  --editor-bg: #F5E8CE;
+  --sidebar-bg: #F7ECD2;
+  --sidebar-border: rgba(51, 43, 29, 0.14);
+}
+
+/* 4. High Contrast Light — Bright background + strong dark text */
+html[data-theme='high-contrast-light'] {
+  --bg-canvas: #FFFFFF;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subdued: #F0F0F0;
+  --bg-surface-elevated: #FFFFFF;
+  --brand-primary: #007A2B;
+  --brand-primary-bright: #007A2B;
+  --brand-primary-hover: #005C20;
+  --brand-primary-active: #004518;
+  --brand-forest: #007A2B;
+  --brand-surface: #E8F5E9;
+  --brand-border: #000000;
+  --border-subtle: #000000;
+  --border-strong: #000000;
+  --brand-lime: #005C20;
+  --brand-lime-text: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: #111111;
+  --text-muted: #222222;
+  --text-inverse: #FFFFFF;
+  --selected-bg: #E0E0E0;
+  --editor-bg: #FFFFFF;
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #000000;
+}
+
+/* 5. High Contrast Dark — Deep black background + bright text */
+html[data-theme='high-contrast-dark'] {
+  --bg-canvas: #000000;
+  --bg-surface: #0A0A0A;
+  --bg-surface-subdued: #1A1A1A;
+  --bg-surface-elevated: #141414;
+  --brand-primary: #00FF66;
+  --brand-primary-bright: #33FF85;
+  --brand-primary-hover: #00E65C;
+  --brand-primary-active: #00CC52;
+  --brand-forest: #00FF66;
+  --brand-surface: #002B11;
+  --brand-border: #FFFFFF;
+  --border-subtle: #FFFFFF;
+  --border-strong: #00FF66;
+  --brand-lime: #CCFF00;
+  --brand-lime-text: #000000;
+  --text-primary: #FFFFFF;
+  --text-secondary: #EEEEEE;
+  --text-muted: #CCCCCC;
+  --text-inverse: #000000;
+  --selected-bg: #222222;
+  --editor-bg: #000000;
+  --sidebar-bg: #050505;
+  --sidebar-border: #FFFFFF;
+}
+
+/* 6. OLED Dark — Pure black backgrounds for OLED displays */
+html[data-theme='oled-dark'] {
+  --bg-canvas: #000000;
+  --bg-surface: #0A0E0B;
+  --bg-surface-subdued: #121814;
+  --bg-surface-elevated: #151D17;
+  --brand-primary: #10B981;
+  --brand-primary-bright: #34D399;
+  --brand-primary-hover: #059669;
+  --brand-primary-active: #047857;
+  --brand-forest: #10B981;
+  --brand-surface: #062417;
+  --brand-border: rgba(255, 255, 255, 0.16);
+  --border-subtle: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.3);
+  --brand-lime: #A7F3D0;
+  --brand-lime-text: #000000;
+  --text-primary: #F9FAFB;
+  --text-secondary: #D1D5DB;
+  --text-muted: #9CA3AF;
+  --text-inverse: #000000;
+  --selected-bg: #121814;
+  --editor-bg: #000000;
+  --sidebar-bg: #000000;
+  --sidebar-border: rgba(255, 255, 255, 0.16);
+}
+
+/* 7. Midnight Blue — Deep navy + cool blue accents */
+html[data-theme='midnight-blue'] {
+  --bg-canvas: #0A1128;
+  --bg-surface: #101F42;
+  --bg-surface-subdued: #172A59;
+  --bg-surface-elevated: #1C336B;
+  --brand-primary: #38BDF8;
+  --brand-primary-bright: #7DD3FC;
+  --brand-primary-hover: #0EA5E9;
+  --brand-primary-active: #0284C7;
+  --brand-forest: #38BDF8;
+  --brand-surface: #0E2954;
+  --brand-border: rgba(56, 189, 248, 0.22);
+  --border-subtle: rgba(56, 189, 248, 0.22);
+  --border-strong: rgba(56, 189, 248, 0.38);
+  --brand-lime: #7DD3FC;
+  --brand-lime-text: #0A1128;
+  --text-primary: #F0F9FF;
+  --text-secondary: #BAE6FD;
+  --text-muted: #7DD3FC;
+  --text-inverse: #0A1128;
+  --selected-bg: #172A59;
+  --editor-bg: #0D1635;
+  --sidebar-bg: #0C1532;
+  --sidebar-border: rgba(56, 189, 248, 0.2);
+}
+
+/* 8. Monochrome — Black, white, and grayscale */
+html[data-theme='monochrome'] {
+  --bg-canvas: #F8F9FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subdued: #E9ECEF;
+  --bg-surface-elevated: #FFFFFF;
+  --brand-primary: #212529;
+  --brand-primary-bright: #343A40;
+  --brand-primary-hover: #000000;
+  --brand-primary-active: #000000;
+  --brand-forest: #212529;
+  --brand-surface: #E9ECEF;
+  --brand-border: rgba(33, 37, 41, 0.16);
+  --border-subtle: rgba(33, 37, 41, 0.16);
+  --border-strong: rgba(33, 37, 41, 0.32);
+  --brand-lime: #495057;
+  --brand-lime-text: #FFFFFF;
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-muted: #6C757D;
+  --text-inverse: #FFFFFF;
+  --selected-bg: #E9ECEF;
+  --editor-bg: #F1F3F5;
+  --sidebar-bg: #F8F9FA;
+  --sidebar-border: rgba(33, 37, 41, 0.16);
+}
+
+/* 9. Ocean — Cool teal + deep blue + soft neutral backgrounds */
+html[data-theme='ocean'] {
+  --bg-canvas: #F0FDF4;
+  --bg-surface: #FFFFFF;
+  --bg-surface-subdued: #E0F2FE;
+  --bg-surface-elevated: #FFFFFF;
+  --brand-primary: #0D9488;
+  --brand-primary-bright: #14B8A6;
+  --brand-primary-hover: #0F766E;
+  --brand-primary-active: #115E59;
+  --brand-forest: #0D9488;
+  --brand-surface: #CCFBF1;
+  --brand-border: rgba(13, 148, 136, 0.18);
+  --border-subtle: rgba(13, 148, 136, 0.18);
+  --border-strong: rgba(13, 148, 136, 0.32);
+  --brand-lime: #5EEAD4;
+  --brand-lime-text: #0F172A;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
+  --selected-bg: #E0F2FE;
+  --editor-bg: #F8FAFC;
+  --sidebar-bg: #F0FDF4;
+  --sidebar-border: rgba(13, 148, 136, 0.18);
+}
+
 /* Reset & Accessibility Baseline */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -920,26 +1168,53 @@ tr:hover td {
   display: flex;
   flex-direction: row;
   min-height: calc(100vh - 70px);
-  background-color: #FAFAF4;
+  background-color: var(--bg-canvas);
   position: relative;
+  overflow-x: hidden;
 }
 
 .platform-sidebar {
-  width: 250px;
+  width: 260px;
   flex-shrink: 0;
-  background-color: #FAFAF4;
-  border-right: 1px solid #E5F0DF;
-  padding: 20px 14px 28px;
+  background-color: var(--sidebar-bg, var(--bg-surface));
+  border-right: 1px solid var(--sidebar-border, var(--border-subtle));
+  padding: 16px 12px 28px;
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 70px;
   height: calc(100vh - 70px);
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 90;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   scrollbar-width: thin;
-  scrollbar-color: #D2DEC9 transparent;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+/* Desktop Collapsed Rail Mode (Prevents content overflow & maximizes screen space) */
+.platform-sidebar.collapsed {
+  width: 72px;
+  padding: 16px 8px 24px;
+}
+
+.platform-sidebar.collapsed .sidebar-label,
+.platform-sidebar.collapsed .sidebar-section-title,
+.platform-sidebar.collapsed .sidebar-mascot-card-text {
+  display: none !important;
+}
+
+.platform-sidebar.collapsed .sidebar-nav-btn {
+  justify-content: center;
+  padding: 11px 0;
+  border-radius: 12px;
+  gap: 0;
+}
+
+.platform-sidebar.collapsed .sidebar-mascot-card {
+  padding: 8px 4px;
+  display: flex;
+  justify-content: center;
 }
 
 .sidebar-nav-btn {
@@ -947,11 +1222,11 @@ tr:hover td {
   align-items: center;
   gap: 12px;
   width: 100%;
-  padding: 10px 16px;
+  padding: 10px 14px;
   border-radius: 100px;
   border: none;
   background-color: transparent;
-  color: #3A4E40;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
@@ -960,12 +1235,12 @@ tr:hover td {
 }
 
 .sidebar-nav-btn:hover {
-  background-color: #EBF3E7;
-  color: #26352A;
+  background-color: var(--bg-surface-subdued);
+  color: var(--text-primary);
 }
 
 .sidebar-nav-btn.active {
-  background-color: #43A85B !important;
+  background-color: var(--brand-primary) !important;
   color: #FFFFFF !important;
   font-weight: 700 !important;
   box-shadow: 0 4px 14px rgba(67, 168, 91, 0.32);
@@ -976,43 +1251,93 @@ tr:hover td {
 }
 
 .sidebar-nav-btn.active:hover {
-  background-color: #38944f !important;
+  background-color: var(--brand-primary-hover) !important;
   color: #FFFFFF !important;
 }
-
 
 .platform-main-content {
   flex: 1;
   min-width: 0;
-  background-color: #FAFAF4;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
   overflow-x: hidden;
 }
 
+/* Mobile Drawer Responsive Mode (Zero horizontal overflow, off-canvas drawer with backdrop) */
 @media (max-width: 1023px) {
   .platform-sidebar {
     position: fixed;
-    top: 70px;
+    top: 0;
     left: 0;
     bottom: 0;
+    width: min(320px, 85vw) !important;
+    max-width: 85vw !important;
+    height: 100vh;
+    height: 100dvh;
     z-index: 1050;
-    background-color: #FAFAF4;
-    box-shadow: 4px 0 24px rgba(38, 53, 42, 0.15);
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
     transform: translateX(-100%);
+    padding: 0;
   }
 
   .platform-sidebar.open {
     transform: translateX(0);
   }
 
+  /* Ensure labels are always visible on mobile when drawer is open, even if desktop collapsed state is active */
+  .platform-sidebar.collapsed .sidebar-label,
+  .platform-sidebar.collapsed .sidebar-section-title,
+  .platform-sidebar.collapsed .sidebar-mascot-card-text {
+    display: initial !important;
+  }
+
+  .platform-sidebar.collapsed .sidebar-nav-btn {
+    justify-content: flex-start;
+    padding: 10px 14px;
+    border-radius: 100px;
+    gap: 12px;
+  }
+
   .platform-sidebar-backdrop {
     position: fixed;
-    top: 70px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(38, 53, 42, 0.38);
-    backdrop-filter: blur(2px);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
     z-index: 1040;
+    animation: fadeIn 0.15s ease-out;
+  }
+}
+
+.desktop-only-toggle {
+  display: flex !important;
+}
+.mobile-only-toggle {
+  display: none !important;
+}
+.sidebar-mobile-drawer-header {
+  display: none !important;
+}
+.sidebar-desktop-collapse-header {
+  display: flex !important;
+}
+
+@media (max-width: 1023px) {
+  .desktop-only-toggle {
+    display: none !important;
+  }
+  .mobile-only-toggle {
+    display: flex !important;
+  }
+  .sidebar-mobile-drawer-header {
+    display: flex !important;
+  }
+  .sidebar-desktop-collapse-header {
+    display: none !important;
+  }
+  .theme-btn-label {
+    display: none;
   }
 }
 
