@@ -15,8 +15,17 @@ import {
   Sparkles,
   Terminal,
   ShieldCheck,
-  Briefcase,
   GraduationCap,
+  Box,
+  Wifi,
+  IndianRupee,
+  Wallet,
+  Landmark,
+  CreditCard,
+  MessageCircle,
+  Mic,
+  Lightbulb,
+  Crown,
 } from 'lucide-react';
 
 interface CourseCatalogueProps {
@@ -77,14 +86,35 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
 
   const getCourseItemIcon = (streamId: string, idx: number) => {
     if (streamId === 'technology') {
-      const icons = [<Sparkles key="sp" size={16} />, <Cpu key="cp" size={16} />, <Terminal key="tm" size={16} />, <ShieldCheck key="sc" size={16} />];
+      const icons = [
+        <Cpu key="cpu" size={17} />,
+        <Sparkles key="sp" size={17} />,
+        <Terminal key="tm" size={17} />,
+        <Box key="bx" size={17} />,
+        <Wifi key="wf" size={17} />,
+        <ShieldCheck key="sc" size={17} />,
+      ];
       return icons[idx % icons.length];
     }
     if (streamId === 'finance') {
-      const icons = [<Coins key="co" size={16} />, <Award key="aw" size={16} />, <Briefcase key="bc" size={16} />, <CheckCircle2 key="ck" size={16} />];
+      const icons = [
+        <IndianRupee key="inr" size={17} />,
+        <Wallet key="wal" size={17} />,
+        <Landmark key="lm" size={17} />,
+        <CreditCard key="cc" size={17} />,
+        <ShieldCheck key="sc2" size={17} />,
+        <Coins key="co" size={17} />,
+      ];
       return icons[idx % icons.length];
     }
-    const icons = [<Users key="us" size={16} />, <Clock key="cl" size={16} />, <Sparkles key="sp2" size={16} />, <GraduationCap key="gc" size={16} />];
+    const icons = [
+      <Clock key="cl" size={17} />,
+      <MessageCircle key="mc" size={17} />,
+      <Mic key="mic" size={17} />,
+      <Lightbulb key="lb" size={17} />,
+      <Crown key="cr" size={17} />,
+      <Users key="us" size={17} />,
+    ];
     return icons[idx % icons.length];
   };
 
@@ -430,37 +460,42 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 key={stream.id}
                 style={{
                   backgroundColor: '#FFFFFF',
-                  borderRadius: '20px',
+                  borderRadius: '24px',
                   border: '1px solid #E5F0DF',
                   overflow: 'hidden',
                   display: 'flex',
                   flexDirection: 'column',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                  transition: 'box-shadow 0.2s ease',
+                  boxShadow: '0 4px 20px rgba(38, 53, 42, 0.05)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                 }}
               >
                 {/* Stream Header */}
                 <div
                   style={{
-                    backgroundColor: '#FAFAF4',
-                    padding: '24px 22px 18px',
+                    backgroundColor: stream.id === 'finance' ? '#F4FBE4' : '#EBF5E9',
+                    padding: '24px 22px 20px',
                     borderBottom: '1px solid #E5F0DF',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '12px',
+                    gap: '14px',
+                    position: 'relative',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div
                       style={{
-                        width: '44px',
-                        height: '44px',
+                        width: '46px',
+                        height: '46px',
                         borderRadius: '50%',
-                        backgroundColor: '#E5F0DF',
+                        backgroundColor: stream.id === 'finance' ? '#9EDD38' : '#43A85B',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#43A85B',
+                        color: stream.id === 'finance' ? '#17341B' : '#FFFFFF',
+                        boxShadow:
+                          stream.id === 'finance'
+                            ? '0 4px 10px rgba(158, 221, 56, 0.35)'
+                            : '0 4px 10px rgba(67, 168, 91, 0.28)',
                       }}
                     >
                       {getStreamIcon(stream.id, 22)}
@@ -473,13 +508,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         color: '#26352A',
                         border: 'none',
                         borderRadius: '100px',
-                        padding: '4px 12px',
+                        padding: '5px 14px',
                         fontSize: '0.8rem',
                         fontWeight: 700,
                         cursor: 'pointer',
                         display: 'inline-flex',
                         alignItems: 'center',
-                        gap: '4px',
+                        gap: '6px',
+                        transition: 'transform 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateX(2px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateX(0)';
                       }}
                     >
                       <span>{stream.courses.length} Courses</span>
@@ -495,15 +537,18 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         fontWeight: 800,
                         color: '#26352A',
                         fontFamily: 'Space Grotesk, sans-serif',
+                        letterSpacing: '-0.01em',
+                        lineHeight: 1.25,
                       }}
                     >
                       {stream.title}
                     </h3>
                     <p
                       style={{
-                        margin: '4px 0 0',
+                        margin: '5px 0 0',
                         fontSize: '0.88rem',
-                        color: '#6A7D70',
+                        color: '#556D5C',
+                        lineHeight: 1.35,
                       }}
                     >
                       {stream.summary}
@@ -527,7 +572,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         transition: 'background-color 0.15s ease',
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FAFAF4';
+                        e.currentTarget.style.backgroundColor = '#F8FAF6';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
@@ -535,11 +580,11 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     >
                       <div
                         style={{
-                          width: '36px',
-                          height: '36px',
+                          width: '38px',
+                          height: '38px',
                           borderRadius: '50%',
-                          backgroundColor: '#E5F0DF',
-                          color: '#43A85B',
+                          backgroundColor: stream.id === 'finance' ? '#EDF8D8' : '#E5F0DF',
+                          color: stream.id === 'finance' ? '#4A7F18' : '#3B8E50',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -555,9 +600,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                             fontWeight: 700,
                             fontSize: '0.94rem',
                             color: '#26352A',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
+                            lineHeight: 1.3,
                           }}
                         >
                           {c.title}
@@ -566,10 +609,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                           style={{
                             fontSize: '0.82rem',
                             color: '#6A7D70',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            marginTop: '2px',
+                            marginTop: '3px',
+                            lineHeight: 1.35,
                           }}
                         >
                           {c.summary}
@@ -577,16 +618,16 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         <div
                           style={{
                             display: 'flex',
-                            gap: '10px',
+                            gap: '8px',
                             alignItems: 'center',
                             fontSize: '0.75rem',
-                            color: '#43A85B',
-                            marginTop: '4px',
+                            color: '#556D5C',
+                            marginTop: '6px',
                             fontWeight: 600,
                           }}
                         >
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <BookOpen size={12} /> {c.modules_count} modules
+                            <BookOpen size={12} color="#43A85B" /> {c.modules_count} modules
                           </span>
                           <span>•</span>
                           <span>{c.duration_hours}h</span>
@@ -595,26 +636,35 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         </div>
                       </div>
 
-                      <ChevronRight size={18} color="#A3B8A8" />
+                      <ChevronRight size={18} color="#9DB5A4" />
                     </div>
                   ))}
                 </div>
 
                 {/* Bottom View All Button */}
-                <div style={{ padding: '14px 20px', backgroundColor: '#FAFAF4', textAlign: 'center' }}>
+                <div style={{ padding: '16px 20px', backgroundColor: '#FAFAF4', textAlign: 'center' }}>
                   <button
                     type="button"
                     onClick={() => toggleStreamExpand(stream.id)}
                     style={{
-                      background: 'none',
-                      border: 'none',
-                      color: '#43A85B',
+                      backgroundColor: '#EEF6EB',
+                      border: '1px solid #DCEADA',
+                      color: '#26352A',
+                      borderRadius: '100px',
+                      padding: '9px 22px',
+                      fontSize: '0.84rem',
                       fontWeight: 700,
-                      fontSize: '0.88rem',
                       cursor: 'pointer',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '6px',
+                      transition: 'all 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#E0EFDC';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#EEF6EB';
                     }}
                   >
                     <span>
