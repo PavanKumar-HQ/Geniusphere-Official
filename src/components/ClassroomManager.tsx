@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { KeyRound, CheckCircle2, AlertCircle, Calendar, RefreshCw, Ban, PlusCircle } from 'lucide-react';
+import { MascotSphere } from './MascotSphere';
 
 interface ClassroomManagerProps {
   db: InMemoryDatabase;
@@ -96,67 +97,73 @@ export const ClassroomManager: React.FC<ClassroomManagerProps> = ({ db, currentU
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Student: Join with Code */}
       {!isTeacher && (
-        <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-            <KeyRound size={20} color="var(--brand-primary)" />
-            <h3 style={{ fontSize: '1.1rem' }}>Join Classroom with Invite Code</h3>
-          </div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '14px' }}>
-            Enter the 8-character code provided by your educator to access your institution's cohort, assignments, and gradebook.
-          </p>
-
-          <form onSubmit={handleJoinClassroom} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <input
-              type="text"
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value)}
-              placeholder="e.g. SEC2026A"
-              style={{
-                flex: '1 1 200px',
-                padding: '10px 14px',
-                borderRadius: '8px',
-                border: '1px solid var(--border-strong)',
-                fontFamily: 'var(--font-mono)',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                fontSize: '1rem',
-              }}
-            />
-            <button type="submit" className="btn-primary" style={{ padding: '0 20px' }}>
-              Join Classroom
-            </button>
-          </form>
-
-          {feedback && (
-            <div
-              style={{
-                marginTop: '12px',
-                padding: '10px 14px',
-                borderRadius: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                backgroundColor: feedback.type === 'success' ? 'var(--success-bg)' : 'var(--danger-bg)',
-                color: feedback.type === 'success' ? 'var(--success-text)' : 'var(--danger-text)',
-                border: `1px solid ${feedback.type === 'success' ? 'var(--success-border)' : 'var(--danger-border)'}`,
-                fontSize: '0.85rem',
-              }}
-            >
-              {feedback.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-              <span>{feedback.message}</span>
+        <div className="card" style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+          <MascotSphere pose="happy" size={74} animated={true} />
+          <div style={{ flex: '1 1 300px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+              <KeyRound size={20} color="var(--brand-primary)" />
+              <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Join Classroom with Invite Code</h3>
             </div>
-          )}
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '14px' }}>
+              Enter the 8-character code provided by your educator to access your institution's cohort, assignments, and gradebook.
+            </p>
+
+            <form onSubmit={handleJoinClassroom} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                value={joinCode}
+                onChange={(e) => setJoinCode(e.target.value)}
+                placeholder="e.g. SEC2026A"
+                style={{
+                  flex: '1 1 200px',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-strong)',
+                  fontFamily: 'var(--font-mono)',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                }}
+              />
+              <button type="submit" className="btn-primary" style={{ padding: '0 20px' }}>
+                Join Classroom
+              </button>
+            </form>
+
+            {feedback && (
+              <div
+                style={{
+                  marginTop: '12px',
+                  padding: '10px 14px',
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: feedback.type === 'success' ? 'var(--success-bg)' : 'var(--danger-bg)',
+                  color: feedback.type === 'success' ? 'var(--success-text)' : 'var(--danger-text)',
+                  border: `1px solid ${feedback.type === 'success' ? 'var(--success-border)' : 'var(--danger-border)'}`,
+                  fontSize: '0.85rem',
+                }}
+              >
+                {feedback.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+                <span>{feedback.message}</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {/* Teacher Actions Bar */}
       {isTeacher && (
-        <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <div>
-            <h3 style={{ fontSize: '1.1rem' }}>Classroom & Join Code Administration</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              Manage active student access codes and cryptographic expiration windows.
-            </p>
+        <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <MascotSphere pose="teaching" size={56} animated={true} />
+            <div>
+              <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Classroom & Join Code Administration</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '4px 0 0' }}>
+                Manage active student access codes and cryptographic expiration windows.
+              </p>
+            </div>
           </div>
           <button
             type="button"
@@ -175,9 +182,12 @@ export const ClassroomManager: React.FC<ClassroomManagerProps> = ({ db, currentU
           {isTeacher ? 'Managed Classrooms' : 'Your Enrolled Classrooms'}
         </h3>
         {classrooms.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '24px 0' }}>
-            {isTeacher ? 'No classrooms configured.' : 'You are not enrolled in any classrooms yet.'}
-          </p>
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <MascotSphere pose={isTeacher ? 'teaching' : 'thinking'} size={80} />
+            <p style={{ color: 'var(--text-muted)', marginTop: '12px' }}>
+              {isTeacher ? 'No classrooms configured yet. Create your first classroom above!' : 'You are not enrolled in any classrooms yet.'}
+            </p>
+          </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
             {classrooms.map((cls) => {

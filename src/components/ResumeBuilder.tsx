@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { ResumeProject } from '../types';
 import { Award, Download, Plus, CheckCircle2 } from 'lucide-react';
+import { MascotSphere } from './MascotSphere';
 
 interface ResumeBuilderProps {
   db: InMemoryDatabase;
@@ -94,10 +95,18 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ db, currentUserId 
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
       {/* Editor Column */}
       <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Award size={20} color="var(--brand-primary)" />
-            <h2 style={{ fontSize: '1.25rem' }}>Resume & Portfolio Editor</h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <MascotSphere pose="coding" size={48} animated={true} />
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Award size={18} color="var(--brand-primary)" />
+                <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Resume & Portfolio Editor</h2>
+              </div>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: '2px 0 0' }}>
+                Showcase verified laboratory mastery &amp; code credentials
+              </p>
+            </div>
           </div>
           <span className="badge badge-brand">ATS-Optimized</span>
         </div>

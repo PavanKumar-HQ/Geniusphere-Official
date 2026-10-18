@@ -8,6 +8,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { InMemoryDatabase } from '../db/in-memory-db';
+import { MascotSphere } from './MascotSphere';
 
 export interface LabCatalogueProps {
   db: InMemoryDatabase;
@@ -53,28 +54,31 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
   return (
     <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 24px 80px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
       {/* Top Header */}
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: 'var(--text-meta)', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-          <button 
-            type="button"
-            onClick={onNavigateHome}
-            style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', padding: 0, fontWeight: 600, fontSize: 'inherit' }}
-          >
-            Home
-          </button>
-          <span>/</span>
-          <span>Labs Catalogue</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: 'var(--text-meta)', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+            <button 
+              type="button"
+              onClick={onNavigateHome}
+              style={{ background: 'none', border: 'none', color: 'var(--brand-primary)', cursor: 'pointer', padding: 0, fontWeight: 600, fontSize: 'inherit' }}
+            >
+              Home
+            </button>
+            <span>/</span>
+            <span>Labs Catalogue</span>
+          </div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: 'var(--text-meta)', fontWeight: 700, marginBottom: '12px' }}>
+            <Terminal size={14} />
+            <span>INTERACTIVE LABS & SIMULATIONS</span>
+          </div>
+          <h1 style={{ fontSize: 'var(--text-page-title)', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
+            Explore Interactive Labs
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0, maxWidth: '680px' }}>
+            Practice hands-on concept simulations, parameter-driven experiments, and isolated code execution sandboxes across approved disciplines.
+          </p>
         </div>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: 'var(--text-meta)', fontWeight: 700, marginBottom: '12px' }}>
-          <Terminal size={14} />
-          <span>INTERACTIVE LABS & SIMULATIONS</span>
-        </div>
-        <h1 style={{ fontSize: 'var(--text-page-title)', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
-          Explore Interactive Labs
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0, maxWidth: '680px' }}>
-          Practice hands-on concept simulations, parameter-driven experiments, and isolated code execution sandboxes across approved disciplines.
-        </p>
+        <MascotSphere pose="coding" size={96} speechBubble="Ready to run code in the sandbox?" />
       </div>
 
       {/* Filter and Search Bar */}
@@ -150,10 +154,10 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
 
       {/* Labs Grid */}
       {labs.length === 0 ? (
-        <div className="card" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
-          <Terminal size={36} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-          <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '4px' }}>No matching labs found</h3>
-          <p style={{ fontSize: '0.88rem' }}>Try clearing your search query or selecting "All Subjects".</p>
+        <div className="card" style={{ padding: '48px 24px', textAlign: 'center' }}>
+          <MascotSphere pose="thinking" size={90} speechBubble="No labs matched this filter!" />
+          <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', margin: '14px 0 4px' }}>No matching labs found</h3>
+          <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0 }}>Try clearing your search query or selecting "All Subjects".</p>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '24px' }}>

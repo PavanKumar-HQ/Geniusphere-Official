@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
+import { MascotSphere } from './MascotSphere';
 
 interface CertificateModalProps {
   certificate: Certificate | null;
@@ -35,7 +36,7 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         }}
       >
         {/* Top Controls */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#43A85B' }}>
             <Award size={22} />
             <span style={{ fontWeight: 800, fontSize: '1.05rem', color: '#26352A', fontFamily: 'var(--font-heading)' }}>
@@ -61,6 +62,15 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
           >
             <X size={18} />
           </button>
+        </div>
+
+        {/* Celebrating Mascot Banner */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+          <MascotSphere
+            pose="celebrating"
+            size={76}
+            speechBubble="Milestone Unlocked! Official verified credential earned! 🎉"
+          />
         </div>
 
         {/* Certificate Printable Area */}

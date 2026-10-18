@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Assignment, Submission, User } from '../types';
 import { Users, BookOpen, Award, CheckCircle2, PlusCircle } from 'lucide-react';
+import { MascotSphere } from './MascotSphere';
 
 interface TeacherGradebookProps {
   db: InMemoryDatabase;
@@ -114,11 +115,14 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Top Bar */}
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-        <div>
-          <h2 style={{ fontSize: '1.25rem' }}>Teacher Gradebook & Classroom Roster</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            Authoritative institutional view with database-enforced classroom isolation
-          </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <MascotSphere pose="teaching" size={56} animated={true} />
+          <div>
+            <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Teacher Gradebook & Classroom Roster</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '4px 0 0' }}>
+              Authoritative institutional view with database-enforced classroom isolation
+            </p>
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
