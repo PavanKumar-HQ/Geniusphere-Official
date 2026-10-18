@@ -30,7 +30,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
       streak: liveProgress.streak_days,
       courses_completed: Math.max(4, liveProgress.completed_courses.length),
       badge: 'Cyber Sentinel',
-      avatar_color: '#3B82F6',
+      avatar_color: '#43A85B',
     },
     {
       rank: 2,
@@ -74,7 +74,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
       streak: 7,
       courses_completed: 2,
       badge: 'Cloud Pioneer',
-      avatar_color: '#06B6D4',
+      avatar_color: '#43A85B',
     },
     {
       rank: 6,

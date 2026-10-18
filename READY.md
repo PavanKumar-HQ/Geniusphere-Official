@@ -23,7 +23,7 @@ In strict accordance with the **Master Engineering & Architectural Prompt for Ge
    - **Highlights & Actions (Lime):** `#D9F477` (paired with `#26352A` Charcoal text for WCAG AAA contrast)
    - **Headings, Body Copy & Hairline Borders (Charcoal):** `#26352A` (hairline borders: `rgba(38, 53, 42, 0.12)`)
    - **Zero neon gradients, zero dark-mode glow halations, zero glassmorphic AI slop, zero emoji decoration.** Outline Lucide icons with 1.5px–2px strokes.
-   - **Typography:** `Plus Jakarta Sans`, `Inter`, and `JetBrains Mono` (Google Fonts).
+   - **Typography:** `Space Grotesk` (Headlines, Wordmark, and Expressive Titles) + `Inter` (UI, Navigation, Buttons, Dashboards, and Reading Copy) + `JetBrains Mono` (Code & Telemetry).
 
 2. **Core Architectural Features Implemented:**
    - **Flagship Exemplar Learning Journey:** "Recognising Digital Payment Scams" ([src/components/ScamDefenseJourney.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ScamDefenseJourney.tsx)), a 5-stage pedagogical loop (Understand → Examine → Apply → Get Feedback → Demonstrate) featuring the Golden UPI PIN rule, 3 authentic Indian threat vectors, interactive threat evaluation simulator, NPCI & 1930 Cyber Fraud Helpline protocols, and HMAC-SHA256 verifiable evidence card generation.

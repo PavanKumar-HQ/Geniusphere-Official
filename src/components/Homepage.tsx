@@ -90,31 +90,32 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 gap: '8px',
                 padding: '6px 14px',
                 borderRadius: '9999px',
-                backgroundColor: '#EBF5F0',
-                border: '1px solid #C4E3D4',
-                color: '#164E3D',
+                backgroundColor: '#E5F0DF',
+                border: '1px solid rgba(38, 53, 42, 0.14)',
+                color: '#26352A',
                 fontSize: '0.8rem',
                 fontWeight: 700,
                 letterSpacing: '0.03em',
               }}
             >
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#1E6B4E' }} />
+              <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#43A85B' }} />
               <span>EVIDENCE-BACKED EDUCATION • INDIA 2026</span>
             </div>
 
-            {/* Headline: Clean, Normalized, Prestigious Typography */}
+            {/* Headline: Space Grotesk Bold, Charcoal */}
             <h1
               style={{
+                fontFamily: 'var(--font-heading)',
                 fontSize: 'clamp(2.5rem, 4.4vw, 3.75rem)',
-                fontWeight: 800,
+                fontWeight: 700,
                 lineHeight: 1.12,
                 letterSpacing: '-0.03em',
-                color: '#14261C',
+                color: '#26352A',
                 margin: 0,
               }}
             >
               Practical skills, taught in class,{' '}
-              <span style={{ color: '#1E6B4E' }}>measured clearly.</span>
+              <span style={{ color: '#43A85B' }}>measured clearly.</span>
             </h1>
 
             {/* Supporting Summary */}
@@ -122,7 +123,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               style={{
                 fontSize: '1.08rem',
                 lineHeight: 1.68,
-                color: '#475569',
+                color: '#4A5B4F',
                 margin: 0,
                 maxWidth: '560px',
               }}
@@ -161,7 +162,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   borderRadius: '8px',
                 }}
               >
-                <Terminal size={17} color="#1E6B4E" />
+                <Terminal size={17} color="#43A85B" />
                 <span>Explore 12 Sandboxes</span>
               </button>
             </div>
@@ -174,21 +175,21 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 gap: '20px',
                 flexWrap: 'wrap',
                 paddingTop: '12px',
-                borderTop: '1px solid #E8E2D6',
+                borderTop: '1px solid rgba(38, 53, 42, 0.12)',
                 width: '100%',
                 maxWidth: '560px',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
-                <CheckCircle2 size={15} color="#1E6B4E" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#4A5B4F', fontWeight: 600 }}>
+                <CheckCircle2 size={15} color="#43A85B" />
                 <span>CBSE & AICTE Aligned</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
-                <Shield size={15} color="#1D58A6" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#4A5B4F', fontWeight: 600 }}>
+                <Shield size={15} color="#43A85B" />
                 <span>DPDP Act 2023 Compliant</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#475569', fontWeight: 600 }}>
-                <Sparkles size={15} color="#B45309" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '0.82rem', color: '#4A5B4F', fontWeight: 600 }}>
+                <Sparkles size={15} color="#43A85B" />
                 <span>Zero-Install Wasm</span>
               </div>
             </div>
@@ -228,37 +229,13 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             </p>
           </div>
 
-            {/* Audience Tabs with Dedicated Vibrant Colors */}
+            {/* Audience Tabs with Botanical Colors */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '28px' }}>
               {[
-                {
-                  id: 'school',
-                  label: 'Schools & PU Colleges (Ages 14–18)',
-                  activeBg: '#1E6B4E',
-                  color: '#FFFFFF',
-                  activeBorder: '#16533C',
-                },
-                {
-                  id: 'college',
-                  label: 'Colleges & Universities (Ages 18+)',
-                  activeBg: '#1D58A6',
-                  color: '#FFFFFF',
-                  activeBorder: '#154584',
-                },
-                {
-                  id: 'teacher',
-                  label: 'Teachers & Educators',
-                  activeBg: '#237A59',
-                  color: '#FFFFFF',
-                  activeBorder: '#1A6045',
-                },
-                {
-                  id: 'parent',
-                  label: 'Parents & Guardians',
-                  activeBg: '#B45309',
-                  color: '#FFFFFF',
-                  activeBorder: '#92400E',
-                },
+                { id: 'school', label: 'Schools & PU Colleges (Ages 14–18)' },
+                { id: 'college', label: 'Colleges & Universities (Ages 18+)' },
+                { id: 'teacher', label: 'Teachers & Educators' },
+                { id: 'parent', label: 'Parents & Guardians' },
               ].map((tab) => {
                 const isActive = audienceTab === tab.id;
                 return (
@@ -269,13 +246,13 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     style={{
                       padding: '8px 18px',
                       borderRadius: 'var(--radius-full)',
-                      border: isActive ? `1.5px solid ${tab.activeBorder}` : '1.5px solid var(--border-subtle)',
-                      backgroundColor: isActive ? tab.activeBg : '#FFFFFF',
-                      color: isActive ? tab.color : 'var(--text-secondary)',
+                      border: isActive ? '1.5px solid #388E4C' : '1.5px solid rgba(38, 53, 42, 0.16)',
+                      backgroundColor: isActive ? '#43A85B' : '#FFFFFF',
+                      color: isActive ? '#FFFFFF' : '#26352A',
                       fontWeight: isActive ? 800 : 600,
                       fontSize: '0.86rem',
                       cursor: 'pointer',
-                      boxShadow: isActive ? '0 1px 3px rgba(20, 38, 28, 0.12)' : 'var(--shadow-xs)',
+                      boxShadow: isActive ? '0 1px 3px rgba(38, 53, 42, 0.12)' : 'none',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -285,20 +262,13 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               })}
             </div>
 
-            {/* Tab Content Cards with Distinct Colored Top Bar */}
+            {/* Tab Content Cards with Botanical Top Bar */}
             <div
               className="card"
               style={{
                 padding: '36px',
                 backgroundColor: '#FFFFFF',
-                borderTop:
-                  audienceTab === 'school'
-                    ? '4px solid #1E6B4E'
-                    : audienceTab === 'college'
-                    ? '4px solid #1D58A6'
-                    : audienceTab === 'teacher'
-                    ? '4px solid #237A59'
-                    : '4px solid #B45309',
+                borderTop: '3px solid #43A85B',
                 boxShadow: 'var(--shadow-md)',
               }}
             >
@@ -317,8 +287,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#1D58A6" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>DPDP Act 2023 Compliant:</strong> Verifiable parental consent ledger for all minors.</span>
                     </div>
@@ -353,20 +323,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#4338CA" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Proof of Mastery:</strong> Cryptographically verified completion certificates.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#F3E8FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#7E22CE" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Placement Cell Reporting:</strong> Exportable cohort competency matrix.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#15803D" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Applied Sandboxes:</strong> AI models, distributed ledgers, and web security.</span>
                     </div>
@@ -377,7 +347,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               {audienceTab === 'teacher' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'center' }}>
                   <div>
-                    <span className="tag-pill tag-pill-gold" style={{ marginBottom: '10px' }}>
+                    <span className="tag-pill tag-pill-lime" style={{ marginBottom: '10px' }}>
                       TEACHER COHORT CONTROLS
                     </span>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -389,20 +359,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#B45309" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Ready-to-Teach Kits:</strong> Starter slides, discussion guides, and rubrics.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#15803D" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Auto-Graded Checks:</strong> Instant visibility into student attempt quality.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#1D58A6" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>8-Character Join Codes:</strong> No student signups required for classroom labs.</span>
                     </div>
@@ -413,7 +383,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               {audienceTab === 'parent' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '28px', alignItems: 'center' }}>
                   <div>
-                    <span className="tag-pill tag-pill-emerald" style={{ marginBottom: '10px' }}>
+                    <span className="tag-pill tag-pill-lime" style={{ marginBottom: '10px' }}>
                       SAFEGUARDING FIRST
                     </span>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -425,20 +395,20 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#15803D" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Zero Ad Profiling:</strong> No behavioral tracking or third-party ad pixels.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#EEF5FC', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#1D58A6" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Consent Management:</strong> Review or withdraw consent at any time.</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <CheckCircle2 size={16} color="#B45309" />
+                      <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <CheckCircle2 size={16} color="#43A85B" />
                       </div>
                       <span><strong>Transparent Milestones:</strong> Real skills learned instead of game addiction.</span>
                     </div>
@@ -479,7 +449,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                borderTop: '4px solid #1D58A6',
+                borderTop: '3px solid #43A85B',
                 boxShadow: 'var(--shadow-md)',
                 transition: 'all 0.2s ease',
               }}
@@ -490,9 +460,9 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    backgroundColor: 'var(--brand-blue-surface)',
-                    color: 'var(--brand-blue)',
-                    border: '1px solid var(--brand-blue-border)',
+                    backgroundColor: '#E5F0DF',
+                    color: '#43A85B',
+                    border: '1px solid rgba(38, 53, 42, 0.12)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -500,7 +470,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 >
                   <Cpu size={24} />
                 </div>
-                <span className="tag-pill tag-pill-sky">
+                <span className="tag-pill tag-pill-emerald">
                   {getDomainCount('technology') + getDomainCount('coding')} Courses
                 </span>
               </div>
@@ -589,7 +559,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '16px',
-                borderTop: '4px solid #1E6B4E',
+                borderTop: '3px solid #43A85B',
                 boxShadow: 'var(--shadow-sm)',
                 transition: 'all 0.2s ease',
               }}
@@ -621,10 +591,10 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 High-impact workplace communication, scientific problem-solving, collaboration, ATS resume construction, and team prioritization.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginTop: '4px' }}>
-                <span className="tag-pill tag-pill-purple">💬 Communication</span>
-                <span className="tag-pill tag-pill-indigo">📄 ATS Resume Builder</span>
+                <span className="tag-pill tag-pill-emerald">💬 Communication</span>
+                <span className="tag-pill tag-pill-lime">📄 ATS Resume Builder</span>
                 <span className="tag-pill tag-pill-emerald">🤝 Team Collaboration</span>
-                <span className="tag-pill tag-pill-gold">🎯 Problem Solving</span>
+                <span className="tag-pill tag-pill-lime">🎯 Problem Solving</span>
               </div>
               <button
                 type="button"
@@ -671,7 +641,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #1D58A6',
+                  borderTop: '3px solid #43A85B',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -680,14 +650,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    backgroundColor: '#1D58A6',
+                    backgroundColor: '#43A85B',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 2px 6px rgba(29, 88, 166, 0.25)',
+                    boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
                   }}
                 >
                   1
@@ -705,7 +675,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #1E6B4E',
+                  borderTop: '3px solid #43A85B',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -714,14 +684,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    backgroundColor: '#1E6B4E',
+                    backgroundColor: '#43A85B',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 2px 6px rgba(30, 107, 78, 0.25)',
+                    boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
                   }}
                 >
                   2
@@ -739,7 +709,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #B45309',
+                  borderTop: '3px solid #43A85B',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -748,14 +718,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    backgroundColor: '#B45309',
+                    backgroundColor: '#43A85B',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 2px 6px rgba(180, 83, 9, 0.25)',
+                    boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
                   }}
                 >
                   3
@@ -773,7 +743,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '14px',
-                  borderTop: '4px solid #164E3D',
+                  borderTop: '3px solid #43A85B',
                   boxShadow: 'var(--shadow-sm)',
                 }}
               >
@@ -782,14 +752,14 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    backgroundColor: '#164E3D',
+                    backgroundColor: '#43A85B',
                     color: '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontWeight: 900,
                     fontSize: '1.15rem',
-                    boxShadow: '0 2px 6px rgba(22, 78, 61, 0.25)',
+                    boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
                   }}
                 >
                   4
@@ -834,10 +804,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
           {allLabs.slice(0, 4).map((lab) => {
-            const isTech = lab.category === 'technology' || lab.category === 'coding';
             const isFinance = lab.category === 'finance';
-            const topColor = isTech ? '#1D58A6' : isFinance ? '#B45309' : '#1E6B4E';
-            const tagClass = isTech ? 'tag-pill-sky' : isFinance ? 'tag-pill-gold' : 'tag-pill-emerald';
+            const tagClass = isFinance ? 'tag-pill-gold' : 'tag-pill-emerald';
 
             return (
               <div
@@ -848,7 +816,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   gap: '16px',
-                  borderTop: `4px solid ${topColor}`,
+                  borderTop: '3px solid #43A85B',
                   boxShadow: 'var(--shadow-sm)',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                 }}
@@ -1225,12 +1193,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                     width: '36px',
                     height: '36px',
                     borderRadius: '10px',
-                    backgroundColor: '#1E6B4E',
+                    backgroundColor: '#43A85B',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: '#FFFFFF',
-                    boxShadow: '0 2px 6px rgba(30, 107, 78, 0.25)',
+                    boxShadow: 'var(--shadow-sm)',
                   }}
                 >
                   <Shield size={20} />
@@ -1279,8 +1247,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 padding: '28px',
                 borderRadius: 'var(--radius-lg)',
                 backgroundColor: '#FFFFFF',
-                border: '1.5px solid #C4E3D4',
-                boxShadow: '0 4px 16px rgba(22, 78, 61, 0.08)',
+                border: '1.5px solid #E5F0DF',
+                boxShadow: 'var(--shadow-sm)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '14px',
@@ -1288,7 +1256,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#164E3D', letterSpacing: '0.05em' }}>
+                <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#43A85B', letterSpacing: '0.05em' }}>
                   DPDP ACT 2023 COMPLIANCE LEDGER
                 </span>
                 <span className="tag-pill tag-pill-emerald" style={{ fontSize: '0.68rem', padding: '1px 7px' }}>
@@ -1334,57 +1302,57 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           style={{
             padding: '48px 36px',
             borderRadius: 'var(--radius-xl)',
-            backgroundColor: '#164E3D',
-            border: '2px solid #0F382B',
-            boxShadow: '0 16px 40px -10px rgba(22, 78, 61, 0.35)',
+            backgroundColor: '#E5F0DF',
+            border: '1px solid rgba(38, 53, 42, 0.16)',
+            boxShadow: '0 8px 24px rgba(38, 53, 42, 0.06)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             textAlign: 'center',
             gap: '28px',
-            color: '#FFFFFF',
+            color: '#26352A',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
           <div style={{ maxWidth: '720px', position: 'relative', zIndex: 1 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '9999px', backgroundColor: '#FEF7EA', color: '#B45309', border: '1px solid #FCE7C3' }}>
-                ⚡ 2026 PILOT ADOPTION COHORTS
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, padding: '4px 12px', borderRadius: '9999px', backgroundColor: '#D9F477', color: '#26352A', border: '1px solid rgba(38, 53, 42, 0.14)' }}>
+                PILOT ADOPTION COHORTS 2026
               </span>
             </div>
-            <h2 style={{ fontSize: 'clamp(1.75rem, 3.2vw, 2.5rem)', fontWeight: 900, margin: '0 0 12px 0', letterSpacing: '-0.02em', color: '#FAF7F2' }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.75rem, 3.2vw, 2.5rem)', fontWeight: 700, margin: '0 0 12px 0', letterSpacing: '-0.02em', color: '#26352A' }}>
               Join the 4–8 Week Institutional Pilot Program
             </h2>
-            <p style={{ color: '#D1E7DD', fontSize: '1.02rem', lineHeight: 1.65, margin: 0 }}>
+            <p style={{ color: '#4A5B4F', fontSize: '1.02rem', lineHeight: 1.65, margin: 0 }}>
               Equip your school or college with ready-to-teach curriculum kits, teacher training, zero-install browser sandboxes, and exportable institutional evidence-of-learning reports.
             </p>
           </div>
 
           {/* Pilot Target Metrics Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', width: '100%', maxWidth: '880px', position: 'relative', zIndex: 1 }}>
-            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#BAE6FD' }}>≥ 70%</div>
-              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Student Activation</div>
-              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Target Benchmark</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: '#FAFAF4', border: '1px solid rgba(38, 53, 42, 0.12)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#43A85B' }}>≥ 70%</div>
+              <div style={{ fontSize: '0.82rem', color: '#26352A', fontWeight: 700, marginTop: '4px' }}>Student Activation</div>
+              <div style={{ fontSize: '0.72rem', color: '#4A5B4F', marginTop: '2px' }}>Target Benchmark</div>
             </div>
 
-            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#A7F3D0' }}>≥ 60%</div>
-              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Sandbox Completion</div>
-              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Outcome Metric</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: '#FAFAF4', border: '1px solid rgba(38, 53, 42, 0.12)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#43A85B' }}>≥ 60%</div>
+              <div style={{ fontSize: '0.82rem', color: '#26352A', fontWeight: 700, marginTop: '4px' }}>Sandbox Completion</div>
+              <div style={{ fontSize: '0.72rem', color: '#4A5B4F', marginTop: '2px' }}>Outcome Metric</div>
             </div>
 
-            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FDE68A' }}>4–8 Wks</div>
-              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Cohort Duration</div>
-              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Structured Term</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: '#FAFAF4', border: '1px solid rgba(38, 53, 42, 0.12)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#26352A' }}>4–8 Wks</div>
+              <div style={{ fontSize: '0.82rem', color: '#26352A', fontWeight: 700, marginTop: '4px' }}>Cohort Duration</div>
+              <div style={{ fontSize: '0.72rem', color: '#4A5B4F', marginTop: '2px' }}>Structured Term</div>
             </div>
 
-            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.15)', textAlign: 'center' }}>
-              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#FECDD3' }}>₹0 Free</div>
-              <div style={{ fontSize: '0.82rem', color: '#FAF7F2', fontWeight: 600, marginTop: '4px' }}>Zero-Cost Pilot Phase</div>
-              <div style={{ fontSize: '0.72rem', color: '#A7D7C5', marginTop: '2px' }}>Institutional Grant</div>
+            <div style={{ padding: '20px 16px', borderRadius: '14px', backgroundColor: '#FAFAF4', border: '1px solid rgba(38, 53, 42, 0.12)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#43A85B' }}>₹0 Free</div>
+              <div style={{ fontSize: '0.82rem', color: '#26352A', fontWeight: 700, marginTop: '4px' }}>Zero-Cost Pilot Phase</div>
+              <div style={{ fontSize: '0.72rem', color: '#4A5B4F', marginTop: '2px' }}>Institutional Grant</div>
             </div>
           </div>
 
@@ -1397,15 +1365,15 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 padding: '0 28px',
                 fontSize: '1rem',
                 fontWeight: 800,
-                backgroundColor: '#FAF7F2',
-                color: '#164E3D',
+                backgroundColor: '#43A85B',
+                color: '#FFFFFF',
                 borderRadius: '8px',
                 border: 'none',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
               }}
             >
               <School size={18} />
@@ -1421,11 +1389,10 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                 padding: '0 22px',
                 fontSize: '1rem',
                 fontWeight: 700,
-                borderColor: 'rgba(255, 255, 255, 0.4)',
-                color: '#FAF7F2',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                color: '#26352A',
+                backgroundColor: '#FAFAF4',
                 borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
+                border: '1px solid rgba(38, 53, 42, 0.16)',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',

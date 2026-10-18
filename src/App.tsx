@@ -421,12 +421,12 @@ export const App: React.FC = () => {
                   width: '40px',
                   height: '40px',
                   borderRadius: '10px',
-                  backgroundColor: '#164E3D',
+                  backgroundColor: 'var(--brand-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#FFFFFF',
-                  boxShadow: '0 1px 3px rgba(22, 78, 61, 0.25)',
+                  boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
                 }}
               >
                 <ShieldCheck size={24} />
@@ -435,11 +435,11 @@ export const App: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span
                     style={{
-                      fontFamily: 'var(--font-heading)',
+                      fontFamily: 'var(--font-display-brand)',
                       fontSize: '1.25rem',
-                      fontWeight: 800,
+                      fontWeight: 700,
                       letterSpacing: '-0.02em',
-                      color: 'var(--brand-forest)',
+                      color: 'var(--text-primary)',
                     }}
                   >
                     GENIUSPHERE
@@ -450,9 +450,9 @@ export const App: React.FC = () => {
                       fontWeight: 800,
                       padding: '2px 8px',
                       borderRadius: '12px',
-                      backgroundColor: 'var(--brand-surface)',
-                      color: 'var(--brand-forest)',
-                      border: '1px solid var(--brand-border)',
+                      backgroundColor: 'var(--brand-lime)',
+                      color: 'var(--brand-lime-text)',
+                      border: '1px solid rgba(38, 53, 42, 0.14)',
                     }}
                   >
                     PILOT 2026

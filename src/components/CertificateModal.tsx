@@ -25,55 +25,75 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
       <div
         className="modal-content"
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: '780px', backgroundColor: '#070D1F', padding: '32px' }}
+        style={{
+          maxWidth: '780px',
+          backgroundColor: '#FAFAF4',
+          border: '1.5px solid #E5F0DF',
+          borderRadius: '16px',
+          padding: '32px',
+          boxShadow: 'var(--shadow-md)',
+        }}
       >
         {/* Top Controls */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#F59E0B' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#43A85B' }}>
             <Award size={22} />
-            <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>VERIFIED COURSE COMPLETION CERTIFICATE</span>
+            <span style={{ fontWeight: 800, fontSize: '1.05rem', color: '#26352A', fontFamily: 'var(--font-heading)' }}>
+              VERIFIED COURSE COMPLETION CERTIFICATE
+            </span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5F0DF',
+              color: '#26352A',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
             aria-label="Close dialog"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Certificate Printable Area */}
-        <div className="certificate-container" style={{ margin: '0 auto', maxWidth: '720px' }}>
-          <div className="certificate-border-inner">
+        <div className="certificate-container" style={{ margin: '0 auto', maxWidth: '720px', backgroundColor: '#FFFFFF', border: '3px solid #43A85B' }}>
+          <div className="certificate-border-inner" style={{ border: '1.5px dashed #D5CCC0' }}>
             {/* Header Brand */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: 'var(--brand-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#43A85B', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF' }}>
                 <ShieldCheck size={22} />
               </div>
-              <span style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', color: '#FFFFFF' }}>
+              <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#26352A', fontFamily: 'var(--font-heading)' }}>
                 GENIUSPHERE
               </span>
             </div>
 
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--brand-joy-of-quest)', textTransform: 'uppercase', marginBottom: '14px' }}>
-              CERTIFICATE OF ACCOMPLISHMENT & MASTERY
+            <div style={{ fontSize: '0.8rem', fontWeight: 800, letterSpacing: '0.15em', color: '#43A85B', textTransform: 'uppercase', marginBottom: '14px' }}>
+              CERTIFICATE OF ACCOMPLISHMENT &amp; MASTERY
             </div>
 
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+            <p style={{ fontSize: '0.9rem', color: '#6B7C72', marginBottom: '16px' }}>
               This certifies that
             </p>
 
-            <h2 style={{ fontSize: '2.1rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '16px', letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: '2.1rem', fontWeight: 800, color: '#26352A', marginBottom: '16px', letterSpacing: '-0.01em', fontFamily: 'var(--font-heading)' }}>
               {certificate.student_name}
             </h2>
 
-            <p style={{ fontSize: '0.92rem', color: 'var(--text-secondary)', maxWidth: '560px', margin: '0 auto 20px', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '0.92rem', color: '#6B7C72', maxWidth: '560px', margin: '0 auto 20px', lineHeight: 1.6 }}>
               has successfully completed all 10 modules, interactive concept visualizers, sandbox simulations, and assessments for
             </p>
 
-            <div style={{ padding: '12px 24px', borderRadius: '12px', backgroundColor: 'rgba(37, 99, 235, 0.15)', border: '1px solid rgba(59, 130, 246, 0.4)', display: 'inline-block', marginBottom: '24px' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#60A5FA' }}>
+            <div style={{ padding: '12px 24px', borderRadius: '10px', backgroundColor: '#E5F0DF', border: '1.5px solid #D5CCC0', display: 'inline-block', marginBottom: '24px' }}>
+              <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#26352A', fontFamily: 'var(--font-heading)' }}>
                 {certificate.course_title}
               </span>
             </div>
@@ -82,7 +102,18 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             {certificate.skills_acquired && certificate.skills_acquired.length > 0 && (
               <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '28px' }}>
                 {certificate.skills_acquired.map((s, idx) => (
-                  <span key={idx} className="badge badge-accent" style={{ fontSize: '0.75rem' }}>
+                  <span
+                    key={idx}
+                    style={{
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      backgroundColor: '#E5F0DF',
+                      border: '1px solid #D5CCC0',
+                      color: '#26352A',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                    }}
+                  >
                     ✓ {s}
                   </span>
                 ))}
@@ -90,20 +121,20 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
             )}
 
             {/* Footer Metadata */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '20px', borderTop: '1px solid rgba(245, 158, 11, 0.25)', flexWrap: 'wrap', gap: '16px', textAlign: 'left' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '20px', borderTop: '1px solid #E5F0DF', flexWrap: 'wrap', gap: '16px', textAlign: 'left' }}>
               <div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Issue Date</div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#FFFFFF' }}>{certificate.issue_date}</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>Certificate ID</div>
-                <div style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: '#22D3EE' }}>{certificate.id}</div>
+                <div style={{ fontSize: '0.72rem', color: '#6B7C72', fontWeight: 600 }}>Issue Date</div>
+                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#26352A' }}>{certificate.issue_date}</div>
+                <div style={{ fontSize: '0.72rem', color: '#6B7C72', marginTop: '6px', fontWeight: 600 }}>Certificate ID</div>
+                <div style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', color: '#43A85B', fontWeight: 700 }}>{certificate.id}</div>
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Cryptographic Verification Hash</div>
-                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#34D399', maxWidth: '280px', wordBreak: 'break-all' }}>
+                <div style={{ fontSize: '0.72rem', color: '#6B7C72', fontWeight: 600 }}>Cryptographic Verification Hash</div>
+                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#26352A', maxWidth: '280px', wordBreak: 'break-all', fontWeight: 600 }}>
                   {certificate.verification_hash}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', color: '#10B981', fontSize: '0.75rem', marginTop: '4px', fontWeight: 700 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', color: '#43A85B', fontSize: '0.75rem', marginTop: '6px', fontWeight: 700 }}>
                   <CheckCircle2 size={13} />
                   <span>Authoritative Server Verified</span>
                 </div>
@@ -117,8 +148,8 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
           <button
             type="button"
             onClick={handlePrint}
-            className="btn-accent"
-            style={{ height: '42px', padding: '0 24px' }}
+            className="btn-primary"
+            style={{ height: '42px', padding: '0 24px', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <Printer size={16} />
             <span>Print / Save PDF</span>

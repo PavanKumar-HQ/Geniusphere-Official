@@ -6,13 +6,13 @@
    ==================================================================== */
 
 :root {
-  /* Clean, Normalized Professional Typography */
-  --font-display-brand: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Clean, Expressive Normalized Typography: Space Grotesk + Inter */
+  --font-display-brand: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
 
-  /* Master Botanical & Academic Light Palette (CIE Verified) */
+  /* Master Botanical Palette: Warm Ivory + Soft Sage + Fresh Green + Lime + Charcoal */
   --bg-canvas: #FAFAF4;                  /* Main Background: Warm Ivory */
   --bg-surface: #FFFFFF;                 /* Pure White Surface / Canvas Cards */
   --bg-surface-subdued: #E5F0DF;         /* Secondary Surfaces: Soft Sage */
@@ -29,13 +29,13 @@
   --border-subtle: rgba(38, 53, 42, 0.12);
   --border-strong: rgba(38, 53, 42, 0.22);
 
-  --brand-lime: #D9F477;                 /* Highlights, Streaks & Pulses: Lime */
+  --brand-lime: #D9F477;                 /* Highlights & Important Actions: Lime */
   --brand-lime-text: #26352A;            /* Charcoal text on lime for WCAG AAA */
 
-  --brand-blue: #2B5E63;                 /* Deep Sage Teal for Secondary Information */
-  --brand-blue-hover: #1E464A;
-  --brand-blue-surface: #E5EFF0;
-  --brand-blue-border: #C8DFE1;
+  --brand-blue: #43A85B;                 /* Pure Botanical: No Blue */
+  --brand-blue-hover: #388E4C;
+  --brand-blue-surface: #E5F0DF;
+  --brand-blue-border: rgba(38, 53, 42, 0.12);
 
   --brand-quest: #D97706;                /* Warm Amber */
   --brand-quest-hover: #B45309;
@@ -110,17 +110,17 @@
   --radius-2xl: 20px;
   --radius-full: 9999px;
 
-  /* Dignified Solid & Subtle Tone Tokens (No Neon Gradients) */
-  --grad-brand: #1E6B4E;
-  --grad-sky: #1D58A6;
-  --grad-quest: #B45309;
-  --grad-questioning: #1E6B4E;
-  --grad-tech: #1D58A6;
-  --grad-finance: #B45309;
-  --grad-pro: #1E6B4E;
-  --grad-coding: #1D58A6;
-  --grad-fun: #1E6B4E;
-  --grad-rainbow: #1E6B4E;
+  /* Solid Flat Tokens (Zero Gradients, Zero Blue, Zero Dark Forest Green) */
+  --grad-brand: #43A85B;
+  --grad-sky: #43A85B;
+  --grad-quest: #D9F477;
+  --grad-questioning: #43A85B;
+  --grad-tech: #43A85B;
+  --grad-finance: #43A85B;
+  --grad-pro: #43A85B;
+  --grad-coding: #43A85B;
+  --grad-fun: #43A85B;
+  --grad-rainbow: #43A85B;
 
   /* Natural Tactile Paper Shadows (Zero Neon Glows) */
   --shadow-xs: 0 1px 2px rgba(20, 38, 28, 0.04);
@@ -238,15 +238,15 @@ button {
 }
 
 .btn-questioning {
-  background-color: #237A59;
+  background-color: #43A85B;
   color: #FFFFFF;
-  border: 1px solid #1A6045;
+  border: 1px solid #388E4C;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(35, 122, 89, 0.15);
+  box-shadow: 0 1px 3px rgba(38, 53, 42, 0.12);
 }
 .btn-questioning:hover:not(:disabled) {
-  background-color: #1A6045;
-  box-shadow: 0 2px 6px rgba(35, 122, 89, 0.22);
+  background-color: #388E4C;
+  box-shadow: 0 2px 6px rgba(38, 53, 42, 0.18);
   transform: translateY(-1px);
 }
 .btn-questioning:active:not(:disabled) {
@@ -254,28 +254,41 @@ button {
 }
 
 .btn-accent {
-  background-color: #237A59;
+  background-color: #43A85B;
   color: #FFFFFF;
-  border: 1px solid #1A6045;
+  border: 1px solid #388E4C;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(35, 122, 89, 0.15);
+  box-shadow: 0 1px 3px rgba(38, 53, 42, 0.12);
 }
 .btn-accent:hover:not(:disabled) {
-  background-color: #1A6045;
-  box-shadow: 0 2px 6px rgba(35, 122, 89, 0.22);
+  background-color: #388E4C;
+  box-shadow: 0 2px 6px rgba(38, 53, 42, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-lime, .btn-highlight {
+  background-color: var(--brand-lime); /* #D9F477 */
+  color: var(--text-primary);          /* #26352A Charcoal for WCAG AAA */
+  border: 1px solid rgba(38, 53, 42, 0.18);
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(38, 53, 42, 0.08);
+}
+.btn-lime:hover:not(:disabled), .btn-highlight:hover:not(:disabled) {
+  background-color: #CEEB68;
+  box-shadow: 0 2px 6px rgba(38, 53, 42, 0.15);
   transform: translateY(-1px);
 }
 
 .btn-purple {
-  background-color: var(--brand-blue);
+  background-color: #43A85B;
   color: #FFFFFF;
-  border: 1px solid var(--brand-blue-hover);
+  border: 1px solid #388E4C;
   font-weight: 700;
-  box-shadow: 0 1px 3px rgba(29, 88, 166, 0.15);
+  box-shadow: 0 1px 3px rgba(38, 53, 42, 0.12);
 }
 .btn-purple:hover:not(:disabled) {
-  background-color: var(--brand-blue-hover);
-  box-shadow: 0 2px 6px rgba(29, 88, 166, 0.22);
+  background-color: #388E4C;
+  box-shadow: 0 2px 6px rgba(38, 53, 42, 0.18);
   transform: translateY(-1px);
 }
 
@@ -622,30 +635,34 @@ button {
 }
 
 .tag-pill-sky {
-  background-color: var(--brand-blue-surface);
-  color: var(--brand-blue);
-  border: 1px solid var(--brand-blue-border);
+  background-color: #E5F0DF;
+  color: #26352A;
+  border: 1px solid rgba(38, 53, 42, 0.14);
 }
 .tag-pill-sky:hover {
-  background-color: #E2EBF5;
+  background-color: #DAE8D3;
 }
 
 .tag-pill-indigo {
-  background-color: #F0F4FA;
-  color: #1E3A8A;
-  border: 1px solid #BFDBFE;
+  background-color: #FAFAF4;
+  color: #26352A;
+  border: 1px solid rgba(38, 53, 42, 0.14);
 }
 .tag-pill-indigo:hover {
-  background-color: #E2EBF5;
+  background-color: #E5F0DF;
+}
+
+.tag-pill-lime {
+  background-color: #D9F477;
+  color: #26352A;
+  border: 1px solid rgba(38, 53, 42, 0.18);
+  font-weight: 800;
 }
 
 .tag-pill-purple {
-  background-color: #F5EEF8;
-  color: #5B21B6;
-  border: 1px solid #DDD6FE;
-}
-.tag-pill-purple:hover {
-  background-color: #EFE6F5;
+  background-color: #E5F0DF;
+  color: #43A85B;
+  border: 1px solid rgba(38, 53, 42, 0.14);
 }
 
 .tag-pill-gold {
@@ -684,27 +701,27 @@ button {
 }
 
 .pulse-dot-green {
-  background-color: #10B981;
-  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  background-color: #43A85B;
+  box-shadow: 0 0 0 0 rgba(67, 168, 91, 0.7);
   animation: pulse-green 1.8s infinite;
 }
 
 .pulse-dot-cyan {
-  background-color: #06B6D4;
-  box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7);
+  background-color: #D9F477;
+  box-shadow: 0 0 0 0 rgba(217, 244, 119, 0.7);
   animation: pulse-cyan 1.8s infinite;
 }
 
 @keyframes pulse-green {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(67, 168, 91, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(67, 168, 91, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(67, 168, 91, 0); }
 }
 
 @keyframes pulse-cyan {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 244, 119, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(217, 244, 119, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(217, 244, 119, 0); }
 }
 
 /* Clean Tables */

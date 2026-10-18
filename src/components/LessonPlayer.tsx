@@ -155,12 +155,12 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
 
         {/* Gamification Pills */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-          <div className="streak-pill" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>
-            <Flame size={13} color="#F97316" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#D9F477', color: '#26352A', fontWeight: 800, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px' }}>
+            <Flame size={13} color="#26352A" />
             <span>{userProgress.streak_days}-Day Streak</span>
           </div>
-          <div className="xp-pill" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>
-            <Zap size={13} color="#1D58A6" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#E5F0DF', color: '#26352A', fontWeight: 700, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px', border: '1px solid rgba(38, 53, 42, 0.12)' }}>
+            <Zap size={13} color="#43A85B" />
             <span>{userProgress.xp} XP</span>
           </div>
         </div>

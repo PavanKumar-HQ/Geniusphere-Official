@@ -314,7 +314,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
                       position: 'relative',
                       width: '100%',
                       paddingBottom: '56.25%',
-                      backgroundColor: '#0F172A',
+                      backgroundColor: 'var(--bg-secondary)',
                       cursor: 'pointer',
                     }}
                     onClick={() => setActiveVideo(video)}

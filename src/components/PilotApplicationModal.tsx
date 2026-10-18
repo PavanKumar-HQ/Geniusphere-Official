@@ -289,10 +289,10 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
               {[
-                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#1D58A6', bg: 'var(--brand-blue-surface)', icon: '🤖' },
-                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#B45309', bg: 'var(--brand-quest-surface)', icon: '💳' },
-                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#1E6B4E', bg: 'var(--brand-surface)', icon: '⚡' },
-                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#164E3D', bg: 'var(--brand-surface)', icon: '🤝' },
+                { id: 'technology', label: 'Technology & Cyber Safety', desc: 'AI, Blockchain, Web Security', color: '#43A85B', bg: '#E5F0DF', icon: '🤖' },
+                { id: 'finance', label: 'Applied Indian Finance', desc: 'UPI Safety, Budgeting, SIPs', color: '#43A85B', bg: '#E5F0DF', icon: '💳' },
+                { id: 'coding', label: 'Programming Logic', desc: 'Browser Code Sandboxes', color: '#43A85B', bg: '#E5F0DF', icon: '⚡' },
+                { id: 'professional', label: 'Professional Skills', desc: 'Communication & Leadership', color: '#43A85B', bg: '#E5F0DF', icon: '🤝' },
               ].map((trk) => {
                 const selected = tracks.includes(trk.id);
                 return (
@@ -304,8 +304,8 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
                       padding: '12px',
                       borderRadius: '10px',
                       textAlign: 'left',
-                      border: selected ? `2px solid ${trk.color}` : '1.5px solid var(--border-subtle)',
-                      backgroundColor: selected ? trk.bg : 'var(--bg-canvas)',
+                      border: selected ? '2px solid #43A85B' : '1.5px solid rgba(38, 53, 42, 0.12)',
+                      backgroundColor: selected ? '#E5F0DF' : '#FFFFFF',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
                       boxShadow: selected ? '0 1px 3px rgba(20, 38, 28, 0.1)' : 'none',

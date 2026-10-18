@@ -424,7 +424,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '320px',
               maxWidth: '320px',
               flex: '0 0 auto',
-              borderTop: '4px solid #1D58A6',
+              borderTop: '4px solid #43A85B',
               boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
@@ -451,7 +451,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
             </div>
 
             <div style={{ marginTop: '8px' }}>
-              <div style={{ fontSize: '0.74rem', color: '#0284C7', fontWeight: 800, marginBottom: '4px', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: '0.74rem', color: '#43A85B', fontWeight: 800, marginBottom: '4px', letterSpacing: '0.04em' }}>
                 {currentFact.year} MILESTONE
               </div>
               <h3 style={{ fontSize: '1.12rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
@@ -487,7 +487,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '350px',
               maxWidth: '350px',
               flex: '0 0 auto',
-              borderTop: '4px solid #1E6B4E',
+              borderTop: '4px solid #43A85B',
               boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
@@ -663,7 +663,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               minWidth: '330px',
               maxWidth: '330px',
               flex: '0 0 auto',
-              borderTop: '4px solid #1D58A6',
+              borderTop: '4px solid #43A85B',
               boxShadow: 'var(--shadow-sm)',
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             }}
@@ -695,8 +695,8 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
               </div>
               <div
                 style={{
-                  backgroundColor: '#F4EFEB',
-                  color: '#164E3D',
+                  backgroundColor: '#FAFAF4',
+                  color: '#26352A',
                   padding: '10px 12px',
                   borderRadius: 'var(--radius-md)',
                   border: '1.5px solid #D5CCC0',

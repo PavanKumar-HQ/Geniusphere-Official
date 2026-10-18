@@ -26,7 +26,7 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ db, currentUserI
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <span className="badge badge-brand" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', border: '1px solid rgba(59, 130, 246, 0.25)' }}>
+            <span className="badge" style={{ backgroundColor: '#E5F0DF', color: '#26352A', border: '1px solid rgba(38, 53, 42, 0.18)', fontWeight: 700 }}>
               SHA-256 Chained
             </span>
             <span className="badge badge-neutral">
@@ -73,7 +73,7 @@ export const AuditLogViewer: React.FC<AuditLogViewerProps> = ({ db, currentUserI
                     <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)' }}>
                       {ev.resource_type}{ev.resource_id ? `:${ev.resource_id}` : ''}
                     </td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#3b82f6' }}>
+                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#43A85B', fontWeight: 600 }}>
                       {ev.row_hash ? `${ev.row_hash.slice(0, 8)}...` : 'unhashed'}
                     </td>
                     <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
