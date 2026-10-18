@@ -1113,5 +1113,95 @@ tr:hover td {
   animation: mascotSparkle 2s ease-in-out infinite;
 }
 
+/* ====================================================================
+   LAB SVG ANIMATIONS (Integrated from Geniusphere-main)
+   ==================================================================== */
+@keyframes rotateFan {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate-fan {
+  animation: rotateFan 0.8s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes signalPulse {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.96);
+    opacity: 0.7;
+  }
+}
+
+.signal-pulse {
+  animation: signalPulse 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes telemetryDash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.telemetry-flow {
+  stroke-dasharray: 6 4;
+  animation: telemetryDash 1.2s linear infinite;
+}
+
+/* ====================================================================
+   Shared Lab Workspace Grid & Panels
+   ==================================================================== */
+.workspace-grid-container {
+  display: grid;
+  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(260px, 300px);
+  gap: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--bg-canvas);
+}
+
+.workspace-panel-instructions,
+.workspace-panel-center,
+.workspace-panel-criteria {
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1100px) {
+  .workspace-grid-container {
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(240px, 280px);
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace-grid-container {
+    display: block;
+    height: calc(100% - 50px);
+  }
+  .mobile-tab-bar {
+    display: flex !important;
+  }
+  .workspace-panel-instructions:not(.active),
+  .workspace-panel-center:not(.active),
+  .workspace-panel-criteria:not(.active) {
+    display: none !important;
+  }
+}
+
 
 

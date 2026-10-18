@@ -1143,7 +1143,9 @@ export const App: React.FC = () => {
               maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1320px',
               margin: '0 auto',
               width: '100%',
-              minHeight: 'calc(100vh - 70px)',
+              height: currentView === 'lab-workspace' ? 'calc(100vh - 70px)' : undefined,
+              overflow: currentView === 'lab-workspace' ? 'hidden' : undefined,
+              minHeight: currentView === 'lab-workspace' ? undefined : 'calc(100vh - 70px)',
             }}
           >
 

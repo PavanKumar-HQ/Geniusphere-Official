@@ -1,8 +1,26 @@
-import React from 'react';
-import { Shield, Lock, Server, Database, Smartphone, Globe, Check, AlertTriangle, Wind } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Shield,
+  Lock,
+  Server,
+  Database,
+  Smartphone,
+  Globe,
+  Check,
+  AlertTriangle,
+  Wind,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  User,
+  GraduationCap,
+  Wifi,
+  Smile,
+} from 'lucide-react';
 
 // ====================================================================
 // 1. NEURAL NETWORK VISUALIZER (Lab T1: AI Classifier)
+// Enhanced with signal pulse flows and dynamic layer representations
 // ====================================================================
 interface NeuralNetworkSvgProps {
   keywordDensity: number;
@@ -27,35 +45,71 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
   const in3Weight = Math.min(1, (100 - senderReputation) / 100);
 
   const inputNodes = [
-    { label: 'KW Density', val: `${keywordDensity}%`, w: in1Weight, y: 35 },
-    { label: 'Urgency', val: `${urgencyScore}`, w: in2Weight, y: 95 },
-    { label: 'Domain Rep', val: `${senderReputation}`, w: in3Weight, y: 155 },
+    { label: 'KW Density', val: `${keywordDensity}%`, w: in1Weight, y: 36, color: '#43A85B' },
+    { label: 'Urgency Score', val: `${urgencyScore}/100`, w: in2Weight, y: 95, color: '#D97706' },
+    { label: 'Domain Rep', val: `${senderReputation}/100`, w: in3Weight, y: 154, color: '#2563EB' },
   ];
 
   const hiddenNodes = [
-    { y: 30, w: (in1Weight * 0.7 + in2Weight * 0.3) },
-    { y: 75, w: (in2Weight * 0.5 + in3Weight * 0.5) },
-    { y: 120, w: (in1Weight * 0.4 + in3Weight * 0.6) },
-    { y: 165, w: (in2Weight * 0.8 + in1Weight * 0.2) },
+    { y: 32, w: in1Weight * 0.7 + in2Weight * 0.3 },
+    { y: 74, w: in2Weight * 0.5 + in3Weight * 0.5 },
+    { y: 116, w: in1Weight * 0.4 + in3Weight * 0.6 },
+    { y: 158, w: in2Weight * 0.8 + in1Weight * 0.2 },
   ];
 
   const outputNodes = [
-    { label: 'PHISH', active: isPhish, color: '#B91C1C', y: 65 },
-    { label: 'LEGIT', active: !isPhish && !isSuspicious, color: '#15803D', y: 130 },
+    { label: 'PHISHING', active: isPhish, color: '#DC2626', bg: '#FEE2E2', y: 65, code: 'P' },
+    { label: 'LEGITIMATE', active: !isPhish && !isSuspicious, color: '#16A34A', bg: '#DCFCE7', y: 125, code: 'L' },
   ];
 
   return (
-    <div style={{ width: '100%', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '16px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>
-          Interactive Neural Weights & Activation Flow
+    <div
+      style={{
+        width: '100%',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        padding: '18px 20px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#43A85B' }} />
+          <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em' }}>
+            Neural Weights & Activation Flow
+          </span>
         </div>
-        <div style={{ fontSize: '0.74rem', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-          Confidence: {confidenceScore}%
+        <div
+          style={{
+            fontSize: '0.78rem',
+            fontFamily: 'monospace',
+            backgroundColor: '#F4F8F1',
+            padding: '3px 10px',
+            borderRadius: '100px',
+            color: '#3B6843',
+            fontWeight: 700,
+            border: '1px solid #E0ECD8',
+          }}
+        >
+          Model Confidence: {confidenceScore}%
         </div>
       </div>
 
       <svg viewBox="0 0 540 195" style={{ width: '100%', height: 'auto', display: 'block' }}>
+        <defs>
+          <linearGradient id="synapsePhish" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#43A85B" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#DC2626" stopOpacity="0.8" />
+          </linearGradient>
+          <linearGradient id="synapseLegit" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#43A85B" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#16A34A" stopOpacity="0.9" />
+          </linearGradient>
+        </defs>
+
         {/* Layer 1 to Layer 2 Connections */}
         {inputNodes.map((inNode, i) =>
           hiddenNodes.map((hidNode, j) => {
@@ -63,17 +117,33 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
             return (
               <line
                 key={`in-hid-${i}-${j}`}
-                x1="90"
+                x1="95"
                 y1={inNode.y}
                 x2="260"
                 y2={hidNode.y}
-                stroke={isPhish ? '#EF4444' : isSuspicious ? '#F59E0B' : '#30B2E7'}
+                stroke={isPhish ? 'url(#synapsePhish)' : 'url(#synapseLegit)'}
                 strokeWidth={Math.max(1, activeWeight * 3)}
-                strokeOpacity={Math.max(0.12, activeWeight * 0.65)}
+                strokeOpacity={Math.max(0.18, activeWeight * 0.75)}
               />
             );
           })
         )}
+
+        {/* Traveling Signal Pulse Animation */}
+        <circle r="3" fill="#43A85B" opacity="0.8">
+          <animateMotion
+            path={`M 95 ${inputNodes[0].y} L 260 ${hiddenNodes[1].y} L 450 ${outputNodes[isPhish ? 0 : 1].y}`}
+            dur="2.4s"
+            repeatCount="indefinite"
+          />
+        </circle>
+        <circle r="3" fill="#82C424" opacity="0.8">
+          <animateMotion
+            path={`M 95 ${inputNodes[1].y} L 260 ${hiddenNodes[2].y} L 450 ${outputNodes[isPhish ? 0 : 1].y}`}
+            dur="2.8s"
+            repeatCount="indefinite"
+          />
+        </circle>
 
         {/* Layer 2 to Layer 3 Connections */}
         {hiddenNodes.map((hidNode, i) =>
@@ -82,11 +152,11 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
               key={`hid-out-${i}-${j}`}
               x1="280"
               y1={hidNode.y}
-              x2="450"
+              x2="445"
               y2={outNode.y}
-              stroke={outNode.active ? outNode.color : '#94A3B8'}
-              strokeWidth={outNode.active ? 2.5 : 0.8}
-              strokeOpacity={outNode.active ? 0.75 : 0.15}
+              stroke={outNode.active ? outNode.color : '#CBD5E1'}
+              strokeWidth={outNode.active ? 2.5 : 0.9}
+              strokeOpacity={outNode.active ? 0.85 : 0.25}
             />
           ))
         )}
@@ -94,11 +164,11 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         {/* Input Layer Nodes */}
         {inputNodes.map((node, i) => (
           <g key={`in-node-${i}`}>
-            <circle cx="80" cy={node.y} r="16" fill="var(--bg-surface)" stroke="var(--brand-primary)" strokeWidth="2.5" />
-            <text x="80" y={node.y + 4} textAnchor="middle" fontSize="10" fontWeight="700" fill="var(--text-primary)">
+            <circle cx="85" cy={node.y} r="15" fill="#FFFFFF" stroke={node.color} strokeWidth="2.5" />
+            <text x="85" y={node.y + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="#26352A">
               x{i + 1}
             </text>
-            <text x="60" y={node.y + 3} textAnchor="end" fontSize="10.5" fontWeight="600" fill="var(--text-secondary)">
+            <text x="62" y={node.y + 3} textAnchor="end" fontSize="10" fontWeight="700" fill="#4A5E4F">
               {node.label}
             </text>
           </g>
@@ -110,12 +180,12 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
             <circle
               cx="270"
               cy={node.y}
-              r="12"
-              fill={isPhish ? 'rgba(239, 68, 68, 0.15)' : 'rgba(48, 178, 231, 0.15)'}
-              stroke={isPhish ? '#EF4444' : '#30B2E7'}
+              r="13"
+              fill={isPhish ? 'rgba(220, 38, 38, 0.1)' : 'rgba(67, 168, 91, 0.12)'}
+              stroke={isPhish ? '#DC2626' : '#43A85B'}
               strokeWidth="2"
             />
-            <circle cx="270" cy={node.y} r="4" fill={isPhish ? '#EF4444' : '#30B2E7'} />
+            <circle cx="270" cy={node.y} r="4" fill={isPhish ? '#DC2626' : '#43A85B'} />
           </g>
         ))}
 
@@ -123,24 +193,31 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         {outputNodes.map((node, k) => (
           <g key={`out-node-${k}`}>
             <circle
-              cx="460"
+              cx="455"
               cy={node.y}
               r="18"
-              fill={node.active ? node.color : 'var(--bg-surface)'}
+              fill={node.active ? node.color : '#FFFFFF'}
               stroke={node.color}
               strokeWidth={node.active ? 3 : 1.5}
             />
             <text
-              x="460"
+              x="455"
               y={node.y + 4}
               textAnchor="middle"
               fontSize="11"
-              fontWeight="800"
-              fill={node.active ? '#FFFFFF' : 'var(--text-muted)'}
+              fontWeight="900"
+              fill={node.active ? '#FFFFFF' : '#64748B'}
             >
-              {k === 0 ? 'P' : 'L'}
+              {node.code}
             </text>
-            <text x="485" y={node.y + 4} textAnchor="start" fontSize="11" fontWeight="700" fill={node.active ? node.color : 'var(--text-muted)'}>
+            <text
+              x="482"
+              y={node.y + 4}
+              textAnchor="start"
+              fontSize="10.5"
+              fontWeight="800"
+              fill={node.active ? node.color : '#94A3B8'}
+            >
               {node.label}
             </text>
           </g>
@@ -151,7 +228,8 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
 };
 
 // ====================================================================
-// 2. BLOCKCHAIN INTER-BLOCK CHAIN LINK (Lab T2: Blockchain Builder)
+// 2. BLOCKCHAIN INTER-BLOCK HASH CHAIN LINK (Lab T2: Blockchain Builder)
+// Integrated with cryptographic hashing machine & tamper detector
 // ====================================================================
 interface BlockchainChainLinkProps {
   isValid: boolean;
@@ -160,33 +238,35 @@ interface BlockchainChainLinkProps {
 
 export const BlockchainChainLinkSvg: React.FC<BlockchainChainLinkProps> = ({ isValid, prevHashPreview }) => {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px 0', gap: '10px' }}>
-      <div style={{ flex: 1, height: '2px', backgroundColor: isValid ? 'var(--success-border)' : 'var(--danger-border)' }} />
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 0', gap: '12px' }}>
+      <div style={{ flex: 1, height: '2px', backgroundColor: isValid ? '#B7E2BA' : '#FECACA' }} />
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '6px',
-          padding: '4px 12px',
-          borderRadius: '20px',
-          backgroundColor: isValid ? 'var(--success-bg)' : 'var(--danger-bg)',
-          border: `1px solid ${isValid ? 'var(--success-border)' : 'var(--danger-border)'}`,
-          fontSize: '0.74rem',
-          fontFamily: 'var(--font-mono)',
-          color: isValid ? 'var(--success)' : 'var(--danger)',
+          gap: '8px',
+          padding: '6px 14px',
+          borderRadius: '100px',
+          backgroundColor: isValid ? '#EDF8EE' : '#FEF2F2',
+          border: `1.5px solid ${isValid ? '#A4D9A9' : '#FCA5A5'}`,
+          fontSize: '0.78rem',
+          fontFamily: 'monospace',
+          color: isValid ? '#1E652E' : '#991B1B',
           fontWeight: 700,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
         }}
       >
-        {isValid ? <Lock size={12} /> : <AlertTriangle size={12} />}
-        <span>{isValid ? `✓ Cryptographic Link Verified: ${prevHashPreview}` : `✕ Hash Mismatch: Tampered Chain Link`}</span>
+        {isValid ? <Lock size={13} color="#16A34A" /> : <AlertTriangle size={13} color="#DC2626" />}
+        <span>{isValid ? `✓ Hash Verified: ${prevHashPreview}` : `✕ Hash Mismatch: Tampered Chain Link`}</span>
       </div>
-      <div style={{ flex: 1, height: '2px', backgroundColor: isValid ? 'var(--success-border)' : 'var(--danger-border)' }} />
+      <div style={{ flex: 1, height: '2px', backgroundColor: isValid ? '#B7E2BA' : '#FECACA' }} />
     </div>
   );
 };
 
 // ====================================================================
-// 3. IOT SENSOR DIAL GAUGE & ACTUATOR FAN (Lab T3: IoT Simulator)
+// 3. IOT SENSOR GAUGE & ACTUATOR FAN (Lab T3: IoT Simulator)
+// Integrated with rotating cooling fan & telemetry waves
 // ====================================================================
 interface IotSensorDialProps {
   currentTemp: number;
@@ -197,7 +277,6 @@ interface IotSensorDialProps {
 export const IotSensorDialSvg: React.FC<IotSensorDialProps> = ({ currentTemp, threshold, humidity }) => {
   const isAlarm = currentTemp >= threshold;
 
-  // Map 15°C - 50°C to angle range -120deg to +120deg (240 deg total)
   const minTemp = 15;
   const maxTemp = 50;
   const clampedTemp = Math.max(minTemp, Math.min(maxTemp, currentTemp));
@@ -205,74 +284,107 @@ export const IotSensorDialSvg: React.FC<IotSensorDialProps> = ({ currentTemp, th
   const thresholdAngle = -120 + ((threshold - minTemp) / (maxTemp - minTemp)) * 240;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '16px', padding: '16px', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        flexWrap: 'wrap',
+        gap: '20px',
+        padding: '20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
       {/* Gauge Visualizer */}
       <div style={{ textAlign: 'center' }}>
-        <svg width="170" height="110" viewBox="0 0 170 110">
+        <svg width="180" height="115" viewBox="0 0 180 115">
           {/* Background Arc */}
-          <path d="M 25 95 A 60 60 0 1 1 145 95" fill="none" stroke="#E2E8F0" strokeWidth="12" strokeLinecap="round" />
-          {/* Active Color Arc */}
+          <path d="M 25 100 A 65 65 0 1 1 155 100" fill="none" stroke="#EEF4EC" strokeWidth="12" strokeLinecap="round" />
+          {/* Active Progress Arc */}
           <path
-            d="M 25 95 A 60 60 0 1 1 145 95"
+            d="M 25 100 A 65 65 0 1 1 155 100"
             fill="none"
-            stroke={isAlarm ? 'var(--danger)' : '#30B2E7'}
+            stroke={isAlarm ? '#DC2626' : '#43A85B'}
             strokeWidth="12"
-            strokeDasharray="210"
-            strokeDashoffset={210 - (210 * ((clampedTemp - minTemp) / (maxTemp - minTemp)))}
+            strokeDasharray="225"
+            strokeDashoffset={225 - 225 * ((clampedTemp - minTemp) / (maxTemp - minTemp))}
             strokeLinecap="round"
           />
 
           {/* Needle */}
-          <g transform={`translate(85, 95) rotate(${needleAngle})`}>
-            <polygon points="-3,-10 3,-10 1,-54 -1,-54" fill={isAlarm ? 'var(--danger)' : '#172B4D'} />
-            <circle cx="0" cy="0" r="7" fill={isAlarm ? 'var(--danger)' : 'var(--brand-primary)'} />
+          <g transform={`translate(90, 100) rotate(${needleAngle})`}>
+            <polygon points="-3,-10 3,-10 1,-58 -1,-58" fill={isAlarm ? '#DC2626' : '#26352A'} />
+            <circle cx="0" cy="0" r="7" fill={isAlarm ? '#DC2626' : '#43A85B'} />
           </g>
 
           {/* Threshold Tick Mark */}
-          <g transform={`translate(85, 95) rotate(${thresholdAngle})`}>
-            <line x1="0" y1="-62" x2="0" y2="-72" stroke="#B45309" strokeWidth="2.5" />
+          <g transform={`translate(90, 100) rotate(${thresholdAngle})`}>
+            <line x1="0" y1="-66" x2="0" y2="-76" stroke="#D97706" strokeWidth="2.5" />
           </g>
 
-          <text x="85" y="85" textAnchor="middle" fontSize="16" fontWeight="800" fill="var(--text-primary)">
+          <text x="90" y="88" textAnchor="middle" fontSize="18" fontWeight="800" fill="#26352A">
             {currentTemp}°C
           </text>
-          <text x="85" y="102" textAnchor="middle" fontSize="9" fontWeight="600" fill="var(--text-muted)">
+          <text x="90" y="105" textAnchor="middle" fontSize="9" fontWeight="700" fill="#6A7D70">
             Threshold: {threshold}°C
           </text>
         </svg>
-        <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600, marginTop: '-4px' }}>
-          Real-Time Sensor Thermometer
+        <div style={{ fontSize: '0.78rem', color: '#556D5C', fontWeight: 700, marginTop: '-2px' }}>
+          Calibrated Telemetry Sensor
         </div>
       </div>
 
-      {/* Actuator State Visual */}
+      {/* Cloud & Radio Link Visualizer */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+        <div
+          style={{
+            width: '56px',
+            height: '56px',
+            borderRadius: '14px',
+            backgroundColor: '#F1F8EE',
+            border: '1px solid #D6E8CF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#43A85B',
+          }}
+        >
+          <Wifi size={24} className={isAlarm ? 'signal-pulse' : ''} />
+        </div>
+        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#26352A' }}>MQTT Gateway</div>
+        <div style={{ fontSize: '0.72rem', color: '#6A7D70' }}>Humidity: {humidity}%</div>
+      </div>
+
+      {/* Actuator Fan State */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
         <div
           style={{
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            backgroundColor: isAlarm ? 'var(--danger-bg)' : 'var(--bg-surface)',
-            border: `2px solid ${isAlarm ? 'var(--danger)' : 'var(--border-subtle)'}`,
+            backgroundColor: isAlarm ? '#FEF2F2' : '#F4FAF1',
+            border: `2px solid ${isAlarm ? '#FCA5A5' : '#D2E8CB'}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: isAlarm ? '0 0 16px rgba(220, 38, 38, 0.2)' : 'none',
           }}
         >
           <Wind
-            size={32}
-            color={isAlarm ? 'var(--danger)' : 'var(--text-muted)'}
-            style={{
-              animation: isAlarm ? 'spin 1.2s linear infinite' : 'none',
-            }}
+            size={28}
+            className={isAlarm ? 'rotate-fan' : ''}
+            color={isAlarm ? '#DC2626' : '#43A85B'}
           />
         </div>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '0.84rem', fontWeight: 800, color: isAlarm ? 'var(--danger)' : 'var(--text-primary)' }}>
-            {isAlarm ? 'COOLING ACTUATOR ENGAGED' : 'IDLE / AMBIENT'}
+          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: isAlarm ? '#DC2626' : '#26352A' }}>
+            {isAlarm ? 'COOLING ACTUATOR ON' : 'ACTUATOR IDLE'}
           </div>
-          <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-            Telemetry: {humidity}% RH • MQTT Active
+          <div style={{ fontSize: '0.72rem', color: '#6A7D70' }}>
+            {isAlarm ? 'Emergency fan active' : 'Within safety limits'}
           </div>
         </div>
       </div>
@@ -281,153 +393,8 @@ export const IotSensorDialSvg: React.FC<IotSensorDialProps> = ({ currentTemp, th
 };
 
 // ====================================================================
-// 4. PRIVACY RADAR EXPOSURE (Lab T4: Digital Privacy Decision)
-// ====================================================================
-interface PrivacyRadarProps {
-  location: boolean;
-  contacts: boolean;
-  mic: boolean;
-  adTracking: boolean;
-  exposureScore: number;
-}
-
-export const PrivacyRadarSvg: React.FC<PrivacyRadarProps> = ({ location, contacts, mic, adTracking, exposureScore }) => {
-  const isSafe = exposureScore <= 25;
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '16px', padding: '16px', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
-      <svg width="180" height="180" viewBox="0 0 200 200">
-        {/* Radar Concentric Circles */}
-        <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(239, 68, 68, 0.25)" strokeWidth="1.5" strokeDasharray="4 4" />
-        <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(245, 158, 11, 0.3)" strokeWidth="1.5" strokeDasharray="4 4" />
-        <circle cx="100" cy="100" r="30" fill="rgba(21, 128, 61, 0.1)" stroke="var(--success)" strokeWidth="2" />
-
-        {/* Center device */}
-        <circle cx="100" cy="100" r="8" fill="var(--brand-primary)" />
-
-        {/* Data Beacons */}
-        {/* Location Beacon */}
-        <circle
-          cx={location ? 165 : 100}
-          cy={location ? 55 : 85}
-          r="6"
-          fill={location ? 'var(--danger)' : 'var(--success)'}
-        />
-        <text x={location ? 165 : 100} y={location ? 45 : 80} fontSize="8" fontWeight="700" textAnchor="middle" fill="var(--text-secondary)">
-          GPS
-        </text>
-
-        {/* Contacts Beacon */}
-        <circle
-          cx={contacts ? 45 : 88}
-          cy={contacts ? 70 : 100}
-          r="6"
-          fill={contacts ? 'var(--danger)' : 'var(--success)'}
-        />
-        <text x={contacts ? 45 : 88} y={contacts ? 60 : 96} fontSize="8" fontWeight="700" textAnchor="middle" fill="var(--text-secondary)">
-          Contacts
-        </text>
-
-        {/* Microphone Beacon */}
-        <circle
-          cx={mic ? 155 : 112}
-          cy={mic ? 145 : 105}
-          r="6"
-          fill={mic ? 'var(--danger)' : 'var(--success)'}
-        />
-        <text x={mic ? 155 : 112} y={mic ? 160 : 118} fontSize="8" fontWeight="700" textAnchor="middle" fill="var(--text-secondary)">
-          Mic
-        </text>
-
-        {/* Ad Tracking Beacon */}
-        <circle
-          cx={adTracking ? 50 : 100}
-          cy={adTracking ? 140 : 115}
-          r="6"
-          fill={adTracking ? 'var(--danger)' : 'var(--success)'}
-        />
-        <text x={adTracking ? 50 : 100} y={adTracking ? 155 : 126} fontSize="8" fontWeight="700" textAnchor="middle" fill="var(--text-secondary)">
-          Ads
-        </text>
-      </svg>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-          PERIMETER RADAR ZONES
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem' }}>
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--success)' }} />
-          <span>Core Zone: Encrypted On-Device Only</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem' }}>
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--warning)' }} />
-          <span>Middle Zone: Cloud Service Backups</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem' }}>
-          <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--danger)' }} />
-          <span>Outer Perimeter: Ad Networks & Third Parties</span>
-        </div>
-        <div style={{ fontSize: '0.82rem', fontWeight: 700, color: isSafe ? 'var(--success)' : 'var(--danger)', marginTop: '4px' }}>
-          Status: {isSafe ? '✓ Exposure Safely Minimized' : '⚠ Significant Data Leakage Detected'}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ====================================================================
-// 5. DEFENSIVE WEB SECURITY PIPELINE (Lab T5: Defensive Security)
-// ====================================================================
-interface SecurityPipelineProps {
-  paramQueries: boolean;
-  outputEncoding: boolean;
-  strictCsp: boolean;
-}
-
-export const SecurityPipelineSvg: React.FC<SecurityPipelineProps> = ({ paramQueries, outputEncoding, strictCsp }) => {
-  const isSecure = paramQueries && outputEncoding;
-
-  return (
-    <div style={{ padding: '16px', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
-      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-        Defensive Interception Pipeline
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', textAlign: 'center' }}>
-        {/* Stage 1: Request */}
-        <div style={{ padding: '12px 6px', borderRadius: '8px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-          <Smartphone size={20} color="var(--brand-primary)" style={{ margin: '0 auto 6px' }} />
-          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: 'var(--text-primary)' }}>1. Client HTTP</div>
-          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Untrusted Payload</div>
-        </div>
-
-        {/* Stage 2: WAF & CSP */}
-        <div style={{ padding: '12px 6px', borderRadius: '8px', backgroundColor: strictCsp ? 'var(--success-bg)' : 'var(--bg-surface)', border: `1px solid ${strictCsp ? 'var(--success-border)' : 'var(--border-subtle)'}` }}>
-          <Shield size={20} color={strictCsp ? 'var(--success)' : 'var(--text-muted)'} style={{ margin: '0 auto 6px' }} />
-          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: strictCsp ? 'var(--success)' : 'var(--text-primary)' }}>2. WAF & CSP</div>
-          <div style={{ fontSize: '0.68rem', color: strictCsp ? 'var(--success)' : 'var(--text-muted)' }}>{strictCsp ? 'Active Filtering' : 'Bypassed'}</div>
-        </div>
-
-        {/* Stage 3: Parameterizer */}
-        <div style={{ padding: '12px 6px', borderRadius: '8px', backgroundColor: paramQueries ? 'var(--success-bg)' : 'var(--danger-bg)', border: `1px solid ${paramQueries ? 'var(--success-border)' : 'var(--danger-border)'}` }}>
-          <Server size={20} color={paramQueries ? 'var(--success)' : 'var(--danger)'} style={{ margin: '0 auto 6px' }} />
-          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: paramQueries ? 'var(--success)' : 'var(--danger)' }}>3. Prepared Stmt</div>
-          <div style={{ fontSize: '0.68rem', color: paramQueries ? 'var(--success)' : 'var(--danger)' }}>{paramQueries ? 'Parameterized' : 'Raw String Concat'}</div>
-        </div>
-
-        {/* Stage 4: Database Engine */}
-        <div style={{ padding: '12px 6px', borderRadius: '8px', backgroundColor: isSecure ? 'var(--success-bg)' : 'var(--danger-bg)', border: `1px solid ${isSecure ? 'var(--success-border)' : 'var(--danger-border)'}` }}>
-          <Database size={20} color={isSecure ? 'var(--success)' : 'var(--danger)'} style={{ margin: '0 auto 6px' }} />
-          <div style={{ fontSize: '0.76rem', fontWeight: 700, color: isSecure ? 'var(--success)' : 'var(--danger)' }}>4. PostgreSQL</div>
-          <div style={{ fontSize: '0.68rem', color: isSecure ? 'var(--success)' : 'var(--danger)' }}>{isSecure ? 'Safe Execution' : 'SQL Injection Attack!'}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ====================================================================
-// 6. FINANCIAL MARKET PRICE TREND (Lab F1: Market Explorer)
+// 4. FINANCIAL MARKET PRICE TRAJECTORY & DISCOVERY (Lab F1: Market Explorer)
+// Integrated with live price tickers & scenario curves
 // ====================================================================
 interface MarketTrendSvgProps {
   scenario: 'expansion' | 'correction' | 'shock';
@@ -435,59 +402,134 @@ interface MarketTrendSvgProps {
 }
 
 export const MarketTrendSvg: React.FC<MarketTrendSvgProps> = ({ scenario, beta }) => {
-  const points = scenario === 'expansion'
-    ? [30, 42, 48, 62, 58, 75, 84, 98, 115]
-    : scenario === 'correction'
-    ? [80, 85, 78, 62, 54, 48, 55, 60, 68]
-    : [110, 105, 95, 45, 38, 42, 40, 48, 52];
+  const [livePrice, setLivePrice] = useState<number>(142.5);
+  const [direction, setDirection] = useState<'up' | 'down'>('up');
+  const prevPriceRef = useRef(livePrice);
 
-  // Scale with beta
-  const scaledPoints = points.map((p) => {
-    const baseline = points[0];
+  // Base trajectories for 3 scenarios
+  const basePoints =
+    scenario === 'expansion'
+      ? [32, 40, 46, 58, 54, 72, 80, 95, 112]
+      : scenario === 'correction'
+      ? [82, 88, 76, 60, 52, 46, 52, 58, 66]
+      : [110, 102, 90, 42, 35, 38, 36, 44, 48];
+
+  // Scale with beta sensitivity
+  const scaledPoints = basePoints.map((p) => {
+    const baseline = basePoints[0];
     const diff = p - baseline;
     return Math.max(15, Math.min(135, baseline + diff * beta));
   });
 
-  const svgPoints = scaledPoints
-    .map((y, idx) => `${idx * 40 + 20},${145 - y}`)
-    .join(' ');
+  // Calculate live ticker simulation
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const change = (Math.random() - 0.46) * 1.8 * beta;
+      setLivePrice((prev) => {
+        const next = Math.max(10, Math.round((prev + change) * 100) / 100);
+        setDirection(next >= prevPriceRef.current ? 'up' : 'down');
+        prevPriceRef.current = next;
+        return next;
+      });
+    }, 1800);
+    return () => clearInterval(timer);
+  }, [beta]);
 
+  const svgPoints = scaledPoints.map((y, idx) => `${idx * 40 + 20},${145 - y}`).join(' ');
+  const areaPoints = `20,145 ${svgPoints} 340,145`;
   const isPositive = scaledPoints[scaledPoints.length - 1] >= scaledPoints[0];
 
   return (
-    <div style={{ padding: '14px', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>
-          Scenario Price Trajectory (Beta: {beta}x)
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      {/* Header with live ticker */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <div>
+          <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em' }}>
+            Price Trajectory Simulation (Beta: {beta}x)
+          </div>
+          <div style={{ fontSize: '0.74rem', color: '#6A7D70', marginTop: '2px' }}>
+            Scenario: {scenario === 'expansion' ? 'Steady Growth' : scenario === 'correction' ? 'Sector Correction' : 'Liquidity Shock'}
+          </div>
         </div>
-        <div style={{ fontSize: '0.8rem', fontWeight: 800, color: isPositive ? 'var(--success)' : 'var(--danger)' }}>
-          {isPositive ? 'Bullish Trend' : 'Bearish Volatility'}
+
+        {/* Live Feed Pill */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '4px 12px',
+              borderRadius: '100px',
+              backgroundColor: direction === 'up' ? '#EDF8EE' : '#FEF2F2',
+              border: `1px solid ${direction === 'up' ? '#BCE4C2' : '#FCA5A5'}`,
+              color: direction === 'up' ? '#1E652E' : '#991B1B',
+              fontSize: '0.86rem',
+              fontWeight: 800,
+            }}
+          >
+            {direction === 'up' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+            <span>${livePrice.toFixed(2)}</span>
+          </div>
+
+          <span
+            style={{
+              padding: '4px 10px',
+              borderRadius: '6px',
+              backgroundColor: isPositive ? '#E5F0DF' : '#FEF2F2',
+              color: isPositive ? '#24592E' : '#991B1B',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+            }}
+          >
+            {isPositive ? 'Bullish Regime' : 'Bearish Volatility'}
+          </span>
         </div>
       </div>
 
-      <svg viewBox="0 0 360 145" style={{ width: '100%', height: '110px' }}>
-        {/* Horizontal grid lines */}
-        <line x1="15" y1="35" x2="345" y2="35" stroke="#E2E8F0" strokeDasharray="3 3" />
-        <line x1="15" y1="75" x2="345" y2="75" stroke="#E2E8F0" strokeDasharray="3 3" />
-        <line x1="15" y1="115" x2="345" y2="115" stroke="#E2E8F0" strokeDasharray="3 3" />
+      <svg viewBox="0 0 360 145" style={{ width: '100%', height: '125px', display: 'block' }}>
+        <defs>
+          <linearGradient id="marketAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={isPositive ? '#43A85B' : '#DC2626'} stopOpacity="0.25" />
+            <stop offset="100%" stopColor={isPositive ? '#43A85B' : '#DC2626'} stopOpacity="0.0" />
+          </linearGradient>
+        </defs>
 
-        {/* Trajectory Polyline */}
+        {/* Grid lines */}
+        <line x1="15" y1="35" x2="345" y2="35" stroke="#F0F4EC" strokeDasharray="3 3" />
+        <line x1="15" y1="75" x2="345" y2="75" stroke="#F0F4EC" strokeDasharray="3 3" />
+        <line x1="15" y1="115" x2="345" y2="115" stroke="#F0F4EC" strokeDasharray="3 3" />
+
+        {/* Area fill */}
+        <polygon points={areaPoints} fill="url(#marketAreaGradient)" />
+
+        {/* Price Polyline */}
         <polyline
           fill="none"
-          stroke={isPositive ? 'var(--success)' : 'var(--danger)'}
+          stroke={isPositive ? '#43A85B' : '#DC2626'}
           strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           points={svgPoints}
         />
 
-        {/* Milestone Dots */}
+        {/* Trajectory Milestone Dots */}
         {scaledPoints.map((y, idx) => (
           <circle
             key={idx}
             cx={idx * 40 + 20}
             cy={145 - y}
-            r="4"
-            fill="var(--bg-surface)"
-            stroke={isPositive ? 'var(--success)' : 'var(--danger)'}
+            r="4.5"
+            fill="#FFFFFF"
+            stroke={isPositive ? '#43A85B' : '#DC2626'}
             strokeWidth="2.5"
           />
         ))}
@@ -497,7 +539,8 @@ export const MarketTrendSvg: React.FC<MarketTrendSvgProps> = ({ scenario, beta }
 };
 
 // ====================================================================
-// 7. COMPOUND INTEREST GROWTH CURVE (Lab F2: Compound Interest)
+// 5. COMPOUND INTEREST GROWTH BREAKDOWN (Lab F2: Compound Interest)
+// Integrated with exponential milestone bars & wealth trajectory
 // ====================================================================
 interface CompoundGrowthSvgProps {
   principal: number;
@@ -507,7 +550,13 @@ interface CompoundGrowthSvgProps {
   currencySymbol?: string;
 }
 
-export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal, monthly, rate, years, currencySymbol = '$' }) => {
+export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({
+  principal,
+  monthly,
+  rate,
+  years,
+  currencySymbol = '$',
+}) => {
   const steps = 5;
   const milestoneYears = Array.from({ length: steps }, (_, i) => Math.round(((i + 1) / steps) * years));
 
@@ -519,33 +568,89 @@ export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal,
     const total = pPart + mPart;
     const deposits = principal + monthly * 12 * yr;
     const interest = total - deposits;
-    return { yr, deposits: Math.round(deposits), interest: Math.max(0, Math.round(interest)), total: Math.round(total) };
+    return {
+      yr,
+      deposits: Math.round(deposits),
+      interest: Math.max(0, Math.round(interest)),
+      total: Math.round(total),
+    };
   });
 
-  const maxVal = Math.max(...data.map(d => d.total), 1);
+  const maxVal = Math.max(...data.map((d) => d.total), 1);
 
   return (
-    <div style={{ padding: '16px', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
-      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-        Exponential Compounding Breakdown (Years 1 to {years})
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em' }}>
+          Exponential Compounding (Years 1 to {years})
+        </div>
+        <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#43A85B' }}>
+          Final Value: {currencySymbol}{(data[data.length - 1].total).toLocaleString()}
+        </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '110px', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--border-subtle)' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-end',
+          justifyContent: 'space-between',
+          height: '115px',
+          gap: '12px',
+          paddingBottom: '8px',
+          borderBottom: '1px solid #EEF3E9',
+        }}
+      >
         {data.map((item, idx) => {
           const totalHeightPct = Math.min(100, Math.max(12, (item.total / maxVal) * 100));
           const depositHeightPct = (item.deposits / item.total) * totalHeightPct;
           const interestHeightPct = totalHeightPct - depositHeightPct;
 
           return (
-            <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end' }}>
-              <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                {currencySymbol}{(item.total / 1000).toFixed(0)}k
+            <div
+              key={idx}
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                height: '100%',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#26352A', marginBottom: '4px' }}>
+                {currencySymbol}
+                {(item.total / 1000).toFixed(0)}k
               </div>
-              <div style={{ width: '80%', display: 'flex', flexDirection: 'column', height: `${totalHeightPct}%` }}>
-                <div style={{ height: `${interestHeightPct}%`, backgroundColor: '#FDB913', borderRadius: '4px 4px 0 0' }} title={`Interest: ${currencySymbol}${item.interest}`} />
-                <div style={{ height: `${depositHeightPct}%`, backgroundColor: '#30B2E7', borderRadius: interestHeightPct <= 0 ? '4px 4px 0 0' : 0 }} title={`Deposits: ${currencySymbol}${item.deposits}`} />
+              <div
+                style={{
+                  width: '80%',
+                  maxWidth: '46px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: `${totalHeightPct}%`,
+                  borderRadius: '4px 4px 0 0',
+                  overflow: 'hidden',
+                  transition: 'height 0.3s ease',
+                }}
+              >
+                <div
+                  style={{ height: `${interestHeightPct}%`, backgroundColor: '#82C424' }}
+                  title={`Compounded Wealth: ${currencySymbol}${item.interest.toLocaleString()}`}
+                />
+                <div
+                  style={{ height: `${depositHeightPct}%`, backgroundColor: '#43A85B' }}
+                  title={`Deposits: ${currencySymbol}${item.deposits.toLocaleString()}`}
+                />
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.72rem', color: '#6A7D70', marginTop: '6px', fontWeight: 600 }}>
                 Yr {item.yr}
               </div>
             </div>
@@ -553,14 +658,14 @@ export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal,
         })}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '10px', fontSize: '0.76rem', fontWeight: 600 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '12px', fontSize: '0.78rem', fontWeight: 700 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#30B2E7' }} />
-          <span>Principal / Deposits</span>
+          <div style={{ width: '10px', height: '10px', borderRadius: '3px', backgroundColor: '#43A85B' }} />
+          <span style={{ color: '#26352A' }}>Principal &amp; Monthly Deposits</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#FDB913' }} />
-          <span>Compounded Interest</span>
+          <div style={{ width: '10px', height: '10px', borderRadius: '3px', backgroundColor: '#82C424' }} />
+          <span style={{ color: '#3A6310' }}>Compounded Earnings</span>
         </div>
       </div>
     </div>
@@ -568,7 +673,445 @@ export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({ principal,
 };
 
 // ====================================================================
-// 8. SETTLEMENT LIFECYCLE NETWORK (Lab F3: Institution Flow)
+// 6. 50/30/20 BUDGET PIE VISUALIZER (Integrated from Geniusphere-main)
+// ====================================================================
+interface BudgetPieSvgProps {
+  income?: number;
+}
+
+export const BudgetPieSvg: React.FC<BudgetPieSvgProps> = ({ income = 5000 }) => {
+  const needs = income * 0.5;
+  const wants = income * 0.3;
+  const savings = income * 0.2;
+
+  return (
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em', marginBottom: '12px' }}>
+        50/30/20 Budget Allocation Model
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '20px' }}>
+        {/* Circular SVG Donut */}
+        <div style={{ position: 'relative', width: '130px', height: '130px' }}>
+          <svg viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
+            {/* Needs: 50% (dasharray: 157, circum = 314) */}
+            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#43A85B" strokeWidth="16" strokeDasharray="125.6 251.2" strokeDashoffset="0" />
+            {/* Wants: 30% (dasharray: 75.36) */}
+            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#30B2E7" strokeWidth="16" strokeDasharray="75.36 251.2" strokeDashoffset="-125.6" />
+            {/* Savings: 20% (dasharray: 50.24) */}
+            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#D97706" strokeWidth="16" strokeDasharray="50.24 251.2" strokeDashoffset="-200.96" />
+          </svg>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <DollarSign size={16} color="#43A85B" />
+            <span style={{ fontSize: '0.8rem', fontWeight: 900, color: '#26352A' }}>100%</span>
+          </div>
+        </div>
+
+        {/* Legend Callouts */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.82rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#43A85B' }} />
+            <div>
+              <span style={{ fontWeight: 800, color: '#26352A' }}>Needs (50%): </span>
+              <span style={{ color: '#556D5C' }}>${needs.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#30B2E7' }} />
+            <div>
+              <span style={{ fontWeight: 800, color: '#26352A' }}>Wants (30%): </span>
+              <span style={{ color: '#556D5C' }}>${wants.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: '#D97706' }} />
+            <div>
+              <span style={{ fontWeight: 800, color: '#26352A' }}>Savings (20%): </span>
+              <span style={{ color: '#556D5C' }}>${savings.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ====================================================================
+// 7. ACTIVE COMMUNICATION & LISTENING (Integrated from Geniusphere-main)
+// ====================================================================
+interface ConversationSvgProps {
+  currentStep?: number;
+}
+
+export const ConversationSvg: React.FC<ConversationSvgProps> = ({ currentStep = 2 }) => {
+  return (
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em' }}>
+          Two-Way Communication &amp; Active Listening Flow
+        </div>
+        <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '4px', backgroundColor: '#EDF8EE', color: '#1E652E' }}>
+          Phase {currentStep} of 4
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px' }}>
+        {/* Speaker Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: '#EDF8EE',
+              border: '2px solid #43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#43A85B',
+            }}
+          >
+            <User size={24} />
+          </div>
+          <span style={{ fontSize: '0.76rem', fontWeight: 700, color: '#26352A' }}>Speaker</span>
+        </div>
+
+        {/* Transmission Pathway with Pulses */}
+        <div style={{ flex: 1, margin: '0 16px', position: 'relative', height: '6px', backgroundColor: '#EEF4EC', borderRadius: '100px' }}>
+          <div
+            style={{
+              width: `${Math.min(100, currentStep * 25)}%`,
+              height: '100%',
+              backgroundColor: '#43A85B',
+              borderRadius: '100px',
+              transition: 'width 0.3s ease',
+            }}
+          />
+        </div>
+
+        {/* Listener Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: '#F0F9FF',
+              border: '2px solid #30B2E7',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#30B2E7',
+            }}
+          >
+            <Smile size={24} />
+          </div>
+          <span style={{ fontSize: '0.76rem', fontWeight: 700, color: '#26352A' }}>Active Listener</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ====================================================================
+// 8. INTERACTIVE CLASSROOM DISTRIBUTION (Integrated from Geniusphere-main)
+// ====================================================================
+interface ClassroomSvgProps {
+  currentStep?: number;
+}
+
+export const ClassroomSvg: React.FC<ClassroomSvgProps> = ({ currentStep = 2 }) => {
+  return (
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em' }}>
+          Modern Pedagogy Distribution &amp; Collaboration Grid
+        </div>
+        <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '4px', backgroundColor: '#E5F0DF', color: '#26352A' }}>
+          Stage {currentStep} Active
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px' }}>
+        {/* Educator Node */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              backgroundColor: '#E5F0DF',
+              border: '2px solid #43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#43A85B',
+            }}
+          >
+            <GraduationCap size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#26352A' }}>Educator Lead</div>
+            <div style={{ fontSize: '0.72rem', color: '#6A7D70' }}>Content synthesis active</div>
+          </div>
+        </div>
+
+        {/* 6-Student Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '10px', width: '100%', maxWidth: '380px' }}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '6px',
+                borderRadius: '8px',
+                backgroundColor: '#F8FAF6',
+                border: '1px solid #E5F0DF',
+              }}
+            >
+              <User size={16} color="#43A85B" />
+              <span style={{ fontSize: '0.66rem', fontWeight: 700, color: '#556D5C' }}>S{i}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ====================================================================
+// 9. DIGITAL PRIVACY RADAR (Lab T4: Digital Privacy)
+// ====================================================================
+interface PrivacyRadarProps {
+  exposureScore: number;
+  permissions?: {
+    location?: boolean;
+    contacts?: boolean;
+    mic?: boolean;
+    adTracking?: boolean;
+  };
+  location?: boolean;
+  contacts?: boolean;
+  mic?: boolean;
+  adTracking?: boolean;
+}
+
+export const PrivacyRadarSvg: React.FC<PrivacyRadarProps> = ({
+  exposureScore,
+  permissions,
+  location,
+  contacts,
+  mic,
+  adTracking,
+}) => {
+  const perm = {
+    location: location ?? permissions?.location ?? true,
+    contacts: contacts ?? permissions?.contacts ?? true,
+    mic: mic ?? permissions?.mic ?? true,
+    adTracking: adTracking ?? permissions?.adTracking ?? true,
+  };
+  const isSafe = exposureScore < 25;
+
+  return (
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em' }}>
+          Real-Time Exposure Assessment
+        </div>
+        <span
+          style={{
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            padding: '3px 10px',
+            borderRadius: '100px',
+            backgroundColor: isSafe ? '#EDF8EE' : '#FEF2F2',
+            color: isSafe ? '#1E652E' : '#991B1B',
+            border: `1px solid ${isSafe ? '#BCE4C2' : '#FCA5A5'}`,
+          }}
+        >
+          {isSafe ? 'Low Exposure Tier' : 'High Exposure Alert'}
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '16px' }}>
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#EEF4EC" strokeWidth="1.5" />
+          <circle cx="60" cy="60" r="35" fill="none" stroke="#EEF4EC" strokeWidth="1.5" />
+          <circle cx="60" cy="60" r="20" fill="none" stroke="#EEF4EC" strokeWidth="1.5" />
+          <line x1="10" y1="60" x2="110" y2="60" stroke="#EEF4EC" strokeWidth="1" />
+          <line x1="60" y1="10" x2="60" y2="110" stroke="#EEF4EC" strokeWidth="1" />
+          {/* Radar Sweep Line */}
+          <line x1="60" y1="60" x2="105" y2="40" stroke="#43A85B" strokeWidth="2" strokeOpacity="0.8">
+            <animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="4s" repeatCount="indefinite" />
+          </line>
+          <circle cx="60" cy="60" r="5" fill="#43A85B" />
+        </svg>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.78rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: perm.location ? '#DC2626' : '#16A34A', fontWeight: 700 }}>
+              {perm.location ? '✕' : '✓'} Location Telemetry:
+            </span>
+            <span>{perm.location ? 'Broadcasted' : 'Revoked'}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: perm.contacts ? '#DC2626' : '#16A34A', fontWeight: 700 }}>
+              {perm.contacts ? '✕' : '✓'} Contact Book:
+            </span>
+            <span>{perm.contacts ? 'Harvested' : 'Secured'}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: perm.mic ? '#DC2626' : '#16A34A', fontWeight: 700 }}>
+              {perm.mic ? '✕' : '✓'} Microphone Audio:
+            </span>
+            <span>{perm.mic ? 'Background Access' : 'Restricted'}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: perm.adTracking ? '#DC2626' : '#16A34A', fontWeight: 700 }}>
+              {perm.adTracking ? '✕' : '✓'} Ad Profiling ID:
+            </span>
+            <span>{perm.adTracking ? 'Shared Across Apps' : 'Blocked'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ====================================================================
+// 10. DEFENSIVE SECURITY PIPELINE (Lab T5: Web Defense)
+// ====================================================================
+interface SecurityPipelineProps {
+  paramQueries: boolean;
+  outputEncoding: boolean;
+  strictCsp: boolean;
+}
+
+export const SecurityPipelineSvg: React.FC<SecurityPipelineProps> = ({ paramQueries, outputEncoding, strictCsp }) => {
+  return (
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em', marginBottom: '14px' }}>
+        Defense-in-Depth Filter Inspection Pathway
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+        <div
+          style={{
+            padding: '10px 14px',
+            borderRadius: '10px',
+            backgroundColor: paramQueries ? '#EDF8EE' : '#FEF2F2',
+            border: `1.5px solid ${paramQueries ? '#A4D9A9' : '#FCA5A5'}`,
+            textAlign: 'center',
+            flex: 1,
+            minWidth: '120px',
+          }}
+        >
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: paramQueries ? '#1E652E' : '#991B1B' }}>
+            SQL Parameterization
+          </div>
+          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: paramQueries ? '#16A34A' : '#DC2626', marginTop: '2px' }}>
+            {paramQueries ? 'ACTIVE' : 'VULNERABLE'}
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: '10px 14px',
+            borderRadius: '10px',
+            backgroundColor: outputEncoding ? '#EDF8EE' : '#FEF2F2',
+            border: `1.5px solid ${outputEncoding ? '#A4D9A9' : '#FCA5A5'}`,
+            textAlign: 'center',
+            flex: 1,
+            minWidth: '120px',
+          }}
+        >
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: outputEncoding ? '#1E652E' : '#991B1B' }}>
+            HTML Entity Encoding
+          </div>
+          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: outputEncoding ? '#16A34A' : '#DC2626', marginTop: '2px' }}>
+            {outputEncoding ? 'ENFORCED' : 'BYPASSED'}
+          </div>
+        </div>
+
+        <div
+          style={{
+            padding: '10px 14px',
+            borderRadius: '10px',
+            backgroundColor: strictCsp ? '#EDF8EE' : '#FEF2F2',
+            border: `1.5px solid ${strictCsp ? '#A4D9A9' : '#FCA5A5'}`,
+            textAlign: 'center',
+            flex: 1,
+            minWidth: '120px',
+          }}
+        >
+          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: strictCsp ? '#1E652E' : '#991B1B' }}>
+            Strict CSP Headers
+          </div>
+          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: strictCsp ? '#16A34A' : '#DC2626', marginTop: '2px' }}>
+            {strictCsp ? 'SECURED' : 'UNGUARDED'}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ====================================================================
+// 11. SETTLEMENT LIFECYCLE NETWORK (Lab F3: Institution Flow)
 // ====================================================================
 interface SettlementLifecycleProps {
   currentStep: number;
@@ -584,21 +1127,29 @@ export const SettlementLifecycleSvg: React.FC<SettlementLifecycleProps> = ({ cur
   ];
 
   return (
-    <div style={{ padding: '16px', backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '10px' }}>
-      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', marginBottom: '14px' }}>
+    <div
+      style={{
+        padding: '18px 20px',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E5F0DF',
+        borderRadius: '16px',
+        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+      }}
+    >
+      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em', marginBottom: '16px' }}>
         ACH / Card Network Settlement Pathway
       </div>
 
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0' }}>
-        {/* Background Connecting Bus */}
-        <div style={{ position: 'absolute', left: '20px', right: '20px', height: '3px', backgroundColor: '#E2E8F0', zIndex: 0 }} />
+        {/* Connecting Track */}
+        <div style={{ position: 'absolute', left: '20px', right: '20px', height: '3px', backgroundColor: '#EEF4EC', zIndex: 0 }} />
         <div
           style={{
             position: 'absolute',
             left: '20px',
-            width: `${((currentStep) / (stations.length - 1)) * 88}%`,
+            width: `${(currentStep / (stations.length - 1)) * 90}%`,
             height: '3px',
-            backgroundColor: 'var(--brand-primary)',
+            backgroundColor: '#43A85B',
             transition: 'all 0.3s ease',
             zIndex: 0,
           }}
@@ -616,19 +1167,27 @@ export const SettlementLifecycleSvg: React.FC<SettlementLifecycleProps> = ({ cur
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
-                  backgroundColor: isPassed ? 'var(--success)' : isCurrent ? 'var(--brand-primary)' : 'var(--bg-surface)',
-                  border: `2px solid ${isPassed ? 'var(--success)' : isCurrent ? 'var(--brand-primary)' : 'var(--border-subtle)'}`,
-                  color: isPassed || isCurrent ? '#FFFFFF' : 'var(--text-muted)',
+                  backgroundColor: isPassed ? '#43A85B' : isCurrent ? '#D9F477' : '#FFFFFF',
+                  border: `2px solid ${isPassed || isCurrent ? '#43A85B' : '#DCEADA'}`,
+                  color: isPassed ? '#FFFFFF' : '#26352A',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.25s ease',
-                  boxShadow: isCurrent ? '0 0 12px rgba(48, 178, 231, 0.4)' : 'none',
+                  boxShadow: isCurrent ? '0 0 10px rgba(67, 168, 91, 0.35)' : 'none',
                 }}
               >
                 {isPassed ? <Check size={18} /> : <Icon size={17} />}
               </div>
-              <div style={{ fontSize: '0.72rem', fontWeight: isCurrent ? 800 : 600, color: isCurrent ? 'var(--brand-primary)' : isPassed ? 'var(--success)' : 'var(--text-secondary)' }}>
+              <div
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: isCurrent ? 800 : 600,
+                  color: isCurrent ? '#26352A' : isPassed ? '#43A85B' : '#6A7D70',
+                  textAlign: 'center',
+                  maxWidth: '70px',
+                }}
+              >
                 {st.name}
               </div>
             </div>

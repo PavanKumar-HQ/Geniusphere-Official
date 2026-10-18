@@ -27,12 +27,12 @@ interface SectionContextBarProps {
 export const SectionContextBar: React.FC<SectionContextBarProps> = ({
   currentView,
   courseTitle,
-  labTitle,
+  labTitle: _labTitle,
   onNavigate,
   onBack,
 }) => {
-  // If we are on home page, render a minimal clean status bar or skip
-  if (currentView === 'home') {
+  // If we are on home page or inside the full-screen lab workspace, skip to avoid double headers and offset overlap
+  if (currentView === 'home' || currentView === 'lab-workspace') {
     return null;
   }
 
@@ -70,14 +70,6 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
           icon: Terminal,
           parent: 'Home',
           parentView: 'home',
-        };
-      case 'lab-workspace':
-        return {
-          title: labTitle || 'Lab Workspace',
-          subtitle: 'Isolated parameter-driven environment and automated test suite',
-          icon: Terminal,
-          parent: 'Labs',
-          parentView: 'labs',
         };
       case 'code-sandbox':
         return {
@@ -167,7 +159,7 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
   const meta = getSectionMeta();
   const Icon = meta.icon;
 
-  const isNested = currentView === 'course-detail' || currentView === 'lesson-player' || currentView === 'lab-workspace';
+  const isNested = currentView === 'course-detail' || currentView === 'lesson-player';
 
   return (
     <div

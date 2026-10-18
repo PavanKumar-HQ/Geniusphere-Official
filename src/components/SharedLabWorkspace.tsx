@@ -25,6 +25,9 @@ import {
   MarketTrendSvg,
   CompoundGrowthSvg,
   SettlementLifecycleSvg,
+  BudgetPieSvg,
+  ConversationSvg,
+  ClassroomSvg,
 } from './LabSvgVisualizers';
 
 export interface SharedLabWorkspaceProps {
@@ -142,6 +145,55 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [codeOutput, setCodeOutput] = useState<string>('');
   const [codeTestsPassed, setCodeTestsPassed] = useState<boolean>(false);
   const [hintsRevealed, setHintsRevealed] = useState<number>(0);
+
+  // Lab Sec: Scam Defense Lab
+  const [scamCaseIndex, setScamCaseIndex] = useState<number>(0);
+  const [scamAnswers, setScamAnswers] = useState<Record<number, { isFraud: boolean; action: string }>>({});
+  const [scamFeedback, setScamFeedback] = useState<string>('');
+
+  const scamCases = useMemo(() => [
+    {
+      id: 0,
+      title: 'UPI Collect Request Claiming "Prize Cashback"',
+      sender: 'cashback-reward@paytm / Push Notification: Receive ₹25,000',
+      message: 'Congratulations! You won ₹25,000 cashback reward. Please enter your 6-digit UPI PIN immediately to approve funds into your bank account.',
+      isFraud: true,
+      safeAction: 'Decline request immediately and report fraudulent VPA to Cyber Crime (1930 / cybercrime.gov.in)',
+      explanation: 'Critical Principle: UPI PIN is ONLY entered to deduct money from your account. Receiving funds NEVER requires entering your UPI PIN or sharing OTP.',
+    },
+    {
+      id: 1,
+      title: 'Urgent KYC Verification SMS with Shortened Link',
+      sender: '+91-9876543210 (Personal 10-digit mobile number claiming to be HDFC Alert)',
+      message: 'ALERT: Your bank account will be permanently SUSPENDED within 2 hours due to unverified PAN/KYC. Tap link to verify instantly: bit.ly/hdfc-kyc-verify-portal',
+      isFraud: true,
+      safeAction: 'Do not click the URL; report sender number as phishing to 1930 and bank fraud helpline',
+      explanation: 'Banks never send sudden account closure threats from individual 10-digit mobile numbers with third-party URL shorteners (bit.ly, tinyurl). Legitimate KYC is handled securely inside official banking portals.',
+    },
+    {
+      id: 2,
+      title: 'In-Store Physical Merchant Dynamic QR Code',
+      sender: 'Fresh Green Grocery (VPA: merchant.freshgreen@icici)',
+      message: 'Scan to pay ₹340 for items at retail counter. App displays registered merchant trade name "Fresh Green Supermarket Pvt Ltd".',
+      isFraud: false,
+      safeAction: 'Verify the merchant name on your payment app screen and authorize genuine payment',
+      explanation: 'Legitimate merchant transaction where you are purchasing in-person goods, the merchant name matches the storefront, and verified NPCI merchant badges are visible.',
+    },
+  ], []);
+
+  const handleEvaluateScam = (idx: number, isFraud: boolean) => {
+    const isCorrect = isFraud === scamCases[idx].isFraud;
+    const nextAnswers = { ...scamAnswers, [idx]: { isFraud, action: scamCases[idx].safeAction } };
+    setScamAnswers(nextAnswers);
+    setScamFeedback(isCorrect ? 'Correct!' : 'Incorrect');
+    setSaveStatus('LOCAL DRAFT');
+
+    const next = [...checkedCriteria];
+    if (Object.keys(nextAnswers).length >= 1) next[0] = true;
+    if (nextAnswers[0]?.isFraud === true) next[1] = true;
+    if (Object.keys(nextAnswers).length >= 3) next[2] = true;
+    setCheckedCriteria(next);
+  };
 
   // Check if previously completed in DB
   useEffect(() => {
@@ -542,38 +594,37 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 72px)', backgroundColor: 'var(--bg-canvas)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden', backgroundColor: 'var(--bg-canvas)' }}>
       {/* ============================================================== */}
       {/* 1. TOP NAVIGATION BAR (Section 3.1)                             */}
       {/* ============================================================== */}
       <header
         style={{
-          height: '60px',
-          backgroundColor: 'var(--bg-surface)',
+          height: '56px',
+          backgroundColor: '#FFFFFF',
           borderBottom: '1px solid var(--border-subtle)',
-          padding: '0 24px',
+          padding: '0 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          position: 'sticky',
-          top: '72px',
-          zIndex: 50,
+          flexShrink: 0,
+          zIndex: 10,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <button
             type="button"
             onClick={onNavigateBack}
             className="btn-secondary"
-            style={{ height: '36px', padding: '0 12px', fontSize: '0.85rem' }}
+            style={{ height: '34px', padding: '0 12px', fontSize: '0.84rem' }}
             title="Back to Labs Catalogue"
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={15} />
             <span>Back to Labs</span>
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <h1 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
               {lab.title}
             </h1>
             <span className="badge badge-brand" style={{ textTransform: 'capitalize' }}>
@@ -587,7 +638,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 type="button"
                 onClick={() => onSelectCourse(lab.course_slug!)}
                 className="btn-outline"
-                style={{ height: '28px', padding: '0 8px', fontSize: '0.75rem', borderRadius: 'var(--radius-sm)' }}
+                style={{ height: '26px', padding: '0 8px', fontSize: '0.72rem', borderRadius: 'var(--radius-sm)' }}
                 title="Go to associated course"
               >
                 View Course
@@ -609,7 +660,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             type="button"
             onClick={handleResetLab}
             className="btn-outline"
-            style={{ height: '36px', padding: '0 12px', fontSize: '0.85rem' }}
+            style={{ height: '34px', padding: '0 12px', fontSize: '0.84rem' }}
             title="Reset lab to initial state"
           >
             <RotateCcw size={14} />
@@ -621,11 +672,11 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       {/* Mobile Tab Switcher */}
       <div
         style={{
-          display: 'none',
-          backgroundColor: 'var(--bg-surface)',
+          backgroundColor: '#FFFFFF',
           borderBottom: '1px solid var(--border-subtle)',
           padding: '8px 16px',
           gap: '8px',
+          flexShrink: 0,
         }}
         className="mobile-tab-bar"
       >
@@ -634,12 +685,14 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           onClick={() => setMobileTab('instructions')}
           style={{
             flex: 1,
-            height: '36px',
+            height: '34px',
             backgroundColor: mobileTab === 'instructions' ? 'var(--brand-surface)' : 'transparent',
             color: mobileTab === 'instructions' ? 'var(--brand-primary)' : 'var(--text-secondary)',
             borderRadius: '6px',
             fontWeight: 600,
-            fontSize: '0.82rem',
+            fontSize: '0.8rem',
+            border: 'none',
+            cursor: 'pointer',
           }}
         >
           1. Instructions
@@ -649,12 +702,14 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           onClick={() => setMobileTab('workspace')}
           style={{
             flex: 1,
-            height: '36px',
+            height: '34px',
             backgroundColor: mobileTab === 'workspace' ? 'var(--brand-surface)' : 'transparent',
             color: mobileTab === 'workspace' ? 'var(--brand-primary)' : 'var(--text-secondary)',
             borderRadius: '6px',
             fontWeight: 600,
-            fontSize: '0.82rem',
+            fontSize: '0.8rem',
+            border: 'none',
+            cursor: 'pointer',
           }}
         >
           2. Workspace
@@ -664,12 +719,14 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           onClick={() => setMobileTab('results')}
           style={{
             flex: 1,
-            height: '36px',
+            height: '34px',
             backgroundColor: mobileTab === 'results' ? 'var(--brand-surface)' : 'transparent',
             color: mobileTab === 'results' ? 'var(--brand-primary)' : 'var(--text-secondary)',
             borderRadius: '6px',
             fontWeight: 600,
-            fontSize: '0.82rem',
+            fontSize: '0.8rem',
+            border: 'none',
+            cursor: 'pointer',
           }}
         >
           3. Assessment
@@ -679,36 +736,26 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       {/* ============================================================== */}
       {/* 2. MAIN 3-PANEL WORKSPACE (Section 3.1)                         */}
       {/* ============================================================== */}
-      <main
-        style={{
-          flex: 1,
-          display: 'grid',
-          gridTemplateColumns: '320px 1fr 340px',
-          gap: '0',
-          overflow: 'hidden',
-          backgroundColor: 'var(--bg-canvas)',
-        }}
-        className="workspace-grid-container"
-      >
+      <main className="workspace-grid-container">
         {/* ============================================================ */}
         {/* PANEL 1 (LEFT): INSTRUCTIONS & PARAMETERS                    */}
         {/* ============================================================ */}
         <aside
+          className={`workspace-panel-instructions ${mobileTab === 'instructions' ? 'active' : ''}`}
           style={{
-            backgroundColor: 'var(--bg-surface)',
+            backgroundColor: '#FFFFFF',
             borderRight: '1px solid var(--border-subtle)',
-            padding: '24px 20px',
-            overflowY: 'auto',
+            padding: '20px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
+            gap: '18px',
           }}
         >
           <div>
             <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--brand-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '4px' }}>
               LEARNING OBJECTIVE
             </div>
-            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
               {lab.learning_objective}
             </p>
           </div>
@@ -717,7 +764,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '10px' }}>
               STEP-BY-STEP INSTRUCTIONS
             </div>
-            <ol style={{ paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+            <ol style={{ paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
               {lab.instructions.map((step, idx) => (
                 <li key={idx}>{step}</li>
               ))}
@@ -739,12 +786,13 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         {/* PANEL 2 (CENTRE): INTERACTIVE WORKSPACE ENGINE               */}
         {/* ============================================================ */}
         <section
+          className={`workspace-panel-center ${mobileTab === 'workspace' ? 'active' : ''}`}
           style={{
-            padding: '24px',
-            overflowY: 'auto',
+            padding: '20px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
+            gap: '18px',
+            minWidth: 0,
           }}
         >
           {/* Header Summary Card */}
@@ -1676,20 +1724,180 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               </div>
             </div>
           )}
+
+          {/* -------------------------------------------------------- */}
+          {/* LAB ENGINE 13: DIGITAL PAYMENT SCAM DEFENSE SIMULATOR    */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-sec-scam-defense' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    Cybercrime Defense: Educational Payment Scam Verification
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    NPCI & Indian Cyber Crime Coordination Centre (1930) Protocol
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {scamCases.map((c, i) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        setScamCaseIndex(i);
+                        setScamFeedback('');
+                      }}
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        backgroundColor: scamCaseIndex === i ? 'var(--brand-primary)' : 'var(--bg-canvas)',
+                        color: scamCaseIndex === i ? '#FFFFFF' : 'var(--text-secondary)',
+                        border: '1px solid var(--border-subtle)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Case {i + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Case inspection card */}
+              <div
+                style={{
+                  padding: '20px',
+                  borderRadius: '12px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #E5F0DF',
+                  boxShadow: '0 2px 8px rgba(38, 53, 42, 0.04)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <AlertTriangle size={18} color="var(--warning)" />
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                    {scamCases[scamCaseIndex].title}
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '12px', fontFamily: 'var(--font-mono)' }}>
+                  Source: {scamCases[scamCaseIndex].sender}
+                </div>
+                <div
+                  style={{
+                    padding: '14px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1px solid var(--border-subtle)',
+                    fontSize: '0.88rem',
+                    color: 'var(--text-primary)',
+                    lineHeight: 1.5,
+                    marginBottom: '16px',
+                  }}
+                >
+                  "{scamCases[scamCaseIndex].message}"
+                </div>
+
+                {/* Classification buttons */}
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleEvaluateScam(scamCaseIndex, true)}
+                    className="btn-outline"
+                    style={{
+                      flex: 1,
+                      minWidth: '140px',
+                      height: '38px',
+                      borderColor: scamAnswers[scamCaseIndex]?.isFraud === true ? 'var(--danger)' : undefined,
+                      backgroundColor: scamAnswers[scamCaseIndex]?.isFraud === true ? 'var(--danger-bg)' : undefined,
+                      color: scamAnswers[scamCaseIndex]?.isFraud === true ? 'var(--danger)' : undefined,
+                      fontWeight: 700,
+                    }}
+                  >
+                    Flag as Potential Fraud / Scam
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleEvaluateScam(scamCaseIndex, false)}
+                    className="btn-outline"
+                    style={{
+                      flex: 1,
+                      minWidth: '140px',
+                      height: '38px',
+                      borderColor: scamAnswers[scamCaseIndex]?.isFraud === false ? 'var(--success)' : undefined,
+                      backgroundColor: scamAnswers[scamCaseIndex]?.isFraud === false ? 'var(--success-bg)' : undefined,
+                      color: scamAnswers[scamCaseIndex]?.isFraud === false ? 'var(--success)' : undefined,
+                      fontWeight: 700,
+                    }}
+                  >
+                    Mark as Legitimate Transaction
+                  </button>
+                </div>
+
+                {scamFeedback && (
+                  <div
+                    style={{
+                      marginTop: '16px',
+                      padding: '12px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: scamAnswers[scamCaseIndex]?.isFraud === scamCases[scamCaseIndex].isFraud ? 'var(--success-bg)' : 'var(--danger-bg)',
+                      border: `1px solid ${scamAnswers[scamCaseIndex]?.isFraud === scamCases[scamCaseIndex].isFraud ? 'var(--success-border)' : 'var(--danger-border)'}`,
+                      fontSize: '0.84rem',
+                      lineHeight: 1.5,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    <div style={{ fontWeight: 700, marginBottom: '4px' }}>
+                      {scamAnswers[scamCaseIndex]?.isFraud === scamCases[scamCaseIndex].isFraud ? '✓ Correct Assessment' : '⚠ Analysis Guidance'}
+                    </div>
+                    {scamCases[scamCaseIndex].explanation}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Universal Domain Simulation Fallback */}
+          {lab.id !== 'lab-t1-ai-classifier' &&
+            lab.id !== 'lab-t2-blockchain-builder' &&
+            lab.id !== 'lab-t3-iot-sensor' &&
+            lab.id !== 'lab-t4-privacy-decision' &&
+            lab.id !== 'lab-t5-web-defense' &&
+            lab.id !== 'lab-t6-microsoft-productivity' &&
+            lab.id !== 'lab-f1-market-explorer' &&
+            lab.id !== 'lab-f2-compound-interest' &&
+            lab.id !== 'lab-f3-institution-flow' &&
+            lab.id !== 'lab-c1-programming-fundamentals' &&
+            lab.id !== 'lab-c2-conditions-loops' &&
+            lab.id !== 'lab-c3-debugging-workshop' &&
+            lab.id !== 'lab-sec-scam-defense' && (
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
+                  Interactive Domain Simulation Studio
+                </div>
+                {lab.category === 'finance' && <BudgetPieSvg income={5000} />}
+                {lab.category === 'professional' && <ConversationSvg currentStep={2} />}
+                {lab.category === 'technology' && <ClassroomSvg currentStep={2} />}
+                {lab.category === 'coding' && (
+                  <MarketTrendSvg scenario="expansion" beta={1.0} />
+                )}
+              </div>
+            )}
         </section>
 
         {/* ============================================================ */}
         {/* PANEL 3 (RIGHT): OUTPUT, CRITERIA & SUBMISSION VERIFICATION  */}
         {/* ============================================================ */}
         <aside
+          className={`workspace-panel-criteria ${mobileTab === 'results' ? 'active' : ''}`}
           style={{
-            backgroundColor: 'var(--bg-surface)',
+            backgroundColor: '#FFFFFF',
             borderLeft: '1px solid var(--border-subtle)',
-            padding: '24px 20px',
-            overflowY: 'auto',
+            padding: '20px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
+            gap: '18px',
           }}
         >
           {/* Status Badge Card */}
