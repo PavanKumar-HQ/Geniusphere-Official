@@ -187,4 +187,53 @@ function sanitizeAndValidateToken(inputToken: string): boolean {
       expect(studentEvents).toHaveLength(0);
     });
   });
+
+  describe('Journey 5: Data Durability & State Hydration across Sessions', () => {
+    it('persists and hydrates course enrollments, progress, and lab attempts across instances', () => {
+      const studentId = 'user-student-1';
+      const courseId = 'course-ai-fund';
+
+      // 1. Student enrolls in course and completes a lesson
+      db.enrollInCourse(studentId, courseId);
+      const enrollment = db.getCourseEnrollment(studentId, courseId);
+      expect(enrollment).not.toBeNull();
+      expect(enrollment?.course_id).toBe(courseId);
+
+      // 2. Student records a lab attempt
+      const attempt = db.recordLabAttempt(studentId, 'lab-t1-ai-classifier', {
+        passed: true,
+        score: 95,
+        diagnostics: 'Defensive assertion passed with 0 errors.',
+      });
+      expect(attempt.passed).toBe(true);
+
+      // 3. Serialize state (simulating browser persistence)
+      const serializedState = {
+        submissions: Array.from(db.submissions.entries()),
+        assignments: Array.from(db.assignments.entries()),
+        classrooms: Array.from(db.classrooms.entries()),
+        enrollments: Array.from(db.enrollments.entries()),
+        labAttempts: Array.from(db.labAttempts.entries()),
+        courseEnrollments: Array.from(db.courseEnrollments.entries()),
+        userProgress: Array.from(db.userProgress.entries()),
+        certificates: Array.from(db.certificates.entries()),
+        studentResumes: Array.from(db.studentResumes.entries()),
+        auditEvents: Array.from(db.auditEvents.entries()),
+        updated_at: new Date().toISOString(),
+      };
+
+      // 4. Create fresh database instance (simulating browser reload)
+      const freshDb = new InMemoryDatabase();
+      (freshDb as any).applyHydratedState(serializedState);
+
+      // 5. Verify all hydrated entities exist and match
+      const hydratedEnrollment = freshDb.getCourseEnrollment(studentId, courseId);
+      expect(hydratedEnrollment).not.toBeNull();
+      expect(hydratedEnrollment?.course_id).toBe(courseId);
+
+      const hydratedAttempts = freshDb.getLabAttempts(studentId, 'lab-t1-ai-classifier');
+      expect(hydratedAttempts.length).toBeGreaterThanOrEqual(1);
+      expect(hydratedAttempts[0].score).toBe(95);
+    });
+  });
 });

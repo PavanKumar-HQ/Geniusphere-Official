@@ -34,6 +34,7 @@ import {
   INITIAL_STUDY_RESOURCES,
 } from '../data/curriculum';
 import { APPROVED_LABS } from '../data/approved-labs';
+import { sovereignDB } from './indexed-db';
 
 export class DatabaseError extends Error {
   code: string;
@@ -878,6 +879,7 @@ export class InMemoryDatabase {
       progress_percent: 0,
     };
     this.courseEnrollments.set(enrollmentKey, enrollment);
+    this.persistState();
 
     this.logAuditEvent({
       organization_id: null,
@@ -936,6 +938,7 @@ export class InMemoryDatabase {
 
       this.courseEnrollments.set(enrollmentKey, enrollment);
       this.recordLessonCompletion(userId, courseId, lessonId);
+      this.persistState();
 
       this.logAuditEvent({
         organization_id: null,
@@ -980,6 +983,7 @@ export class InMemoryDatabase {
     };
 
     this.studentResumes.set(userId, updated);
+    this.persistState();
 
     this.logAuditEvent({
       organization_id: null,
@@ -1245,6 +1249,7 @@ export class InMemoryDatabase {
     const prog = this.getUserProgress(userId);
     prog.xp += xpAmount;
     this.userProgress.set(userId, prog);
+    this.persistState();
     return prog;
   }
 
@@ -1296,6 +1301,7 @@ export class InMemoryDatabase {
     }
 
     this.userProgress.set(userId, prog);
+    this.persistState();
     return { progress: prog, completedCourse, certificate };
   }
 
@@ -1398,10 +1404,10 @@ export class InMemoryDatabase {
   }
 
   /**
-   * Persists mutated transactional entities to localStorage if available
+   * Persists all mutated transactional entities to localStorage and IndexedDB
    */
   public persistState(): void {
-    if (typeof window === 'undefined' || !window.localStorage) return;
+    if (typeof window === 'undefined') return;
     try {
       const state = {
         submissions: Array.from(this.submissions.entries()),
@@ -1409,39 +1415,79 @@ export class InMemoryDatabase {
         classrooms: Array.from(this.classrooms.entries()),
         enrollments: Array.from(this.enrollments.entries()),
         labAttempts: Array.from(this.labAttempts.entries()),
+        courseEnrollments: Array.from(this.courseEnrollments.entries()),
+        userProgress: Array.from(this.userProgress.entries()),
+        certificates: Array.from(this.certificates.entries()),
+        studentResumes: Array.from(this.studentResumes.entries()),
+        auditEvents: Array.from(this.auditEvents.entries()),
+        updated_at: new Date().toISOString(),
       };
-      window.localStorage.setItem('geniusphere_db_v1', JSON.stringify(state));
+      if (window.localStorage) {
+        window.localStorage.setItem('geniusphere_db_v1', JSON.stringify(state));
+      }
+      sovereignDB.saveState(state).catch(() => {});
     } catch {
       // Gracefully ignore storage quota errors
     }
   }
 
   /**
-   * Hydrates previous session entities from localStorage if available
+   * Hydrates previous session entities synchronously from localStorage, then asynchronously from IndexedDB
    */
   public hydrateState(): void {
-    if (typeof window === 'undefined' || !window.localStorage) return;
+    if (typeof window === 'undefined') return;
     try {
-      const raw = window.localStorage.getItem('geniusphere_db_v1');
-      if (!raw) return;
-      const state = JSON.parse(raw);
-      if (Array.isArray(state.submissions)) {
-        for (const [k, v] of state.submissions) this.submissions.set(k, v);
+      if (window.localStorage) {
+        const raw = window.localStorage.getItem('geniusphere_db_v1');
+        if (raw) {
+          const state = JSON.parse(raw);
+          this.applyHydratedState(state);
+        }
       }
-      if (Array.isArray(state.assignments)) {
-        for (const [k, v] of state.assignments) this.assignments.set(k, v);
-      }
-      if (Array.isArray(state.classrooms)) {
-        for (const [k, v] of state.classrooms) this.classrooms.set(k, v);
-      }
-      if (Array.isArray(state.enrollments)) {
-        for (const [k, v] of state.enrollments) this.enrollments.set(k, v);
-      }
-      if (Array.isArray(state.labAttempts)) {
-        for (const [k, v] of state.labAttempts) this.labAttempts.set(k, v);
-      }
+      sovereignDB
+        .loadState()
+        .then((state) => {
+          if (state) {
+            this.applyHydratedState(state);
+          }
+        })
+        .catch(() => {});
     } catch {
       // Gracefully ignore hydration errors
+    }
+  }
+
+  private applyHydratedState(state: any): void {
+    if (!state) return;
+    if (Array.isArray(state.submissions)) {
+      for (const [k, v] of state.submissions) this.submissions.set(k, v);
+    }
+    if (Array.isArray(state.assignments)) {
+      for (const [k, v] of state.assignments) this.assignments.set(k, v);
+    }
+    if (Array.isArray(state.classrooms)) {
+      for (const [k, v] of state.classrooms) this.classrooms.set(k, v);
+    }
+    if (Array.isArray(state.enrollments)) {
+      for (const [k, v] of state.enrollments) this.enrollments.set(k, v);
+    }
+    if (Array.isArray(state.labAttempts)) {
+      for (const [k, v] of state.labAttempts) this.labAttempts.set(k, v);
+    }
+    if (Array.isArray(state.courseEnrollments)) {
+      for (const [k, v] of state.courseEnrollments) this.courseEnrollments.set(k, v);
+    }
+    if (Array.isArray(state.userProgress)) {
+      for (const [k, v] of state.userProgress) this.userProgress.set(k, v);
+    }
+    if (Array.isArray(state.certificates)) {
+      for (const [k, v] of state.certificates) this.certificates.set(k, v);
+    }
+    if (Array.isArray(state.studentResumes)) {
+      for (const [k, v] of state.studentResumes) this.studentResumes.set(k, v);
+    }
+    if (Array.isArray(state.auditEvents)) {
+      for (const [k, v] of state.auditEvents) this.auditEvents.set(k, v);
     }
   }
 }
