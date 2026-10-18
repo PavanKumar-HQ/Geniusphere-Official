@@ -912,3 +912,98 @@ tr:hover td {
     scroll-behavior: auto !important;
   }
 }
+
+/* ====================================================================
+   Master Application Shell & Sidebar Rail (Design Board 2)
+   ==================================================================== */
+.platform-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: calc(100vh - 75px);
+  background-color: #FAFAF4;
+  position: relative;
+}
+
+.platform-sidebar {
+  width: 248px;
+  flex-shrink: 0;
+  background-color: #FAFAF4;
+  border-right: 1px solid #E5F0DF;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 72px;
+  height: calc(100vh - 72px);
+  overflow-y: auto;
+  z-index: 90;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 100px;
+  border: none;
+  background-color: transparent;
+  color: #3A4E40;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.sidebar-nav-btn:hover {
+  background-color: #EBF3E7;
+  color: #26352A;
+}
+
+.sidebar-nav-btn.active {
+  background-color: #E5F0DF;
+  color: #26352A;
+  font-weight: 800;
+}
+
+.sidebar-nav-btn.active svg {
+  color: #43A85B !important;
+}
+
+.platform-main-content {
+  flex: 1;
+  min-width: 0;
+  background-color: #FAFAF4;
+}
+
+@media (max-width: 1023px) {
+  .platform-sidebar {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    bottom: 0;
+    z-index: 1050;
+    background-color: #FAFAF4;
+    box-shadow: 4px 0 24px rgba(38, 53, 42, 0.15);
+    transform: translateX(-100%);
+  }
+
+  .platform-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .platform-sidebar-backdrop {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(38, 53, 42, 0.38);
+    backdrop-filter: blur(2px);
+    z-index: 1040;
+  }
+}
+

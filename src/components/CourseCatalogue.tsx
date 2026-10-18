@@ -3,7 +3,6 @@ import { InMemoryDatabase } from '../db/in-memory-db';
 import { MascotSphere } from './MascotSphere';
 import { Course } from '../types';
 import {
-  Search,
   BookOpen,
   ArrowRight,
   Clock,
@@ -315,150 +314,109 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       </div>
 
       {/* ================================================================ */}
-      {/* FILTER BAR & SEARCH INPUT */}
+      {/* FILTER CONTROLS (Shown when searching or filtering)              */}
       {/* ================================================================ */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          backgroundColor: '#FFFFFF',
-          padding: '20px 24px',
-          borderRadius: '16px',
-          border: '1px solid #E5F0DF',
-        }}
-      >
+      {!isBrowsingAllWithoutSearch ? (
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
+            flexDirection: 'column',
             gap: '16px',
+            backgroundColor: '#FFFFFF',
+            padding: '20px 24px',
+            borderRadius: '16px',
+            border: '1px solid #E5F0DF',
           }}
         >
-          {/* Stream Filter Pills */}
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-            <button
-              type="button"
-              onClick={() => setSelectedStream('all')}
-              className={`filter-pill ${selectedStream === 'all' ? 'active' : ''}`}
-              style={{
-                backgroundColor: selectedStream === 'all' ? '#43A85B' : '#E5F0DF',
-                color: selectedStream === 'all' ? '#FFFFFF' : '#26352A',
-                border: 'none',
-                fontWeight: 700,
-                padding: '8px 16px',
-                borderRadius: '20px',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              All Streams ({allCanonicalCourses.length})
-            </button>
-
-            {streams.map((s) => (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '16px',
+            }}
+          >
+            {/* Stream Filter Pills */}
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               <button
-                key={s.id}
                 type="button"
-                onClick={() => setSelectedStream(s.id)}
-                className={`filter-pill ${selectedStream === s.id ? 'active' : ''}`}
+                onClick={() => setSelectedStream('all')}
                 style={{
-                  backgroundColor: selectedStream === s.id ? '#43A85B' : '#E5F0DF',
-                  color: selectedStream === s.id ? '#FFFFFF' : '#26352A',
+                  backgroundColor: selectedStream === 'all' ? '#43A85B' : '#E5F0DF',
+                  color: selectedStream === 'all' ? '#FFFFFF' : '#26352A',
                   border: 'none',
                   fontWeight: 700,
                   padding: '8px 16px',
                   borderRadius: '20px',
                   cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
                   transition: 'all 0.15s ease',
                 }}
               >
-                {getStreamIcon(s.id, 14)}
-                <span>
-                  {s.title} ({s.courses.length})
-                </span>
+                All Streams ({allCanonicalCourses.length})
               </button>
-            ))}
-          </div>
 
-          {/* Search Input */}
-          <div style={{ position: 'relative', width: '320px', maxWidth: '100%' }}>
-            <Search
-              size={16}
-              style={{ position: 'absolute', left: '14px', top: '12px', color: '#6A7D70' }}
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses, skills or topics..."
-              style={{
-                width: '100%',
-                height: '42px',
-                paddingLeft: '38px',
-                paddingRight: '14px',
-                borderRadius: '100px',
-                border: '1px solid #E5F0DF',
-                backgroundColor: '#FAFAF4',
-                color: '#26352A',
-                fontSize: '0.92rem',
-                outline: 'none',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            />
-          </div>
-        </div>
+              {streams.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => setSelectedStream(s.id)}
+                  style={{
+                    backgroundColor: selectedStream === s.id ? '#43A85B' : '#E5F0DF',
+                    color: selectedStream === s.id ? '#FFFFFF' : '#26352A',
+                    border: 'none',
+                    fontWeight: 700,
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {getStreamIcon(s.id, 14)}
+                  <span>
+                    {s.title} ({s.courses.length})
+                  </span>
+                </button>
+              ))}
+            </div>
 
-        {/* Level filter row */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '14px',
-            alignItems: 'center',
-            fontSize: '0.85rem',
-            color: '#6A7D70',
-            borderTop: '1px solid #F0F4EC',
-            paddingTop: '12px',
-          }}
-        >
-          <span style={{ fontWeight: 600 }}>Filter by difficulty:</span>
-          {['all', 'beginner', 'intermediate', 'advanced'].map((lvl) => (
+            {/* Clear Filters Button */}
             <button
-              key={lvl}
               type="button"
-              onClick={() => setSelectedLevel(lvl)}
+              onClick={() => {
+                setSearch('');
+                setSelectedStream('all');
+                setSelectedLevel('all');
+              }}
               style={{
-                background: selectedLevel === lvl ? '#D9F477' : 'none',
-                border: 'none',
-                borderRadius: '6px',
-                color: '#26352A',
-                fontWeight: selectedLevel === lvl ? 800 : 500,
-                cursor: 'pointer',
+                background: 'none',
+                border: '1px solid #E5F0DF',
+                borderRadius: '100px',
+                padding: '6px 14px',
                 fontSize: '0.82rem',
-                padding: '4px 8px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
+                color: '#6A7D70',
+                cursor: 'pointer',
+                fontWeight: 600,
               }}
             >
-              {lvl}
+              Reset to 3 Streams View
             </button>
-          ))}
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {/* ================================================================ */}
-      {/* 3-COLUMN STREAM LAYOUT (When "All Streams" is active) */}
-      {/* Exactly mirrors Design Board 2 (media_1792296532547.jpg) */}
+      {/* 3-COLUMN STREAM LAYOUT (When "All Streams" is active)             */}
+      {/* Exactly mirrors Design Board 2 (media_1792296532547.jpg)         */}
       {/* ================================================================ */}
       {isBrowsingAllWithoutSearch ? (
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
             gap: '24px',
             alignItems: 'start',
           }}
@@ -874,35 +832,36 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       )}
 
       {/* ================================================================ */}
-      {/* BOTTOM CTA & TESTIMONIAL BANNER (Matching Design Board 2) */}
+      {/* BOTTOM CTA & TESTIMONIAL BANNER (Matching Design Board 2)        */}
       {/* ================================================================ */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1.4fr 1fr',
-          gap: '24px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '20px',
           alignItems: 'stretch',
         }}
       >
-        {/* Left Card: Ready to start your journey? */}
+        {/* 1. Left Card: Ready to start your journey? */}
         <div
           style={{
-            backgroundColor: '#FAFAF4',
-            borderRadius: '24px',
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
             border: '1px solid #E5F0DF',
-            padding: '32px',
+            padding: '24px 28px',
             display: 'flex',
             alignItems: 'center',
-            gap: '24px',
+            gap: '18px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
           }}
         >
-          <MascotSphere pose="celebrating" size={120} />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <MascotSphere pose="happy" size={90} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <div>
               <h3
                 style={{
                   margin: 0,
-                  fontSize: '1.4rem',
+                  fontSize: '1.25rem',
                   fontWeight: 800,
                   color: '#26352A',
                   fontFamily: 'Space Grotesk, sans-serif',
@@ -910,122 +869,126 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               >
                 Ready to start your journey?
               </h3>
-              <p style={{ margin: '4px 0 0', color: '#3A4E40', fontSize: '0.92rem' }}>
+              <p style={{ margin: '4px 0 0', color: '#6A7D70', fontSize: '0.84rem' }}>
                 Join thousands of learners building skills for a better future.
               </p>
             </div>
-
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div>
               <button
                 type="button"
                 onClick={() => {
                   setSelectedStream('all');
-                  window.scrollTo({ top: 300, behavior: 'smooth' });
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 style={{
                   backgroundColor: '#43A85B',
                   color: '#FFFFFF',
                   fontWeight: 800,
-                  padding: '10px 22px',
+                  padding: '8px 20px',
                   borderRadius: '100px',
                   border: 'none',
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '8px',
+                  gap: '6px',
+                  fontSize: '0.86rem',
                 }}
               >
                 <span>Explore all courses</span>
-                <ArrowRight size={15} />
+                <ArrowRight size={14} />
               </button>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '8px',
-                fontSize: '0.8rem',
-                color: '#3A4E40',
-                fontWeight: 600,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <CheckCircle2 size={14} color="#43A85B" /> Self-paced learning
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <CheckCircle2 size={14} color="#43A85B" /> Hands-on projects & labs
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <CheckCircle2 size={14} color="#43A85B" /> Expert feedback
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <CheckCircle2 size={14} color="#43A85B" /> Certificates & recognition
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Card: Editorial Student Testimonial */}
+        {/* 2. Center Card: 4 Feature Pillars */}
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #E5F0DF',
+            padding: '20px 24px',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '14px',
+            alignContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+              <CheckCircle2 size={18} />
+            </div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Self-paced learning</div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+              <Terminal size={18} />
+            </div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Hands-on projects & labs</div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+              <Users size={18} />
+            </div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Expert feedback</div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+              <Award size={18} />
+            </div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Certificates & recognition</div>
+          </div>
+        </div>
+
+        {/* 3. Right Card: Editorial Student Testimonial with Photo */}
         <div
           style={{
             backgroundColor: '#26352A',
             color: '#FFFFFF',
-            borderRadius: '24px',
-            padding: '32px',
+            borderRadius: '20px',
+            padding: '24px',
             display: 'flex',
-            flexDirection: 'column',
+            alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '20px',
+            gap: '14px',
             position: 'relative',
             overflow: 'hidden',
           }}
         >
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <span style={{ color: '#D9F477', fontSize: '2rem', lineHeight: 1, fontFamily: 'serif' }}>“</span>
+          <div style={{ flex: 1, zIndex: 1 }}>
+            <span style={{ color: '#D9F477', fontSize: '1.6rem', lineHeight: 1, fontFamily: 'serif' }}>“</span>
             <p
               style={{
-                fontSize: '1.05rem',
-                lineHeight: 1.55,
+                fontSize: '0.85rem',
+                lineHeight: 1.5,
                 fontWeight: 500,
                 color: '#FAFAF4',
-                margin: '8px 0 0',
+                margin: '2px 0 8px',
               }}
             >
               Geniusphere made learning practical and exciting. I built real projects and gained confidence in my skills.
             </p>
+            <div style={{ fontSize: '0.76rem', color: '#D9F477', fontWeight: 700 }}>
+              — Student, Class 10
+            </div>
           </div>
 
-          <div
+          <img
+            src="/images/student_hero.jpg"
+            alt="Student"
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderTop: '1px solid rgba(255,255,255,0.15)',
-              paddingTop: '16px',
+              width: '76px',
+              height: '76px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '2px solid #D9F477',
+              flexShrink: 0,
             }}
-          >
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#D9F477' }}>Ananya Sharma</div>
-              <div style={{ fontSize: '0.8rem', color: '#E5F0DF' }}>Student, Class 10 • Bengaluru</div>
-            </div>
-
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '4px 10px',
-                borderRadius: '100px',
-                backgroundColor: 'rgba(217, 244, 119, 0.2)',
-                color: '#D9F477',
-                fontSize: '0.75rem',
-                fontWeight: 700,
-              }}
-            >
-              <CheckCircle2 size={13} /> Verified Learner
-            </div>
-          </div>
+          />
         </div>
       </div>
     </div>

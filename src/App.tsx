@@ -24,6 +24,8 @@ import { CIEAuditMatrix } from './components/CIEAuditMatrix';
 import { BackupExportModal } from './components/BackupExportModal';
 import { VectorScratchpadOverlay } from './components/VectorScratchpadOverlay';
 import { VisualDiagramStudio } from './components/VisualDiagramStudio';
+import { MascotSphere } from './components/MascotSphere';
+import { CertificateModal } from './components/CertificateModal';
 import {
   ShieldCheck,
   BookOpen,
@@ -33,9 +35,6 @@ import {
   School,
   Menu,
   X,
-  Shield,
-  Video,
-  Info,
   Terminal,
   Download,
   Smartphone,
@@ -43,6 +42,12 @@ import {
   Edit3,
   Zap,
   Flame,
+  Search,
+  Bell,
+  ChevronDown,
+  Folder,
+  Award,
+  ArrowRight,
 } from 'lucide-react';
 
 export type AppView =
@@ -72,9 +77,10 @@ export const App: React.FC = () => {
   // Single persistent in-memory database instance for genuine state progression
   const db = useMemo(() => new InMemoryDatabase(), []);
 
-  // Supported actors in the environment
+  // Supported actors in the environment (matching Design Board 2: Pavan Kumar / Learner)
   const users = [
-    { id: 'user-student-1', name: 'Aarav Patel (Student, Minor)', role: 'learner', badge: 'Student' },
+    { id: 'user-student-1', name: 'Pavan Kumar (Learner)', role: 'learner', badge: 'Learner' },
+    { id: 'user-student-2', name: 'Aarav Patel (Student, Minor)', role: 'learner', badge: 'Student' },
     { id: 'user-teacher-1', name: 'Dr. Sharma (Teacher, DPTS)', role: 'teacher', badge: 'Teacher' },
     { id: 'user-parent-1', name: 'Sunita Patel (Guardian of Aarav)', role: 'guardian', badge: 'Parent' },
     { id: 'user-admin-1', name: 'Principal Verma (Institution Admin)', role: 'institution_admin', badge: 'Inst Admin' },
@@ -90,7 +96,14 @@ export const App: React.FC = () => {
   const [selectedDomain, setSelectedDomain] = useState<string>('all');
   const [selectedLabSlug, setSelectedLabSlug] = useState<string>('ai-classification-playground');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Master Layout UI States (Matching Design Board 2)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState('');
+  const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false);
+  const [certificateModalOpen, setCertificateModalOpen] = useState(false);
 
   // Viewport Simulator State (Desktop 100% vs Mobile PWA Frame 390px)
   const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
@@ -108,11 +121,27 @@ export const App: React.FC = () => {
   const isTeacher = currentUser.role === 'teacher';
   const isInstAdmin = currentUser.role === 'institution_admin';
   const isSuperadmin = currentUser.role === 'superadmin';
-  const isGuardian = currentUser.role === 'guardian';
-  const isLearner = currentUser.role === 'learner';
+
+  const allCourses = useMemo(() => db.getCanonicalCourses(), [db, refreshTrigger]);
+  const allLabs = useMemo(() => db.getLabDefinitions(), [db]);
+
+  const matchingCourses = useMemo(() => {
+    if (!globalSearch.trim()) return [];
+    const q = globalSearch.toLowerCase();
+    return allCourses.filter(c => c.title.toLowerCase().includes(q) || c.summary.toLowerCase().includes(q)).slice(0, 5);
+  }, [allCourses, globalSearch]);
+
+  const matchingLabs = useMemo(() => {
+    if (!globalSearch.trim()) return [];
+    const q = globalSearch.toLowerCase();
+    return allLabs.filter(l => l.title.toLowerCase().includes(q) || l.summary.toLowerCase().includes(q)).slice(0, 3);
+  }, [allLabs, globalSearch]);
 
   const handleNavigate = (view: string, slug?: string) => {
-    setMobileMenuOpen(false);
+    setSidebarOpen(false);
+    setUserMenuOpen(false);
+    setNotificationsOpen(false);
+    setSearchSuggestionsOpen(false);
     if (view === 'course-detail' && slug) {
       setSelectedCourseSlug(slug);
       setCurrentView('course-detail');
@@ -379,502 +408,656 @@ export const App: React.FC = () => {
       )}
 
       {/* ============================================================ */}
-      {/* 1. TOP PRIMARY NAVIGATION BAR (CLEAN, DESIGN BOARD 1)        */}
+      {/* 1. TOP MASTER BAR (MATCHING DESIGN BOARD 2)                  */}
       {/* ============================================================ */}
       <header
         style={{
-          backgroundColor: '#FAFAF4',
+          backgroundColor: '#FFFFFF',
           borderBottom: '1px solid #E5F0DF',
           position: 'sticky',
           top: 0,
           zIndex: 100,
+          height: '72px',
         }}
       >
         <div
           style={{
-            maxWidth: '1280px',
-            margin: '0 auto',
+            maxWidth: '100%',
             padding: '0 24px',
-            height: '70px',
+            height: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '16px',
+            gap: '20px',
           }}
         >
-          {/* LEFT: GENIUSPHERE BRAND LOGO */}
-          <button
-            type="button"
-            onClick={() => handleNavigate('home')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: 0,
-              textAlign: 'left',
-            }}
-          >
-            <div
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '50%',
-                backgroundColor: '#43A85B',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FFFFFF',
-                boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
-              }}
-            >
-              <ShieldCheck size={22} />
-            </div>
-            <div>
-              <span
-                style={{
-                  fontFamily: 'Space Grotesk, sans-serif',
-                  fontSize: '1.35rem',
-                  fontWeight: 800,
-                  letterSpacing: '-0.02em',
-                  color: '#26352A',
-                  display: 'block',
-                  lineHeight: 1.1,
-                }}
-              >
-                Geniusphere
-              </span>
-              <span style={{ fontSize: '0.72rem', color: '#6A7D70', fontWeight: 600 }}>
-                Learn it. Apply it. Prove it.
-              </span>
-            </div>
-          </button>
-
-          {/* CENTER: CLEAN NAVIGATION LINKS */}
-          <nav
-            className="desktop-nav-links"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
+          {/* LEFT: MOBILE TOGGLE & GENIUSPHERE BRAND LOGO */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {/* Mobile / Drawer Toggle Button */}
             <button
               type="button"
-              onClick={() => handleNavigate('home')}
-              style={{
-                backgroundColor: currentView === 'home' ? '#E5F0DF' : 'transparent',
-                border: 'none',
-                padding: '8px 16px',
-                color: currentView === 'home' ? '#26352A' : '#3A4E40',
-                fontWeight: currentView === 'home' ? 800 : 600,
-                borderRadius: '100px',
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Home
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavigate('catalogue')}
-              style={{
-                backgroundColor: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '#E5F0DF' : 'transparent',
-                border: 'none',
-                padding: '8px 16px',
-                color: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? '#26352A' : '#3A4E40',
-                fontWeight: currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 800 : 600,
-                borderRadius: '100px',
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Courses
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavigate('labs')}
-              style={{
-                backgroundColor: currentView === 'labs' || currentView === 'lab-workspace' ? '#E5F0DF' : 'transparent',
-                border: 'none',
-                padding: '8px 16px',
-                color: currentView === 'labs' || currentView === 'lab-workspace' ? '#26352A' : '#3A4E40',
-                fontWeight: currentView === 'labs' || currentView === 'lab-workspace' ? 800 : 600,
-                borderRadius: '100px',
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Labs & Projects
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleNavigate('resources')}
-              style={{
-                backgroundColor: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '#E5F0DF' : 'transparent',
-                border: 'none',
-                padding: '8px 16px',
-                color: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? '#26352A' : '#3A4E40',
-                fontWeight: currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 800 : 600,
-                borderRadius: '100px',
-                fontSize: '0.92rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Resources
-            </button>
-          </nav>
-
-          {/* RIGHT: AUTH & ACTIVE ROLE WORKSPACE */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            {/* Active User Workspace Quick-Link */}
-            {isLearner && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('student-dashboard')}
-                style={{
-                  backgroundColor: currentView === 'student-dashboard' ? '#43A85B' : '#E5F0DF',
-                  color: currentView === 'student-dashboard' ? '#FFFFFF' : '#26352A',
-                  border: 'none',
-                  borderRadius: '100px',
-                  padding: '7px 16px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                }}
-              >
-                <BookOpen size={14} />
-                <span>My Learning</span>
-              </button>
-            )}
-
-            {isTeacher && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('gradebook')}
-                style={{
-                  backgroundColor: currentView === 'gradebook' || currentView === 'classrooms' ? '#43A85B' : '#E5F0DF',
-                  color: currentView === 'gradebook' || currentView === 'classrooms' ? '#FFFFFF' : '#26352A',
-                  border: 'none',
-                  borderRadius: '100px',
-                  padding: '7px 16px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                }}
-              >
-                <GraduationCap size={15} />
-                <span>Teacher Workspace</span>
-              </button>
-            )}
-
-            {isInstAdmin && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('institution-workspace')}
-                style={{
-                  backgroundColor: currentView === 'institution-workspace' ? '#43A85B' : '#E5F0DF',
-                  color: currentView === 'institution-workspace' ? '#FFFFFF' : '#26352A',
-                  border: 'none',
-                  borderRadius: '100px',
-                  padding: '7px 16px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                }}
-              >
-                <School size={14} />
-                <span>Admin Console</span>
-              </button>
-            )}
-
-            {isGuardian && (
-              <button
-                type="button"
-                onClick={() => handleNavigate('parent')}
-                style={{
-                  backgroundColor: currentView === 'parent' ? '#43A85B' : '#E5F0DF',
-                  color: currentView === 'parent' ? '#FFFFFF' : '#26352A',
-                  border: 'none',
-                  borderRadius: '100px',
-                  padding: '7px 16px',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                }}
-              >
-                <Users size={14} />
-                <span>Parent Portal</span>
-              </button>
-            )}
-
-            {/* Single Clean Persona Selector Pill */}
-            <div style={{ position: 'relative' }}>
-              <select
-                value={currentUserId}
-                onChange={(e) => {
-                  const newUserId = e.target.value;
-                  setCurrentUserId(newUserId);
-                  const userObj = users.find((u) => u.id === newUserId);
-                  if (userObj?.role === 'teacher') setCurrentView('gradebook');
-                  else if (userObj?.role === 'guardian') setCurrentView('parent');
-                  else if (userObj?.role === 'institution_admin') setCurrentView('institution-workspace');
-                  else if (userObj?.role === 'superadmin') setCurrentView('platform-workspace');
-                  else if (userObj?.role === 'learner') setCurrentView('student-dashboard');
-                }}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '100px',
-                  border: '1px solid #E5F0DF',
-                  backgroundColor: '#FFFFFF',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  color: '#26352A',
-                  cursor: 'pointer',
-                  outline: 'none',
-                }}
-                aria-label="Switch User Persona"
-              >
-                {users.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    👤 {u.name.split(' (')[0]} ({u.badge})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* CTA Button: Get Started */}
-            <button
-              type="button"
-              onClick={() => {
-                setAuthModalMode('getstarted');
-                setAuthModalOpen(true);
-              }}
-              style={{
-                backgroundColor: '#43A85B',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: '100px',
-                padding: '8px 20px',
-                fontSize: '0.88rem',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(67, 168, 91, 0.2)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              Get Started
-            </button>
-
-            {/* Mobile Menu Hamburger Toggle */}
-            <button
-              type="button"
-              className="mobile-menu-toggle"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setSidebarOpen(!sidebarOpen)}
               style={{
                 background: 'none',
                 border: '1px solid #E5F0DF',
                 borderRadius: '8px',
                 padding: '6px',
                 cursor: 'pointer',
-                display: 'none',
+                display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#26352A',
               }}
-              aria-label="Toggle Navigation Menu"
+              aria-label="Toggle Navigation Sidebar"
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+
+            <button
+              type="button"
+              onClick={() => handleNavigate('home')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
+                textAlign: 'left',
+              }}
+            >
+              <div
+                style={{
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  backgroundColor: '#43A85B',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#FFFFFF',
+                  boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+                }}
+              >
+                <ShieldCheck size={22} />
+              </div>
+              <span
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontSize: '1.4rem',
+                  fontWeight: 800,
+                  letterSpacing: '-0.02em',
+                  color: '#26352A',
+                  lineHeight: 1.1,
+                }}
+              >
+                Geniusphere
+              </span>
+            </button>
+          </div>
+
+          {/* CENTER: UNIVERSAL SEARCH BAR WITH LIVE DROPDOWN (Design Board 2) */}
+          <div style={{ flex: 1, maxWidth: '540px', position: 'relative' }}>
+            <div style={{ position: 'relative', width: '100%' }}>
+              <Search
+                size={18}
+                style={{
+                  position: 'absolute',
+                  left: '16px',
+                  top: '12px',
+                  color: '#6A7D70',
+                  pointerEvents: 'none',
+                }}
+              />
+              <input
+                type="text"
+                value={globalSearch}
+                onChange={(e) => {
+                  setGlobalSearch(e.target.value);
+                  setSearchSuggestionsOpen(true);
+                }}
+                onFocus={() => setSearchSuggestionsOpen(true)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setSearchSuggestionsOpen(false);
+                    handleNavigate('catalogue');
+                  }
+                }}
+                placeholder="Search for courses, skills or topics..."
+                style={{
+                  width: '100%',
+                  height: '42px',
+                  paddingLeft: '44px',
+                  paddingRight: globalSearch ? '36px' : '16px',
+                  borderRadius: '100px',
+                  border: '1.5px solid #E5F0DF',
+                  backgroundColor: '#FAFAF4',
+                  color: '#26352A',
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  outline: 'none',
+                  transition: 'all 0.15s ease',
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              />
+              {globalSearch && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setGlobalSearch('');
+                    setSearchSuggestionsOpen(false);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '12px',
+                    background: 'none',
+                    border: 'none',
+                    color: '#6A7D70',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* Live Autocomplete Dropdown */}
+            {searchSuggestionsOpen && globalSearch.trim().length > 0 && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '48px',
+                  left: 0,
+                  right: 0,
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '16px',
+                  border: '1px solid #E5F0DF',
+                  boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
+                  padding: '12px',
+                  zIndex: 200,
+                  maxHeight: '380px',
+                  overflowY: 'auto',
+                }}
+              >
+                {matchingCourses.length > 0 && (
+                  <div style={{ marginBottom: '10px' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase', padding: '4px 8px' }}>
+                      Courses ({matchingCourses.length})
+                    </div>
+                    {matchingCourses.map((c) => (
+                      <div
+                        key={c.id}
+                        onClick={() => {
+                          handleSelectCourse(c.slug);
+                          setSearchSuggestionsOpen(false);
+                        }}
+                        style={{
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          cursor: 'pointer',
+                          transition: 'background 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E5F0DF')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <BookOpen size={15} color="#43A85B" />
+                          <span style={{ fontSize: '0.86rem', fontWeight: 700, color: '#26352A' }}>{c.title}</span>
+                        </div>
+                        <span style={{ fontSize: '0.74rem', color: '#6A7D70' }}>{c.duration_hours}h • {c.level}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {matchingLabs.length > 0 && (
+                  <div>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase', padding: '4px 8px' }}>
+                      Interactive Labs ({matchingLabs.length})
+                    </div>
+                    {matchingLabs.map((l) => (
+                      <div
+                        key={l.id}
+                        onClick={() => {
+                          setSelectedLabSlug(l.slug);
+                          setCurrentView('lab-workspace');
+                          setSearchSuggestionsOpen(false);
+                        }}
+                        style={{
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          cursor: 'pointer',
+                          transition: 'background 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E5F0DF')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Terminal size={15} color="#43A85B" />
+                          <span style={{ fontSize: '0.86rem', fontWeight: 700, color: '#26352A' }}>{l.title}</span>
+                        </div>
+                        <span style={{ fontSize: '0.74rem', color: '#6A7D70' }}>Lab Simulator</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {matchingCourses.length === 0 && matchingLabs.length === 0 && (
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#6A7D70', fontSize: '0.85rem' }}>
+                    No direct matches. Press Enter to search curriculum.
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT: NOTIFICATIONS BELL & USER AVATAR PILL (Design Board 2) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative' }}>
+            {/* Notification Bell Button */}
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: '1px solid #E5F0DF',
+                  backgroundColor: notificationsOpen ? '#E5F0DF' : '#FFFFFF',
+                  color: '#26352A',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  transition: 'all 0.15s ease',
+                }}
+                aria-label="Notifications"
+              >
+                <Bell size={18} />
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    width: '7px',
+                    height: '7px',
+                    borderRadius: '50%',
+                    backgroundColor: '#43A85B',
+                  }}
+                />
+              </button>
+
+              {/* Notification Popover */}
+              {notificationsOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '48px',
+                    right: 0,
+                    width: '320px',
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '16px',
+                    border: '1px solid #E5F0DF',
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.1)',
+                    padding: '16px',
+                    zIndex: 200,
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Notifications</div>
+                    <button
+                      type="button"
+                      onClick={() => setNotificationsOpen(false)}
+                      style={{ background: 'none', border: 'none', fontSize: '0.74rem', color: '#43A85B', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
+                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎓 Welcome to Geniusphere 2.0</div>
+                      <div style={{ color: '#6A7D70' }}>Explore 40 canonical courses and hands-on sandboxes.</div>
+                    </div>
+                    <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
+                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎖️ Verified Credentials</div>
+                      <div style={{ color: '#6A7D70' }}>Certificates now include SHA-256 integrity hashes.</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* User Profile Pill matching Design Board 2 */}
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid #E5F0DF',
+                  padding: '4px 14px 4px 6px',
+                  borderRadius: '100px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                }}
+              >
+                <img
+                  src="/images/student_hero.jpg"
+                  alt={currentUser.name}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '1.5px solid #43A85B',
+                  }}
+                />
+                <div style={{ textAlign: 'left', lineHeight: 1.15 }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#26352A' }}>
+                    {currentUser.name.split(' (')[0]}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#6A7D70', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    <span>{currentUser.badge}</span>
+                    <ChevronDown size={11} />
+                  </div>
+                </div>
+              </button>
+
+              {/* Persona / User Switcher Menu */}
+              {userMenuOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '48px',
+                    right: 0,
+                    width: '280px',
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '16px',
+                    border: '1px solid #E5F0DF',
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.1)',
+                    padding: '16px',
+                    zIndex: 200,
+                  }}
+                >
+                  <div style={{ borderBottom: '1px solid #E5F0DF', paddingBottom: '10px', marginBottom: '10px' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#26352A' }}>{currentUser.name.split(' (')[0]}</div>
+                    <div style={{ fontSize: '0.74rem', color: '#6A7D70' }}>{currentUser.badge} Account</div>
+                  </div>
+
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    Switch Persona:
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
+                    {users.map((u) => (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => {
+                          setCurrentUserId(u.id);
+                          setUserMenuOpen(false);
+                          if (u.role === 'teacher') setCurrentView('gradebook');
+                          else if (u.role === 'institution_admin') setCurrentView('institution-workspace');
+                          else if (u.role === 'guardian') setCurrentView('parent');
+                          else if (u.role === 'superadmin') setCurrentView('platform-workspace');
+                          else if (u.role === 'learner') setCurrentView('student-dashboard');
+                        }}
+                        style={{
+                          padding: '6px 10px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          backgroundColor: u.id === currentUserId ? '#E5F0DF' : 'transparent',
+                          color: '#26352A',
+                          fontWeight: u.id === currentUserId ? 800 : 500,
+                          fontSize: '0.8rem',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        👤 {u.name.split(' (')[0]} ({u.badge})
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      setAuthModalMode('signin');
+                      setAuthModalOpen(true);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      borderRadius: '8px',
+                      backgroundColor: '#FAFAF4',
+                      border: '1px solid #E5F0DF',
+                      color: '#26352A',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Switch Account / Sign In
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
 
       {/* ============================================================ */}
-      {/* 2. ACCESSIBLE RESPONSIVE MOBILE MENU DRAWER                  */}
+      {/* 2. MASTER APPLICATION LAYOUT WITH SIDEBAR (DESIGN BOARD 2)  */}
       {/* ============================================================ */}
-      {mobileMenuOpen && (
-        <div
-          style={{
-            backgroundColor: 'var(--bg-surface)',
-            borderBottom: '2px solid var(--border-strong)',
-            padding: '16px 24px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            zIndex: 99,
-          }}
-        >
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
-            Main Sections
+      <div className="platform-layout">
+        {/* Mobile Backdrop */}
+        {sidebarOpen && (
+          <div
+            className="platform-sidebar-backdrop"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* LEFT SIDEBAR NAVIGATION RAIL */}
+        <aside className={`platform-sidebar ${sidebarOpen ? 'open' : ''}`}>
+          <div>
+            {/* Primary Navigation List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={() => handleNavigate('home')}
+                className={`sidebar-nav-btn ${currentView === 'home' ? 'active' : ''}`}
+              >
+                <Home size={18} />
+                <span>Home</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('catalogue')}
+                className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'active' : ''}`}
+              >
+                <BookOpen size={18} />
+                <span>Courses</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('student-dashboard')}
+                className={`sidebar-nav-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
+              >
+                <GraduationCap size={18} />
+                <span>My Learning</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('labs')}
+                className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+              >
+                <Terminal size={18} />
+                <span>Labs & Projects</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('leaderboard')}
+                className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
+              >
+                <Users size={18} />
+                <span>Community</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleNavigate('resources')}
+                className={`sidebar-nav-btn ${currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'active' : ''}`}
+              >
+                <Folder size={18} />
+                <span>Resources</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setCertificateModalOpen(true);
+                  setSidebarOpen(false);
+                }}
+                className="sidebar-nav-btn"
+              >
+                <Award size={18} />
+                <span>Certificates</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setNotificationsOpen(!notificationsOpen);
+                  setSidebarOpen(false);
+                }}
+                className="sidebar-nav-btn"
+              >
+                <Bell size={18} />
+                <span>Notifications</span>
+              </button>
+            </div>
+
+            {/* For Institutions Group */}
+            <div style={{ marginTop: '24px' }}>
+              <div
+                style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  color: '#6A7D70',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  padding: '0 16px 8px',
+                }}
+              >
+                For Institutions
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('institution-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                >
+                  <School size={18} />
+                  <span>Institution Workspace</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('classrooms')}
+                  className={`sidebar-nav-btn ${currentView === 'classrooms' || currentView === 'gradebook' ? 'active' : ''}`}
+                >
+                  <Users size={18} />
+                  <span>Manage Classes</span>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => handleNavigate('home')}
-            style={{ justifyContent: 'flex-start', height: '40px' }}
+          {/* Bottom Mascot Encouragement Widget (matching Design Board 2) */}
+          <div
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '16px',
+              border: '1px solid #E5F0DF',
+              padding: '16px',
+              marginTop: '20px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+            }}
           >
-            <Home size={16} />
-            <span>Home</span>
-          </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <MascotSphere pose="happy" size={38} />
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
+                  Keep going!
+                </div>
+                <div style={{ fontSize: '0.72rem', color: '#6A7D70', lineHeight: 1.25 }}>
+                  Every skill you learn builds a bigger you.
+                </div>
+              </div>
+            </div>
 
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => handleNavigate('catalogue')}
-            style={{ justifyContent: 'flex-start', height: '40px' }}
-          >
-            <BookOpen size={16} />
-            <span>Courses ({db.getCourses().length})</span>
-          </button>
+            {/* Progress Bar */}
+            <div style={{ width: '100%', height: '6px', backgroundColor: '#E5F0DF', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
+              <div style={{ width: '60%', height: '100%', backgroundColor: '#43A85B', borderRadius: '100px' }} />
+            </div>
 
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => handleNavigate('labs')}
-            style={{ justifyContent: 'flex-start', height: '40px' }}
-          >
-            <Terminal size={16} />
-            <span>Interactive Labs ({db.getLabDefinitions().length})</span>
-          </button>
-
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => handleNavigate('resources')}
-            style={{ justifyContent: 'flex-start', height: '40px' }}
-          >
-            <Video size={16} />
-            <span>Resources Hub</span>
-          </button>
-
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => handleNavigate('about')}
-            style={{ justifyContent: 'flex-start', height: '40px' }}
-          >
-            <Info size={16} />
-            <span>About Geniusphere</span>
-          </button>
-
-          <div style={{ height: '1px', backgroundColor: 'var(--border-subtle)', margin: '8px 0' }} />
-
-          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
-            Workspaces & Tools
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.75rem', color: '#6A7D70', fontWeight: 600 }}>3/5 courses</span>
+              <button
+                type="button"
+                onClick={() => handleNavigate('student-dashboard')}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#43A85B',
+                  fontWeight: 800,
+                  fontSize: '0.78rem',
+                  cursor: 'pointer',
+                  padding: 0,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '2px',
+                }}
+              >
+                <span>Continue</span>
+                <ArrowRight size={12} />
+              </button>
+            </div>
           </div>
+        </aside>
 
-          {isLearner && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => handleNavigate('student-dashboard')}
-              style={{ justifyContent: 'flex-start', height: '40px' }}
-            >
-              <BookOpen size={16} />
-              <span>My Learning Dashboard</span>
-            </button>
-          )}
-
-          {isTeacher && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => handleNavigate('gradebook')}
-              style={{ justifyContent: 'flex-start', height: '40px' }}
-            >
-              <GraduationCap size={16} />
-              <span>Teacher Gradebook & Classrooms</span>
-            </button>
-          )}
-
-          {isInstAdmin && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => handleNavigate('institution-workspace')}
-              style={{ justifyContent: 'flex-start', height: '40px' }}
-            >
-              <School size={16} />
-              <span>Institution Admin Console</span>
-            </button>
-          )}
-
-          {isSuperadmin && (
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => handleNavigate('platform-workspace')}
-              style={{ justifyContent: 'flex-start', height: '40px' }}
-            >
-              <Shield size={16} />
-              <span>Platform Operations</span>
-            </button>
-          )}
-
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setAuthModalMode('signin');
-                setAuthModalOpen(true);
-              }}
-              style={{ flex: 1, height: '38px', fontSize: '0.85rem' }}
-            >
-              Sign In
-            </button>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setAuthModalMode('getstarted');
-                setAuthModalOpen(true);
-              }}
-              style={{ flex: 1, height: '38px', fontSize: '0.85rem' }}
-            >
-              Get Started
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================================ */}
-      {/* 3. MAIN CONTENT ROUTER                                       */}
-      {/* ============================================================ */}
-      <main
-        style={{
-          flex: 1,
-          padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 24px',
-          maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1280px',
-          margin: '0 auto',
-          width: '100%',
-        }}
-      >
+        {/* MAIN WORKSPACE CONTENT */}
+        <div className="platform-main-content">
+          <main
+            style={{
+              flex: 1,
+              padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 24px',
+              maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1280px',
+              margin: '0 auto',
+              width: '100%',
+            }}
+          >
         <div
           style={
             viewportMode === 'mobile'
@@ -1133,6 +1316,34 @@ export const App: React.FC = () => {
         )}
         </div>
       </main>
+    </div>
+  </div>
+
+      {/* ============================================================ */}
+      {/* 3.5 CERTIFICATE MODAL VIEWER                                 */}
+      {/* ============================================================ */}
+      {certificateModalOpen && (
+        <CertificateModal
+          certificate={
+            db.getUserCertificates(currentUserId)[0] || {
+              id: 'cert-sample-ai',
+              user_id: currentUserId,
+              course_id: 'course-ai-fund',
+              course_title: 'Artificial Intelligence Literacy',
+              student_name: currentUser.name.split(' (')[0],
+              verification_hash: '9f8e7d6c5b4a3210fedcba9876543210',
+              issued_at: new Date().toISOString(),
+              credential_url: 'https://verify.geniusphere.tech/c/ai-literacy',
+              metadata: {
+                score_achieved: 100,
+                learning_stream: 'Technology & Digital Skills',
+                curriculum_version: '2026.1',
+              },
+            }
+          }
+          onClose={() => setCertificateModalOpen(false)}
+        />
+      )}
 
       {/* ============================================================ */}
       {/* 4. AUTHENTICATION & ONBOARDING MODAL                         */}
