@@ -1007,3 +1007,95 @@ tr:hover td {
   }
 }
 
+/* ====================================================================
+   MASCOT SPHERE ANIMATIONS & DYNAMICS
+   ==================================================================== */
+@keyframes mascotFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes mascotShadow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: scale(0.85);
+    opacity: 0.06;
+  }
+}
+
+@keyframes mascotWave {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-18deg);
+  }
+  75% {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes mascotTypingLeft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes mascotTypingRight {
+  0%, 100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mascotSparkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.25) rotate(15deg);
+    opacity: 1;
+  }
+}
+
+.mascot-animated-float {
+  animation: mascotFloat 3.2s ease-in-out infinite;
+}
+
+.mascot-animated-shadow {
+  transform-origin: center;
+  animation: mascotShadow 3.2s ease-in-out infinite;
+}
+
+.mascot-hand-wave {
+  transform-origin: 22px 52px;
+  animation: mascotWave 1.4s ease-in-out infinite;
+}
+
+.mascot-hand-typing-left {
+  animation: mascotTypingLeft 0.35s ease-in-out infinite;
+}
+
+.mascot-hand-typing-right {
+  animation: mascotTypingRight 0.35s ease-in-out infinite;
+}
+
+.mascot-sparkle-spin {
+  transform-origin: center;
+  animation: mascotSparkle 2s ease-in-out infinite;
+}
+
+

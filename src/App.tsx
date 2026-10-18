@@ -26,6 +26,8 @@ import { VectorScratchpadOverlay } from './components/VectorScratchpadOverlay';
 import { VisualDiagramStudio } from './components/VisualDiagramStudio';
 import { MascotSphere } from './components/MascotSphere';
 import { CertificateModal } from './components/CertificateModal';
+import { SoftwareAuthScreen } from './components/SoftwareAuthScreen';
+import { SoftwareUserGuideModal } from './components/SoftwareUserGuideModal';
 import {
   ShieldCheck,
   BookOpen,
@@ -48,6 +50,8 @@ import {
   Folder,
   Award,
   ArrowRight,
+  Sparkles,
+  LogOut,
 } from 'lucide-react';
 
 export type AppView =
@@ -104,6 +108,8 @@ export const App: React.FC = () => {
   const [globalSearch, setGlobalSearch] = useState('');
   const [searchSuggestionsOpen, setSearchSuggestionsOpen] = useState(false);
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [userGuideOpen, setUserGuideOpen] = useState<boolean>(false);
 
   // Viewport Simulator State (Desktop 100% vs Mobile PWA Frame 390px)
   const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
@@ -115,7 +121,7 @@ export const App: React.FC = () => {
 
   // Auth Modal State
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authModalMode, setAuthModalMode] = useState<'signin' | 'getstarted'>('signin');
+  const [authModalMode] = useState<'signin' | 'getstarted'>('signin');
 
   const currentUser = users.find((u) => u.id === currentUserId) || users[0];
   const isTeacher = currentUser.role === 'teacher';
@@ -206,6 +212,25 @@ export const App: React.FC = () => {
     else if (role === 'superadmin') setCurrentView('platform-workspace');
     else if (role === 'guardian') setCurrentView('parent');
   };
+
+  if (!isAuthenticated) {
+    return (
+      <SoftwareAuthScreen
+        users={users}
+        onLogin={(userId, role) => {
+          setCurrentUserId(userId);
+          setIsAuthenticated(true);
+          if (role === 'teacher') {
+            setCurrentView('gradebook');
+          } else if (role === 'institution_admin') {
+            setCurrentView('institution-workspace');
+          } else {
+            setCurrentView('catalogue');
+          }
+        }}
+      />
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-canvas)' }}>
@@ -660,8 +685,38 @@ export const App: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT: NOTIFICATIONS BELL & USER AVATAR PILL (Design Board 2) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative' }}>
+          {/* RIGHT: USER GUIDE, NOTIFICATIONS BELL & USER AVATAR PILL (Design Board 2) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+            {/* Interactive User Guide Button with Mascot */}
+            <button
+              type="button"
+              onClick={() => setUserGuideOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: '#FAFAF4',
+                border: '1px solid #E5F0DF',
+                borderRadius: '100px',
+                padding: '5px 14px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#26352A',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#E5F0DF';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#FAFAF4';
+              }}
+              title="Launch Interactive Software User Guide"
+            >
+              <MascotSphere pose="happy" size={20} animated={false} />
+              <span>User Guide</span>
+            </button>
+
             {/* Notification Bell Button */}
             <div style={{ position: 'relative' }}>
               <button
@@ -726,12 +781,12 @@ export const App: React.FC = () => {
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
-                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎓 Welcome to Geniusphere 2.0</div>
-                      <div style={{ color: '#6A7D70' }}>Explore 40 canonical courses and hands-on sandboxes.</div>
+                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎓 Welcome to Geniusphere Suite</div>
+                      <div style={{ color: '#6A7D70' }}>Explore 40 canonical courses, hands-on sandboxes, and gradebooks.</div>
                     </div>
                     <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
-                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎖️ Verified Credentials</div>
-                      <div style={{ color: '#6A7D70' }}>Certificates now include SHA-256 integrity hashes.</div>
+                      <div style={{ fontWeight: 700, color: '#26352A' }}>🎖️ Verified Credentials Active</div>
+                      <div style={{ color: '#6A7D70' }}>Certificates include tamper-proof SHA-256 integrity hashes.</div>
                     </div>
                   </div>
                 </div>
@@ -772,7 +827,7 @@ export const App: React.FC = () => {
                     {currentUser.name.split(' (')[0]}
                   </div>
                   <div style={{ fontSize: '0.72rem', color: '#6A7D70', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <span>{currentUser.badge}</span>
+                    <span>{isTeacher ? 'Faculty' : 'Learner'}</span>
                     <ChevronDown size={11} />
                   </div>
                 </div>
@@ -785,7 +840,7 @@ export const App: React.FC = () => {
                     position: 'absolute',
                     top: '48px',
                     right: 0,
-                    width: '280px',
+                    width: '290px',
                     backgroundColor: '#FFFFFF',
                     borderRadius: '16px',
                     border: '1px solid #E5F0DF',
@@ -794,66 +849,99 @@ export const App: React.FC = () => {
                     zIndex: 200,
                   }}
                 >
-                  <div style={{ borderBottom: '1px solid #E5F0DF', paddingBottom: '10px', marginBottom: '10px' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#26352A' }}>{currentUser.name.split(' (')[0]}</div>
-                    <div style={{ fontSize: '0.74rem', color: '#6A7D70' }}>{currentUser.badge} Account</div>
+                  <div style={{ borderBottom: '1px solid #E5F0DF', paddingBottom: '10px', marginBottom: '12px' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>{currentUser.name.split(' (')[0]}</div>
+                    <div style={{ fontSize: '0.74rem', color: '#43A85B', fontWeight: 600, marginTop: '2px' }}>
+                      {isTeacher ? '🎓 Faculty & Educator Portal' : '👤 Student Learner Portal'}
+                    </div>
                   </div>
 
-                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase', marginBottom: '6px' }}>
-                    Switch Persona:
-                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+                    {/* Toggle between Student & Teacher */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const nextUserId = isTeacher ? 'user-student-1' : 'user-teacher-1';
+                        setCurrentUserId(nextUserId);
+                        setUserMenuOpen(false);
+                        setCurrentView(isTeacher ? 'student-dashboard' : 'gradebook');
+                      }}
+                      style={{
+                        padding: '9px 12px',
+                        borderRadius: '10px',
+                        border: '1px solid #E5F0DF',
+                        backgroundColor: '#F8FAF6',
+                        color: '#26352A',
+                        fontWeight: 700,
+                        fontSize: '0.8rem',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        transition: 'background 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#E5F0DF';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#F8FAF6';
+                      }}
+                    >
+                      {isTeacher ? <GraduationCap size={16} color="#43A85B" /> : <Users size={16} color="#43A85B" />}
+                      <span>{isTeacher ? 'Switch to Student View' : 'Switch to Teacher Portal'}</span>
+                    </button>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px' }}>
-                    {users.map((u) => (
-                      <button
-                        key={u.id}
-                        type="button"
-                        onClick={() => {
-                          setCurrentUserId(u.id);
-                          setUserMenuOpen(false);
-                          if (u.role === 'teacher') setCurrentView('gradebook');
-                          else if (u.role === 'institution_admin') setCurrentView('institution-workspace');
-                          else if (u.role === 'guardian') setCurrentView('parent');
-                          else if (u.role === 'superadmin') setCurrentView('platform-workspace');
-                          else if (u.role === 'learner') setCurrentView('student-dashboard');
-                        }}
-                        style={{
-                          padding: '6px 10px',
-                          borderRadius: '8px',
-                          border: 'none',
-                          backgroundColor: u.id === currentUserId ? '#E5F0DF' : 'transparent',
-                          color: '#26352A',
-                          fontWeight: u.id === currentUserId ? 800 : 500,
-                          fontSize: '0.8rem',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        👤 {u.name.split(' (')[0]} ({u.badge})
-                      </button>
-                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setUserGuideOpen(true);
+                      }}
+                      style={{
+                        padding: '9px 12px',
+                        borderRadius: '10px',
+                        border: '1px solid #E5F0DF',
+                        backgroundColor: '#FFFFFF',
+                        color: '#26352A',
+                        fontWeight: 600,
+                        fontSize: '0.8rem',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <Sparkles size={16} color="#43A85B" />
+                      <span>Software User Guide</span>
+                    </button>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => {
                       setUserMenuOpen(false);
-                      setAuthModalMode('signin');
-                      setAuthModalOpen(true);
+                      setIsAuthenticated(false);
                     }}
                     style={{
                       width: '100%',
-                      padding: '8px',
-                      borderRadius: '8px',
+                      padding: '9px',
+                      borderRadius: '10px',
                       backgroundColor: '#FAFAF4',
                       border: '1px solid #E5F0DF',
-                      color: '#26352A',
+                      color: '#DC2626',
                       fontWeight: 700,
                       fontSize: '0.82rem',
                       cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
                     }}
                   >
-                    Switch Account / Sign In
+                    <LogOut size={14} />
+                    <span>Sign Out / Lock Workstation</span>
                   </button>
                 </div>
               )}
@@ -877,121 +965,231 @@ export const App: React.FC = () => {
         {/* LEFT SIDEBAR NAVIGATION RAIL */}
         <aside className={`platform-sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div>
-            {/* Primary Navigation List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <button
-                type="button"
-                onClick={() => handleNavigate('home')}
-                className={`sidebar-nav-btn ${currentView === 'home' ? 'active' : ''}`}
-              >
-                <Home size={18} />
-                <span>Home</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('catalogue')}
-                className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'active' : ''}`}
-              >
-                <BookOpen size={18} />
-                <span>Courses</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('student-dashboard')}
-                className={`sidebar-nav-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
-              >
-                <GraduationCap size={18} />
-                <span>My Learning</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('labs')}
-                className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
-              >
-                <Terminal size={18} />
-                <span>Labs & Projects</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('leaderboard')}
-                className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
-              >
-                <Users size={18} />
-                <span>Community</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleNavigate('resources')}
-                className={`sidebar-nav-btn ${currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'active' : ''}`}
-              >
-                <Folder size={18} />
-                <span>Resources</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setCertificateModalOpen(true);
-                  setSidebarOpen(false);
-                }}
-                className="sidebar-nav-btn"
-              >
-                <Award size={18} />
-                <span>Certificates</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setNotificationsOpen(!notificationsOpen);
-                  setSidebarOpen(false);
-                }}
-                className="sidebar-nav-btn"
-              >
-                <Bell size={18} />
-                <span>Notifications</span>
-              </button>
-            </div>
-
-            {/* For Institutions Group */}
-            <div style={{ marginTop: '24px' }}>
-              <div
-                style={{
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  color: '#6A7D70',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  padding: '0 16px 8px',
-                }}
-              >
-                For Institutions
-              </div>
+            {isTeacher ? (
+              /* TEACHER / EDUCATOR DEDICATED NAVIGATION RAIL */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    color: '#43A85B',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    padding: '0 16px 8px',
+                  }}
+                >
+                  Educator Portal
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => handleNavigate('institution-workspace')}
-                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                  onClick={() => handleNavigate('gradebook')}
+                  className={`sidebar-nav-btn ${currentView === 'gradebook' ? 'active' : ''}`}
                 >
-                  <School size={18} />
-                  <span>Institution Workspace</span>
+                  <Users size={18} />
+                  <span>Class Gradebook</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('classrooms')}
-                  className={`sidebar-nav-btn ${currentView === 'classrooms' || currentView === 'gradebook' ? 'active' : ''}`}
+                  className={`sidebar-nav-btn ${currentView === 'classrooms' ? 'active' : ''}`}
                 >
-                  <Users size={18} />
+                  <School size={18} />
                   <span>Manage Classes</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('catalogue')}
+                  className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                >
+                  <BookOpen size={18} />
+                  <span>Curriculum & Courses</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('labs')}
+                  className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                >
+                  <Terminal size={18} />
+                  <span>Lab Environments</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('institution-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                >
+                  <ShieldCheck size={18} />
+                  <span>Institution Workspace</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCertificateModalOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                >
+                  <Award size={18} />
+                  <span>Certificate Registry</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('resources')}
+                  className={`sidebar-nav-btn ${currentView === 'resources' ? 'active' : ''}`}
+                >
+                  <Folder size={18} />
+                  <span>Teaching Resources</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserGuideOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                >
+                  <Sparkles size={18} />
+                  <span>Software User Guide</span>
+                </button>
               </div>
-            </div>
+            ) : (
+              /* STUDENT / LEARNER DEDICATED NAVIGATION RAIL */
+              <div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('home')}
+                    className={`sidebar-nav-btn ${currentView === 'home' ? 'active' : ''}`}
+                  >
+                    <Home size={18} />
+                    <span>Home</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('catalogue')}
+                    className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'active' : ''}`}
+                  >
+                    <BookOpen size={18} />
+                    <span>Courses</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('student-dashboard')}
+                    className={`sidebar-nav-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
+                  >
+                    <GraduationCap size={18} />
+                    <span>My Learning</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('labs')}
+                    className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                  >
+                    <Terminal size={18} />
+                    <span>Labs & Projects</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('leaderboard')}
+                    className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
+                  >
+                    <Users size={18} />
+                    <span>Community</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('resources')}
+                    className={`sidebar-nav-btn ${currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'active' : ''}`}
+                  >
+                    <Folder size={18} />
+                    <span>Resources</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCertificateModalOpen(true);
+                      setSidebarOpen(false);
+                    }}
+                    className="sidebar-nav-btn"
+                  >
+                    <Award size={18} />
+                    <span>Certificates</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserGuideOpen(true);
+                      setSidebarOpen(false);
+                    }}
+                    className="sidebar-nav-btn"
+                  >
+                    <Sparkles size={18} />
+                    <span>Software User Guide</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNotificationsOpen(!notificationsOpen);
+                      setSidebarOpen(false);
+                    }}
+                    className="sidebar-nav-btn"
+                  >
+                    <Bell size={18} />
+                    <span>Notifications</span>
+                  </button>
+                </div>
+
+                {/* For Institutions Group */}
+                <div style={{ marginTop: '24px' }}>
+                  <div
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: '#6A7D70',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      padding: '0 16px 8px',
+                    }}
+                  >
+                    For Institutions
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('institution-workspace')}
+                      className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                    >
+                      <School size={18} />
+                      <span>Institution Workspace</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('classrooms')}
+                      className={`sidebar-nav-btn ${currentView === 'classrooms' || currentView === 'gradebook' ? 'active' : ''}`}
+                    >
+                      <Users size={18} />
+                      <span>Manage Classes</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Bottom Mascot Encouragement Widget (matching Design Board 2) */}
@@ -1005,45 +1203,84 @@ export const App: React.FC = () => {
               boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <MascotSphere pose="happy" size={38} />
+            {isTeacher ? (
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
-                  Keep going!
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <MascotSphere pose="teaching" size={40} />
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
+                      Educator Suite
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#6A7D70', lineHeight: 1.25 }}>
+                      Class 10-A: 24 students enrolled, 82% course completion.
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.72rem', color: '#6A7D70', lineHeight: 1.25 }}>
-                  Every skill you learn builds a bigger you.
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('gradebook')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#43A85B',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                  >
+                    <span>Open Gradebook</span>
+                    <ArrowRight size={12} />
+                  </button>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                  <MascotSphere pose="happy" size={38} />
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
+                      Keep going!
+                    </div>
+                    <div style={{ fontSize: '0.72rem', color: '#6A7D70', lineHeight: 1.25 }}>
+                      Every skill you learn builds a bigger you.
+                    </div>
+                  </div>
+                </div>
 
-            {/* Progress Bar */}
-            <div style={{ width: '100%', height: '6px', backgroundColor: '#E5F0DF', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
-              <div style={{ width: '60%', height: '100%', backgroundColor: '#43A85B', borderRadius: '100px' }} />
-            </div>
+                {/* Progress Bar */}
+                <div style={{ width: '100%', height: '6px', backgroundColor: '#E5F0DF', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
+                  <div style={{ width: '60%', height: '100%', backgroundColor: '#43A85B', borderRadius: '100px' }} />
+                </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.75rem', color: '#6A7D70', fontWeight: 600 }}>3/5 courses</span>
-              <button
-                type="button"
-                onClick={() => handleNavigate('student-dashboard')}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#43A85B',
-                  fontWeight: 800,
-                  fontSize: '0.78rem',
-                  cursor: 'pointer',
-                  padding: 0,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '2px',
-                }}
-              >
-                <span>Continue</span>
-                <ArrowRight size={12} />
-              </button>
-            </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#6A7D70', fontWeight: 600 }}>3/5 courses</span>
+                  <button
+                    type="button"
+                    onClick={() => handleNavigate('student-dashboard')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#43A85B',
+                      fontWeight: 800,
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                      padding: 0,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '2px',
+                    }}
+                  >
+                    <span>Continue</span>
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </aside>
 
@@ -1504,6 +1741,13 @@ export const App: React.FC = () => {
         isOpen={scratchpadOpen}
         onClose={() => setScratchpadOpen(false)}
         labKey={selectedLabSlug || 'global'}
+      />
+
+      <SoftwareUserGuideModal
+        isOpen={userGuideOpen}
+        onClose={() => setUserGuideOpen(false)}
+        isTeacher={isTeacher}
+        onNavigate={(view) => handleNavigate(view)}
       />
     </div>
   );
