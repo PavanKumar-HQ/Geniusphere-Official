@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Lesson, CourseEnrollment, Certificate } from '../types';
 import { ConceptSvgAnimation } from './ConceptSvgAnimation';
@@ -18,6 +18,8 @@ import {
   Cpu,
   Terminal as TerminalIcon,
   BookOpen,
+  Sparkles,
+  RotateCcw,
 } from 'lucide-react';
 
 interface LessonPlayerProps {
@@ -44,6 +46,9 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
   const [earnedCertificate, setEarnedCertificate] = useState<Certificate | null>(null);
+
+  const [overrideVideoId, setOverrideVideoId] = useState<string | null>(null);
+  const videoLessons = useMemo(() => db.getVideoLessons(), [db]);
 
   // Quiz submission state for current lesson
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
@@ -76,6 +81,28 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   const currentIdx = allLessons.findIndex((l) => l.id === activeLesson?.id);
   const nextLesson = allLessons[currentIdx + 1];
   const isCompleted = enrollment.completed_lessons.includes(activeLesson?.id || '');
+
+  // Fallback domain-appropriate educational video mapping
+  const fallbackVideoId = useMemo(() => {
+    const domainVideos: Record<string, string[]> = {
+      technology: ['0mCsluv5FXA', 'wjZofJX0v4M', 'b4b8ktEV4Bg', 'Q3TzZzLzDqw'],
+      coding: ['8mAITcNt710', 'eWRfhZUzrAc', 'wjZofJX0v4M'],
+      finance: ['PHe0bXAIuk0', 'Rm6p-o4uQ_g', 'X1u3K-z5S2A'],
+      professional: ['D5phvOX_t-U', 'X1u3K-z5S2A', '0mCsluv5FXA'],
+    };
+    const list = domainVideos[course?.domain || 'technology'] || ['0mCsluv5FXA', '8mAITcNt710', 'PHe0bXAIuk0'];
+    return list[Math.max(0, currentIdx) % list.length];
+  }, [course?.domain, currentIdx]);
+
+  const activeVideoId =
+    overrideVideoId ||
+    (activeLesson?.video_id && activeLesson.video_id !== 'dQw4w9WgXcQ'
+      ? activeLesson.video_id
+      : fallbackVideoId);
+
+  const activeVideoMeta = useMemo(() => {
+    return videoLessons.find((v) => v.youtube_id === activeVideoId);
+  }, [videoLessons, activeVideoId]);
 
   const handleCompleteAndNext = () => {
     if (!activeLesson) return;
@@ -388,24 +415,154 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
             {/* TAB 1: VIDEO LESSON & NOTES */}
             {activeTab === 'video' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* 16:9 YouTube Video Embed */}
-                <div className="card" style={{ padding: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                {/* 16:9 YouTube Video Embed with Curated Educational Masterclasses */}
+                <div className="card" style={{ padding: '20px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Play size={18} color="var(--brand-primary)" />
-                      <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>Curated Educational Video</span>
+                      <span style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--text-primary)' }}>
+                        {activeVideoMeta?.title || activeLesson.title}
+                      </span>
                     </div>
-                    <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
-                      High Definition 1080p
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {activeVideoMeta?.instructor_name && (
+                        <span className="badge badge-accent" style={{ fontSize: '0.72rem' }}>
+                          {activeVideoMeta.instructor_name}
+                        </span>
+                      )}
+                      <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
+                        HD 1080p
+                      </span>
+                    </div>
                   </div>
+
                   <div className="video-responsive-wrapper">
                     <iframe
-                      src={`https://www.youtube-nocookie.com/embed/${activeLesson.video_id || 'dQw4w9WgXcQ'}?rel=0`}
-                      title={activeLesson.title}
+                      src={`https://www.youtube-nocookie.com/embed/${activeVideoId}?rel=0`}
+                      title={activeVideoMeta?.title || activeLesson.title}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                     />
+                  </div>
+
+                  {/* 10 Verified Educational Video Selector Grid */}
+                  <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Sparkles size={16} color="var(--brand-primary)" />
+                          <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                            10 Verified Educational Video Masterclasses
+                          </span>
+                        </div>
+                        <p style={{ margin: '2px 0 0', fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                          Click any verified lecture below to switch video stream immediately (MIT, Harvard CS50, 3Blue1Brown, Ray Dalio, Khan Academy).
+                        </p>
+                      </div>
+
+                      {overrideVideoId && (
+                        <button
+                          type="button"
+                          onClick={() => setOverrideVideoId(null)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            color: 'var(--brand-primary)',
+                            backgroundColor: 'var(--brand-surface)',
+                            border: '1px solid var(--brand-border)',
+                            borderRadius: '100px',
+                            padding: '4px 12px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <RotateCcw size={12} />
+                          Reset to Default
+                        </button>
+                      )}
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+                        gap: '10px',
+                        maxHeight: '260px',
+                        overflowY: 'auto',
+                        padding: '4px 2px',
+                      }}
+                    >
+                      {videoLessons.map((v, vIdx) => {
+                        const isCurrent = v.youtube_id === activeVideoId;
+                        return (
+                          <button
+                            key={v.id}
+                            type="button"
+                            onClick={() => setOverrideVideoId(v.youtube_id)}
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              textAlign: 'left',
+                              padding: '10px 12px',
+                              borderRadius: '10px',
+                              backgroundColor: isCurrent ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                              border: isCurrent ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                              gap: '5px',
+                            }}
+                          >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span
+                                style={{
+                                  fontSize: '0.66rem',
+                                  fontWeight: 800,
+                                  textTransform: 'uppercase',
+                                  backgroundColor: isCurrent ? 'var(--brand-primary)' : '#E5F0DF',
+                                  color: isCurrent ? '#FFFFFF' : '#26352A',
+                                  padding: '2px 6px',
+                                  borderRadius: '6px',
+                                }}
+                              >
+                                {v.category}
+                              </span>
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                {v.duration_minutes}m
+                              </span>
+                            </div>
+
+                            <div
+                              style={{
+                                fontSize: '0.79rem',
+                                fontWeight: 700,
+                                color: 'var(--text-primary)',
+                                lineHeight: 1.3,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              {vIdx + 1}. {v.title}
+                            </div>
+
+                            <div
+                              style={{
+                                fontSize: '0.71rem',
+                                color: 'var(--text-muted)',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {v.instructor_name || 'Academic Institution'}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 

@@ -8,14 +8,18 @@ import {
   FileCode,
   Code2,
   Cpu,
+  Database,
 } from 'lucide-react';
 import { CodeEditor } from './CodeEditor';
 import { MascotSphere } from './MascotSphere';
+import { GeniusphereLoader } from './GeniusphereLoader';
 import {
   SupportedLanguage,
   STARTER_TEMPLATES,
   executePythonCode,
   executeCCode,
+  executeJavaScriptCode,
+  executeSqlCode,
   ExecutionResult,
 } from '../utils/codeSandboxRunner';
 
@@ -72,14 +76,20 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
       let res: ExecutionResult;
       if (language === 'python') {
         res = executePythonCode(code);
-      } else {
+      } else if (language === 'c') {
         res = executeCCode(code);
+      } else if (language === 'javascript') {
+        res = executeJavaScriptCode(code);
+      } else if (language === 'sql') {
+        res = executeSqlCode(code);
+      } else {
+        res = executePythonCode(code);
       }
 
       setResult(res);
       setIsRunning(false);
       if (onRunSuccess) onRunSuccess(res);
-    }, 120);
+    }, 280);
   };
 
   const handleCopyCode = () => {
@@ -136,7 +146,11 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             speechBubble={
               language === 'python'
                 ? 'Python v3.12 active! Try testing loops and functions!'
-                : 'C Language environment ready! Test pointers and memory bounds!'
+                : language === 'c'
+                ? 'C Language environment ready! Test pointers and memory bounds!'
+                : language === 'javascript'
+                ? 'Modern ES6+ engine active! Test async, closures, and array methods!'
+                : 'Relational SQL active! Run live queries against Geniusphere student DB!'
             }
           />
           <div>
@@ -155,11 +169,11 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                   textTransform: 'uppercase',
                 }}
               >
-                In-Browser WASM
+                In-Browser Engine
               </span>
             </div>
             <p style={{ margin: 0, color: '#6A7D70', fontSize: '0.86rem' }}>
-              Write, compile, and execute real <strong>Python</strong> and <strong>C Language</strong> code with live stdout terminal feedback.
+              Write, compile, and execute real <strong>Python</strong>, <strong>C</strong>, <strong>JavaScript</strong>, and <strong>SQL</strong> code with live stdout terminal feedback.
             </p>
           </div>
         </div>
@@ -173,19 +187,20 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             padding: '4px',
             borderRadius: '100px',
             gap: '4px',
+            flexWrap: 'wrap',
           }}
         >
           <button
             type="button"
             onClick={() => setLanguage('python')}
             style={{
-              padding: '8px 20px',
+              padding: '8px 16px',
               borderRadius: '100px',
               border: 'none',
               backgroundColor: language === 'python' ? '#43A85B' : 'transparent',
               color: language === 'python' ? '#FFFFFF' : '#26352A',
               fontWeight: 800,
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -194,7 +209,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               boxShadow: language === 'python' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
             }}
           >
-            <Code2 size={16} />
+            <Code2 size={15} />
             <span>Python 3.12</span>
           </button>
 
@@ -202,13 +217,13 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             type="button"
             onClick={() => setLanguage('c')}
             style={{
-              padding: '8px 20px',
+              padding: '8px 16px',
               borderRadius: '100px',
               border: 'none',
               backgroundColor: language === 'c' ? '#43A85B' : 'transparent',
               color: language === 'c' ? '#FFFFFF' : '#26352A',
               fontWeight: 800,
-              fontSize: '0.85rem',
+              fontSize: '0.82rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -217,8 +232,54 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               boxShadow: language === 'c' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
             }}
           >
-            <Cpu size={16} />
-            <span>C Language (GCC)</span>
+            <Cpu size={15} />
+            <span>C Language</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setLanguage('javascript')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '100px',
+              border: 'none',
+              backgroundColor: language === 'javascript' ? '#43A85B' : 'transparent',
+              color: language === 'javascript' ? '#FFFFFF' : '#26352A',
+              fontWeight: 800,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.15s ease',
+              boxShadow: language === 'javascript' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
+            }}
+          >
+            <FileCode size={15} />
+            <span>JavaScript</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setLanguage('sql')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '100px',
+              border: 'none',
+              backgroundColor: language === 'sql' ? '#43A85B' : 'transparent',
+              color: language === 'sql' ? '#FFFFFF' : '#26352A',
+              fontWeight: 800,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.15s ease',
+              boxShadow: language === 'sql' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
+            }}
+          >
+            <Database size={15} />
+            <span>Relational SQL</span>
           </button>
         </div>
       </div>
@@ -487,9 +548,28 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             )}
 
             {isRunning && (
-              <div style={{ color: '#D9F477', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="pulse-dot-green" />
-                <span>Compiling {language === 'python' ? 'Python bytecode' : 'C native binary'} in WebAssembly sandbox...</span>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '260px',
+                }}
+              >
+                <GeniusphereLoader
+                  size="sm"
+                  theme="dark"
+                  message={`Executing ${
+                    language === 'python'
+                      ? 'Python 3.12 Bytecode'
+                      : language === 'c'
+                      ? 'C Native Runtime'
+                      : language === 'javascript'
+                      ? 'JavaScript ES6+ Engine'
+                      : 'Relational SQL Query'
+                  }...`}
+                  submessage="Isolated sandbox with memory guards & safety execution limits"
+                />
               </div>
             )}
 

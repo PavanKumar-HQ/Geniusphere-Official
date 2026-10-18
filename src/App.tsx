@@ -51,6 +51,7 @@ import {
   Sparkles,
   LogOut,
   Code2,
+  ShieldAlert,
 } from 'lucide-react';
 
 export type AppView =
@@ -846,7 +847,7 @@ export const App: React.FC = () => {
                   className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
                 >
                   <Code2 size={18} />
-                  <span>Coding Sandbox (Python & C)</span>
+                  <span>Coding Sandbox (Python, C, JS, SQL)</span>
                 </button>
 
                 <button
@@ -856,6 +857,15 @@ export const App: React.FC = () => {
                 >
                   <ShieldCheck size={18} />
                   <span>Institution Workspace</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('platform-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+                >
+                  <ShieldAlert size={18} />
+                  <span>Platform Admin & Content</span>
                 </button>
 
                 <button
@@ -934,7 +944,7 @@ export const App: React.FC = () => {
                     className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
                   >
                     <Code2 size={18} />
-                    <span>Coding Sandbox (Python & C)</span>
+                    <span>Multi-Language Sandbox</span>
                   </button>
 
                   <button
@@ -1020,6 +1030,15 @@ export const App: React.FC = () => {
                     >
                       <Users size={18} />
                       <span>Manage Classes</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('platform-workspace')}
+                      className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+                    >
+                      <ShieldAlert size={18} />
+                      <span>Platform Admin & Content</span>
                     </button>
                   </div>
                 </div>

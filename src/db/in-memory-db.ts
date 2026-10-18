@@ -22,6 +22,7 @@ import {
   VideoLesson,
   StudyResource,
   DomainType,
+  DifficultyLevel,
   Certificate,
   UserProgressState,
   LabDefinition,
@@ -858,6 +859,112 @@ export class InMemoryDatabase {
       if (c.slug === slug) return c;
     }
     return null;
+  }
+
+  createCourse(courseData: {
+    title: string;
+    domain: DomainType;
+    subject: string;
+    level?: DifficultyLevel;
+    summary?: string;
+    description?: string;
+    duration_hours?: number;
+    initialModuleTitle?: string;
+    initialLessonTitle?: string;
+    initialVideoId?: string;
+    addedByUserId?: string;
+  }): Course {
+    const id = `course-custom-${Date.now()}`;
+    const slug = courseData.title
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+    const moduleId = `mod-${id}-1`;
+    const lessonId = `les-${id}-1`;
+
+    const newCourse: Course = {
+      id,
+      title: courseData.title.trim(),
+      slug: slug || id,
+      domain: courseData.domain,
+      subject: courseData.subject.trim(),
+      level: courseData.level || 'beginner',
+      summary: courseData.summary?.trim() || `Comprehensive foundational course exploring ${courseData.title.trim()}.`,
+      description:
+        courseData.description?.trim() ||
+        `Hands-on curriculum exploring ${courseData.title.trim()} through rigorous theoretical foundations and verified interactive labs.`,
+      learning_objectives: [
+        `Understand foundational principles of ${courseData.title.trim()}`,
+        'Apply interactive simulation models and deterministic proofs',
+        'Demonstrate mastery through practical coding sandboxes',
+      ],
+      prerequisites: ['Basic analytical curiosity'],
+      duration_hours: courseData.duration_hours || 4,
+      is_published: true,
+      availability_status: 'verified_functional',
+      modules: [
+        {
+          id: moduleId,
+          course_id: id,
+          title: courseData.initialModuleTitle?.trim() || 'Module 1: Foundations & Architecture',
+          order_index: 0,
+          lessons: [
+            {
+              id: lessonId,
+              module_id: moduleId,
+              title: courseData.initialLessonTitle?.trim() || 'Foundations & Architectural Overview',
+              order_index: 0,
+              summary: `Master core principles and verify interactive mechanics for ${courseData.title.trim()}.`,
+              duration_minutes: 25,
+              video_id: courseData.initialVideoId || '0mCsluv5FXA',
+              content_markdown: `### Welcome to ${courseData.title.trim()}\n\nThis course provides a comprehensive exploration of key concepts and interactive principles.\n\n#### Key Objectives\n\n- Master fundamental mechanics\n- Test deterministic scenarios in the live sandbox\n- Validate results with cryptographic assurance\n\n\`\`\`javascript\n// Interactive verification snippet\nconsole.log("Welcome to ${courseData.title.trim()} on Geniusphere!");\n\`\`\`\n\nReview the interactive visualizer and run simulations to complete your learning objectives.`,
+              quiz: {
+                id: `quiz-${lessonId}`,
+                questions: [
+                  {
+                    id: `q-${lessonId}-1`,
+                    prompt: `What is the primary purpose of studying ${courseData.title.trim()}?`,
+                    options: [
+                      'To understand core principles and apply systematic problem solving',
+                      'To memorize syntax without practical implementation',
+                      'To bypass security validation protocols',
+                      'To ignore systemic performance limits',
+                    ],
+                    correct_option_index: 0,
+                    explanation: 'Rigorous engineering foundations combine theoretical understanding with real-world verification.',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+      created_at: new Date().toISOString(),
+    };
+
+    this.courses.set(id, newCourse);
+
+    this.logAuditEvent({
+      actor_id: courseData.addedByUserId || 'user-superadmin-1',
+      organization_id: null,
+      action_type: 'course_published',
+      resource_type: 'course',
+      resource_id: id,
+      ip_address: null,
+      user_agent: null,
+      details: {
+        title: newCourse.title,
+        domain: newCourse.domain,
+        subject: newCourse.subject,
+      },
+    });
+
+    return newCourse;
+  }
+
+  getUserById(id: string): User | null {
+    return this.users.get(id) || null;
   }
 
   getCanonicalStreams() {

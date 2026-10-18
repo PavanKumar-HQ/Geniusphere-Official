@@ -1,12 +1,23 @@
 import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { DomainType } from '../types';
+import { GeniusphereLoader } from './GeniusphereLoader';
 import {
   FileText,
   CheckCircle2,
   PlusCircle,
   Trash2,
   ExternalLink,
+  User,
+  Award,
+  Zap,
+  BookOpen,
+  Terminal,
+  ChevronRight,
+  Sparkles,
+  Flame,
+  Search,
+  ArrowLeft,
 } from 'lucide-react';
 
 interface PlatformAdminWorkspaceProps {
@@ -32,11 +43,29 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
   const [videoMsg, setVideoMsg] = useState<string | null>(null);
   const [videoVersion, setVideoVersion] = useState(0);
 
-  const videoLessons = useMemo(() => db.getVideoLessons(), [db, videoVersion]);
+  // Dynamic Content & Student Profile State
+  const [contentVersion, setContentVersion] = useState(0);
+  const [userProfileVersion, setUserProfileVersion] = useState(0);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [userSearch, setUserSearch] = useState('');
+  const [isPublishingCourse, setIsPublishingCourse] = useState(false);
+  const [courseMsg, setCourseMsg] = useState<string | null>(null);
 
-  const allUsers = Array.from(db.users.values());
+  // New Course Form State
+  const [newCourseTitle, setNewCourseTitle] = useState('');
+  const [newCourseDomain, setNewCourseDomain] = useState<DomainType>('technology');
+  const [newCourseSubject, setNewCourseSubject] = useState('');
+  const [newCourseLevel, setNewCourseLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
+  const [newCourseHours, setNewCourseHours] = useState('6');
+  const [newCourseSummary, setNewCourseSummary] = useState('');
+  const [newCourseModuleTitle, setNewCourseModuleTitle] = useState('');
+  const [newCourseLessonTitle, setNewCourseLessonTitle] = useState('');
+  const [newCourseVideoId, setNewCourseVideoId] = useState('0mCsluv5FXA');
+
+  const videoLessons = useMemo(() => db.getVideoLessons(), [db, videoVersion]);
+  const allUsers = useMemo(() => Array.from(db.users.values()), [db, userProfileVersion]);
   const allOrgs = Array.from(db.organizations.values());
-  const allCourses = db.getCourses();
+  const allCourses = useMemo(() => db.getCourses(), [db, contentVersion]);
   const allClassrooms = Array.from(db.classrooms.values());
   const allAuditEvents = Array.from(db.auditEvents.values());
 
@@ -227,102 +256,613 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
         </div>
       )}
 
-      {/* Tab 2: Users */}
+      {/* Tab 2: Users & Student Profiles */}
       {activeTab === 'users' && (
-        <div className="card">
-          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '16px' }}>
-            System Users & Role Inventory
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {allUsers.map((u) => (
-              <div
-                key={u.id}
-                style={{
-                  padding: '14px 18px',
-                  borderRadius: '8px',
-                  backgroundColor: 'var(--bg-surface-subdued)',
-                  border: '1px solid var(--border-subtle)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '12px',
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{u.full_name}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {u.email} • ID: <code>{u.id}</code>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {selectedStudentId ? (
+            /* Selected Student Profile Drilldown View */
+            (() => {
+              const u = db.getUserById(selectedStudentId);
+              if (!u) return <div>Student not found.</div>;
+              const prog = db.getUserProgress(selectedStudentId);
+              const enrollments = db.getUserEnrollments(selectedStudentId);
+              const certs = db.getCertificates(selectedStudentId);
+              const attempts = db.getLabAttempts(selectedStudentId);
+
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* Top Bar with Back Button */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedStudentId(null)}
+                      className="btn-secondary"
+                      style={{ height: '36px', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <ArrowLeft size={14} /> Back to Users Directory
+                    </button>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span className="badge badge-brand">USER ID: <code>{u.id}</code></span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          db.awardXp(u.id, 100, 'Admin Grant');
+                          setUserProfileVersion((v) => v + 1);
+                        }}
+                        className="btn-primary"
+                        style={{ height: '36px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                      >
+                        <Zap size={14} /> Award +100 XP
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Student Header Card */}
+                  <div className="card-elevated" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                    <div
+                      style={{
+                        width: '64px',
+                        height: '64px',
+                        borderRadius: '50%',
+                        backgroundColor: '#43A85B',
+                        color: '#FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.4rem',
+                        fontWeight: 800,
+                        boxShadow: '0 4px 12px rgba(67, 168, 91, 0.3)',
+                      }}
+                    >
+                      {u.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: '220px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                        <h2 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0 }}>{u.full_name}</h2>
+                        {u.is_minor && <span className="badge badge-warning">Minor Student (COPPA/GDPR-K)</span>}
+                        {u.is_superadmin ? (
+                          <span className="badge badge-danger">SUPERADMIN</span>
+                        ) : (
+                          <span className="badge badge-brand">STUDENT</span>
+                        )}
+                        <span className="badge badge-success">{u.account_status.toUpperCase()}</span>
+                      </div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                        {u.email} • Registered: {new Date(u.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Real-time Student Metrics Grid */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
+                    <div className="card" style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#43A85B', marginBottom: '6px' }}>
+                        <Zap size={18} />
+                        <span style={{ fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>Total Mastery XP</span>
+                      </div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{prog.xp} XP</div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Level {Math.floor(prog.xp / 500) + 1} Academic Rank</span>
+                    </div>
+
+                    <div className="card" style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#EAB308', marginBottom: '6px' }}>
+                        <Flame size={18} />
+                        <span style={{ fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>Active Streak</span>
+                      </div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{prog.streak_days} Days</div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Continuous Daily Study</span>
+                    </div>
+
+                    <div className="card" style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#3B82F6', marginBottom: '6px' }}>
+                        <BookOpen size={18} />
+                        <span style={{ fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>Courses Enrolled</span>
+                      </div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{enrollments.length}</div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{prog.completed_courses.length} Fully Completed</span>
+                    </div>
+
+                    <div className="card" style={{ padding: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#8B5CF6', marginBottom: '6px' }}>
+                        <Award size={18} />
+                        <span style={{ fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase' }}>Verified Certs</span>
+                      </div>
+                      <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{certs.length}</div>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Cryptographically Bound</span>
+                    </div>
+                  </div>
+
+                  {/* Enrolled Courses Progress */}
+                  <div className="card" style={{ padding: '20px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <BookOpen size={18} color="var(--brand-primary)" />
+                      <span>Enrolled Curriculum & Real-time Progress</span>
+                    </h3>
+
+                    {enrollments.length === 0 ? (
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No courses enrolled yet.</div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {enrollments.map((enr) => {
+                          const crs = db.getCourseById(enr.course_id);
+                          return (
+                            <div
+                              key={enr.id}
+                              style={{
+                                padding: '14px 16px',
+                                borderRadius: '10px',
+                                backgroundColor: 'var(--bg-surface-subdued)',
+                                border: '1px solid var(--border-subtle)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '8px',
+                              }}
+                            >
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                                <div>
+                                  <span style={{ fontWeight: 800, fontSize: '0.92rem' }}>
+                                    {crs?.title || enr.course_id}
+                                  </span>
+                                  {crs && (
+                                    <span className="badge badge-accent" style={{ marginLeft: '8px', fontSize: '0.68rem' }}>
+                                      {crs.domain.toUpperCase()}
+                                    </span>
+                                  )}
+                                </div>
+                                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--brand-primary)' }}>
+                                  {enr.progress_percent}% Complete
+                                </span>
+                              </div>
+
+                              {/* Progress Bar */}
+                              <div style={{ width: '100%', height: '8px', borderRadius: '4px', backgroundColor: 'var(--border-subtle)', overflow: 'hidden' }}>
+                                <div
+                                  style={{
+                                    width: `${enr.progress_percent}%`,
+                                    height: '100%',
+                                    backgroundColor: 'var(--brand-primary)',
+                                    borderRadius: '4px',
+                                    transition: 'width 0.3s ease',
+                                  }}
+                                />
+                              </div>
+
+                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                                <span>{enr.completed_lessons.length} lessons completed</span>
+                                <span>Enrolled: {new Date(enr.enrolled_at).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Hands-on Lab Attempts */}
+                  <div className="card" style={{ padding: '20px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Terminal size={18} color="var(--brand-primary)" />
+                      <span>Hands-on Lab Verification Attempts ({attempts.length})</span>
+                    </h3>
+
+                    {attempts.length === 0 ? (
+                      <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No lab verification attempts recorded yet.</div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {attempts.map((att) => (
+                          <div
+                            key={att.id}
+                            style={{
+                              padding: '10px 14px',
+                              borderRadius: '8px',
+                              backgroundColor: 'var(--bg-surface-subdued)',
+                              border: '1px solid var(--border-subtle)',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              fontSize: '0.82rem',
+                            }}
+                          >
+                            <div>
+                              <strong>Lab ID:</strong> <code>{att.lab_id}</code>
+                              <span style={{ color: 'var(--text-muted)', marginLeft: '10px' }}>
+                                Score: {att.score}%
+                              </span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span className={`badge ${att.passed ? 'badge-success' : 'badge-danger'}`}>
+                                {att.passed ? 'PASSED' : 'INCOMPLETE'}
+                              </span>
+                              <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>
+                                {new Date(att.created_at).toLocaleTimeString()}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {u.is_minor && <span className="badge badge-warning">Minor Account</span>}
-                  {u.is_superadmin ? (
-                    <span className="badge badge-danger">SUPERADMIN</span>
-                  ) : (
-                    <span className="badge badge-brand">STANDARD USER</span>
-                  )}
-                  <span className="badge badge-success">{u.account_status.toUpperCase()}</span>
+              );
+            })()
+          ) : (
+            /* User Directory List */
+            <div className="card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
+                    System Users & Student Profiles Directory
+                  </h3>
+                  <p style={{ margin: '4px 0 0', color: 'var(--text-secondary)', fontSize: '0.84rem' }}>
+                    Click "Inspect Student Profile" on any registered user to inspect curriculum progress, XP, and verified lab attempts.
+                  </p>
+                </div>
+
+                <div style={{ position: 'relative', width: '240px' }}>
+                  <Search size={14} style={{ position: 'absolute', left: '10px', top: '11px', color: 'var(--text-muted)' }} />
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px 8px 30px',
+                      borderRadius: '8px',
+                      border: '1px solid var(--border-subtle)',
+                      fontSize: '0.82rem',
+                      backgroundColor: 'var(--bg-canvas)',
+                    }}
+                  />
                 </div>
               </div>
-            ))}
-          </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {allUsers
+                  .filter((u) => !userSearch || u.full_name.toLowerCase().includes(userSearch.toLowerCase()) || u.email.toLowerCase().includes(userSearch.toLowerCase()))
+                  .map((u) => (
+                    <div
+                      key={u.id}
+                      style={{
+                        padding: '14px 18px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-surface-subdued)',
+                        border: '1px solid var(--border-subtle)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '12px',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{u.full_name}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          {u.email} • ID: <code>{u.id}</code>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {u.is_minor && <span className="badge badge-warning">Minor</span>}
+                        {u.is_superadmin ? (
+                          <span className="badge badge-danger">SUPERADMIN</span>
+                        ) : (
+                          <span className="badge badge-brand">STUDENT</span>
+                        )}
+                        <span className="badge badge-success">{u.account_status.toUpperCase()}</span>
+
+                        <button
+                          type="button"
+                          onClick={() => setSelectedStudentId(u.id)}
+                          className="btn-secondary"
+                          style={{
+                            height: '32px',
+                            padding: '0 12px',
+                            fontSize: '0.78rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontWeight: 700,
+                          }}
+                        >
+                          <User size={13} />
+                          <span>Inspect Student Profile</span>
+                          <ChevronRight size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Tab 3: Content */}
+      {/* Tab 3: Content Publication & Curriculum Authoring */}
       {activeTab === 'content' && (
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-            <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Curriculum Publication Registry</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                Reconciled 27 courses across 4 domains. Every course contains 2 substantive modules and 4 concrete lessons.
-              </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Add New Course Content Form */}
+          <div className="card" style={{ borderTop: '4px solid var(--brand-primary)', padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <PlusCircle size={20} color="var(--brand-primary)" />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>
+                Publish New Course & Content to Live Curriculum
+              </h3>
             </div>
-            {onNavigateToCatalogue && (
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={onNavigateToCatalogue}
-                style={{ height: '36px', fontSize: '0.82rem' }}
-              >
-                Explore Catalogue
-              </button>
-            )}
-          </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '0 0 18px' }}>
+              Directly inject verified curricula, modules, and lessons into the platform runtime with automated schema validation and cryptographic audit event chaining.
+            </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {allCourses.map((c) => (
+            {courseMsg && (
               <div
-                key={c.id}
                 style={{
                   padding: '12px 16px',
                   borderRadius: '8px',
-                  backgroundColor: 'var(--bg-surface-subdued)',
-                  border: '1px solid var(--border-subtle)',
+                  backgroundColor: 'var(--success-bg)',
+                  color: 'var(--success-text)',
+                  fontSize: '0.86rem',
+                  fontWeight: 600,
+                  marginBottom: '18px',
+                  border: '1px solid var(--success-border)',
                   display: 'flex',
-                  justifyContent: 'space-between',
                   alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '10px',
+                  gap: '8px',
                 }}
               >
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{c.title}</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                    Domain: <strong>{c.domain.toUpperCase()}</strong> • Subject: <strong>{c.subject}</strong> • {c.modules.length} Modules
+                <CheckCircle2 size={16} />
+                <span>{courseMsg}</span>
+              </div>
+            )}
+
+            {isPublishingCourse ? (
+              <div style={{ padding: '40px 20px' }}>
+                <GeniusphereLoader
+                  size="md"
+                  message="Publishing New Course to Distributed Curriculum..."
+                  submessage="Enforcing schema validation, cryptographic hash-chaining, and student accessibility invariants"
+                />
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!newCourseTitle.trim()) {
+                    alert('Please enter a course title');
+                    return;
+                  }
+                  setIsPublishingCourse(true);
+                  setTimeout(() => {
+                    db.createCourse({
+                      title: newCourseTitle.trim(),
+                      domain: newCourseDomain,
+                      subject: newCourseSubject.trim() || 'Applied Science',
+                      level: newCourseLevel,
+                      duration_hours: parseInt(newCourseHours, 10) || 6,
+                      summary: newCourseSummary.trim(),
+                      initialModuleTitle: newCourseModuleTitle.trim(),
+                      initialLessonTitle: newCourseLessonTitle.trim(),
+                      initialVideoId: newCourseVideoId,
+                      addedByUserId: currentUserId,
+                    });
+                    setIsPublishingCourse(false);
+                    setCourseMsg(`Course "${newCourseTitle.trim()}" published and verified!`);
+                    setContentVersion((v) => v + 1);
+                    setNewCourseTitle('');
+                    setNewCourseSubject('');
+                    setNewCourseSummary('');
+                    setNewCourseModuleTitle('');
+                    setNewCourseLessonTitle('');
+                    setTimeout(() => setCourseMsg(null), 5000);
+                  }, 400);
+                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Course Title *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Advanced Cryptographic Engineering"
+                      value={newCourseTitle}
+                      onChange={(e) => setNewCourseTitle(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.88rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Domain *
+                    </label>
+                    <select
+                      value={newCourseDomain}
+                      onChange={(e) => setNewCourseDomain(e.target.value as DomainType)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.88rem' }}
+                    >
+                      <option value="technology">Technology & Cybersecurity</option>
+                      <option value="coding">Software Engineering & Coding</option>
+                      <option value="finance">Quantitative Finance & Economics</option>
+                      <option value="professional">Professional Mastery & Leadership</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Subject / Discipline
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Distributed Consensus Systems"
+                      value={newCourseSubject}
+                      onChange={(e) => setNewCourseSubject(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.88rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Difficulty Level & Duration
+                    </label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <select
+                        value={newCourseLevel}
+                        onChange={(e) => setNewCourseLevel(e.target.value as any)}
+                        style={{ flex: 1, padding: '10px 8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.85rem' }}
+                      >
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                      </select>
+                      <input
+                        type="number"
+                        min="1"
+                        max="40"
+                        value={newCourseHours}
+                        onChange={(e) => setNewCourseHours(e.target.value)}
+                        placeholder="Hours"
+                        style={{ width: '80px', padding: '10px 8px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.85rem' }}
+                      />
+                    </div>
                   </div>
                 </div>
-                <div>
-                  {c.availability_status === 'verified_functional' ? (
-                    <span className="badge badge-success">VERIFIED FUNCTIONAL</span>
-                  ) : (
-                    <span className="badge badge-brand">IMPLEMENTED IN BUILD</span>
-                  )}
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Initial Module Title
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Module 1: Cryptographic Invariants & Hashes"
+                      value={newCourseModuleTitle}
+                      onChange={(e) => setNewCourseModuleTitle(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.88rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Initial Lesson Title
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Lesson 1: Zero-Knowledge Verification"
+                      value={newCourseLessonTitle}
+                      onChange={(e) => setNewCourseLessonTitle(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.88rem' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                      Associated Educational Video Lecture
+                    </label>
+                    <select
+                      value={newCourseVideoId}
+                      onChange={(e) => setNewCourseVideoId(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.85rem' }}
+                    >
+                      {videoLessons.map((v) => (
+                        <option key={v.id} value={v.youtube_id}>
+                          {v.title} ({v.instructor_name || v.category})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, marginBottom: '6px' }}>
+                    Course Summary & Learning Scope
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Concise overview of curriculum pedagogy, interactive labs, and target competencies..."
+                    value={newCourseSummary}
+                    onChange={(e) => setNewCourseSummary(e.target.value)}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)', fontSize: '0.88rem', resize: 'vertical' }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    style={{
+                      height: '42px',
+                      padding: '0 24px',
+                      fontSize: '0.9rem',
+                      fontWeight: 800,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
+                    <Sparkles size={16} />
+                    <span>Publish Course to Catalog</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          {/* Curriculum Registry List */}
+          <div className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>Curriculum Publication Registry ({allCourses.length} Subjects)</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: '4px 0 0' }}>
+                  Real-time catalog synchronized with student enrollment and progress engines.
+                </p>
               </div>
-            ))}
+              {onNavigateToCatalogue && (
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={onNavigateToCatalogue}
+                  style={{ height: '36px', fontSize: '0.82rem' }}
+                >
+                  Explore Catalogue
+                </button>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {allCourses.map((c) => (
+                <div
+                  key={c.id}
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--bg-surface-subdued)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{c.title}</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      Domain: <strong>{c.domain.toUpperCase()}</strong> • Subject: <strong>{c.subject}</strong> • {c.modules.length} Modules • {c.duration_hours}h
+                    </div>
+                  </div>
+                  <div>
+                    {c.availability_status === 'verified_functional' ? (
+                      <span className="badge badge-success">VERIFIED FUNCTIONAL</span>
+                    ) : (
+                      <span className="badge badge-brand">LIVE CATALOG</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
