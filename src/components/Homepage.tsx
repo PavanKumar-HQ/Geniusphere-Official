@@ -37,7 +37,6 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
   const [pilotModalOpen, setPilotModalOpen] = useState(false);
   const [audienceTab, setAudienceTab] = useState<'school' | 'college' | 'teacher' | 'parent'>('school');
-  const [heroMode, setHeroMode] = useState<'student' | 'sandbox'>('student');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const getDomainCount = (domain: string) => {
@@ -58,7 +57,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       {/* ============================================================ */}
       <section
         style={{
-          padding: '56px 24px 72px',
+          padding: '48px 32px 64px',
           width: '100%',
           backgroundColor: '#FAFAF4',
           borderBottom: '1px solid #E5F0DF',
@@ -67,11 +66,11 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
       >
         <div
           style={{
-            maxWidth: '1240px',
+            maxWidth: '1280px',
             margin: '0 auto',
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-            gap: '48px',
+            gap: '40px',
             alignItems: 'center',
           }}
         >
@@ -81,19 +80,40 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-start',
-              gap: '24px',
+              gap: '20px',
             }}
           >
+            {/* Live Indicator Pill */}
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 14px',
+                borderRadius: '100px',
+                backgroundColor: '#E5F0DF',
+                border: '1px solid #D2DEC9',
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                color: '#26352A',
+                letterSpacing: '0.03em',
+              }}
+            >
+              <span className="pulse-dot-green" />
+              <span>LIVE COMPUTATIONAL ENGINE • ZERO MOCK DATA</span>
+            </div>
+
             {/* Headline: Space Grotesk Bold, Fresh Green highlight */}
             <h1
               style={{
                 fontFamily: 'Space Grotesk, sans-serif',
-                fontSize: 'clamp(2.6rem, 5vw, 4rem)',
+                fontSize: 'clamp(2.4rem, 4.5vw, 3.8rem)',
                 fontWeight: 800,
-                lineHeight: 1.14,
+                lineHeight: 1.15,
                 letterSpacing: '-0.03em',
                 color: '#26352A',
                 margin: 0,
+                paddingTop: '4px',
               }}
             >
               Build real skills <br />
@@ -239,143 +259,46 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
             </div>
           </div>
 
-          {/* Right Column: Editorial Student Visual & Interactive Sandbox Toggle */}
+          {/* Right Column: Live Interactive Computational Sandbox Engine & SVG Animations */}
           <div
             style={{
               position: 'relative',
+              width: '100%',
+              maxWidth: '560px',
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
+              gap: '12px',
             }}
           >
-            {/* Mode switcher tabs (Subtle and clean at top) */}
-            <div
-              style={{
-                display: 'inline-flex',
-                backgroundColor: '#E5F0DF',
-                padding: '3px',
-                borderRadius: '100px',
-                marginBottom: '16px',
-                gap: '4px',
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setHeroMode('student')}
-                style={{
-                  border: 'none',
-                  backgroundColor: heroMode === 'student' ? '#FFFFFF' : 'transparent',
-                  color: heroMode === 'student' ? '#26352A' : '#6A7D70',
-                  fontWeight: heroMode === 'student' ? 800 : 600,
-                  padding: '6px 16px',
-                  borderRadius: '100px',
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  boxShadow: heroMode === 'student' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Student Story
-              </button>
-              <button
-                type="button"
-                onClick={() => setHeroMode('sandbox')}
-                style={{
-                  border: 'none',
-                  backgroundColor: heroMode === 'sandbox' ? '#FFFFFF' : 'transparent',
-                  color: heroMode === 'sandbox' ? '#26352A' : '#6A7D70',
-                  fontWeight: heroMode === 'sandbox' ? 800 : 600,
-                  padding: '6px 16px',
-                  borderRadius: '100px',
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                  boxShadow: heroMode === 'sandbox' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                Interactive Sandbox Preview
-              </button>
-            </div>
-
-            {heroMode === 'student' ? (
+            {/* Engine Header Badge */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div
                 style={{
-                  position: 'relative',
-                  width: '100%',
-                  maxWidth: '460px',
-                  borderRadius: '24px',
-                  overflow: 'hidden',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
                   backgroundColor: '#FFFFFF',
+                  padding: '5px 14px',
+                  borderRadius: '100px',
                   border: '1px solid #E5F0DF',
-                  boxShadow: '0 12px 36px rgba(0,0,0,0.06)',
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  color: '#26352A',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
                 }}
               >
-                <img
-                  src="/images/student_hero.jpg"
-                  alt="Geniusphere Student"
-                  style={{
-                    width: '100%',
-                    height: '440px',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-
-                {/* Playful Editorial Sticker (matching Design Board 1) */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '20px',
-                    backgroundColor: '#D9F477',
-                    color: '#26352A',
-                    padding: '6px 16px',
-                    borderRadius: '12px',
-                    fontFamily: 'Space Grotesk, sans-serif',
-                    fontWeight: 800,
-                    fontSize: '0.92rem',
-                    transform: 'rotate(4deg)',
-                    boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
-                  }}
-                >
-                  Real Skills. Real Opportunities.
-                </div>
-
-                {/* Mascot Greeting Tag */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '20px',
-                    left: '20px',
-                    backgroundColor: 'rgba(250, 250, 244, 0.95)',
-                    backdropFilter: 'blur(8px)',
-                    border: '1px solid #E5F0DF',
-                    padding: '10px 16px',
-                    borderRadius: '16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-                  }}
-                >
-                  <MascotSphere pose="happy" size={44} />
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '0.86rem', color: '#26352A' }}>
-                      Learn by doing
-                    </div>
-                    <div style={{ fontSize: '0.74rem', color: '#6A7D70' }}>
-                      Verified browser sandboxes
-                    </div>
-                  </div>
-                </div>
+                <MascotSphere pose="coding" size={26} animated={false} />
+                <span>Interactive Learning Engine</span>
               </div>
-            ) : (
-              <div style={{ width: '100%', maxWidth: '520px' }}>
-                <HeroAnimationSandbox
-                  onLaunchLab={(slug) => onNavigate('lab-workspace', slug)}
-                />
-              </div>
-            )}
+              <span style={{ fontSize: '0.74rem', color: '#6A7D70', fontWeight: 600 }}>
+                Live client-side WebAssembly &amp; SVG ↓
+              </span>
+            </div>
+
+            {/* Live Interactive Sandbox with live SVG visualizers */}
+            <HeroAnimationSandbox
+              onLaunchLab={(slug) => onNavigate('lab-workspace', slug)}
+            />
           </div>
         </div>
       </section>

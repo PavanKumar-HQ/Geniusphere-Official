@@ -38,12 +38,6 @@ import {
   Menu,
   X,
   Terminal,
-  Download,
-  Smartphone,
-  Monitor,
-  Edit3,
-  Zap,
-  Flame,
   Search,
   Bell,
   ChevronDown,
@@ -111,9 +105,6 @@ export const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [userGuideOpen, setUserGuideOpen] = useState<boolean>(false);
 
-  // Viewport Simulator State (Desktop 100% vs Mobile PWA Frame 390px)
-  const [viewportMode, setViewportMode] = useState<'desktop' | 'mobile'>('desktop');
-  const [devToolbarVisible, setDevToolbarVisible] = useState<boolean>(false);
 
   // Sovereign Backup & Notes Overlay Modals
   const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
@@ -234,215 +225,19 @@ export const App: React.FC = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-canvas)' }}>
-      {/* Top Hairline Rule: Fresh Green */}
-      <div
-        style={{
-          height: '3px',
-          backgroundColor: '#43A85B',
-          width: '100%',
-        }}
-      />
-
       {/* ============================================================ */}
-      {/* 0. PERSISTENT TELEMETRY, GOVERNANCE & SIMULATOR BAR (DEV MODE)*/}
-      {/* ============================================================ */}
-      {devToolbarVisible && (
-        <div
-          style={{
-          backgroundColor: '#FAFAF4',
-          color: '#26352A',
-          fontSize: '0.78rem',
-          padding: '6px 20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '10px',
-          borderBottom: '1px solid rgba(38, 53, 42, 0.12)',
-          zIndex: 101,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          {/* Performance & Sync Pill */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: '#E5F0DF',
-              color: '#26352A',
-              fontWeight: 700,
-              padding: '3px 10px',
-              borderRadius: '12px',
-              fontSize: '0.72rem',
-              border: '1px solid rgba(38, 53, 42, 0.12)',
-            }}
-          >
-            <Zap size={13} color="#43A85B" />
-            <span>Snapshot Loaded: 14ms (IDB)</span>
-            <span style={{ color: 'rgba(38, 53, 42, 0.35)' }}>•</span>
-            <span style={{ color: '#43A85B' }}>Sync: Verified</span>
-            <span style={{ color: 'rgba(38, 53, 42, 0.35)' }}>•</span>
-            <span>24h Auto-Backup: Active</span>
-          </div>
-
-          {/* Gamification Pill: Streak in Lime with Charcoal text */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px',
-              backgroundColor: '#D9F477',
-              color: '#26352A',
-              fontWeight: 800,
-              padding: '3px 10px',
-              borderRadius: '12px',
-              fontSize: '0.72rem',
-            }}
-            title="Consistent Student Streak"
-          >
-            <Flame size={13} color="#26352A" />
-            <span>12 Days</span>
-            <span style={{ opacity: 0.4 }}>|</span>
-            <span>2,450 XP</span>
-          </div>
-        </div>
-
-        {/* Action Controls & Simulator Switches */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          {/* Viewport Simulator Toggle (390px Mobile vs 100% Desktop) */}
-          <div style={{ display: 'inline-flex', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(38, 53, 42, 0.18)' }}>
-            <button
-              type="button"
-              onClick={() => setViewportMode('desktop')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '3px 8px',
-                fontSize: '0.72rem',
-                border: 'none',
-                backgroundColor: viewportMode === 'desktop' ? '#43A85B' : '#FFFFFF',
-                color: viewportMode === 'desktop' ? '#FAFAF4' : '#26352A',
-                fontWeight: viewportMode === 'desktop' ? 800 : 500,
-                cursor: 'pointer',
-              }}
-              title="Desktop Studio View"
-            >
-              <Monitor size={12} />
-              <span>Studio 100%</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewportMode('mobile')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '3px 8px',
-                fontSize: '0.72rem',
-                border: 'none',
-                backgroundColor: viewportMode === 'mobile' ? '#43A85B' : '#FFFFFF',
-                color: viewportMode === 'mobile' ? '#FAFAF4' : '#26352A',
-                fontWeight: viewportMode === 'mobile' ? 800 : 500,
-                cursor: 'pointer',
-              }}
-              title="Mobile PWA Touch Frame (390px)"
-            >
-              <Smartphone size={12} />
-              <span>PWA 390px</span>
-            </button>
-          </div>
-
-          {/* Sovereign Backup Drawer Button */}
-          <button
-            type="button"
-            onClick={() => setBackupModalOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: 600,
-              backgroundColor: '#FFFFFF',
-              border: '1px solid rgba(38, 53, 42, 0.18)',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              color: '#26352A',
-            }}
-          >
-            <Download size={12} />
-            <span>Backup / Export</span>
-          </button>
-
-          {/* Vector Notes Overlay Toggle */}
-          <button
-            type="button"
-            onClick={() => setScratchpadOpen(!scratchpadOpen)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '3px 9px',
-              fontSize: '0.74rem',
-              fontWeight: 600,
-              backgroundColor: scratchpadOpen ? '#E5F0DF' : '#FFFFFF',
-              border: '1px solid rgba(38, 53, 42, 0.18)',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              color: '#26352A',
-            }}
-          >
-            <Edit3 size={12} />
-            <span>Vector Overlay</span>
-          </button>
-
-          {/* Persona Switcher Quick Dropdown */}
-          <select
-            value={currentUserId}
-            onChange={(e) => {
-              const newId = e.target.value;
-              setCurrentUserId(newId);
-              if (newId === 'user-cie-auditor') setCurrentView('cie-audit');
-              else if (newId === 'user-teacher-1') setCurrentView('gradebook');
-              else if (newId === 'user-parent-1') setCurrentView('parent');
-              else if (newId === 'user-admin-1') setCurrentView('institution-workspace');
-              else if (newId === 'user-superadmin-1') setCurrentView('platform-workspace');
-              else if (newId === 'user-student-1') setCurrentView('student-dashboard');
-            }}
-            style={{
-              padding: '3px 8px',
-              borderRadius: '6px',
-              border: '1px solid rgba(38, 53, 42, 0.18)',
-              backgroundColor: '#FFFFFF',
-              fontWeight: 700,
-              fontSize: '0.72rem',
-              color: '#26352A',
-              cursor: 'pointer',
-            }}
-          >
-            {users.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.badge}: {u.name.split(' (')[0]}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      )}
-
-      {/* ============================================================ */}
-      {/* 1. TOP MASTER BAR (MATCHING DESIGN BOARD 2)                  */}
+      {/* 1. TOP MASTER BAR (CANONICAL ENTERPRISE SOFTWARE SHELL)     */}
       {/* ============================================================ */}
       <header
         style={{
           backgroundColor: '#FFFFFF',
+          borderTop: '3px solid #43A85B',
           borderBottom: '1px solid #E5F0DF',
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          height: '72px',
+          height: '70px',
+          boxShadow: '0 2px 8px rgba(38, 53, 42, 0.04)',
         }}
       >
         <div
@@ -1289,61 +1084,13 @@ export const App: React.FC = () => {
           <main
             style={{
               flex: 1,
-              padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 24px',
-              maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1280px',
+              padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '32px 28px',
+              maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1320px',
               margin: '0 auto',
               width: '100%',
+              minHeight: 'calc(100vh - 70px)',
             }}
           >
-        <div
-          style={
-            viewportMode === 'mobile'
-              ? {
-                  maxWidth: '390px',
-                  margin: '24px auto',
-                  borderRadius: '36px',
-                  border: '8px solid #26352A',
-                  boxShadow: '0 20px 40px rgba(38, 53, 42, 0.25)',
-                  overflow: 'hidden',
-                  backgroundColor: '#FAFAF4',
-                  minHeight: '844px',
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }
-              : { width: '100%' }
-          }
-        >
-          {viewportMode === 'mobile' && (
-            <div
-              style={{
-                height: '24px',
-                backgroundColor: '#26352A',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#FAFAF4',
-                fontSize: '0.65rem',
-                fontWeight: 700,
-              }}
-            >
-              <div
-                style={{
-                  width: '110px',
-                  height: '14px',
-                  backgroundColor: '#1E2B22',
-                  borderRadius: '0 0 10px 10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
-              >
-                <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#43A85B' }} />
-                <div style={{ width: '32px', height: '3px', borderRadius: '2px', backgroundColor: '#3A4E40' }} />
-              </div>
-            </div>
-          )}
 
           {currentView === 'home' && (
             <Homepage
@@ -1551,7 +1298,6 @@ export const App: React.FC = () => {
             key={`diagram-studio-${refreshTrigger}`}
           />
         )}
-        </div>
       </main>
     </div>
   </div>
@@ -1707,7 +1453,7 @@ export const App: React.FC = () => {
               <span>•</span>
               <button
                 type="button"
-                onClick={() => setDevToolbarVisible(!devToolbarVisible)}
+                onClick={() => setBackupModalOpen(true)}
                 style={{
                   background: 'none',
                   border: '1px solid #E5F0DF',
@@ -1719,7 +1465,7 @@ export const App: React.FC = () => {
                   fontWeight: 700,
                 }}
               >
-                ⚡ {devToolbarVisible ? 'Hide Developer Toolbar' : 'Dev / Auditor Mode'}
+                <span>Sovereign Data Backup</span>
               </button>
             </div>
           </div>

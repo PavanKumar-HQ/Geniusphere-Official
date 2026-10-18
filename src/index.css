@@ -919,26 +919,27 @@ tr:hover td {
 .platform-layout {
   display: flex;
   flex-direction: row;
-  min-height: calc(100vh - 75px);
+  min-height: calc(100vh - 70px);
   background-color: #FAFAF4;
   position: relative;
 }
 
 .platform-sidebar {
-  width: 248px;
+  width: 250px;
   flex-shrink: 0;
   background-color: #FAFAF4;
   border-right: 1px solid #E5F0DF;
-  padding: 24px 16px;
+  padding: 20px 14px 28px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   position: sticky;
-  top: 72px;
-  height: calc(100vh - 72px);
+  top: 70px;
+  height: calc(100vh - 70px);
   overflow-y: auto;
   z-index: 90;
   transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: thin;
+  scrollbar-color: #D2DEC9 transparent;
 }
 
 .sidebar-nav-btn {
@@ -977,12 +978,13 @@ tr:hover td {
   flex: 1;
   min-width: 0;
   background-color: #FAFAF4;
+  overflow-x: hidden;
 }
 
 @media (max-width: 1023px) {
   .platform-sidebar {
     position: fixed;
-    top: 72px;
+    top: 70px;
     left: 0;
     bottom: 0;
     z-index: 1050;
@@ -997,7 +999,7 @@ tr:hover td {
 
   .platform-sidebar-backdrop {
     position: fixed;
-    top: 72px;
+    top: 70px;
     left: 0;
     right: 0;
     bottom: 0;
