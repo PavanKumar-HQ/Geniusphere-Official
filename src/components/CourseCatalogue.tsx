@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
+import { MascotSphere } from './MascotSphere';
+import { Course } from '../types';
 import {
   Search,
   BookOpen,
-  Play,
   ArrowRight,
-  ArrowLeft,
   Clock,
+  Cpu,
+  Coins,
+  Users,
+  Award,
+  CheckCircle2,
+  ChevronRight,
+  Sparkles,
+  Terminal,
+  ShieldCheck,
+  Briefcase,
+  GraduationCap,
 } from 'lucide-react';
+
 interface CourseCatalogueProps {
   db: InMemoryDatabase;
   onSelectCourse: (slug: string) => void;
@@ -19,232 +31,1003 @@ interface CourseCatalogueProps {
 export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   db,
   onSelectCourse,
-  onNavigateHome,
   initialDomain = 'all',
-  onLaunchLab,
 }) => {
   const [search, setSearch] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState<string>(initialDomain);
+  const [selectedStream, setSelectedStream] = useState<string>(
+    initialDomain === 'all' || initialDomain === 'technology' || initialDomain === 'finance' || initialDomain === 'professional'
+      ? initialDomain
+      : 'all'
+  );
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
-
-  const courses = db.getCourses({
-    search,
-    domain: selectedDomain,
-    level: selectedLevel,
+  const [expandedStreams, setExpandedStreams] = useState<Record<string, boolean>>({
+    technology: false,
+    finance: false,
+    professional: false,
   });
 
-  const allList = db.getCourses();
-  const techCount = allList.filter((c) => c.domain === 'technology').length;
-  const codingCount = allList.filter((c) => c.domain === 'coding').length;
-  const finCount = allList.filter((c) => c.domain === 'finance').length;
-  const profCount = allList.filter((c) => c.domain === 'professional').length;
+  const streams = db.getCanonicalStreams();
+  const allCanonicalCourses = db.getCanonicalCourses();
 
-  const domains: { id: string; label: string }[] = [
-    { id: 'all', label: `All (${allList.length})` },
-    { id: 'technology', label: `Technology (${techCount})` },
-    { id: 'coding', label: `Coding & Programming (${codingCount})` },
-    { id: 'finance', label: `Finance (${finCount})` },
-    { id: 'professional', label: `Professional Development (${profCount})` },
-  ];
+  // Filtered courses for search or individual stream view
+  const filteredCourses = db.getCanonicalCourses({
+    stream: selectedStream === 'all' ? undefined : selectedStream,
+    search: search.trim() ? search : undefined,
+    level: selectedLevel === 'all' ? undefined : selectedLevel,
+  });
+
+  const toggleStreamExpand = (streamId: string) => {
+    setExpandedStreams((prev) => ({
+      ...prev,
+      [streamId]: !prev[streamId],
+    }));
+  };
+
+  const getStreamIcon = (streamId: string, size: number = 20) => {
+    switch (streamId) {
+      case 'technology':
+        return <Cpu size={size} />;
+      case 'finance':
+        return <Coins size={size} />;
+      case 'professional':
+        return <Users size={size} />;
+      default:
+        return <GraduationCap size={size} />;
+    }
+  };
+
+  const getCourseItemIcon = (streamId: string, idx: number) => {
+    if (streamId === 'technology') {
+      const icons = [<Sparkles key="sp" size={16} />, <Cpu key="cp" size={16} />, <Terminal key="tm" size={16} />, <ShieldCheck key="sc" size={16} />];
+      return icons[idx % icons.length];
+    }
+    if (streamId === 'finance') {
+      const icons = [<Coins key="co" size={16} />, <Award key="aw" size={16} />, <Briefcase key="bc" size={16} />, <CheckCircle2 key="ck" size={16} />];
+      return icons[idx % icons.length];
+    }
+    const icons = [<Users key="us" size={16} />, <Clock key="cl" size={16} />, <Sparkles key="sp2" size={16} />, <GraduationCap key="gc" size={16} />];
+    return icons[idx % icons.length];
+  };
+
+  const isBrowsingAllWithoutSearch = selectedStream === 'all' && !search.trim() && selectedLevel === 'all';
 
   return (
-    <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 24px 80px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      {/* Top Navigation & Back Link */}
-      <div>
-        <button
-          type="button"
-          onClick={onNavigateHome}
+    <div
+      style={{
+        maxWidth: '1280px',
+        margin: '0 auto',
+        padding: '32px 24px 80px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '36px',
+      }}
+    >
+      {/* ================================================================ */}
+      {/* TOP HEADER SECTION WITH MASCOT & STAT BADGES (Design Board 2) */}
+      {/* ================================================================ */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.4fr 1.1fr 1fr',
+          gap: '28px',
+          alignItems: 'center',
+          backgroundColor: '#FAFAF4',
+          borderRadius: '24px',
+          padding: '36px 36px 28px',
+          border: '1px solid #E5F0DF',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Left: Titles & Mission Statement */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '4px 12px',
+                borderRadius: '100px',
+                backgroundColor: '#E5F0DF',
+                color: '#26352A',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                marginBottom: '10px',
+              }}
+            >
+              <Sparkles size={13} color="#43A85B" /> Practical Skills Platform
+            </span>
+            <h1
+              style={{
+                fontSize: '2.75rem',
+                fontWeight: 800,
+                color: '#26352A',
+                letterSpacing: '-0.03em',
+                margin: 0,
+                lineHeight: 1.15,
+                fontFamily: 'Space Grotesk, sans-serif',
+              }}
+            >
+              Course Catalogue
+            </h1>
+          </div>
+
+          <h2
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 700,
+              color: '#43A85B',
+              margin: 0,
+            }}
+          >
+            Choose your path. Build real skills.
+          </h2>
+
+          <p
+            style={{
+              color: '#3A4E40',
+              fontSize: '0.98rem',
+              lineHeight: 1.55,
+              margin: 0,
+              maxWidth: '520px',
+            }}
+          >
+            Explore our curated 40-course curriculum across Technology, Finance and Professional Skills.
+            Learn at your own pace, with hands-on practice, real projects and meaningful feedback.
+          </p>
+        </div>
+
+        {/* Center: Mascot Sphere with Playful Angled Quote */}
+        <div
           style={{
-            background: 'none',
-            border: 'none',
-            color: 'var(--text-secondary)',
-            cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: '8px',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            marginBottom: '16px',
-            padding: 0,
-            minHeight: 'auto',
+            justifyContent: 'center',
+            position: 'relative',
           }}
         >
-          <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--bg-surface-subdued)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ArrowLeft size={14} />
+          <div
+            style={{
+              position: 'absolute',
+              top: '-12px',
+              left: '10px',
+              transform: 'rotate(-7deg)',
+              fontFamily: 'Space Grotesk, cursive, sans-serif',
+              fontWeight: 800,
+              fontSize: '1.05rem',
+              color: '#26352A',
+              backgroundColor: '#D9F477',
+              padding: '4px 12px',
+              borderRadius: '12px',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+              zIndex: 2,
+            }}
+          >
+            Small steps. Big dreams.
           </div>
-          <span>BACK TO HOME</span>
-        </button>
+          <MascotSphere pose="happy" size={170} />
+        </div>
 
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: '8px' }}>
-          Course Catalog
-        </h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', maxWidth: '640px' }}>
-          Explore our approved 27-course curriculum across Technology, Coding & Programming, Finance, and Professional Development.
-        </p>
+        {/* Far Right: Stacked Stat Badges matching Design Board 2 */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            backgroundColor: '#FFFFFF',
+            padding: '20px',
+            borderRadius: '18px',
+            border: '1px solid #E5F0DF',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: '#E5F0DF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#43A85B',
+                flexShrink: 0,
+              }}
+            >
+              <Users size={18} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>3 Learning Streams</div>
+              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Structured career pathways</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: '#E5F0DF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#43A85B',
+                flexShrink: 0,
+              }}
+            >
+              <BookOpen size={18} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>40+ Courses</div>
+              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Modular, self-paced learning</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: '#E5F0DF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#43A85B',
+                flexShrink: 0,
+              }}
+            >
+              <Terminal size={18} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>Hands-on Labs & Projects</div>
+              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Interactive browser execution</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                backgroundColor: '#E5F0DF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#43A85B',
+                flexShrink: 0,
+              }}
+            >
+              <Award size={18} />
+            </div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#26352A' }}>Earn Verifiable Certificates</div>
+              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>Cryptographic verification hash</div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Filter Pills & Search Bar matching Image 2 */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-          {/* Domain Filter Pills */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {domains.map((d) => (
+      {/* ================================================================ */}
+      {/* FILTER BAR & SEARCH INPUT */}
+      {/* ================================================================ */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          backgroundColor: '#FFFFFF',
+          padding: '20px 24px',
+          borderRadius: '16px',
+          border: '1px solid #E5F0DF',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
+          {/* Stream Filter Pills */}
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => setSelectedStream('all')}
+              className={`filter-pill ${selectedStream === 'all' ? 'active' : ''}`}
+              style={{
+                backgroundColor: selectedStream === 'all' ? '#43A85B' : '#E5F0DF',
+                color: selectedStream === 'all' ? '#FFFFFF' : '#26352A',
+                border: 'none',
+                fontWeight: 700,
+                padding: '8px 16px',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              All Streams ({allCanonicalCourses.length})
+            </button>
+
+            {streams.map((s) => (
               <button
-                key={d.id}
+                key={s.id}
                 type="button"
-                onClick={() => setSelectedDomain(d.id)}
-                className={`filter-pill ${selectedDomain === d.id ? 'active' : ''}`}
+                onClick={() => setSelectedStream(s.id)}
+                className={`filter-pill ${selectedStream === s.id ? 'active' : ''}`}
+                style={{
+                  backgroundColor: selectedStream === s.id ? '#43A85B' : '#E5F0DF',
+                  color: selectedStream === s.id ? '#FFFFFF' : '#26352A',
+                  border: 'none',
+                  fontWeight: 700,
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'all 0.15s ease',
+                }}
               >
-                {d.label}
+                {getStreamIcon(s.id, 14)}
+                <span>
+                  {s.title} ({s.courses.length})
+                </span>
               </button>
             ))}
           </div>
 
           {/* Search Input */}
           <div style={{ position: 'relative', width: '320px', maxWidth: '100%' }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
+            <Search
+              size={16}
+              style={{ position: 'absolute', left: '14px', top: '12px', color: '#6A7D70' }}
+            />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses, topics, keywords..."
-              className="form-input"
-              style={{ paddingLeft: '38px', height: '40px' }}
+              placeholder="Search courses, skills or topics..."
+              style={{
+                width: '100%',
+                height: '42px',
+                paddingLeft: '38px',
+                paddingRight: '14px',
+                borderRadius: '100px',
+                border: '1px solid #E5F0DF',
+                backgroundColor: '#FAFAF4',
+                color: '#26352A',
+                fontSize: '0.92rem',
+                outline: 'none',
+                fontFamily: 'Inter, sans-serif',
+              }}
             />
           </div>
         </div>
 
         {/* Level filter row */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-          <span>Filter by difficulty:</span>
+        <div
+          style={{
+            display: 'flex',
+            gap: '14px',
+            alignItems: 'center',
+            fontSize: '0.85rem',
+            color: '#6A7D70',
+            borderTop: '1px solid #F0F4EC',
+            paddingTop: '12px',
+          }}
+        >
+          <span style={{ fontWeight: 600 }}>Filter by difficulty:</span>
           {['all', 'beginner', 'intermediate', 'advanced'].map((lvl) => (
             <button
               key={lvl}
               type="button"
               onClick={() => setSelectedLevel(lvl)}
               style={{
-                background: 'none',
+                background: selectedLevel === lvl ? '#D9F477' : 'none',
                 border: 'none',
-                color: selectedLevel === lvl ? 'var(--brand-primary)' : 'var(--text-secondary)',
-                fontWeight: selectedLevel === lvl ? 700 : 500,
-                textDecoration: selectedLevel === lvl ? 'underline' : 'none',
+                borderRadius: '6px',
+                color: '#26352A',
+                fontWeight: selectedLevel === lvl ? 800 : 500,
                 cursor: 'pointer',
-                fontSize: '0.85rem',
-                padding: '2px 6px',
-                minHeight: 'auto',
+                fontSize: '0.82rem',
+                padding: '4px 8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
               }}
             >
-              {lvl.toUpperCase()}
+              {lvl}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Course Cards Grid */}
-      {courses.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '64px 20px' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', marginBottom: '16px' }}>
-            No courses matched your search or filters.
-          </p>
-          <button
-            type="button"
-            className="btn-outline"
-            onClick={() => {
-              setSearch('');
-              setSelectedDomain('all');
-              setSelectedLevel('all');
-            }}
-          >
-            Reset Filters
-          </button>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className="course-card"
-              onClick={() => onSelectCourse(course.slug)}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="category-tag-pill">
-                  {course.domain.toUpperCase()}
-                </span>
-                <button
-                  type="button"
-                  className="syllabus-circle-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSelectCourse(course.slug);
+      {/* ================================================================ */}
+      {/* 3-COLUMN STREAM LAYOUT (When "All Streams" is active) */}
+      {/* Exactly mirrors Design Board 2 (media_1792296532547.jpg) */}
+      {/* ================================================================ */}
+      {isBrowsingAllWithoutSearch ? (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+            gap: '24px',
+            alignItems: 'start',
+          }}
+        >
+          {streams.map((stream) => {
+            const isExpanded = expandedStreams[stream.id];
+            const displayedCourses = isExpanded ? stream.courses : stream.courses.slice(0, 5);
+
+            return (
+              <div
+                key={stream.id}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '20px',
+                  border: '1px solid #E5F0DF',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                  transition: 'box-shadow 0.2s ease',
+                }}
+              >
+                {/* Stream Header */}
+                <div
+                  style={{
+                    backgroundColor: '#FAFAF4',
+                    padding: '24px 22px 18px',
+                    borderBottom: '1px solid #E5F0DF',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
                   }}
-                  title="View Course Syllabus"
                 >
-                  <BookOpen size={17} />
-                </button>
-              </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '50%',
+                        backgroundColor: '#E5F0DF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#43A85B',
+                      }}
+                    >
+                      {getStreamIcon(stream.id, 22)}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedStream(stream.id)}
+                      style={{
+                        backgroundColor: '#D9F477',
+                        color: '#26352A',
+                        border: 'none',
+                        borderRadius: '100px',
+                        padding: '4px 12px',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span>{stream.courses.length} Courses</span>
+                      <ArrowRight size={13} />
+                    </button>
+                  </div>
 
-              <h3>{course.title}</h3>
+                  <div>
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontSize: '1.25rem',
+                        fontWeight: 800,
+                        color: '#26352A',
+                        fontFamily: 'Space Grotesk, sans-serif',
+                      }}
+                    >
+                      {stream.title}
+                    </h3>
+                    <p
+                      style={{
+                        margin: '4px 0 0',
+                        fontSize: '0.88rem',
+                        color: '#6A7D70',
+                      }}
+                    >
+                      {stream.summary}
+                    </p>
+                  </div>
+                </div>
 
-              <p>{course.summary}</p>
+                {/* Course List Items */}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {displayedCourses.map((c, idx) => (
+                    <div
+                      key={c.id}
+                      onClick={() => onSelectCourse(c.slug)}
+                      style={{
+                        padding: '16px 20px',
+                        borderBottom: '1px solid #F0F4EC',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#FAFAF4';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          backgroundColor: '#E5F0DF',
+                          color: '#43A85B',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {getCourseItemIcon(stream.id, idx)}
+                      </div>
 
-              {/* Tags matching Image 1 */}
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <span className="topic-hashtag-pill">
-                  #{course.domain === 'technology' ? 'Tech' : course.domain === 'coding' ? 'Programming' : course.domain === 'finance' ? 'Finance' : 'Career'}
-                </span>
-                <span className="topic-hashtag-pill">
-                  #{course.slug.split('-')[0].charAt(0).toUpperCase() + course.slug.split('-')[0].slice(1)}
-                </span>
-                <span className="topic-hashtag-pill" style={{ color: 'var(--brand-blue)', borderColor: 'var(--brand-blue-border)' }}>
-                  #10Sims
-                </span>
-              </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div
+                          style={{
+                            fontWeight: 700,
+                            fontSize: '0.94rem',
+                            color: '#26352A',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {c.title}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '0.82rem',
+                            color: '#6A7D70',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            marginTop: '2px',
+                          }}
+                        >
+                          {c.summary}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '10px',
+                            alignItems: 'center',
+                            fontSize: '0.75rem',
+                            color: '#43A85B',
+                            marginTop: '4px',
+                            fontWeight: 600,
+                          }}
+                        >
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <BookOpen size={12} /> {c.modules_count} modules
+                          </span>
+                          <span>•</span>
+                          <span>{c.duration_hours}h</span>
+                          <span>•</span>
+                          <span style={{ textTransform: 'capitalize' }}>{c.difficulty}</span>
+                        </div>
+                      </div>
 
-              {/* Bottom row matching reference Image 1 */}
-              <div className="course-card-footer">
-                <span className="modules-badge">
-                  <Clock size={16} />
-                  <span>10 Modules</span>
-                </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <ChevronRight size={18} color="#A3B8A8" />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bottom View All Button */}
+                <div style={{ padding: '14px 20px', backgroundColor: '#FAFAF4', textAlign: 'center' }}>
                   <button
                     type="button"
-                    className="play-sim-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const allLabs = db.getLabDefinitions();
-                      const matched = allLabs.find(
-                        (l) => l.course_slug === course.slug || l.category === course.domain
-                      ) || allLabs[0];
-                      if (onLaunchLab) {
-                        onLaunchLab(matched.slug);
-                      } else {
-                        onSelectCourse(course.slug);
-                      }
+                    onClick={() => toggleStreamExpand(stream.id)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#43A85B',
+                      fontWeight: 700,
+                      fontSize: '0.88rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
                     }}
-                    title="Launch Interactive Lab"
                   >
-                    <Play size={16} fill="currentColor" />
-                  </button>
-                  <button
-                    type="button"
-                    className="arrow-action-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onSelectCourse(course.slug);
-                    }}
-                    title="Open Course"
-                  >
-                    <ArrowRight size={20} />
+                    <span>
+                      {isExpanded ? `Show fewer courses` : `View all ${stream.courses.length} courses`}
+                    </span>
+                    <ArrowRight size={14} />
                   </button>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* ================================================================ */
+        /* FILTERED OR SEARCH RESULTS GRID */
+        /* ================================================================ */
+        <div>
+          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.92rem', color: '#6A7D70' }}>
+              Showing <strong>{filteredCourses.length}</strong> matching courses
+            </span>
+            {(selectedStream !== 'all' || selectedLevel !== 'all' || search.trim()) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedStream('all');
+                  setSelectedLevel('all');
+                  setSearch('');
+                }}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#43A85B',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                }}
+              >
+                Reset all filters
+              </button>
+            )}
+          </div>
+
+          {filteredCourses.length === 0 ? (
+            <div
+              style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '16px',
+                padding: '64px 20px',
+                textAlign: 'center',
+                border: '1px solid #E5F0DF',
+              }}
+            >
+              <MascotSphere pose="thinking" size={120} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#26352A', margin: '16px 0 8px' }}>
+                No courses matched your search
+              </h3>
+              <p style={{ color: '#6A7D70', fontSize: '0.95rem', marginBottom: '20px' }}>
+                Try adjusting your search terms or difficulty filter.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setSelectedStream('all');
+                  setSelectedLevel('all');
+                }}
+                style={{
+                  backgroundColor: '#43A85B',
+                  color: '#FFFFFF',
+                  fontWeight: 700,
+                  border: 'none',
+                  padding: '10px 20px',
+                  borderRadius: '100px',
+                  cursor: 'pointer',
+                }}
+              >
+                Show All Courses
+              </button>
             </div>
-          ))}
+          ) : (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+                gap: '24px',
+              }}
+            >
+              {filteredCourses.map((course: Course) => (
+                <div
+                  key={course.id}
+                  onClick={() => onSelectCourse(course.slug)}
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: '20px',
+                    border: '1px solid #E5F0DF',
+                    padding: '24px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '16px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.06)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span
+                        style={{
+                          backgroundColor: '#E5F0DF',
+                          color: '#26352A',
+                          padding: '4px 10px',
+                          borderRadius: '100px',
+                          fontSize: '0.75rem',
+                          fontWeight: 800,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.04em',
+                        }}
+                      >
+                        {course.domain}
+                      </span>
+                      <span
+                        style={{
+                          backgroundColor: '#FAFAF4',
+                          color: '#43A85B',
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {course.level}
+                      </span>
+                    </div>
+
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontSize: '1.2rem',
+                        fontWeight: 800,
+                        color: '#26352A',
+                        lineHeight: 1.3,
+                        fontFamily: 'Space Grotesk, sans-serif',
+                      }}
+                    >
+                      {course.title}
+                    </h3>
+
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: '0.88rem',
+                        color: '#3A4E40',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {course.summary}
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      borderTop: '1px solid #F0F4EC',
+                      paddingTop: '14px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: '#6A7D70' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={14} /> {course.duration_hours}h
+                      </span>
+                      <span>•</span>
+                      <span>{course.modules.length} Modules</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectCourse(course.slug);
+                      }}
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '50%',
+                        backgroundColor: '#43A85B',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <ArrowRight size={18} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
+
+      {/* ================================================================ */}
+      {/* BOTTOM CTA & TESTIMONIAL BANNER (Matching Design Board 2) */}
+      {/* ================================================================ */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.4fr 1fr',
+          gap: '24px',
+          alignItems: 'stretch',
+        }}
+      >
+        {/* Left Card: Ready to start your journey? */}
+        <div
+          style={{
+            backgroundColor: '#FAFAF4',
+            borderRadius: '24px',
+            border: '1px solid #E5F0DF',
+            padding: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '24px',
+          }}
+        >
+          <MascotSphere pose="celebrating" size={120} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '1.4rem',
+                  fontWeight: 800,
+                  color: '#26352A',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                }}
+              >
+                Ready to start your journey?
+              </h3>
+              <p style={{ margin: '4px 0 0', color: '#3A4E40', fontSize: '0.92rem' }}>
+                Join thousands of learners building skills for a better future.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedStream('all');
+                  window.scrollTo({ top: 300, behavior: 'smooth' });
+                }}
+                style={{
+                  backgroundColor: '#43A85B',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  padding: '10px 22px',
+                  borderRadius: '100px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <span>Explore all courses</span>
+                <ArrowRight size={15} />
+              </button>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '8px',
+                fontSize: '0.8rem',
+                color: '#3A4E40',
+                fontWeight: 600,
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CheckCircle2 size={14} color="#43A85B" /> Self-paced learning
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CheckCircle2 size={14} color="#43A85B" /> Hands-on projects & labs
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CheckCircle2 size={14} color="#43A85B" /> Expert feedback
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CheckCircle2 size={14} color="#43A85B" /> Certificates & recognition
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Card: Editorial Student Testimonial */}
+        <div
+          style={{
+            backgroundColor: '#26352A',
+            color: '#FFFFFF',
+            borderRadius: '24px',
+            padding: '32px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '20px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <span style={{ color: '#D9F477', fontSize: '2rem', lineHeight: 1, fontFamily: 'serif' }}>“</span>
+            <p
+              style={{
+                fontSize: '1.05rem',
+                lineHeight: 1.55,
+                fontWeight: 500,
+                color: '#FAFAF4',
+                margin: '8px 0 0',
+              }}
+            >
+              Geniusphere made learning practical and exciting. I built real projects and gained confidence in my skills.
+            </p>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderTop: '1px solid rgba(255,255,255,0.15)',
+              paddingTop: '16px',
+            }}
+          >
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', color: '#D9F477' }}>Ananya Sharma</div>
+              <div style={{ fontSize: '0.8rem', color: '#E5F0DF' }}>Student, Class 10 • Bengaluru</div>
+            </div>
+
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '4px 10px',
+                borderRadius: '100px',
+                backgroundColor: 'rgba(217, 244, 119, 0.2)',
+                color: '#D9F477',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+              }}
+            >
+              <CheckCircle2 size={13} /> Verified Learner
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

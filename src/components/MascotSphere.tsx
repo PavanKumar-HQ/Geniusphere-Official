@@ -9,6 +9,7 @@ export type MascotExpression =
   | 'loading';
 
 interface MascotSphereProps {
+  pose?: MascotExpression;
   expression?: MascotExpression;
   size?: number;
   className?: string;
@@ -18,7 +19,8 @@ interface MascotSphereProps {
 }
 
 export const MascotSphere: React.FC<MascotSphereProps> = ({
-  expression = 'happy',
+  pose,
+  expression = pose || 'happy',
   size = 80,
   className = '',
   speechBubble,

@@ -1,14 +1,15 @@
 import React from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
+import { MascotSphere } from './MascotSphere';
 import {
   BookOpen,
-  Terminal,
   Award,
   Clock,
   Flame,
   Shield,
   Briefcase,
-  Sparkles,
+  CheckCircle2,
+  ListTodo,
 } from 'lucide-react';
 
 interface StudentDashboardProps {
@@ -26,6 +27,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 }) => {
   const user = db.getUser(currentUserId, currentUserId);
   const enrollments = db.getUserEnrollments(currentUserId);
+  const userProgress = db.getUserProgress(currentUserId);
+  const certificates = db.getUserCertificates(currentUserId);
 
   // Student's completed lab submissions
   const allSubmissions: Array<{
@@ -52,13 +55,26 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   });
 
   // Calculate enrolled courses with progress
-  const enrolledCoursesWithDetails = enrollments.map((enr) => {
-    const course = db.getCourseById(enr.course_id);
-    return {
-      enrollment: enr,
-      course,
-    };
-  }).filter((item) => item.course !== null);
+  const enrolledCoursesWithDetails = enrollments
+    .map((enr) => {
+      const course = db.getCourseById(enr.course_id);
+      return {
+        enrollment: enr,
+        course,
+      };
+    })
+    .filter((item) => item.course !== null);
+
+  // Calculate overall completion percent
+  const avgProgress =
+    enrolledCoursesWithDetails.length > 0
+      ? Math.round(
+          enrolledCoursesWithDetails.reduce(
+            (acc, curr) => acc + curr.enrollment.progress_percent,
+            0
+          ) / enrolledCoursesWithDetails.length
+        )
+      : 0;
 
   // Calculate achievements
   const achievements = [];
@@ -76,9 +92,22 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     achievements.push({
       id: 'ach-first-step',
       title: 'Curriculum Explorer',
-      desc: `Enrolled in ${enrolledCoursesWithDetails.length} practical subject${enrolledCoursesWithDetails.length > 1 ? 's' : ''}.`,
+      desc: `Enrolled in ${enrolledCoursesWithDetails.length} practical subject${
+        enrolledCoursesWithDetails.length > 1 ? 's' : ''
+      }.`,
       icon: BookOpen,
       date: 'Active Learner',
+    });
+  }
+  if (certificates.length > 0) {
+    achievements.push({
+      id: 'ach-certified-achiever',
+      title: 'Certified Achiever',
+      desc: `Earned ${certificates.length} verifiable completion certificate${
+        certificates.length > 1 ? 's' : ''
+      }.`,
+      icon: Award,
+      date: 'Verified Hash Credential',
     });
   }
 
@@ -94,33 +123,110 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     },
   ];
 
+  const pendingAssignmentsCount = pendingAssignments.filter((a) => !a.isCompleted).length;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      {/* Header Banner */}
-      <div className="card-elevated" style={{ borderLeft: '5px solid var(--brand-primary)', padding: '24px 28px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', maxWidth: '1240px', margin: '0 auto' }}>
+      {/* ================================================================ */}
+      {/* HEADER BANNER */}
+      {/* ================================================================ */}
+      <div
+        className="card-elevated"
+        style={{
+          borderLeft: '5px solid #43A85B',
+          padding: '28px 32px',
+          backgroundColor: '#FAFAF4',
+          borderRadius: '20px',
+          border: '1px solid #E5F0DF',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-brand">LEARNER WORKSPACE</span>
-              {user?.is_minor && <span className="badge badge-neutral">Minor Account (Parent Consent Active)</span>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  backgroundColor: '#E5F0DF',
+                  color: '#26352A',
+                  padding: '4px 10px',
+                  borderRadius: '100px',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                LEARNER WORKSPACE
+              </span>
+              {user?.is_minor && (
+                <span
+                  style={{
+                    backgroundColor: '#FAFAF4',
+                    color: '#6A7D70',
+                    border: '1px solid #E5F0DF',
+                    padding: '3px 8px',
+                    borderRadius: '100px',
+                    fontSize: '0.72rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  Minor Account (Parent Consent Active)
+                </span>
+              )}
             </div>
-            <h1 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '4px' }}>
-              Welcome back, {user?.full_name || 'Learner'}
+            <h1
+              style={{
+                fontSize: '2rem',
+                fontWeight: 800,
+                color: '#26352A',
+                marginBottom: '6px',
+                fontFamily: 'Space Grotesk, sans-serif',
+              }}
+            >
+              Good morning, {user?.full_name?.split(' ')[0] || 'Learner'}! 👋
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>
-              Track your real coursework progress, complete hands-on lab challenges, and build verified skills.
+            <p style={{ color: '#6A7D70', fontSize: '0.95rem', margin: 0 }}>
+              Keep going. You're making great progress building practical, verified skills.
             </p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '10px', backgroundColor: 'var(--bg-surface-subdued)', border: '1px solid var(--border-subtle)' }}>
-              <Flame size={20} color="#F59E0B" />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '10px 18px',
+                borderRadius: '12px',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E5F0DF',
+              }}
+            >
+              <Flame size={22} color="#F59E0B" />
               <div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                <div
+                  style={{
+                    fontSize: '0.72rem',
+                    color: '#6A7D70',
+                    textTransform: 'uppercase',
+                    fontWeight: 800,
+                    letterSpacing: '0.04em',
+                  }}
+                >
                   Active Streak
                 </div>
-                <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                  3 Days <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-secondary)' }}>(Rest-Protected)</span>
+                <div style={{ fontWeight: 800, fontSize: '1rem', color: '#26352A' }}>
+                  {userProgress.streak_days || 3} Days{' '}
+                  <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#43A85B' }}>
+                    (Protected)
+                  </span>
                 </div>
               </div>
             </div>
@@ -129,104 +235,463 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               type="button"
               className="btn-primary"
               onClick={() => onNavigate('catalogue')}
-              style={{ height: '42px', fontSize: '0.9rem' }}
+              style={{
+                backgroundColor: '#43A85B',
+                color: '#FFFFFF',
+                height: '44px',
+                fontSize: '0.92rem',
+                fontWeight: 700,
+                padding: '0 20px',
+                borderRadius: '100px',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
             >
               <BookOpen size={16} />
-              <span>Explore Courses</span>
+              <span>Explore 40 Courses</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Grid: Continue Learning & Pending Assignments */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-        {/* Continue Learning */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      {/* ================================================================ */}
+      {/* 4-METRIC STAT ROW (Matching Design Board 1) */}
+      {/* ================================================================ */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '16px',
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '20px',
+            border: '1px solid #E5F0DF',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
+          <div
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              backgroundColor: '#E5F0DF',
+              color: '#43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <BookOpen size={20} />
+          </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Continue Learning</h2>
-              <span className="badge badge-brand">{enrolledCoursesWithDetails.length} Enrolled</span>
+            <div style={{ fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>Enrolled Courses</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#26352A' }}>
+              {enrolledCoursesWithDetails.length}
             </div>
-
-            {enrolledCoursesWithDetails.length === 0 ? (
-              <div style={{ padding: '24px 16px', textAlign: 'center', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px' }}>
-                <Sparkles size={32} color="var(--brand-primary)" style={{ margin: '0 auto 12px' }} />
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '6px' }}>Ready to Begin Your Journey?</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px', lineHeight: 1.5 }}>
-                  You have not enrolled in any courses yet. Choose from 27 practical subjects in Technology, Coding, Finance, and Professional Skills.
-                </p>
-                <button
-                  type="button"
-                  className="btn-primary"
-                  onClick={() => onNavigate('catalogue')}
-                  style={{ fontSize: '0.85rem', height: '36px' }}
-                >
-                  Browse Course Catalogue
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                {enrolledCoursesWithDetails.map(({ course, enrollment }) => (
-                  <div
-                    key={course!.id}
-                    style={{
-                      padding: '14px 16px',
-                      borderRadius: '8px',
-                      border: '1px solid var(--border-subtle)',
-                      backgroundColor: 'var(--bg-surface-subdued)',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span className="badge badge-neutral" style={{ fontSize: '0.7rem' }}>
-                        {course!.domain.toUpperCase()}
-                      </span>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--brand-primary)' }}>
-                        {enrollment.progress_percent}% Complete
-                      </span>
-                    </div>
-
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '6px' }}>
-                      {course!.title}
-                    </h3>
-
-                    {/* Progress Bar */}
-                    <div style={{ height: '6px', borderRadius: '3px', backgroundColor: 'var(--border-subtle)', overflow: 'hidden', marginBottom: '12px' }}>
-                      <div
-                        style={{
-                          height: '100%',
-                          width: `${enrollment.progress_percent}%`,
-                          backgroundColor: 'var(--brand-primary)',
-                          transition: 'width 0.3s ease',
-                        }}
-                      />
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                        Completed {enrollment.completed_lessons.length} lessons
-                      </span>
-                      <button
-                        type="button"
-                        className="btn-outline"
-                        onClick={() => onSelectCourse(course!.slug)}
-                        style={{ height: '30px', padding: '0 12px', fontSize: '0.78rem' }}
-                      >
-                        Continue Course
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* Pending Assignments & Labs */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '20px',
+            border: '1px solid #E5F0DF',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
+          <div
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              backgroundColor: '#E5F0DF',
+              color: '#43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <CheckCircle2 size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>Completed Lessons</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#26352A' }}>
+              {userProgress.completed_lessons.length}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '20px',
+            border: '1px solid #E5F0DF',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
+          <div
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              backgroundColor: '#E5F0DF',
+              color: '#43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <ListTodo size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>Pending Assignments</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#26352A' }}>
+              {pendingAssignmentsCount}
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '20px',
+            border: '1px solid #E5F0DF',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
+          <div
+            style={{
+              width: '44px',
+              height: '44px',
+              borderRadius: '12px',
+              backgroundColor: '#E5F0DF',
+              color: '#43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+            }}
+          >
+            <Award size={20} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>Certificates Earned</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#26352A' }}>
+              {certificates.length}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ================================================================ */}
+      {/* MAIN CONTENT GRID: CONTINUE LEARNING + MASCOT ENCOURAGEMENT */}
+      {/* ================================================================ */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.7fr 1fr',
+          gap: '24px',
+          alignItems: 'start',
+        }}
+      >
+        {/* Left Column: Continue Learning */}
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #E5F0DF',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                color: '#26352A',
+                margin: 0,
+                fontFamily: 'Space Grotesk, sans-serif',
+              }}
+            >
+              Continue Learning
+            </h2>
+            <span
+              style={{
+                backgroundColor: '#E5F0DF',
+                color: '#26352A',
+                padding: '4px 10px',
+                borderRadius: '100px',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+              }}
+            >
+              {enrolledCoursesWithDetails.length} Enrolled
+            </span>
+          </div>
+
+          {enrolledCoursesWithDetails.length === 0 ? (
+            <div
+              style={{
+                padding: '36px 20px',
+                textAlign: 'center',
+                backgroundColor: '#FAFAF4',
+                borderRadius: '16px',
+                border: '1px dashed #D2DEC9',
+              }}
+            >
+              <MascotSphere pose="thinking" size={90} />
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '14px 0 6px', color: '#26352A' }}>
+                Ready to Begin Your Journey?
+              </h3>
+              <p style={{ color: '#6A7D70', fontSize: '0.88rem', marginBottom: '18px', maxWidth: '420px', margin: '0 auto 18px', lineHeight: 1.5 }}>
+                You have not enrolled in any courses yet. Choose from our 40 approved courses across Technology & Digital Skills, Financial Literacy & the Economy, and Professional & Life Skills.
+              </p>
+              <button
+                type="button"
+                onClick={() => onNavigate('catalogue')}
+                style={{
+                  backgroundColor: '#43A85B',
+                  color: '#FFFFFF',
+                  fontWeight: 700,
+                  fontSize: '0.88rem',
+                  padding: '10px 22px',
+                  borderRadius: '100px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Browse Course Catalogue
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {enrolledCoursesWithDetails.map(({ course, enrollment }) => (
+                <div
+                  key={course!.id}
+                  style={{
+                    padding: '18px 20px',
+                    borderRadius: '16px',
+                    border: '1px solid #E5F0DF',
+                    backgroundColor: '#FAFAF4',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span
+                      style={{
+                        backgroundColor: '#E5F0DF',
+                        color: '#26352A',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {course!.domain}
+                    </span>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#43A85B' }}>
+                      {enrollment.progress_percent}% Complete
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: '#26352A' }}>
+                    {course!.title}
+                  </h3>
+
+                  {/* Progress Bar */}
+                  <div
+                    style={{
+                      height: '8px',
+                      borderRadius: '4px',
+                      backgroundColor: '#E5F0DF',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '100%',
+                        width: `${enrollment.progress_percent}%`,
+                        backgroundColor: '#43A85B',
+                        borderRadius: '4px',
+                        transition: 'width 0.4s ease',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.8rem', color: '#6A7D70' }}>
+                      Completed {enrollment.completed_lessons.length} of {course!.modules.flatMap((m) => m.lessons).length} lessons
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => onSelectCourse(course!.slug)}
+                      style={{
+                        backgroundColor: '#43A85B',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '100px',
+                        padding: '6px 16px',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right Column: Mascot Widget & Overall Progress */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {/* Mascot Encouragement Card (matching Design Board 1) */}
+          <div
+            style={{
+              backgroundColor: '#E5F0DF',
+              borderRadius: '20px',
+              padding: '24px',
+              border: '1px solid #D2DEC9',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '16px',
+            }}
+          >
+            <MascotSphere pose="encouraging" size={88} />
+            <div>
+              <div
+                style={{
+                  fontWeight: 800,
+                  fontSize: '1.05rem',
+                  color: '#26352A',
+                  lineHeight: 1.3,
+                  fontFamily: 'Space Grotesk, sans-serif',
+                }}
+              >
+                Small steps lead to big achievements!
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#3A4E40', marginTop: '6px', lineHeight: 1.4 }}>
+                Every lesson, lab assertion, and quiz takes you closer to verified career mastery.
+              </div>
+            </div>
+          </div>
+
+          {/* Overall Progress Widget */}
+          <div
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderRadius: '20px',
+              border: '1px solid #E5F0DF',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              textAlign: 'center',
+              gap: '14px',
+            }}
+          >
+            <div
+              style={{
+                width: '100px',
+                height: '100px',
+                borderRadius: '50%',
+                backgroundColor: '#FAFAF4',
+                border: '8px solid #43A85B',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#26352A', lineHeight: 1 }}>
+                {avgProgress}%
+              </span>
+              <span style={{ fontSize: '0.65rem', color: '#6A7D70', textTransform: 'uppercase', fontWeight: 700 }}>
+                Done
+              </span>
+            </div>
+
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#26352A' }}>
+                Overall Completion
+              </div>
+              <div style={{ fontSize: '0.82rem', color: '#6A7D70', marginTop: '4px' }}>
+                Across all enrolled active subjects
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ================================================================ */}
+      {/* LOWER SECTION: ASSIGNMENTS & VERIFIED ACHIEVEMENTS */}
+      {/* ================================================================ */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '24px',
+        }}
+      >
+        {/* Classroom Assignments */}
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #E5F0DF',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '16px',
+          }}
+        >
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Classroom Assignments</h2>
-              <span className="badge badge-neutral">Classroom Tasks</span>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#26352A', margin: 0 }}>
+                Classroom Assignments
+              </h2>
+              <span
+                style={{
+                  backgroundColor: '#E5F0DF',
+                  color: '#26352A',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                }}
+              >
+                Classroom Tasks
+              </span>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -235,31 +700,48 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   key={assign.id}
                   style={{
                     padding: '14px 16px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-subtle)',
-                    backgroundColor: 'var(--bg-surface-subdued)',
+                    borderRadius: '12px',
+                    border: '1px solid #E5F0DF',
+                    backgroundColor: '#FAFAF4',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{assign.course}</span>
-                    <span className={assign.isCompleted ? 'badge badge-success' : 'badge badge-warning'} style={{ fontSize: '0.7rem' }}>
+                    <span style={{ fontSize: '0.75rem', color: '#6A7D70' }}>{assign.course}</span>
+                    <span
+                      style={{
+                        backgroundColor: assign.isCompleted ? '#E5F0DF' : '#FEF3C7',
+                        color: assign.isCompleted ? '#43A85B' : '#92400E',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                      }}
+                    >
                       {assign.status}
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '0.95rem', fontWeight: 700, marginBottom: '6px' }}>
+                  <h3 style={{ fontSize: '0.94rem', fontWeight: 700, margin: '0 0 8px', color: '#26352A' }}>
                     {assign.title}
                   </h3>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.78rem', color: '#6A7D70', display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <Clock size={12} /> {assign.due}
                     </span>
                     <button
                       type="button"
-                      className="btn-primary"
                       onClick={() => onNavigate('lab')}
-                      style={{ height: '30px', padding: '0 12px', fontSize: '0.78rem' }}
+                      style={{
+                        backgroundColor: '#43A85B',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '100px',
+                        padding: '4px 14px',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
                     >
                       {assign.isCompleted ? 'Re-open Lab' : 'Launch Assignment'}
                     </button>
@@ -269,117 +751,122 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             </div>
           </div>
 
-          <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-              Enrolled in School Cohort?
-            </span>
+          <div
+            style={{
+              paddingTop: '14px',
+              borderTop: '1px solid #F0F4EC',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <span style={{ fontSize: '0.82rem', color: '#6A7D70' }}>Enrolled in School Cohort?</span>
             <button
               type="button"
-              className="btn-outline"
               onClick={() => onNavigate('classrooms')}
-              style={{ height: '32px', fontSize: '0.8rem' }}
+              style={{
+                backgroundColor: 'transparent',
+                border: '1px solid #E5F0DF',
+                color: '#26352A',
+                borderRadius: '100px',
+                padding: '6px 14px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
             >
               Join Classroom with Code
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Grid: Recent Lab Results & Earned Achievements */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
-        {/* Recent Results */}
-        <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Recent Evaluation Results</h2>
-            <Terminal size={18} color="var(--brand-primary)" />
+        {/* Verified Achievements */}
+        <div
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid #E5F0DF',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '16px',
+          }}
+        >
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#26352A', margin: 0 }}>
+                Verified Achievements
+              </h2>
+              <Award size={18} color="#43A85B" />
+            </div>
+
+            {achievements.length === 0 ? (
+              <div style={{ padding: '24px 16px', textAlign: 'center', color: '#6A7D70', fontSize: '0.88rem' }}>
+                Complete lessons and lab challenges to earn verified skill badges.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {achievements.map((ach) => {
+                  const IconComponent = ach.icon;
+                  return (
+                    <div
+                      key={ach.id}
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: '12px',
+                        backgroundColor: '#FAFAF4',
+                        border: '1px solid #E5F0DF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '10px',
+                          backgroundColor: '#E5F0DF',
+                          color: '#43A85B',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <IconComponent size={20} />
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#26352A' }}>{ach.title}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>{ach.desc}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {allSubmissions.length === 0 ? (
-            <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              No evaluations submitted yet. Complete course assessments to generate verified evaluation results.
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {allSubmissions.map((sub) => (
-                <div
-                  key={sub.id}
-                  style={{
-                    padding: '12px 14px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--bg-surface-subdued)',
-                    border: '1px solid var(--border-subtle)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '4px',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 600, fontSize: '0.88rem' }}>Web Security Defense Evaluation</span>
-                    <span className={sub.passed ? 'badge badge-success' : 'badge badge-danger'}>
-                      {sub.score}/100 PTS
-                    </span>
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    Timestamp: {new Date(sub.submitted_at).toLocaleTimeString()} • 5/5 Assertions Passed
-                  </div>
-                  {sub.submission_hash && (
-                    <div style={{ fontSize: '0.7rem', color: 'var(--brand-primary)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
-                      Hash: {sub.submission_hash.slice(0, 32)}...
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Earned Achievements */}
-        <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Verified Achievements</h2>
-            <Award size={18} color="var(--brand-primary)" />
-          </div>
-
-          {achievements.length === 0 ? (
-            <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              Complete lessons and lab challenges to earn verified skill badges.
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {achievements.map((ach) => {
-                const IconComponent = ach.icon;
-                return (
-                  <div
-                    key={ach.id}
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '8px',
-                      backgroundColor: 'var(--bg-surface-subdued)',
-                      border: '1px solid var(--border-subtle)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                    }}
-                  >
-                    <div style={{ width: '38px', height: '38px', borderRadius: '8px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <IconComponent size={20} color="var(--brand-primary)" />
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{ach.title}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>{ach.desc}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ paddingTop: '14px', borderTop: '1px solid #F0F4EC' }}>
             <button
               type="button"
-              className="btn-outline"
               onClick={() => onNavigate('resume-builder')}
-              style={{ width: '100%', height: '34px', fontSize: '0.82rem' }}
+              style={{
+                width: '100%',
+                height: '38px',
+                backgroundColor: 'transparent',
+                border: '1px solid #E5F0DF',
+                borderRadius: '100px',
+                color: '#26352A',
+                fontWeight: 700,
+                fontSize: '0.84rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
             >
               <Briefcase size={14} />
               <span>Add Achievements to Resume Builder</span>

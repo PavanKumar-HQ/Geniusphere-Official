@@ -33,6 +33,7 @@ import {
   INITIAL_VIDEO_LESSONS,
   INITIAL_STUDY_RESOURCES,
 } from '../data/curriculum';
+import { ALL_CANONICAL_COURSES, CANONICAL_STREAMS } from '../data/canonical-curriculum';
 import { APPROVED_LABS } from '../data/approved-labs';
 import { sovereignDB } from './indexed-db';
 
@@ -56,6 +57,7 @@ export class InMemoryDatabase {
   classrooms: Map<string, Classroom> = new Map();
   enrollments: Map<string, ClassroomEnrollment> = new Map();
   courses: Map<string, Course> = new Map();
+  canonicalCourses: Map<string, Course> = new Map();
   labs: Map<string, Lab> = new Map();
   labDefinitions: Map<string, LabDefinition> = new Map();
   labAttempts: Map<string, LabAttemptRecord> = new Map();
@@ -259,6 +261,9 @@ export class InMemoryDatabase {
     // 7. Complete Curriculum & Learning Paths
     for (const c of ALL_COURSES) {
       this.courses.set(c.id, c);
+    }
+    for (const c of ALL_CANONICAL_COURSES) {
+      this.canonicalCourses.set(c.id, c);
     }
     for (const p of LEARNING_PATHS) {
       this.learningPaths.set(p.id, p);
@@ -842,14 +847,41 @@ export class InMemoryDatabase {
   }
 
   getCourseById(id: string): Course | null {
-    return this.courses.get(id) || null;
+    return this.courses.get(id) || this.canonicalCourses.get(id) || null;
   }
 
   getCourseBySlug(slug: string): Course | null {
     for (const c of this.courses.values()) {
       if (c.slug === slug) return c;
     }
+    for (const c of this.canonicalCourses.values()) {
+      if (c.slug === slug) return c;
+    }
     return null;
+  }
+
+  getCanonicalStreams() {
+    return CANONICAL_STREAMS;
+  }
+
+  getCanonicalCourses(filters?: { stream?: string; search?: string; level?: string }): Course[] {
+    let result = Array.from(this.canonicalCourses.values());
+    if (filters?.stream && filters.stream !== 'all') {
+      result = result.filter((c) => c.domain === filters.stream);
+    }
+    if (filters?.level && filters.level !== 'all') {
+      result = result.filter((c) => c.level === filters.level);
+    }
+    if (filters?.search && filters.search.trim()) {
+      const q = filters.search.toLowerCase().trim();
+      result = result.filter(
+        (c) =>
+          c.title.toLowerCase().includes(q) ||
+          c.summary.toLowerCase().includes(q) ||
+          c.subject.toLowerCase().includes(q)
+      );
+    }
+    return result;
   }
 
   getLearningPaths(): LearningPath[] {
@@ -863,7 +895,7 @@ export class InMemoryDatabase {
   enrollInCourse(userId: string, courseId: string): CourseEnrollment {
     const user = this.users.get(userId);
     if (!user) throw new DatabaseError('User not found', '23503', 404);
-    const course = this.courses.get(courseId);
+    const course = this.getCourseById(courseId);
     if (!course) throw new DatabaseError('Course not found', '23503', 404);
 
     const enrollmentKey = `${userId}:${courseId}`;
@@ -910,7 +942,7 @@ export class InMemoryDatabase {
   }
 
   completeLesson(userId: string, courseId: string, lessonId: string): CourseEnrollment {
-    const course = this.courses.get(courseId);
+    const course = this.getCourseById(courseId);
     if (!course) throw new DatabaseError('Course not found', '23503', 404);
 
     const enrollmentKey = `${userId}:${courseId}`;
@@ -1307,6 +1339,10 @@ export class InMemoryDatabase {
 
   getCertificates(userId: string): Certificate[] {
     return Array.from(this.certificates.values()).filter((c) => c.user_id === userId);
+  }
+
+  getUserCertificates(userId: string): Certificate[] {
+    return this.getCertificates(userId);
   }
 
   // ==================================================================
