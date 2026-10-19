@@ -5,7 +5,7 @@
  * syntax checking, line-numbered tracebacks, and execution metrics.
  */
 
-export type SupportedLanguage = 'python' | 'c' | 'sql' | 'javascript';
+export type SupportedLanguage = 'python' | 'javascript' | 'typescript' | 'cpp' | 'java' | 'c' | 'sql';
 
 export interface ExecutionResult {
   stdout: string[];

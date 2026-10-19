@@ -265,6 +265,15 @@ export const App: React.FC = () => {
     );
   }, [currentView, currentUser]);
 
+  // CRITICAL: Always reset scroll to the top whenever the view or active item changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const mainEl = document.querySelector('main');
+    if (mainEl) mainEl.scrollTop = 0;
+  }, [currentView, selectedCourseSlug, selectedLabSlug]);
+
   const allCourses = useMemo(() => db.getCanonicalCourses(), [db, refreshTrigger]);
   const allLabs = useMemo(() => db.getLabDefinitions(), [db]);
   const selectedCourse = useMemo(() => db.getCourseBySlug(selectedCourseSlug), [db, selectedCourseSlug]);
@@ -283,9 +292,17 @@ export const App: React.FC = () => {
   }, [allLabs, globalSearch]);
 
   const handleNavigate = (view: string, slug?: string) => {
+    // Instantly reset scroll position to top
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+
     setViewLoading(true);
     setTimeout(() => {
       setViewLoading(false);
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     }, 220);
 
     setSidebarOpen(false);

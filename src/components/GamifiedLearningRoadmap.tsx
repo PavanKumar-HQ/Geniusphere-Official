@@ -1,25 +1,26 @@
 // ====================================================================
-// Geniusphere 2.0 — Gamified Interactive Learning Journey & Lab Roadmap
-// Inspired by Duolingo Path UI & 3D Isometric Stepped Tech Learning
-// Unifies SVG Visualizers and Interactive Labs into a single frictionless experience
+// Geniusphere — Stepped 3D Gamified Learning Roadmap & Interactive Lab
+// Duolingo-style Isometric Path + Live Interactive Lab Simulation
+// Zero UI/UX Friction: The Lab IS the Visualizer
 // ====================================================================
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Brain,
-  Lock,
   Wifi,
   ShieldCheck,
-  RotateCcw,
-  Trophy,
-  Gift,
-  Check,
-  Terminal,
-  BookOpen,
-  Award,
-  Flame,
   CheckCircle2,
+  Check,
+  Lock,
+  Flame,
+  BookOpen,
+  Sparkles,
   ExternalLink,
+  Gift,
+  Award,
+  Terminal,
+  Activity,
+  Zap,
 } from 'lucide-react';
 import {
   NeuralNetworkSvg,
@@ -51,7 +52,7 @@ export interface PathNode {
   accentBg: string;
   status: 'completed' | 'active' | 'available' | 'locked' | 'chest' | 'trophy';
   xp: number;
-  xOffsetPercent: number; // For smooth snake/winding curvature like Duolingo
+  xOffsetPercent: number; // For smooth snake/winding curvature
   mascotTip?: string;
 }
 
@@ -64,6 +65,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
   const [activeNodeId, setActiveNodeId] = useState<string>('node-1');
   const [completedNodeIds, setCompletedNodeIds] = useState<string[]>(['node-1']);
   const [pulseTick, setPulseTick] = useState<number>(0);
+  const [predictionHypothesis, setPredictionHypothesis] = useState<string | null>(null);
 
   // Animated circuit tick for connector glow
   useEffect(() => {
@@ -121,11 +123,8 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
   const iotThreshold = 38;
 
   // Security Pipeline state
-  const secParamQueries = true;
-  const secJwtValidation = true;
-  const secInputSanitization = true;
   const [secPayloadType, setSecPayloadType] = useState<'legit' | 'sql_injection' | 'xss'>('legit');
-  const secIsBlocked = secPayloadType !== 'legit';
+  const [secStrictCsp, setSecStrictCsp] = useState<boolean>(true);
 
   // FinTech Compounding state
   const finPrincipal = 5000;
@@ -148,41 +147,41 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
         icon: Brain,
         color: '#2563EB',
         accentBg: 'rgba(37, 99, 235, 0.12)',
-        status: completedNodeIds.includes('node-1') ? 'completed' : 'active',
+        status: activeNodeId === 'node-1' ? 'active' : completedNodeIds.includes('node-1') ? 'completed' : 'available',
         xp: 25,
         xOffsetPercent: 50,
-        mascotTip: 'Awesome! Adjust the sliders to see neural weights activate in real time.',
+        mascotTip: 'Adjust Keyword Density and Urgency sliders to observe how neural decision boundaries adapt!',
       },
       {
         id: 'node-2',
         unit: 1,
         stepNumber: 2,
         title: 'Cryptographic Hash Lab',
-        subtitle: 'SHA-256 Mining & Tamper Proofing',
-        labSlug: 'sha256-block-builder',
+        subtitle: 'SHA-256 Mining & Block Tamper Proof',
+        labSlug: 'blockchain-block-builder',
         labKey: 'blockchain',
         icon: Lock,
         color: '#D97706',
         accentBg: 'rgba(217, 119, 6, 0.12)',
-        status: activeNodeId === 'node-2' ? 'active' : 'available',
+        status: activeNodeId === 'node-2' ? 'active' : completedNodeIds.includes('node-2') ? 'completed' : 'available',
         xp: 35,
         xOffsetPercent: 32,
-        mascotTip: 'Try tampering with the block data to break the cryptographic link!',
+        mascotTip: 'Click "Mine Block" to compute leading zeros or simulate tamper to break the downstream chain.',
       },
       {
         id: 'node-3',
         unit: 1,
         stepNumber: 3,
         title: 'CIE Evidence Checkpoint',
-        subtitle: 'Rubric Criteria & Proof Verification',
-        labSlug: 'cie-evidence-matrix',
+        subtitle: 'Cambridge Rubric Criterion 4.2 Audit',
+        labSlug: 'cie-rubric-evidence-lab',
         labKey: 'cie-audit',
         icon: Gift,
         color: '#10B981',
         accentBg: 'rgba(16, 185, 129, 0.14)',
         status: 'chest',
         xp: 50,
-        xOffsetPercent: 52,
+        xOffsetPercent: 68,
         mascotTip: 'Treasure unlocked! Cambridge CIE criteria verifies your client-side proof.',
       },
       {
@@ -198,7 +197,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
         accentBg: 'rgba(5, 150, 105, 0.12)',
         status: activeNodeId === 'node-4' ? 'active' : 'available',
         xp: 30,
-        xOffsetPercent: 68,
+        xOffsetPercent: 50,
         mascotTip: 'Slide temperature above 38°C to engage the automatic cooling relay!',
       },
       {
@@ -214,7 +213,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
         accentBg: 'rgba(220, 38, 38, 0.12)',
         status: activeNodeId === 'node-5' ? 'active' : 'available',
         xp: 40,
-        xOffsetPercent: 44,
+        xOffsetPercent: 34,
         mascotTip: 'Test an SQL injection payload and verify how parameterized queries stop it cold.',
       },
       {
@@ -222,19 +221,19 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
         unit: 1,
         stepNumber: 6,
         title: 'Unit 1 Mastery Trophy',
-        subtitle: 'Sovereign Systems Foundations',
-        labSlug: 'fintech-compound-lab',
+        subtitle: 'Comprehensive Capstone Milestone',
+        labSlug: 'unit1-mastery-capstone',
         labKey: 'finance',
-        icon: Trophy,
+        icon: Award,
         color: '#F59E0B',
-        accentBg: 'rgba(245, 158, 11, 0.16)',
+        accentBg: 'rgba(245, 158, 11, 0.15)',
         status: 'trophy',
         xp: 100,
-        xOffsetPercent: 50,
-        mascotTip: 'You have conquered Unit 1! All simulations verified client-side.',
+        xOffsetPercent: 65,
+        mascotTip: 'Final Capstone! Verify 5 completed evidence proofs to earn your certificate.',
       },
     ],
-    [completedNodeIds, activeNodeId]
+    [activeNodeId, completedNodeIds]
   );
 
   const activeNode = nodes.find((n) => n.id === activeNodeId) || nodes[0];
@@ -249,43 +248,43 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
   return (
     <div
       style={{
-        width: '100%',
         backgroundColor: 'var(--bg-surface)',
-        borderRadius: '24px',
         border: '1.5px solid var(--border-subtle)',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+        borderRadius: '24px',
         overflow: 'hidden',
-        transition: 'all 0.2s ease',
+        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.05)',
+        width: '100%',
+        maxWidth: '1240px',
+        margin: '0 auto',
       }}
     >
       {/* ============================================================ */}
-      {/* UNIT BANNER HEADER (Duolingo Style: Unit 1 + Syllabus Guide) */}
+      {/* TOP HEADER: UNIT 1 BANNER & HABIT STATS                      */}
       {/* ============================================================ */}
       <div
         style={{
           backgroundColor: 'var(--brand-primary)',
           color: '#FFFFFF',
-          padding: '20px 28px',
+          padding: '22px 32px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
-          borderBottom: '2px solid rgba(0, 0, 0, 0.08)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div
             style={{
-              width: '42px',
-              height: '42px',
+              width: '44px',
+              height: '44px',
               borderRadius: '12px',
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              backgroundColor: 'rgba(255, 255, 255, 0.18)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 900,
-              fontSize: '1.2rem',
+              fontSize: '1.25rem',
               boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
             }}
           >
@@ -309,7 +308,6 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
               alignItems: 'center',
               gap: '6px',
               backgroundColor: 'rgba(255, 255, 255, 0.18)',
-              backdropFilter: 'blur(8px)',
               padding: '6px 14px',
               borderRadius: '100px',
               fontSize: '0.8rem',
@@ -356,50 +354,36 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(320px, 1.15fr) minmax(360px, 1.35fr)',
-          minHeight: '680px',
+          gridTemplateColumns: 'minmax(320px, 420px) minmax(420px, 1fr)',
+          backgroundColor: 'var(--bg-canvas)',
         }}
         className="gamified-path-grid"
       >
         {/* ============================================================ */}
-        {/* LEFT COLUMN: STEPPED 3D ISOMETRIC / DUOLINGO LEARNING PATH  */}
+        {/* LEFT COLUMN: STEPPED 3D ISOMETRIC LEARNING PATH              */}
         {/* ============================================================ */}
         <div
           style={{
-            padding: '36px 24px',
-            position: 'relative',
+            padding: '28px 24px',
             backgroundColor: 'var(--bg-canvas)',
-            borderRight: '1px solid var(--border-subtle)',
+            borderRight: '1.5px solid var(--border-subtle)',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            overflow: 'hidden',
+            gap: '20px',
           }}
         >
-          {/* Subtle Background Circuit Grid */}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              backgroundImage: 'radial-gradient(circle at 1px 1px, var(--border-subtle) 1px, transparent 0)',
-              backgroundSize: '24px 24px',
-              opacity: 0.6,
-              pointerEvents: 'none',
-            }}
-          />
-
           {/* Track Filter Pills */}
           <div
             style={{
               display: 'flex',
               gap: '6px',
-              marginBottom: '28px',
-              zIndex: 10,
               backgroundColor: 'var(--bg-surface)',
               padding: '4px',
               borderRadius: '100px',
               border: '1px solid var(--border-subtle)',
-              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.04)',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
+              width: 'fit-content',
+              margin: '0 auto',
             }}
           >
             {[
@@ -430,208 +414,174 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
             ))}
           </div>
 
-          {/* Continuous Smooth Connecting SVG Path Behind Nodes */}
-          <svg
-            style={{
-              position: 'absolute',
-              top: '90px',
-              left: 0,
-              width: '100%',
-              height: '560px',
-              pointerEvents: 'none',
-              zIndex: 1,
-            }}
-          >
-            <defs>
-              <linearGradient id="roadmap-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#43A85B" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#2563EB" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.8" />
-              </linearGradient>
-            </defs>
-
-            {/* Circuit Background Track */}
-            <path
-              d="M 180 30 Q 115 110, 115 135 T 185 235 T 245 335 T 160 435 T 180 525"
-              fill="none"
-              stroke="var(--border-subtle)"
-              strokeWidth="8"
-              strokeLinecap="round"
-            />
-            {/* Active Flowing Colored Track */}
-            <path
-              d="M 180 30 Q 115 110, 115 135 T 185 235 T 245 335 T 160 435 T 180 525"
-              fill="none"
-              stroke="url(#roadmap-path-gradient)"
-              strokeWidth="5"
-              strokeLinecap="round"
-              strokeDasharray="8 6"
-              strokeDashoffset={-pulseTick * 2}
-            />
-          </svg>
-
-          {/* Stepped Nodes Column */}
+          {/* DEDICATED MASCOT COMPANION CARD (Zero clipping, always clean) */}
           <div
             style={{
-              width: '100%',
-              maxWidth: '380px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1.5px solid var(--border-subtle)',
+              borderRadius: '16px',
+              padding: '12px 16px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+            }}
+          >
+            <div style={{ flexShrink: 0 }}>
+              <MascotSphere pose="happy" size={42} animated={true} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  Coach Sphere
+                </span>
+                <span className="badge badge-success" style={{ fontSize: '0.62rem', padding: '1px 6px' }}>
+                  ACTIVE
+                </span>
+              </div>
+              <p style={{ margin: '3px 0 0', fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.35, fontWeight: 500 }}>
+                {activeNode.mascotTip || 'Click any step to activate its interactive mission and observe real-time outcomes.'}
+              </p>
+            </div>
+          </div>
+
+          {/* ROADMAP NODES CONTAINER */}
+          <div
+            style={{
               position: 'relative',
-              zIndex: 5,
+              padding: '20px 0',
               display: 'flex',
               flexDirection: 'column',
               gap: '24px',
+              alignItems: 'center',
             }}
           >
+            {/* Smooth SVG Connecting Circuit Line */}
+            <svg
+              style={{
+                position: 'absolute',
+                top: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '180px',
+                height: '520px',
+                pointerEvents: 'none',
+                zIndex: 1,
+              }}
+            >
+              <defs>
+                <linearGradient id="roadmap-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#244C3A" stopOpacity="0.8" />
+                  <stop offset="50%" stopColor="#2563EB" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#D97706" stopOpacity="0.8" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 90 20 Q 30 110, 30 135 T 150 235 T 90 335 T 30 435 T 90 510"
+                fill="none"
+                stroke="var(--border-subtle)"
+                strokeWidth="6"
+                strokeLinecap="round"
+              />
+              <path
+                d="M 90 20 Q 30 110, 30 135 T 150 235 T 90 335 T 30 435 T 90 510"
+                fill="none"
+                stroke="url(#roadmap-path-gradient)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="8 6"
+                strokeDashoffset={-pulseTick * 2}
+              />
+            </svg>
+
+            {/* Stepped Nodes */}
             {nodes.map((node, index) => {
               const isSelected = activeNode.id === node.id;
               const isCompleted = completedNodeIds.includes(node.id);
               const NodeIcon = node.icon;
+              const xShift = (node.xOffsetPercent - 50) * 1.5;
 
               return (
                 <div
                   key={node.id}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     position: 'relative',
-                    transform: `translateX(${(node.xOffsetPercent - 50) * 2.2}px)`,
+                    zIndex: 5,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    transform: `translateX(${xShift}px)`,
                     transition: 'transform 0.25s ease',
                   }}
                 >
-                  {/* Floating Mascot Tip beside Active Node (Duolingo Style!) */}
-                  {isSelected && (
+                  {/* START BADGE on first node */}
+                  {index === 0 && (
                     <div
                       style={{
                         position: 'absolute',
-                        left: node.xOffsetPercent > 50 ? '-130px' : 'auto',
-                        right: node.xOffsetPercent <= 50 ? '-130px' : 'auto',
-                        top: '-15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        zIndex: 20,
-                        animation: 'bounce 2s infinite',
+                        top: '-14px',
+                        backgroundColor: 'var(--brand-primary)',
+                        color: '#FFFFFF',
+                        fontSize: '0.66rem',
+                        fontWeight: 900,
+                        letterSpacing: '0.06em',
+                        padding: '2px 8px',
+                        borderRadius: '100px',
+                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+                        zIndex: 10,
                       }}
-                      className="mascot-speech-bubble-wrapper"
                     >
-                      <MascotSphere pose="happy" size={38} animated={true} />
-                      <div
-                        style={{
-                          backgroundColor: 'var(--bg-surface)',
-                          border: '1.5px solid var(--brand-primary)',
-                          borderRadius: '12px',
-                          padding: '6px 10px',
-                          fontSize: '0.72rem',
-                          fontWeight: 700,
-                          color: 'var(--text-primary)',
-                          boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
-                          maxWidth: '120px',
-                          lineHeight: 1.25,
-                        }}
-                      >
-                        Active Lab!
-                      </div>
+                      START
                     </div>
                   )}
 
-                  {/* 3D Isometric / Stepped Button Node */}
-                  <div style={{ position: 'relative', textAlign: 'center' }}>
-                    {/* START Badge on Node 1 */}
-                    {index === 0 && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: '-16px',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          backgroundColor: '#43A85B',
-                          color: '#FFFFFF',
-                          fontSize: '0.66rem',
-                          fontWeight: 900,
-                          letterSpacing: '0.06em',
-                          padding: '2px 8px',
-                          borderRadius: '100px',
-                          boxShadow: '0 2px 6px rgba(67, 168, 91, 0.4)',
-                          zIndex: 10,
-                        }}
-                      >
-                        START
-                      </div>
-                    )}
+                  {/* 3D Isometric Tactile Button */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectNode(node)}
+                    style={{
+                      width: '64px',
+                      height: '64px',
+                      borderRadius: node.status === 'trophy' ? '18px' : '50%',
+                      backgroundColor: isSelected ? node.color : isCompleted ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                      color: isSelected || isCompleted ? '#FFFFFF' : 'var(--text-primary)',
+                      border: isSelected ? '3px solid #FFFFFF' : '2px solid var(--border-subtle)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: isSelected
+                        ? `0 6px 0 ${node.color}99, 0 10px 18px rgba(0, 0, 0, 0.16)`
+                        : isCompleted
+                        ? `0 6px 0 #1b382b, 0 8px 14px rgba(0, 0, 0, 0.1)`
+                        : `0 5px 0 var(--border-subtle), 0 6px 12px rgba(0, 0, 0, 0.05)`,
+                      transform: isSelected ? 'translateY(-2px)' : 'translateY(0)',
+                      transition: 'all 0.15s ease',
+                    }}
+                    title={`${node.title} — ${node.subtitle}`}
+                  >
+                    {isCompleted && !isSelected ? <Check size={26} strokeWidth={2.5} /> : <NodeIcon size={24} />}
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleSelectNode(node)}
-                      style={{
-                        width: node.status === 'trophy' || node.status === 'chest' ? '64px' : '62px',
-                        height: node.status === 'trophy' || node.status === 'chest' ? '64px' : '62px',
-                        borderRadius: node.status === 'trophy' ? '18px' : '50%',
-                        backgroundColor: isSelected
-                          ? node.color
-                          : isCompleted
-                          ? 'var(--brand-primary)'
-                          : 'var(--bg-surface)',
-                        color: isSelected || isCompleted ? '#FFFFFF' : 'var(--text-primary)',
-                        border: isSelected
-                          ? `3px solid #FFFFFF`
-                          : isCompleted
-                          ? `2px solid var(--brand-primary)`
-                          : `2px solid var(--border-strong)`,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
-                        // 3D Isometric bevel effect matching Image 2 & 5
-                        boxShadow: isSelected
-                          ? `0 6px 0 ${node.color}99, 0 12px 20px rgba(0,0,0,0.18)`
-                          : isCompleted
-                          ? `0 5px 0 #2A7E3E, 0 8px 16px rgba(0,0,0,0.1)`
-                          : `0 5px 0 var(--border-strong), 0 8px 16px rgba(0,0,0,0.06)`,
-                        transform: isSelected ? 'translateY(-3px)' : 'translateY(0)',
-                        transition: 'all 0.15s ease',
-                      }}
-                      title={`${node.title} — ${node.subtitle}`}
-                    >
-                      {/* Active Node Outer Glowing Pulse */}
-                      {isSelected && (
-                        <div
-                          style={{
-                            position: 'absolute',
-                            inset: '-8px',
-                            borderRadius: node.status === 'trophy' ? '24px' : '50%',
-                            border: `2px solid ${node.color}`,
-                            opacity: 0.7,
-                            animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
-                            pointerEvents: 'none',
-                          }}
-                        />
-                      )}
-
-                      {/* Icon */}
-                      {isCompleted && !isSelected ? (
-                        <Check size={26} />
-                      ) : (
-                        <NodeIcon size={24} />
-                      )}
-                    </button>
-
-                    {/* Step Title Label below the 3D Node */}
+                  {/* Clean Node Label Card */}
+                  <div
+                    style={{
+                      marginTop: '8px',
+                      textAlign: 'center',
+                      maxWidth: '160px',
+                    }}
+                  >
                     <div
                       style={{
-                        marginTop: '8px',
-                        fontSize: '0.82rem',
+                        fontSize: '0.8rem',
                         fontWeight: 800,
                         color: isSelected ? 'var(--brand-primary)' : 'var(--text-primary)',
-                        maxWidth: '140px',
-                        lineHeight: 1.2,
-                        textShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                        lineHeight: 1.25,
                       }}
                     >
                       {node.title}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                       +{node.xp} XP • {node.status === 'completed' ? 'Verified' : 'Interactive'}
                     </div>
                   </div>
@@ -642,18 +592,18 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
         </div>
 
         {/* ============================================================ */}
-        {/* RIGHT COLUMN: LIVE INTERACTIVE LAB STUDIO & DAILY QUESTS     */}
+        {/* RIGHT COLUMN: ACTIVE MISSION & INTERACTIVE SIMULATION STUDIO */}
         {/* ============================================================ */}
         <div
           style={{
-            padding: '32px 28px',
+            padding: '28px 32px',
+            backgroundColor: 'var(--bg-surface)',
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px',
-            backgroundColor: 'var(--bg-surface)',
+            gap: '24px',
           }}
         >
-          {/* Active Lab Header Card */}
+          {/* Active Lab Header */}
           <div
             style={{
               display: 'flex',
@@ -709,7 +659,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                 fontSize: '0.85rem',
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(67, 168, 91, 0.3)',
+                boxShadow: '0 4px 12px rgba(36, 76, 58, 0.25)',
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={(e) => {
@@ -727,24 +677,77 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
             </button>
           </div>
 
+          {/* "THINK LIKE A DEVELOPER" PREDICTION CHALLENGE */}
+          <div
+            style={{
+              backgroundColor: 'var(--bg-canvas)',
+              border: '1.5px solid var(--border-subtle)',
+              borderRadius: '14px',
+              padding: '16px 20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Zap size={16} color="var(--brand-primary)" />
+              <span style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--brand-primary)' }}>
+                Think Like a Developer • Hypothesis Check
+              </span>
+            </div>
+            <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+              {activeNode.labKey === 'ai' && 'Prediction: How does high keyword density affect the classifier when urgency is also elevated?'}
+              {activeNode.labKey === 'blockchain' && 'Prediction: If you alter transaction data in Block 1, what happens to Block 2’s cryptographic link?'}
+              {activeNode.labKey === 'iot' && 'Prediction: When sensor temperature exceeds 38°C, which emergency relay engages?'}
+              {activeNode.labKey === 'security' && 'Prediction: Why do parameterized queries prevent SQL injection payloads from executing?'}
+              {(activeNode.labKey === 'finance' || activeNode.labKey === 'cie-audit') && 'Prediction: How does compounding frequency accelerate long-term capital formation?'}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {['Safe Threshold', 'Borderline Risk', 'Critical Alert'].map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setPredictionHypothesis(opt)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-subtle)',
+                    backgroundColor: predictionHypothesis === opt ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                    color: predictionHypothesis === opt ? '#FFFFFF' : 'var(--text-secondary)',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
+              {predictionHypothesis && (
+                <span style={{ fontSize: '0.76rem', color: 'var(--brand-primary)', fontWeight: 700, alignSelf: 'center', marginLeft: '6px' }}>
+                  ✓ Hypothesis logged! Test the controls below to verify.
+                </span>
+              )}
+            </div>
+          </div>
+
           {/* ============================================================ */}
-          {/* EMBEDDED LIVE LAB VISUALIZER & CONTROLS (THE LAB ITSELF!)    */}
+          {/* EMBEDDED LIVE LAB VISUALIZER & CONTROLS                     */}
           {/* ============================================================ */}
           <div
             style={{
               backgroundColor: 'var(--bg-canvas)',
               borderRadius: '16px',
-              border: '1px solid var(--border-subtle)',
+              border: '1.5px solid var(--border-subtle)',
               padding: '20px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '16px',
-              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.02)',
+              gap: '18px',
             }}
           >
             {/* Mode 1: AI Neural Network Lab */}
             {activeNode.labKey === 'ai' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 <NeuralNetworkSvg
                   keywordDensity={aiKeywordDensity}
                   urgencyScore={aiUrgency}
@@ -753,19 +756,38 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                   confidenceScore={aiConfidence}
                 />
 
-                {/* Direct Interactive Controls */}
+                {/* Real-Time Outcome Status Pill */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    backgroundColor: aiLabel === 'Phishing' ? '#FEF2F2' : aiLabel === 'Suspicious' ? '#FFFBEB' : '#F0FDF4',
+                    border: `1px solid ${aiLabel === 'Phishing' ? '#FECACA' : aiLabel === 'Suspicious' ? '#FDE68A' : '#BBF7D0'}`,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Activity size={18} color={aiLabel === 'Phishing' ? '#DC2626' : aiLabel === 'Suspicious' ? '#D97706' : '#16A34A'} />
+                    <span style={{ fontWeight: 800, fontSize: '0.88rem', color: aiLabel === 'Phishing' ? '#991B1B' : aiLabel === 'Suspicious' ? '#92400E' : '#166534' }}>
+                      Model Verdict: {aiLabel.toUpperCase()} ({aiConfidence}% Confidence)
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                    Weight Threshold Check Passed
+                  </span>
+                </div>
+
+                {/* Interactive Sliders */}
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                     gap: '14px',
-                    backgroundColor: 'var(--bg-surface)',
-                    padding: '16px',
-                    borderRadius: '12px',
-                    border: '1px solid var(--border-subtle)',
                   }}
                 >
-                  <div>
+                  <div style={{ backgroundColor: 'var(--bg-surface)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px' }}>
                       <span>Keyword Density</span>
                       <span style={{ color: 'var(--brand-primary)' }}>{aiKeywordDensity}%</span>
@@ -780,7 +802,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                     />
                   </div>
 
-                  <div>
+                  <div style={{ backgroundColor: 'var(--bg-surface)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px' }}>
                       <span>Urgency Score</span>
                       <span style={{ color: '#D97706' }}>{aiUrgency}/100</span>
@@ -795,7 +817,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                     />
                   </div>
 
-                  <div>
+                  <div style={{ backgroundColor: 'var(--bg-surface)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px' }}>
                       <span>Sender Reputation</span>
                       <span style={{ color: '#2563EB' }}>{aiReputation}/100</span>
@@ -838,7 +860,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                     <span style={{ color: 'var(--text-muted)' }}>Payload: </span>
                     <strong style={{ color: 'var(--text-primary)' }}>{blockData}</strong>
                     <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      Nonce: {blockNonce} • Hash: {blockHash.slice(0, 20)}...
+                      Hash: <code style={{ color: blockHash.startsWith('00') ? 'var(--brand-primary)' : '#DC2626' }}>{blockHash.slice(0, 24)}...</code>
                     </div>
                   </div>
 
@@ -850,19 +872,31 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                       style={{
                         padding: '8px 16px',
                         borderRadius: '8px',
-                        backgroundColor: '#D97706',
+                        backgroundColor: 'var(--brand-primary)',
                         color: '#FFFFFF',
                         border: 'none',
                         fontWeight: 800,
                         fontSize: '0.8rem',
                         cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
                       }}
                     >
-                      <RotateCcw size={14} className={isMining ? 'animate-spin' : ''} />
-                      <span>{isMining ? 'Mining Proof...' : 'Mine Block (Nonce)'}</span>
+                      {isMining ? 'Mining Nonce...' : 'Mine Nonce'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsTampered(!isTampered)}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: '8px',
+                        backgroundColor: isTampered ? '#DC2626' : 'var(--bg-canvas)',
+                        color: isTampered ? '#FFFFFF' : 'var(--text-primary)',
+                        border: '1px solid var(--border-subtle)',
+                        fontWeight: 700,
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {isTampered ? 'Tamper Active!' : 'Simulate Tamper'}
                     </button>
                   </div>
                 </div>
@@ -875,7 +909,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                 <IotSensorDialSvg
                   currentTemp={iotTemperature}
                   threshold={iotThreshold}
-                  humidity={55}
+                  humidity={58}
                 />
 
                 <div
@@ -886,10 +920,10 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                     border: '1px solid var(--border-subtle)',
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700, marginBottom: '8px' }}>
-                    <span>Live Thermistor Sensor Reading</span>
-                    <span style={{ color: iotTemperature >= 38 ? '#DC2626' : '#059669', fontWeight: 800 }}>
-                      {iotTemperature}°C {iotTemperature >= 38 ? '(CRITICAL RELAY TRIGGERED)' : '(NORMAL)'}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', fontWeight: 700, marginBottom: '6px' }}>
+                    <span>Ambient Sensor Temperature</span>
+                    <span style={{ color: iotTemperature > iotThreshold ? '#DC2626' : 'var(--brand-primary)' }}>
+                      {iotTemperature}°C {iotTemperature > iotThreshold ? '(RELAY TRIPPED)' : '(NORMAL)'}
                     </span>
                   </div>
                   <input
@@ -898,7 +932,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                     max={50}
                     value={iotTemperature}
                     onChange={(e) => setIotTemperature(Number(e.target.value))}
-                    style={{ width: '100%', accentColor: iotTemperature >= 38 ? '#DC2626' : '#059669' }}
+                    style={{ width: '100%', accentColor: iotTemperature > iotThreshold ? '#DC2626' : 'var(--brand-primary)' }}
                   />
                 </div>
               </div>
@@ -908,9 +942,9 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
             {activeNode.labKey === 'security' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <SecurityPipelineSvg
-                  paramQueries={secParamQueries}
-                  outputEncoding={secInputSanitization}
-                  strictCsp={secJwtValidation}
+                  paramQueries={true}
+                  outputEncoding={true}
+                  strictCsp={secStrictCsp}
                 />
 
                 <div
@@ -926,49 +960,52 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                     flexWrap: 'wrap',
                   }}
                 >
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <button
-                      type="button"
-                      onClick={() => setSecPayloadType('legit')}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '6px',
-                        border: '1px solid var(--border-subtle)',
-                        backgroundColor: secPayloadType === 'legit' ? 'var(--brand-primary)' : 'var(--bg-canvas)',
-                        color: secPayloadType === 'legit' ? '#FFFFFF' : 'var(--text-primary)',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Legitimate Query
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSecPayloadType('sql_injection')}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '6px',
-                        border: '1px solid var(--border-subtle)',
-                        backgroundColor: secPayloadType === 'sql_injection' ? '#DC2626' : 'var(--bg-canvas)',
-                        color: secPayloadType === 'sql_injection' ? '#FFFFFF' : 'var(--text-primary)',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      SQL Injection (1=1)
-                    </button>
+                  <div style={{ fontSize: '0.84rem' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Input Vector: </span>
+                    <strong style={{ color: secPayloadType === 'legit' ? 'var(--brand-primary)' : '#DC2626' }}>
+                      {secPayloadType === 'legit' ? "username='alice'" : "username='admin' OR 1=1;--"}
+                    </strong>
                   </div>
 
-                  <span style={{ fontSize: '0.8rem', fontWeight: 800, color: secIsBlocked ? '#16A34A' : '#DC2626' }}>
-                    {secIsBlocked ? '✓ INJECTION BLOCKED SAFELY' : 'EXPOSURE DETECTED'}
-                  </span>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setSecPayloadType(secPayloadType === 'legit' ? 'sql_injection' : 'legit')}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: secPayloadType === 'legit' ? 'var(--bg-canvas)' : '#DC2626',
+                        color: secPayloadType === 'legit' ? 'var(--text-primary)' : '#FFFFFF',
+                        border: '1px solid var(--border-subtle)',
+                        fontWeight: 800,
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {secPayloadType === 'legit' ? 'Inject SQL Payload' : 'Reset Clean Input'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSecStrictCsp(!secStrictCsp)}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-canvas)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--border-subtle)',
+                        fontWeight: 700,
+                        fontSize: '0.8rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      CSP: {secStrictCsp ? 'STRICT' : 'PERMISSIVE'}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Mode 5: Cambridge CIE Checkpoint / FinTech Lab */}
+            {/* Mode 5: FinTech Compound Growth Lab */}
             {(activeNode.labKey === 'finance' || activeNode.labKey === 'cie-audit') && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <CompoundGrowthSvg
@@ -1018,7 +1055,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
           </div>
 
           {/* ============================================================ */}
-          {/* DAILY QUESTS & CAMBRIDGE CIE RUBRIC (Duolingo Style!)         */}
+          {/* DAILY QUESTS & CAMBRIDGE CIE RUBRIC STRIP                    */}
           {/* ============================================================ */}
           <div
             style={{
@@ -1072,15 +1109,18 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-                  Cambridge CIE Benchmark
+                  PESU CIE Alignment
                 </span>
-                <Award size={15} color="#2563EB" />
+                <span className="badge badge-brand" style={{ fontSize: '0.64rem', padding: '1px 6px' }}>RUBRIC 4.2</span>
               </div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                Evidence-Based Criteria Verified
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={16} color="#D97706" />
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Cryptographic Evidence Proof
+                </span>
               </div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                Tamper-evident client-side logs recorded
+              <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                Client-side hash chained into tamper-evident audit record.
               </div>
             </div>
           </div>
