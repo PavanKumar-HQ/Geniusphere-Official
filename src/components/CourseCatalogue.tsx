@@ -71,34 +71,34 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       case 'technology':
         return {
           label: 'Technology & Digital Skills',
-          color: '#265430',
-          bg: '#E5F0DF',
-          accent: '#43A85B',
-          borderColor: '#CDE5C4',
+          color: 'var(--brand-primary)',
+          bg: 'var(--bg-surface-subdued)',
+          accent: 'var(--brand-primary)',
+          borderColor: 'var(--border-subtle)',
         };
       case 'finance':
         return {
           label: 'Financial Literacy & Economy',
-          color: '#344E11',
-          bg: '#F2F9DE',
-          accent: '#82C424',
-          borderColor: '#DCEEB2',
+          color: 'var(--brand-primary)',
+          bg: 'var(--bg-surface-subdued)',
+          accent: '#A9C86A',
+          borderColor: 'var(--border-subtle)',
         };
       case 'professional':
         return {
           label: 'Professional & Life Skills',
-          color: '#1E4633',
-          bg: '#E7F4EE',
+          color: 'var(--brand-primary)',
+          bg: 'var(--bg-surface-subdued)',
           accent: '#348B60',
-          borderColor: '#C7E7D9',
+          borderColor: 'var(--border-subtle)',
         };
       default:
         return {
           label: 'General Curriculum',
-          color: '#26352A',
-          bg: '#F0F4EC',
-          accent: '#43A85B',
-          borderColor: '#E0EADB',
+          color: 'var(--text-primary)',
+          bg: 'var(--bg-surface-subdued)',
+          accent: 'var(--brand-primary)',
+          borderColor: 'var(--border-subtle)',
         };
     }
   };
@@ -131,13 +131,13 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           gridTemplateColumns: 'minmax(320px, 1.4fr) minmax(200px, 0.9fr) minmax(260px, 1fr)',
           gap: '28px',
           alignItems: 'center',
-          backgroundColor: '#FAFAF4',
+          backgroundColor: 'var(--bg-surface)',
           borderRadius: '24px',
           padding: '32px 36px 28px',
-          border: '1px solid #E5F0DF',
+          border: '1px solid var(--border-subtle)',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 4px 20px rgba(38, 53, 42, 0.03)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
         }}
       >
         {/* Left: Titles & Mission Statement */}
@@ -150,22 +150,23 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 gap: '6px',
                 padding: '4px 12px',
                 borderRadius: '100px',
-                backgroundColor: '#E5F0DF',
-                color: '#26352A',
+                backgroundColor: 'var(--bg-surface-subdued)',
+                color: 'var(--brand-primary)',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
                 marginBottom: '10px',
+                border: '1px solid var(--border-subtle)',
               }}
             >
-              <Sparkles size={13} color="#43A85B" /> Canonical Skills Curriculum
+              <Sparkles size={13} color="var(--brand-primary)" /> Canonical Skills Curriculum
             </span>
             <h1
               style={{
                 fontSize: '2.5rem',
                 fontWeight: 900,
-                color: '#26352A',
+                color: 'var(--text-primary)',
                 letterSpacing: '-0.03em',
                 margin: 0,
                 lineHeight: 1.15,
@@ -180,7 +181,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             style={{
               fontSize: '1.15rem',
               fontWeight: 700,
-              color: '#43A85B',
+              color: 'var(--brand-primary)',
               margin: 0,
             }}
           >
@@ -189,7 +190,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
 
           <p
             style={{
-              color: '#3A4E40',
+              color: 'var(--text-secondary)',
               fontSize: '0.94rem',
               lineHeight: 1.55,
               margin: 0,
@@ -220,11 +221,11 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               fontFamily: 'Space Grotesk, sans-serif',
               fontWeight: 800,
               fontSize: '0.92rem',
-              color: '#26352A',
-              backgroundColor: '#D9F477',
+              color: 'var(--brand-lime-text, #252C27)',
+              backgroundColor: 'var(--brand-lime, #A9C86A)',
               padding: '5px 14px',
               borderRadius: '12px',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
               zIndex: 2,
               whiteSpace: 'nowrap',
             }}
@@ -245,10 +246,10 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--bg-surface-subdued)',
             padding: '18px 20px',
             borderRadius: '18px',
-            border: '1px solid #E5F0DF',
+            border: '1px solid var(--border-subtle)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
           }}
         >
@@ -258,19 +259,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: '#E5F0DF',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#43A85B',
+                color: 'var(--brand-primary)',
                 flexShrink: 0,
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <Cpu size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>3 Learning Streams</div>
-              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>Technology, Finance & Careers</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>3 Learning Streams</div>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Technology, Finance & Careers</div>
             </div>
           </div>
 
@@ -280,19 +282,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: '#E5F0DF',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#43A85B',
+                color: 'var(--brand-primary)',
                 flexShrink: 0,
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <BookOpen size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>40 Full Courses</div>
-              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>180+ verified lessons & quizzes</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>40 Full Courses</div>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>180+ verified lessons & quizzes</div>
             </div>
           </div>
 
@@ -302,19 +305,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: '#E5F0DF',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#43A85B',
+                color: 'var(--brand-primary)',
                 flexShrink: 0,
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <Terminal size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Interactive Sandboxes</div>
-              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>Python 3.12 & C Compiler live</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>Interactive Sandboxes</div>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Multi-language live execution</div>
             </div>
           </div>
 
@@ -324,19 +328,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: '#E5F0DF',
+                backgroundColor: 'var(--bg-surface)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#43A85B',
+                color: 'var(--brand-primary)',
                 flexShrink: 0,
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <Award size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Verifiable Credentials</div>
-              <div style={{ fontSize: '0.76rem', color: '#6A7D70' }}>SHA-256 tamper-proof hash</div>
+              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>Verifiable Credentials</div>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>SHA-256 tamper-proof hash</div>
             </div>
           </div>
         </div>
@@ -351,10 +356,10 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           display: 'flex',
           flexDirection: 'column',
           gap: '16px',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--bg-surface)',
           padding: '20px 24px',
           borderRadius: '20px',
-          border: '1px solid #E5F0DF',
+          border: '1px solid var(--border-subtle)',
           boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
         }}
       >
@@ -366,7 +371,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '12px',
-            borderBottom: '1px solid #EEF3E9',
+            borderBottom: '1px solid var(--border-subtle)',
             paddingBottom: '16px',
           }}
         >
@@ -379,8 +384,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 padding: '9px 18px',
                 borderRadius: '100px',
                 border: 'none',
-                backgroundColor: selectedStream === 'all' ? '#43A85B' : '#F1F6EC',
-                color: selectedStream === 'all' ? '#FFFFFF' : '#26352A',
+                backgroundColor: selectedStream === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                color: selectedStream === 'all' ? '#FFFFFF' : 'var(--text-primary)',
                 fontWeight: 800,
                 fontSize: '0.88rem',
                 cursor: 'pointer',
@@ -388,14 +393,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 alignItems: 'center',
                 gap: '8px',
                 transition: 'all 0.15s ease',
-                boxShadow: selectedStream === 'all' ? '0 2px 8px rgba(67, 168, 91, 0.28)' : 'none',
+                boxShadow: selectedStream === 'all' ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
               }}
             >
               <GraduationCap size={16} />
               <span>All Courses</span>
               <span
                 style={{
-                  backgroundColor: selectedStream === 'all' ? 'rgba(255,255,255,0.25)' : '#E0ECD8',
+                  backgroundColor: selectedStream === 'all' ? 'rgba(255,255,255,0.25)' : 'var(--border-subtle)',
                   padding: '2px 8px',
                   borderRadius: '100px',
                   fontSize: '0.75rem',
@@ -418,8 +423,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     padding: '9px 18px',
                     borderRadius: '100px',
                     border: 'none',
-                    backgroundColor: isSelected ? '#43A85B' : '#F1F6EC',
-                    color: isSelected ? '#FFFFFF' : '#26352A',
+                    backgroundColor: isSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                    color: isSelected ? '#FFFFFF' : 'var(--text-primary)',
                     fontWeight: 800,
                     fontSize: '0.88rem',
                     cursor: 'pointer',
@@ -427,14 +432,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     alignItems: 'center',
                     gap: '8px',
                     transition: 'all 0.15s ease',
-                    boxShadow: isSelected ? '0 2px 8px rgba(67, 168, 91, 0.28)' : 'none',
+                    boxShadow: isSelected ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
                   }}
                 >
                   {getStreamIcon(s.id, 16)}
                   <span>{s.title}</span>
                   <span
                     style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : '#E0ECD8',
+                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : 'var(--border-subtle)',
                       padding: '2px 8px',
                       borderRadius: '100px',
                       fontSize: '0.75rem',
@@ -454,10 +459,10 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: '#F1F6EC',
+                backgroundColor: 'var(--bg-surface-subdued)',
                 borderRadius: '100px',
                 padding: '3px',
-                border: '1px solid #E2EEDB',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <button
@@ -471,12 +476,12 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   padding: '6px 14px',
                   borderRadius: '100px',
                   border: 'none',
-                  backgroundColor: viewMode === 'grid' ? '#FFFFFF' : 'transparent',
-                  color: viewMode === 'grid' ? '#26352A' : '#6A7D70',
+                  backgroundColor: viewMode === 'grid' ? 'var(--bg-surface)' : 'transparent',
+                  color: viewMode === 'grid' ? 'var(--text-primary)' : 'var(--text-muted)',
                   fontWeight: 700,
                   fontSize: '0.8rem',
                   cursor: 'pointer',
-                  boxShadow: viewMode === 'grid' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                  boxShadow: viewMode === 'grid' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                 }}
               >
                 <Grid size={14} />
@@ -494,12 +499,12 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   padding: '6px 14px',
                   borderRadius: '100px',
                   border: 'none',
-                  backgroundColor: viewMode === 'grouped' ? '#FFFFFF' : 'transparent',
-                  color: viewMode === 'grouped' ? '#26352A' : '#6A7D70',
+                  backgroundColor: viewMode === 'grouped' ? 'var(--bg-surface)' : 'transparent',
+                  color: viewMode === 'grouped' ? 'var(--text-primary)' : 'var(--text-muted)',
                   fontWeight: 700,
                   fontSize: '0.8rem',
                   cursor: 'pointer',
-                  boxShadow: viewMode === 'grouped' ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
+                  boxShadow: viewMode === 'grouped' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
                 }}
               >
                 <Layers size={14} />
@@ -534,7 +539,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 left: '14px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#6A7D70',
+                color: 'var(--text-muted)',
               }}
             />
             <input
@@ -546,20 +551,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 width: '100%',
                 padding: '10px 38px 10px 40px',
                 borderRadius: '100px',
-                border: '1px solid #D6E6CF',
-                backgroundColor: '#FAFBF9',
+                border: '1px solid var(--border-subtle)',
+                backgroundColor: 'var(--bg-canvas)',
                 fontSize: '0.88rem',
-                color: '#26352A',
+                color: 'var(--text-primary)',
                 outline: 'none',
                 transition: 'border-color 0.15s ease, background-color 0.15s ease',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#43A85B';
-                e.currentTarget.style.backgroundColor = '#FFFFFF';
+                e.currentTarget.style.borderColor = 'var(--brand-primary)';
+                e.currentTarget.style.backgroundColor = 'var(--bg-surface)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = '#D6E6CF';
-                e.currentTarget.style.backgroundColor = '#FAFBF9';
+                e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                e.currentTarget.style.backgroundColor = 'var(--bg-canvas)';
               }}
             />
             {search && (
@@ -574,7 +579,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#6A7D70',
+                  color: 'var(--text-muted)',
                   padding: '2px',
                   display: 'flex',
                   alignItems: 'center',
@@ -587,7 +592,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
 
           {/* Difficulty Level Pills */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#6A7D70', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Filter size={13} /> Level:
             </span>
             {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((lvl) => {
@@ -601,9 +606,9 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     padding: '6px 14px',
                     borderRadius: '100px',
                     border: '1px solid',
-                    borderColor: isLvlSelected ? '#43A85B' : '#E2EEDB',
-                    backgroundColor: isLvlSelected ? '#E5F0DF' : '#FFFFFF',
-                    color: isLvlSelected ? '#1B4022' : '#556D5C',
+                    borderColor: isLvlSelected ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                    backgroundColor: isLvlSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                    color: isLvlSelected ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
                     fontSize: '0.8rem',
                     cursor: 'pointer',
@@ -622,12 +627,12 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 onClick={resetFilters}
                 style={{
                   background: 'none',
-                  border: '1px solid #D6E6CF',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '100px',
                   padding: '6px 12px',
                   fontSize: '0.8rem',
                   fontWeight: 700,
-                  color: '#6A7D70',
+                  color: 'var(--text-muted)',
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -682,29 +687,29 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       {filteredCourses.length === 0 ? (
         <div
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--bg-surface)',
             borderRadius: '24px',
             padding: '64px 24px',
             textAlign: 'center',
-            border: '1px solid #E5F0DF',
-            boxShadow: '0 4px 20px rgba(38, 53, 42, 0.03)',
+            border: '1px solid var(--border-subtle)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
           }}
         >
           <MascotSphere pose="idea" size={130} />
-          <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#26352A', margin: '20px 0 8px' }}>
+          <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: '20px 0 8px' }}>
             No courses found
           </h3>
-          <p style={{ color: '#6A7D70', fontSize: '0.95rem', marginBottom: '24px', maxWidth: '440px', lineHeight: 1.5 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', marginBottom: '24px', maxWidth: '440px', lineHeight: 1.5 }}>
             We couldn&rsquo;t find courses matching &ldquo;{search}&rdquo;. Try using broader terms like &ldquo;Python&rdquo;, &ldquo;Finance&rdquo;, or &ldquo;Safety&rdquo;.
           </p>
           <button
             type="button"
             onClick={resetFilters}
             style={{
-              backgroundColor: '#43A85B',
+              backgroundColor: 'var(--brand-primary)',
               color: '#FFFFFF',
               fontWeight: 800,
               border: 'none',
@@ -715,7 +720,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               alignItems: 'center',
               gap: '8px',
               fontSize: '0.92rem',
-              boxShadow: '0 2px 8px rgba(67, 168, 91, 0.28)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
             }}
           >
             <span>Show All 40 Courses</span>
@@ -758,13 +763,13 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         width: '48px',
                         height: '48px',
                         borderRadius: '14px',
-                        backgroundColor: '#FFFFFF',
+                        backgroundColor: 'var(--bg-surface)',
                         color: streamMeta.accent,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                        border: `1px solid ${streamMeta.borderColor}`,
+                        border: `1px solid var(--border-subtle)`,
                       }}
                     >
                       {getStreamIcon(stream.id, 24)}
@@ -775,7 +780,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                           margin: 0,
                           fontSize: '1.45rem',
                           fontWeight: 800,
-                          color: streamMeta.color,
+                          color: 'var(--text-primary)',
                           fontFamily: 'Space Grotesk, sans-serif',
                           letterSpacing: '-0.02em',
                         }}
@@ -786,7 +791,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                         style={{
                           margin: '4px 0 0',
                           fontSize: '0.9rem',
-                          color: '#496150',
+                          color: 'var(--text-secondary)',
                           lineHeight: 1.4,
                         }}
                       >
@@ -802,9 +807,9 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                       window.scrollTo({ top: 380, behavior: 'smooth' });
                     }}
                     style={{
-                      backgroundColor: '#FFFFFF',
-                      color: streamMeta.color,
-                      border: `1px solid ${streamMeta.borderColor}`,
+                      backgroundColor: 'var(--bg-surface)',
+                      color: 'var(--text-primary)',
+                      border: `1px solid var(--border-subtle)`,
                       borderRadius: '100px',
                       padding: '8px 18px',
                       fontSize: '0.84rem',
@@ -885,9 +890,9 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         {/* 1. Left Card: Ready to start your journey? with Idea Mascot */}
         <div
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--bg-surface)',
             borderRadius: '20px',
-            border: '1px solid #E5F0DF',
+            border: '1px solid var(--border-subtle)',
             padding: '24px 26px',
             display: 'flex',
             alignItems: 'center',
@@ -903,13 +908,13 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   margin: 0,
                   fontSize: '1.2rem',
                   fontWeight: 800,
-                  color: '#26352A',
+                  color: 'var(--text-primary)',
                   fontFamily: 'Space Grotesk, sans-serif',
                 }}
               >
                 Ready to level up your skills?
               </h3>
-              <p style={{ margin: '4px 0 0', color: '#6A7D70', fontSize: '0.84rem', lineHeight: 1.45 }}>
+              <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '0.84rem', lineHeight: 1.45 }}>
                 Master industry-grade concepts through self-paced learning and practical simulations.
               </p>
             </div>
@@ -921,7 +926,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 style={{
-                  backgroundColor: '#43A85B',
+                  backgroundColor: 'var(--brand-primary)',
                   color: '#FFFFFF',
                   fontWeight: 800,
                   padding: '8px 18px',
@@ -932,7 +937,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   alignItems: 'center',
                   gap: '6px',
                   fontSize: '0.84rem',
-                  boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+                  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
                 }}
               >
                 <span>Browse all 40 courses</span>
@@ -945,9 +950,9 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         {/* 2. Center Card: 4 Feature Pillars with Icons */}
         <div
           style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--bg-surface)',
             borderRadius: '20px',
-            border: '1px solid #E5F0DF',
+            border: '1px solid var(--border-subtle)',
             padding: '20px 24px',
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
@@ -957,38 +962,38 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-surface-subdued)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)', border: '1px solid var(--border-subtle)' }}>
               <CheckCircle2 size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Self-paced learning</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Self-paced learning</div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-surface-subdued)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)', border: '1px solid var(--border-subtle)' }}>
               <Terminal size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Hands-on code labs</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Hands-on code labs</div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-surface-subdued)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)', border: '1px solid var(--border-subtle)' }}>
               <Users size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Interactive quizzes</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Interactive quizzes</div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '6px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#E5F0DF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#43A85B' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: 'var(--bg-surface-subdued)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)', border: '1px solid var(--border-subtle)' }}>
               <Award size={18} />
             </div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#26352A' }}>Tamper-proof certs</div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Tamper-proof certs</div>
           </div>
         </div>
 
         {/* 3. Right Card: Editorial Student Testimonial */}
         <div
           style={{
-            backgroundColor: '#26352A',
+            backgroundColor: 'var(--brand-primary)',
             color: '#FFFFFF',
             borderRadius: '20px',
             padding: '24px',
@@ -1001,19 +1006,19 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           }}
         >
           <div style={{ flex: 1, zIndex: 1 }}>
-            <span style={{ color: '#D9F477', fontSize: '1.6rem', lineHeight: 1, fontFamily: 'serif' }}>&ldquo;</span>
+            <span style={{ color: 'var(--brand-lime, #A9C86A)', fontSize: '1.6rem', lineHeight: 1, fontFamily: 'serif' }}>&ldquo;</span>
             <p
               style={{
                 fontSize: '0.85rem',
                 lineHeight: 1.5,
                 fontWeight: 500,
-                color: '#FAFAF4',
+                color: 'var(--text-inverse, #F7F6F0)',
                 margin: '2px 0 8px',
               }}
             >
               Geniusphere made learning practical and exciting. I built real projects and gained confidence in my skills.
             </p>
-            <div style={{ fontSize: '0.76rem', color: '#D9F477', fontWeight: 700 }}>
+            <div style={{ fontSize: '0.76rem', color: 'var(--brand-lime, #A9C86A)', fontWeight: 700 }}>
               — Student, Class 10
             </div>
           </div>
@@ -1026,7 +1031,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               height: '76px',
               borderRadius: '50%',
               objectFit: 'cover',
-              border: '2px solid #D9F477',
+              border: '2px solid var(--brand-lime, #A9C86A)',
               flexShrink: 0,
             }}
           />
@@ -1072,9 +1077,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'var(--bg-surface)',
         borderRadius: '20px',
-        border: `1.5px solid ${isHovered ? streamMeta.accent : '#E8EFE5'}`,
+        border: `1.5px solid ${isHovered ? streamMeta.accent : 'var(--border-subtle)'}`,
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
@@ -1082,8 +1087,8 @@ const CourseCard: React.FC<CourseCardProps> = ({
         gap: '16px',
         cursor: 'pointer',
         boxShadow: isHovered
-          ? '0 10px 28px rgba(38, 53, 42, 0.08)'
-          : '0 2px 8px rgba(38, 53, 42, 0.02)',
+          ? '0 10px 28px rgba(0, 0, 0, 0.08)'
+          : '0 2px 8px rgba(0, 0, 0, 0.02)',
         transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
         transition: 'transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease',
       }}
@@ -1109,13 +1114,14 @@ const CourseCard: React.FC<CourseCardProps> = ({
 
           <span
             style={{
-              backgroundColor: '#F5F8F3',
-              color: '#556D5C',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              color: 'var(--text-muted)',
               padding: '3px 9px',
               borderRadius: '6px',
               fontSize: '0.74rem',
               fontWeight: 700,
               textTransform: 'capitalize',
+              border: '1px solid var(--border-subtle)',
             }}
           >
             {course.level}
@@ -1128,7 +1134,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
             margin: 0,
             fontSize: '1.2rem',
             fontWeight: 800,
-            color: isHovered ? streamMeta.accent : '#223427',
+            color: isHovered ? streamMeta.accent : 'var(--text-primary)',
             lineHeight: 1.3,
             fontFamily: 'Space Grotesk, sans-serif',
             transition: 'color 0.15s ease',
@@ -1142,7 +1148,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
           style={{
             margin: 0,
             fontSize: '0.88rem',
-            color: '#4B5E50',
+            color: 'var(--text-secondary)',
             lineHeight: 1.5,
             display: '-webkit-box',
             WebkitLineClamp: 3,
@@ -1162,11 +1168,12 @@ const CourseCard: React.FC<CourseCardProps> = ({
               gap: '5px',
               padding: '3px 8px',
               borderRadius: '6px',
-              backgroundColor: '#EDF8EE',
-              color: '#286B37',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              color: 'var(--brand-primary)',
               fontSize: '0.74rem',
               fontWeight: 700,
               width: 'fit-content',
+              border: '1px solid var(--border-subtle)',
             }}
           >
             <Terminal size={12} />
@@ -1181,18 +1188,18 @@ const CourseCard: React.FC<CourseCardProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderTop: '1px solid #F0F4EC',
+          borderTop: '1px solid var(--border-subtle)',
           paddingTop: '14px',
           marginTop: '4px',
         }}
       >
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <Clock size={13} color="#43A85B" /> {course.duration_hours}h
+            <Clock size={13} color="var(--brand-primary)" /> {course.duration_hours}h
           </span>
           <span>•</span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <BookOpen size={13} color="#43A85B" /> {course.modules.length} modules
+            <BookOpen size={13} color="var(--brand-primary)" /> {course.modules.length} modules
           </span>
         </div>
 
@@ -1203,8 +1210,8 @@ const CourseCard: React.FC<CourseCardProps> = ({
             onSelectCourse(course.slug);
           }}
           style={{
-            backgroundColor: isHovered ? '#43A85B' : '#EBF5E9',
-            color: isHovered ? '#FFFFFF' : '#26352A',
+            backgroundColor: isHovered ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+            color: isHovered ? '#FFFFFF' : 'var(--text-primary)',
             border: 'none',
             borderRadius: '100px',
             padding: '7px 16px',

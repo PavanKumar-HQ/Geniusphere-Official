@@ -4,6 +4,9 @@ import {
   executeCCode,
   executeJavaScriptCode,
   executeSqlCode,
+  executeTypeScriptCode,
+  executeCppCode,
+  executeJavaCode,
   STARTER_TEMPLATES,
 } from '../src/utils/codeSandboxRunner';
 
@@ -206,10 +209,17 @@ throw new Error("Explicit test fault");
       const jsTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'javascript');
       const sqlTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'sql');
 
+      const tsTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'typescript');
+      const cppTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'cpp');
+      const javaTemplates = STARTER_TEMPLATES.filter((t) => t.language === 'java');
+
       expect(pythonTemplates.length).toBeGreaterThanOrEqual(3);
       expect(cTemplates.length).toBeGreaterThanOrEqual(3);
       expect(jsTemplates.length).toBeGreaterThanOrEqual(2);
       expect(sqlTemplates.length).toBeGreaterThanOrEqual(2);
+      expect(tsTemplates.length).toBeGreaterThanOrEqual(1);
+      expect(cppTemplates.length).toBeGreaterThanOrEqual(1);
+      expect(javaTemplates.length).toBeGreaterThanOrEqual(1);
 
       // Verify all Python starter templates execute without errors
       pythonTemplates.forEach((tpl) => {
@@ -242,6 +252,51 @@ throw new Error("Explicit test fault");
         expect(res.exitCode).toBe(0);
         expect(res.stdout.length).toBeGreaterThan(0);
       });
+    });
+  });
+
+  describe('TypeScript, C++, and Java Execution Engines', () => {
+    it('executes TypeScript code with interface contracts and static types', () => {
+      const code = `
+interface Learner {
+  name: string;
+  xp: number;
+}
+const student: Learner = { name: "Aarav", xp: 1200 };
+console.log("Verified:", student.name, student.xp);
+`;
+      const res = executeTypeScriptCode(code);
+      expect(res.hasErrors).toBe(false);
+      expect(res.exitCode).toBe(0);
+      expect(res.stdout.some((l) => l.includes('Verified: Aarav 1200'))).toBe(true);
+    });
+
+    it('executes C++ streams with std::cout and formatted expressions', () => {
+      const code = `
+#include <iostream>
+int main() {
+    std::cout << "C++ Engine Status: Online" << std::endl;
+    return 0;
+}
+`;
+      const res = executeCppCode(code);
+      expect(res.hasErrors).toBe(false);
+      expect(res.exitCode).toBe(0);
+      expect(res.stdout.some((l) => l.includes('C++ Engine Status: Online'))).toBe(true);
+    });
+
+    it('executes Java code with System.out.println in class Main', () => {
+      const code = `
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Java JVM Status: Online");
+    }
+}
+`;
+      const res = executeJavaCode(code);
+      expect(res.hasErrors).toBe(false);
+      expect(res.exitCode).toBe(0);
+      expect(res.stdout.some((l) => l.includes('Java JVM Status: Online'))).toBe(true);
     });
   });
 });

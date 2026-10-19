@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Lesson, CourseEnrollment, Certificate } from '../types';
-import { ConceptSvgAnimation } from './ConceptSvgAnimation';
+import { SharedLabWorkspace } from './SharedLabWorkspace';
 import { LessonCodingSandbox } from './LessonCodingSandbox';
 import { CertificateModal } from './CertificateModal';
 import {
@@ -17,15 +17,18 @@ import {
   Video as VideoIcon,
   Terminal as TerminalIcon,
   BookOpen,
-  Sparkles,
   RotateCcw,
+  FlaskConical,
 } from 'lucide-react';
+
+import { SupportedLanguage } from '../utils/codeSandboxRunner';
+import { CODING_CONCEPTS } from '../data/codingConcepts';
 
 interface LessonPlayerProps {
   db: InMemoryDatabase;
   courseId: string;
   initialLessonId: string;
-  initialTab?: 'video' | 'animation' | 'sandbox';
+  initialTab?: 'video' | 'lab' | 'sandbox' | 'animation' | 'concepts';
   currentUserId: string;
   onBackToCourse: () => void;
   onLaunchLab?: (courseSlug: string) => void;
@@ -304,7 +307,12 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
 }) => {
   const course = db.getCourseById(courseId);
   const [currentLessonId, setCurrentLessonId] = useState<string>(initialLessonId);
-  const [activeTab, setActiveTab] = useState<'video' | 'animation' | 'sandbox'>(initialTab || 'video');
+  const [activeTab, setActiveTab] = useState<'video' | 'lab' | 'sandbox'>(() => {
+    if (initialTab === 'animation' || initialTab === 'lab') return 'lab';
+    if (initialTab === 'sandbox') return 'sandbox';
+    return 'video';
+  });
+  const [electedLanguage, setElectedLanguage] = useState<SupportedLanguage>('python');
   const [enrollment, setEnrollment] = useState<CourseEnrollment>(
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
@@ -362,6 +370,31 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     (activeLesson?.video_id && activeLesson.video_id !== 'dQw4w9WgXcQ'
       ? activeLesson.video_id
       : fallbackVideoId);
+
+  const matchedConcept = useMemo(() => {
+    const title = (activeLesson?.title || '').toLowerCase();
+    const courseTitle = (course?.title || '').toLowerCase();
+    const combined = `${title} ${courseTitle}`;
+    if (combined.includes('function') || combined.includes('method') || combined.includes('scope')) {
+      return CODING_CONCEPTS.find((c) => c.id === 'functions') || CODING_CONCEPTS[0];
+    }
+    if (combined.includes('loop') || combined.includes('iterat')) {
+      return CODING_CONCEPTS.find((c) => c.id === 'loops') || CODING_CONCEPTS[0];
+    }
+    if (combined.includes('condition') || combined.includes('logic') || combined.includes('if')) {
+      return CODING_CONCEPTS.find((c) => c.id === 'conditionals') || CODING_CONCEPTS[0];
+    }
+    if (combined.includes('hash') || combined.includes('dict') || combined.includes('map') || combined.includes('collection')) {
+      return CODING_CONCEPTS.find((c) => c.id === 'hashmaps') || CODING_CONCEPTS[0];
+    }
+    if (combined.includes('class') || combined.includes('object') || combined.includes('oop') || combined.includes('struct')) {
+      return CODING_CONCEPTS.find((c) => c.id === 'oop_classes') || CODING_CONCEPTS[0];
+    }
+    if (combined.includes('error') || combined.includes('exception') || combined.includes('defense') || combined.includes('security') || combined.includes('inject')) {
+      return CODING_CONCEPTS.find((c) => c.id === 'error_handling') || CODING_CONCEPTS[0];
+    }
+    return CODING_CONCEPTS.find((c) => c.id === 'variables_types') || CODING_CONCEPTS[0];
+  }, [activeLesson, course]);
 
   const activeVideoMeta = useMemo(() => {
     return videoLessons.find((v) => v.youtube_id === activeVideoId);
@@ -445,12 +478,12 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
 
         {/* Gamification Pills */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#D9F477', color: '#26352A', fontWeight: 800, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px' }}>
-            <Flame size={13} color="#26352A" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: 'var(--brand-lime)', color: 'var(--brand-lime-text)', fontWeight: 800, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px' }}>
+            <Flame size={13} color="var(--brand-lime-text)" />
             <span>{userProgress.streak_days}-Day Streak</span>
           </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#E5F0DF', color: '#26352A', fontWeight: 700, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px', border: '1px solid rgba(38, 53, 42, 0.12)' }}>
-            <Zap size={13} color="#43A85B" />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: 'var(--bg-surface-subdued)', color: 'var(--brand-primary)', fontWeight: 700, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+            <Zap size={13} color="var(--brand-primary)" />
             <span>{userProgress.xp} XP</span>
           </div>
         </div>
@@ -580,7 +613,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                 {activeLesson.summary}
               </p>
 
-              {/* 3-MODALITY LEARNING TABS */}
+              {/* 3-MODALITY INTEGRATED LEARNING TABS */}
               <div style={{ display: 'flex', gap: '8px', padding: '4px', backgroundColor: 'var(--bg-canvas)', borderRadius: '10px', border: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}>
                 <button
                   type="button"
@@ -601,18 +634,18 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   }}
                 >
                   <VideoIcon size={15} />
-                  <span>1. Video & Theory</span>
+                  <span>1. Video Lectures & Notes (10 Sub-Videos)</span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab('animation')}
+                  onClick={() => setActiveTab('lab')}
                   style={{
                     height: '38px',
                     padding: '0 16px',
                     borderRadius: '8px',
-                    backgroundColor: activeTab === 'animation' ? 'var(--brand-primary)' : 'transparent',
-                    color: activeTab === 'animation' ? '#FFFFFF' : 'var(--text-secondary)',
+                    backgroundColor: activeTab === 'lab' ? 'var(--brand-primary)' : 'transparent',
+                    color: activeTab === 'lab' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     display: 'flex',
@@ -622,8 +655,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     cursor: 'pointer',
                   }}
                 >
-                  <TerminalIcon size={15} />
-                  <span>2. Interactive Lab Simulation</span>
+                  <FlaskConical size={15} />
+                  <span>2. Integrated Course Lab</span>
                 </button>
 
                 <button
@@ -645,7 +678,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   }}
                 >
                   <TerminalIcon size={15} />
-                  <span>3. Sandbox Simulation (+100 XP)</span>
+                  <span>3. Hands-On Code Sandbox (+100 XP)</span>
                 </button>
 
                 {onLaunchLab && (
@@ -666,10 +699,10 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       border: '1px solid var(--brand-border)',
                       cursor: 'pointer',
                     }}
-                    title="Launch associated interactive concept lab"
+                    title="Open lab in full screen workspace"
                   >
-                    <TerminalIcon size={14} />
-                    <span>Launch Full Lab</span>
+                    <FlaskConical size={14} />
+                    <span>Open Full-Screen Lab</span>
                   </button>
                 )}
               </div>
@@ -708,18 +741,18 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     />
                   </div>
 
-                  {/* 10 Verified Educational Video Selector Grid */}
+                  {/* All 10 Course Sub-Videos Selector */}
                   <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Sparkles size={16} color="var(--brand-primary)" />
-                          <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                            10 Verified Educational Video Masterclasses
+                          <VideoIcon size={16} color="var(--brand-primary)" />
+                          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                            Course Sub-Videos & Lectures ({allLessons.length} Sub-Videos Inside)
                           </span>
                         </div>
                         <p style={{ margin: '2px 0 0', fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                          Click any verified lecture below to switch video stream immediately (MIT, Harvard CS50, 3Blue1Brown, Ray Dalio, Khan Academy).
+                          All 10 sub-videos are integrated inside this course. Click any video below to switch lecture stream, notes, and quiz immediately.
                         </p>
                       </div>
 
@@ -742,7 +775,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                           }}
                         >
                           <RotateCcw size={12} />
-                          Reset to Default
+                          Reset to Current Lesson Video
                         </button>
                       )}
                     </div>
@@ -750,18 +783,25 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(215px, 1fr))',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))',
                         gap: '12px',
                         padding: '4px 2px',
                       }}
                     >
-                      {videoLessons.map((v, vIdx) => {
-                        const isCurrent = v.youtube_id === activeVideoId;
+                      {allLessons.map((les, lesIdx) => {
+                        const isCurrent = les.id === activeLesson?.id;
+                        const isDone = enrollment.completed_lessons.includes(les.id);
                         return (
                           <button
-                            key={v.id}
+                            key={les.id}
                             type="button"
-                            onClick={() => setOverrideVideoId(v.youtube_id)}
+                            onClick={() => {
+                              setCurrentLessonId(les.id);
+                              setOverrideVideoId(null);
+                              setSelectedAnswers({});
+                              setQuizSubmitted(false);
+                              setQuizScore(null);
+                            }}
                             style={{
                               display: 'flex',
                               flexDirection: 'column',
@@ -775,7 +815,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                               cursor: 'pointer',
                               transition: 'all 0.15s ease',
                               gap: '8px',
-                              minHeight: '112px',
+                              minHeight: '105px',
                               width: '100%',
                               boxSizing: 'border-box',
                               overflow: 'hidden',
@@ -788,17 +828,17 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                                   fontSize: '0.66rem',
                                   fontWeight: 800,
                                   textTransform: 'uppercase',
-                                  backgroundColor: isCurrent ? 'var(--brand-primary)' : '#E5F0DF',
-                                  color: isCurrent ? '#FFFFFF' : '#26352A',
+                                  backgroundColor: isCurrent ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                                  color: isCurrent ? '#FFFFFF' : 'var(--text-secondary)',
                                   padding: '2px 7px',
                                   borderRadius: '6px',
                                   letterSpacing: '0.04em',
                                 }}
                               >
-                                {v.category}
+                                {isCurrent ? '▶ NOW PLAYING' : `VIDEO ${lesIdx + 1}`}
                               </span>
                               <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)' }}>
-                                {v.duration_minutes}m
+                                {les.duration_minutes}m
                               </span>
                             </div>
 
@@ -806,7 +846,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                               style={{
                                 fontSize: '0.8rem',
                                 fontWeight: 700,
-                                color: 'var(--text-primary)',
+                                color: isCurrent ? 'var(--brand-primary)' : 'var(--text-primary)',
                                 lineHeight: 1.35,
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
@@ -815,31 +855,205 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                                 textOverflow: 'ellipsis',
                                 width: '100%',
                               }}
-                              title={v.title}
+                              title={les.title}
                             >
-                              {vIdx + 1}. {v.title}
+                              {les.title}
                             </div>
 
                             <div
                               style={{
-                                fontSize: '0.72rem',
-                                color: 'var(--text-muted)',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
                                 width: '100%',
-                                textAlign: 'left',
                                 marginTop: 'auto',
                               }}
-                              title={v.instructor_name || 'Academic Institution'}
                             >
-                              {v.instructor_name || 'Academic Institution'}
+                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                Module {lesIdx + 1}
+                              </span>
+                              {isDone ? (
+                                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.7rem', color: 'var(--brand-primary)', fontWeight: 700 }}>
+                                  <CheckCircle2 size={12} /> Done
+                                </span>
+                              ) : (
+                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                  Incomplete
+                                </span>
+                              )}
                             </div>
                           </button>
                         );
                       })}
                     </div>
                   </div>
+                </div>
+
+                {/* Elected Programming Language Banner & Live Tailored Concept */}
+                <div
+                  className="card"
+                  style={{
+                    padding: '20px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '14px',
+                    border: '1.5px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-surface)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <TerminalIcon size={20} color="var(--brand-primary)" />
+                      <div>
+                        <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                          Elected Language:{' '}
+                          <span style={{ textTransform: 'uppercase', color: 'var(--brand-primary)' }}>
+                            {electedLanguage}
+                          </span>
+                        </h4>
+                        <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                          Showing computational logic and syntax tailored to your chosen language.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Quick Language Switcher Pills */}
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {(
+                        [
+                          { id: 'python', label: 'Python', icon: '🐍' },
+                          { id: 'javascript', label: 'JavaScript', icon: '⚡' },
+                          { id: 'typescript', label: 'TypeScript', icon: '🔷' },
+                          { id: 'cpp', label: 'C++', icon: '⚙️' },
+                          { id: 'java', label: 'Java', icon: '☕' },
+                          { id: 'c', label: 'C', icon: '🔧' },
+                          { id: 'sql', label: 'SQL', icon: '🗄️' },
+                        ] as const
+                      ).map((lang) => (
+                        <button
+                          key={lang.id}
+                          type="button"
+                          onClick={() => setElectedLanguage(lang.id)}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '100px',
+                            fontSize: '0.76rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            border: electedLanguage === lang.id ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                            backgroundColor: electedLanguage === lang.id ? 'var(--bg-surface-subdued)' : 'var(--bg-canvas)',
+                            color: electedLanguage === lang.id ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <span>{lang.icon}</span>
+                          <span>{lang.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tailored Code Snippet and Mental Model for Elected Language */}
+                  {matchedConcept && matchedConcept.languages[electedLanguage] && (
+                    <div
+                      style={{
+                        backgroundColor: 'var(--bg-surface-subdued)',
+                        borderRadius: '12px',
+                        padding: '14px 16px',
+                        border: '1px solid var(--border-subtle)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                        <span style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
+                          💻 {matchedConcept.title} Implementation in{' '}
+                          <span style={{ textTransform: 'capitalize' }}>{electedLanguage}</span>
+                        </span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            type="button"
+                            onClick={() => setActiveTab('sandbox')}
+                            style={{
+                              padding: '4px 10px',
+                              borderRadius: '100px',
+                              backgroundColor: 'var(--brand-primary)',
+                              border: 'none',
+                              fontSize: '0.74rem',
+                              fontWeight: 700,
+                              color: '#FFFFFF',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <Play size={12} /> Run in Sandbox
+                          </button>
+                        </div>
+                      </div>
+
+                      <pre
+                        style={{
+                          margin: 0,
+                          padding: '12px 14px',
+                          backgroundColor: 'var(--editor-bg, #111827)',
+                          borderRadius: '8px',
+                          color: '#E5E7EB',
+                          fontSize: '0.82rem',
+                          fontFamily: 'var(--font-mono, monospace)',
+                          overflowX: 'auto',
+                          border: '1px solid var(--border-subtle)',
+                        }}
+                      >
+                        <code>{matchedConcept.languages[electedLanguage].code}</code>
+                      </pre>
+
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        <strong>Computational Model:</strong> {matchedConcept.computationalModel}
+                      </div>
+
+                      <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                        <strong>Explanation:</strong> {matchedConcept.languages[electedLanguage].explanation}
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
+                        {matchedConcept.languages[electedLanguage].syntaxStyle && (
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              backgroundColor: 'var(--bg-surface)',
+                              color: 'var(--brand-primary)',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              border: '1px solid var(--border-subtle)',
+                              fontWeight: 700,
+                            }}
+                          >
+                            Syntax: {matchedConcept.languages[electedLanguage].syntaxStyle}
+                          </span>
+                        )}
+                        {matchedConcept.languages[electedLanguage].proTip && (
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              backgroundColor: 'var(--bg-surface)',
+                              color: 'var(--text-muted)',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              border: '1px solid var(--border-subtle)',
+                            }}
+                          >
+                            💡 Pro Tip: {matchedConcept.languages[electedLanguage].proTip}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Lesson Markdown Notes */}
@@ -936,22 +1150,129 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               </div>
             )}
 
-            {/* TAB 2: INTERACTIVE SVG VISUALIZER */}
-            {activeTab === 'animation' && (
+            {/* TAB 2: INTEGRATED COURSE LAB (REAL WORKING LAB, NO FAKE HUD SIMULATION) */}
+            {activeTab === 'lab' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <ConceptSvgAnimation
-                  type={activeLesson.svg_animation_type || 'logic_gates'}
-                  title={activeLesson.title}
-                  moduleId={activeLesson.module_id}
-                  lessonId={activeLesson.id}
-                  courseTitle={course.title}
+                <div
+                  className="card"
+                  style={{
+                    padding: '16px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '12px',
+                    borderLeft: '4px solid var(--brand-primary)',
+                    backgroundColor: 'var(--bg-surface)',
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span className="badge badge-accent" style={{ fontSize: '0.72rem' }}>PRACTICAL LAB</span>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                        {course.title} — Integrated Hands-On Lab
+                      </h3>
+                    </div>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                      Complete real-world engineering objectives, run validation benchmarks, and earn XP.
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => setActiveTab('video')}
+                      style={{ height: '36px', fontSize: '0.8rem' }}
+                    >
+                      <ArrowLeft size={14} /> Back to Video Lectures
+                    </button>
+                  </div>
+                </div>
+
+                <SharedLabWorkspace
+                  db={db}
+                  labSlug={course.linked_lab_slug || 'ai-classification-playground'}
+                  currentUserId={currentUserId}
+                  onNavigateBack={() => setActiveTab('video')}
+                  onSelectCourse={() => onBackToCourse()}
                 />
               </div>
             )}
 
-            {/* TAB 3: INTERACTIVE SANDBOX SIMULATION */}
+            {/* TAB 3: HANDS-ON CODE SANDBOX */}
             {activeTab === 'sandbox' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Language Switcher Toolbar for Lessons */}
+                <div
+                  style={{
+                    backgroundColor: 'var(--bg-surface)',
+                    padding: '12px 18px',
+                    borderRadius: '12px',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                      Elected Sandbox Language:
+                    </span>
+                    <span
+                      style={{
+                        backgroundColor: 'var(--bg-surface-subdued)',
+                        color: 'var(--brand-primary)',
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        fontSize: '0.74rem',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        border: '1px solid var(--border-subtle)',
+                      }}
+                    >
+                      {electedLanguage}
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                    {(
+                      [
+                        { id: 'python', label: 'Python', icon: '🐍' },
+                        { id: 'javascript', label: 'JS', icon: '⚡' },
+                        { id: 'typescript', label: 'TS', icon: '🔷' },
+                        { id: 'cpp', label: 'C++', icon: '⚙️' },
+                        { id: 'java', label: 'Java', icon: '☕' },
+                        { id: 'c', label: 'C', icon: '🔧' },
+                        { id: 'sql', label: 'SQL', icon: '🗄️' },
+                      ] as const
+                    ).map((lang) => (
+                      <button
+                        key={lang.id}
+                        type="button"
+                        onClick={() => setElectedLanguage(lang.id)}
+                        style={{
+                          padding: '3px 8px',
+                          borderRadius: '100px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          border: electedLanguage === lang.id ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                          backgroundColor: electedLanguage === lang.id ? 'var(--bg-surface-subdued)' : 'var(--bg-surface)',
+                          color: electedLanguage === lang.id ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                        }}
+                      >
+                        <span>{lang.icon}</span>
+                        <span>{lang.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <LessonCodingSandbox
                   config={activeLesson.sandbox_config || {
                     title: 'Defensive SQL Sandbox',

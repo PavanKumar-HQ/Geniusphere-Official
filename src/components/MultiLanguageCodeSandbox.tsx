@@ -6,9 +6,8 @@ import {
   Check,
   Terminal,
   FileCode,
-  Code2,
-  Cpu,
-  Database,
+  Layers,
+  X,
 } from 'lucide-react';
 import { CodeEditor } from './CodeEditor';
 import { MascotSphere } from './MascotSphere';
@@ -19,26 +18,34 @@ import {
   executePythonCode,
   executeCCode,
   executeJavaScriptCode,
+  executeTypeScriptCode,
+  executeCppCode,
+  executeJavaCode,
   executeSqlCode,
   ExecutionResult,
 } from '../utils/codeSandboxRunner';
+import { CodingConceptsExplorer } from './CodingConceptsExplorer';
 
 interface MultiLanguageCodeSandboxProps {
   initialLanguage?: SupportedLanguage;
+  initialCode?: string;
   onRunSuccess?: (result: ExecutionResult) => void;
 }
 
 export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> = ({
   initialLanguage = 'python',
+  initialCode: propInitialCode,
   onRunSuccess,
 }) => {
   const [language, setLanguage] = useState<SupportedLanguage>(initialLanguage);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('py-basics');
+  const [showConceptModal, setShowConceptModal] = useState<boolean>(false);
 
   // Filter templates for current language
   const availableTemplates = STARTER_TEMPLATES.filter((t) => t.language === language);
 
   const initialCode =
+    propInitialCode ||
     availableTemplates.find((t) => t.id === selectedTemplateId)?.code ||
     availableTemplates[0]?.code ||
     'print("Hello from Geniusphere!")';
@@ -48,15 +55,17 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
 
-  // When language changes, update template and code
+  // When language changes, update template and code if no explicit propInitialCode
   useEffect(() => {
-    const defaultTpl = STARTER_TEMPLATES.find((t) => t.language === language);
-    if (defaultTpl) {
-      setSelectedTemplateId(defaultTpl.id);
-      setCode(defaultTpl.code);
-      setResult(null);
+    if (!propInitialCode) {
+      const defaultTpl = STARTER_TEMPLATES.find((t) => t.language === language);
+      if (defaultTpl) {
+        setSelectedTemplateId(defaultTpl.id);
+        setCode(defaultTpl.code);
+        setResult(null);
+      }
     }
-  }, [language]);
+  }, [language, propInitialCode]);
 
   const handleSelectTemplate = (id: string) => {
     setSelectedTemplateId(id);
@@ -71,19 +80,32 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
     setIsRunning(true);
     setResult(null);
 
-    // Simulate realistic execution tick for visual feedback
     setTimeout(() => {
       let res: ExecutionResult;
-      if (language === 'python') {
-        res = executePythonCode(code);
-      } else if (language === 'c') {
-        res = executeCCode(code);
-      } else if (language === 'javascript') {
-        res = executeJavaScriptCode(code);
-      } else if (language === 'sql') {
-        res = executeSqlCode(code);
-      } else {
-        res = executePythonCode(code);
+      switch (language) {
+        case 'python':
+          res = executePythonCode(code);
+          break;
+        case 'c':
+          res = executeCCode(code);
+          break;
+        case 'javascript':
+          res = executeJavaScriptCode(code);
+          break;
+        case 'typescript':
+          res = executeTypeScriptCode(code);
+          break;
+        case 'cpp':
+          res = executeCppCode(code);
+          break;
+        case 'java':
+          res = executeJavaCode(code);
+          break;
+        case 'sql':
+          res = executeSqlCode(code);
+          break;
+        default:
+          res = executePythonCode(code);
       }
 
       setResult(res);
@@ -116,6 +138,58 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [code, language]);
 
+  const getFileExtension = (lang: SupportedLanguage) => {
+    switch (lang) {
+      case 'python':
+        return 'main.py';
+      case 'c':
+        return 'main.c';
+      case 'javascript':
+        return 'index.js';
+      case 'typescript':
+        return 'index.ts';
+      case 'cpp':
+        return 'main.cpp';
+      case 'java':
+        return 'Main.java';
+      case 'sql':
+        return 'query.sql';
+      default:
+        return 'script.txt';
+    }
+  };
+
+  const getMascotMessage = (lang: SupportedLanguage) => {
+    switch (lang) {
+      case 'python':
+        return 'Python v3.12 active! Try testing loops and functions!';
+      case 'c':
+        return 'C Language environment ready! Test pointers and memory bounds!';
+      case 'javascript':
+        return 'Modern ES6+ engine active! Test async, closures, and array methods!';
+      case 'typescript':
+        return 'TypeScript 5.x active! Test interfaces and compile-time type verification!';
+      case 'cpp':
+        return 'C++20 environment ready! Test std::cout, vectors, and memory safety!';
+      case 'java':
+        return 'Java 21 OpenJDK ready! Test classes and OOP principles!';
+      case 'sql':
+        return 'Relational SQL active! Run live queries against Geniusphere student DB!';
+      default:
+        return 'Coding environment active!';
+    }
+  };
+
+  const languagesList: Array<{ id: SupportedLanguage; label: string; icon: string }> = [
+    { id: 'python', label: 'Python 3.12', icon: '🐍' },
+    { id: 'javascript', label: 'JavaScript', icon: '🟨' },
+    { id: 'typescript', label: 'TypeScript', icon: '🔷' },
+    { id: 'cpp', label: 'C++ (C++20)', icon: '⚡' },
+    { id: 'java', label: 'Java 21', icon: '☕' },
+    { id: 'c', label: 'C Language', icon: '⚙️' },
+    { id: 'sql', label: 'Relational SQL', icon: '🗄️' },
+  ];
+
   return (
     <div
       style={{
@@ -137,68 +211,53 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
           gap: '16px',
           padding: '18px 24px',
           borderRadius: '16px',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <MascotSphere
             pose="coding"
             size={52}
-            speechBubble={
-              language === 'python'
-                ? 'Python v3.12 active! Try testing loops and functions!'
-                : language === 'c'
-                ? 'C Language environment ready! Test pointers and memory bounds!'
-                : language === 'javascript'
-                ? 'Modern ES6+ engine active! Test async, closures, and array methods!'
-                : 'Relational SQL active! Run live queries against Geniusphere student DB!'
-            }
+            speechBubble={getMascotMessage(language)}
           />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <h2 style={{ fontSize: '1.35rem', margin: 0, fontWeight: 800, color: '#26352A' }}>
+              <h2 style={{ fontSize: '1.35rem', margin: 0, fontWeight: 800, color: 'var(--text-primary)' }}>
                 Multi-Language Coding Sandbox
               </h2>
               <span
                 style={{
-                  backgroundColor: '#E5F0DF',
-                  color: '#26352A',
+                  backgroundColor: 'var(--bg-surface-subdued)',
+                  color: 'var(--brand-primary)',
                   fontSize: '0.72rem',
                   fontWeight: 800,
                   padding: '2px 8px',
                   borderRadius: '100px',
                   textTransform: 'uppercase',
+                  border: '1px solid var(--border-subtle)',
                 }}
               >
                 In-Browser Engine
               </span>
             </div>
-            <p style={{ margin: 0, color: '#6A7D70', fontSize: '0.86rem' }}>
-              Write, compile, and execute real <strong>Python</strong>, <strong>C</strong>, <strong>JavaScript</strong>, and <strong>SQL</strong> code with live stdout terminal feedback.
+            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.86rem' }}>
+              Write, compile, and execute real <strong>Python</strong>, <strong>JavaScript</strong>, <strong>TypeScript</strong>, <strong>C++</strong>, <strong>Java</strong>, <strong>C</strong>, and <strong>SQL</strong> code.
             </p>
           </div>
         </div>
 
-        {/* Language Tabs Selector */}
-        <div
-          style={{
-            display: 'inline-flex',
-            backgroundColor: '#FAFAF4',
-            border: '1.5px solid #E5F0DF',
-            padding: '4px',
-            borderRadius: '100px',
-            gap: '4px',
-            flexWrap: 'wrap',
-          }}
-        >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          {/* Compare Concepts Across Languages Button */}
           <button
             type="button"
-            onClick={() => setLanguage('python')}
+            onClick={() => setShowConceptModal(true)}
             style={{
               padding: '8px 16px',
               borderRadius: '100px',
-              border: 'none',
-              backgroundColor: language === 'python' ? '#43A85B' : 'transparent',
-              color: language === 'python' ? '#FFFFFF' : '#26352A',
+              border: '1px solid var(--brand-primary)',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              color: 'var(--brand-primary)',
               fontWeight: 800,
               fontSize: '0.82rem',
               cursor: 'pointer',
@@ -206,81 +265,49 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               alignItems: 'center',
               gap: '6px',
               transition: 'all 0.15s ease',
-              boxShadow: language === 'python' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
             }}
           >
-            <Code2 size={15} />
-            <span>Python 3.12</span>
+            <Layers size={14} />
+            <span>Compare Coding Concepts</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setLanguage('c')}
+          {/* Language Tabs Selector */}
+          <div
             style={{
-              padding: '8px 16px',
+              display: 'inline-flex',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              border: '1px solid var(--border-subtle)',
+              padding: '4px',
               borderRadius: '100px',
-              border: 'none',
-              backgroundColor: language === 'c' ? '#43A85B' : 'transparent',
-              color: language === 'c' ? '#FFFFFF' : '#26352A',
-              fontWeight: 800,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.15s ease',
-              boxShadow: language === 'c' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
+              gap: '4px',
+              flexWrap: 'wrap',
             }}
           >
-            <Cpu size={15} />
-            <span>C Language</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setLanguage('javascript')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '100px',
-              border: 'none',
-              backgroundColor: language === 'javascript' ? '#43A85B' : 'transparent',
-              color: language === 'javascript' ? '#FFFFFF' : '#26352A',
-              fontWeight: 800,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.15s ease',
-              boxShadow: language === 'javascript' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
-            }}
-          >
-            <FileCode size={15} />
-            <span>JavaScript</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setLanguage('sql')}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '100px',
-              border: 'none',
-              backgroundColor: language === 'sql' ? '#43A85B' : 'transparent',
-              color: language === 'sql' ? '#FFFFFF' : '#26352A',
-              fontWeight: 800,
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.15s ease',
-              boxShadow: language === 'sql' ? '0 2px 6px rgba(67, 168, 91, 0.25)' : 'none',
-            }}
-          >
-            <Database size={15} />
-            <span>Relational SQL</span>
-          </button>
+            {languagesList.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setLanguage(item.id)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '100px',
+                  border: 'none',
+                  backgroundColor: language === item.id ? 'var(--brand-primary)' : 'transparent',
+                  color: language === item.id ? '#FFFFFF' : 'var(--text-primary)',
+                  fontWeight: 800,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -291,13 +318,13 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
           alignItems: 'center',
           gap: '10px',
           flexWrap: 'wrap',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E5F0DF',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
           borderRadius: '12px',
           padding: '10px 16px',
         }}
       >
-        <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase' }}>
+        <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
           Starter Programs:
         </span>
         {availableTemplates.map((tpl) => (
@@ -310,9 +337,9 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               borderRadius: '100px',
               fontSize: '0.8rem',
               fontWeight: selectedTemplateId === tpl.id ? 800 : 600,
-              backgroundColor: selectedTemplateId === tpl.id ? '#E5F0DF' : '#FAFAF4',
-              border: selectedTemplateId === tpl.id ? '1.5px solid #43A85B' : '1px solid #E5F0DF',
-              color: '#26352A',
+              backgroundColor: selectedTemplateId === tpl.id ? 'var(--bg-surface-subdued)' : 'var(--bg-surface)',
+              border: selectedTemplateId === tpl.id ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+              color: selectedTemplateId === tpl.id ? 'var(--brand-primary)' : 'var(--text-primary)',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -339,15 +366,16 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             flexDirection: 'column',
             padding: 0,
             overflow: 'hidden',
-            border: '1.5px solid #E5F0DF',
+            border: '1px solid var(--border-subtle)',
             borderRadius: '16px',
+            backgroundColor: 'var(--bg-surface)',
           }}
         >
           {/* Editor Header Toolbar */}
           <div
             style={{
-              backgroundColor: '#FAFAF4',
-              borderBottom: '1px solid #E5F0DF',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              borderBottom: '1px solid var(--border-subtle)',
               padding: '10px 18px',
               display: 'flex',
               justifyContent: 'space-between',
@@ -355,11 +383,11 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <FileCode size={16} color="#43A85B" />
-              <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#26352A' }}>
-                {language === 'python' ? 'main.py' : 'main.c'}
+              <FileCode size={16} color="var(--brand-primary)" />
+              <span style={{ fontSize: '0.82rem', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
+                {getFileExtension(language)}
               </span>
-              <span style={{ fontSize: '0.72rem', color: '#6A7D70' }}>• UTF-8</span>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>• UTF-8</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -368,12 +396,12 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                 onClick={handleCopyCode}
                 style={{
                   background: 'none',
-                  border: '1px solid #E5F0DF',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '6px',
                   padding: '4px 10px',
                   fontSize: '0.74rem',
                   fontWeight: 600,
-                  color: '#26352A',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -381,7 +409,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                 }}
                 title="Copy code to clipboard"
               >
-                {copied ? <Check size={12} color="#43A85B" /> : <Copy size={12} />}
+                {copied ? <Check size={12} color="var(--brand-primary)" /> : <Copy size={12} />}
                 <span>{copied ? 'Copied' : 'Copy'}</span>
               </button>
 
@@ -390,12 +418,12 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                 onClick={handleReset}
                 style={{
                   background: 'none',
-                  border: '1px solid #E5F0DF',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '6px',
                   padding: '4px 10px',
                   fontSize: '0.74rem',
                   fontWeight: 600,
-                  color: '#26352A',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -410,7 +438,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
           </div>
 
           {/* CodeMirror Editor Area */}
-          <div style={{ flex: 1, minHeight: '360px', backgroundColor: '#FFFFFF' }}>
+          <div style={{ flex: 1, minHeight: '360px', backgroundColor: 'var(--editor-bg, #0B1120)' }}>
             <CodeEditor
               value={code}
               onChange={(newVal) => setCode(newVal)}
@@ -422,15 +450,15 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
           <div
             style={{
               padding: '12px 18px',
-              backgroundColor: '#FAFAF4',
-              borderTop: '1px solid #E5F0DF',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              borderTop: '1px solid var(--border-subtle)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}
           >
-            <span style={{ fontSize: '0.74rem', color: '#6A7D70' }}>
-              Press <kbd style={{ padding: '2px 5px', borderRadius: '4px', border: '1px solid #D2DEC9', backgroundColor: '#FFFFFF' }}>⌘+Enter</kbd> to run
+            <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+              Press <kbd style={{ padding: '2px 5px', borderRadius: '4px', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>⌘+Enter</kbd> to run
             </span>
 
             <button
@@ -446,7 +474,8 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 12px rgba(67, 168, 91, 0.25)',
+                backgroundColor: 'var(--brand-primary)',
+                color: '#FFFFFF',
               }}
             >
               <Play size={16} fill="#FFFFFF" />
@@ -458,9 +487,9 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
         {/* Right Column: Execution Terminal & Output */}
         <div
           style={{
-            backgroundColor: '#1E2B22',
+            backgroundColor: 'var(--editor-bg, #0B1120)',
             borderRadius: '16px',
-            border: '1.5px solid #2B3D30',
+            border: '1.5px solid var(--border-subtle)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -470,9 +499,9 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
           {/* Terminal Title Bar */}
           <div
             style={{
-              backgroundColor: '#16221A',
+              backgroundColor: 'rgba(0, 0, 0, 0.25)',
               padding: '12px 18px',
-              borderBottom: '1px solid #2B3D30',
+              borderBottom: '1px solid var(--border-subtle)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
@@ -484,7 +513,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981' }} />
               <span
                 style={{
-                  color: '#D5DDD2',
+                  color: 'var(--text-secondary)',
                   fontSize: '0.78rem',
                   fontFamily: 'var(--font-mono)',
                   fontWeight: 700,
@@ -538,7 +567,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
             }}
           >
             {!result && !isRunning && (
-              <div style={{ color: '#6A7D70', paddingTop: '40px', textAlign: 'center' }}>
+              <div style={{ color: 'var(--text-secondary)', paddingTop: '40px', textAlign: 'center' }}>
                 <Terminal size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
                 <p style={{ margin: 0, fontWeight: 600 }}>Terminal is ready.</p>
                 <p style={{ margin: '4px 0 0', fontSize: '0.78rem' }}>
@@ -566,6 +595,12 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                       ? 'C Native Runtime'
                       : language === 'javascript'
                       ? 'JavaScript ES6+ Engine'
+                      : language === 'typescript'
+                      ? 'TypeScript Compiler & Engine'
+                      : language === 'cpp'
+                      ? 'Clang++ C++20 Runtime'
+                      : language === 'java'
+                      ? 'OpenJDK Java 21 VM'
                       : 'Relational SQL Query'
                   }...`}
                   submessage="Isolated sandbox with memory guards & safety execution limits"
@@ -583,7 +618,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                       wordBreak: 'break-all',
                       color: line.startsWith('[GUARD]')
                         ? '#F59E0B'
-                        : line.startsWith('[SECURITY') || line.startsWith('✓')
+                        : line.startsWith('[SECURITY') || line.startsWith('✓') || line.startsWith('[TS-COMPILER]') || line.startsWith('[CLANG++') || line.startsWith('[JAVAC')
                         ? '#34D399'
                         : '#F0FDF4',
                     }}
@@ -610,8 +645,8 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                   style={{
                     marginTop: '16px',
                     paddingTop: '10px',
-                    borderTop: '1px solid #2B3D30',
-                    color: '#6A7D70',
+                    borderTop: '1px solid var(--border-subtle)',
+                    color: 'var(--text-secondary)',
                     fontSize: '0.74rem',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -625,6 +660,69 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
           </div>
         </div>
       </div>
+
+      {/* Modal for Comparing Coding Concepts */}
+      {showConceptModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'var(--bg-canvas)',
+              borderRadius: '20px',
+              maxWidth: '1240px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              padding: '24px',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+              position: 'relative',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+              <button
+                type="button"
+                onClick={() => setShowConceptModal(false)}
+                style={{
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '50%',
+                  width: '36px',
+                  height: '36px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <CodingConceptsExplorer
+              initialLanguage={language}
+              onLanguageChange={(newLang) => setLanguage(newLang)}
+              onOpenSandboxWithCode={(newCode, newLang) => {
+                setLanguage(newLang);
+                setCode(newCode);
+                setShowConceptModal(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

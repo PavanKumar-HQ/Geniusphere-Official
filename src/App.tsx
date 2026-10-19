@@ -47,6 +47,7 @@ import {
   applyTheme,
 } from './utils/themeEngine';
 import { Certificate } from './types';
+import { StreakHabitModal } from './components/StreakHabitModal';
 import {
   ShieldCheck,
   BookOpen,
@@ -72,6 +73,8 @@ import {
   PanelLeftOpen,
   Sun,
   Moon,
+  Flame,
+  Zap,
 } from 'lucide-react';
 
 export type AppView =
@@ -82,6 +85,7 @@ export type AppView =
   | 'labs'
   | 'lab-workspace'
   | 'code-sandbox'
+  | 'coding-concepts'
   | 'certificates'
   | 'resources'
   | 'leaderboard'
@@ -239,6 +243,8 @@ export const App: React.FC = () => {
   const [unreadCount, setUnreadCount] = useState<number>(() =>
     backendEngine.notifications.getUnreadCount(currentUser.id)
   );
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
+  const userProgress = useMemo(() => db.getUserProgress(currentUser.id), [db, currentUser.id, refreshTrigger]);
 
   useEffect(() => {
     backendEngine.initialize(currentUser.id, currentUser.name, currentUser.role);
@@ -356,6 +362,7 @@ export const App: React.FC = () => {
     } else if (
       view === 'home' ||
       view === 'code-sandbox' ||
+      view === 'coding-concepts' ||
       view === 'certificates' ||
       view === 'resources' ||
       view === 'leaderboard' ||
@@ -394,9 +401,9 @@ export const App: React.FC = () => {
     setCurrentView('course-detail');
   };
 
-  const [selectedLessonTab, setSelectedLessonTab] = useState<'video' | 'animation' | 'sandbox'>('video');
+  const [selectedLessonTab, setSelectedLessonTab] = useState<'video' | 'lab' | 'sandbox' | 'animation'>('video');
 
-  const handleStartLesson = (courseId: string, lessonId: string, initialTab: 'video' | 'animation' | 'sandbox' = 'video') => {
+  const handleStartLesson = (courseId: string, lessonId: string, initialTab: 'video' | 'lab' | 'sandbox' | 'animation' = 'video') => {
     setSelectedCourseId(courseId);
     setSelectedLessonId(lessonId);
     setSelectedLessonTab(initialTab);
@@ -980,14 +987,72 @@ export const App: React.FC = () => {
             {/* Realtime Live Engine Status Indicator with Live Database Explorer */}
             <RealtimeHeaderStatus currentUserId={currentUser.id} db={db} />
 
+            {/* Top Navigation Streak Widget (Matches Prototype) */}
+            <button
+              type="button"
+              onClick={() => setStreakModalOpen(true)}
+              style={{
+                height: '36px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                border: '1.5px solid rgba(245, 158, 11, 0.35)',
+                borderRadius: '100px',
+                padding: '0 12px',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                color: '#F59E0B',
+                cursor: 'pointer',
+                boxShadow: '0 0 12px rgba(245, 158, 11, 0.18)',
+                transition: 'all 0.15s ease',
+                flexShrink: 0,
+              }}
+              title="Daily Learning Streak & Habit Calendar"
+              aria-label="View Daily Learning Streak"
+            >
+              <Flame size={17} color="#F59E0B" fill="#F59E0B" />
+              <span>{userProgress.streak_days || 5}-Day Streak</span>
+            </button>
+
+            {/* Dynamic XP Pill (Matches Prototype) */}
+            <div
+              style={{
+                height: '36px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '100px',
+                padding: '0 12px',
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                color: 'var(--brand-primary)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                flexShrink: 0,
+              }}
+              title="Total Earned Experience Points"
+            >
+              <Zap size={15} color="var(--brand-primary)" fill="var(--brand-primary)" />
+              <span>{userProgress.xp || 450} XP</span>
+            </div>
+
             {/* Realtime Notification Bell Button */}
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 type="button"
+                className="btn-icon-circle"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 style={{
                   width: '36px',
                   height: '36px',
+                  minWidth: '36px',
+                  maxWidth: '36px',
+                  minHeight: '36px',
+                  maxHeight: '36px',
+                  padding: 0,
+                  boxSizing: 'border-box',
                   borderRadius: '50%',
                   border: '1px solid var(--border-subtle)',
                   backgroundColor: notificationsOpen ? 'var(--bg-surface-subdued)' : 'var(--bg-surface)',
@@ -999,11 +1064,12 @@ export const App: React.FC = () => {
                   position: 'relative',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                   transition: 'all 0.15s ease',
+                  flexShrink: 0,
                 }}
                 aria-label="Notifications"
                 title={`Live Notifications (${unreadCount} unread)`}
               >
-                <Bell size={17} color="var(--text-primary)" />
+                <Bell size={18} strokeWidth={2.2} color="var(--text-primary)" style={{ flexShrink: 0, display: 'block' }} />
                 {unreadCount > 0 && (
                   <span
                     style={{
@@ -1486,7 +1552,7 @@ export const App: React.FC = () => {
                   type="button"
                   onClick={() => handleNavigate('code-sandbox')}
                   className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
-                  title={isSidebarCollapsed ? "Coding Sandbox (Python, C, JS, SQL)" : undefined}
+                  title={isSidebarCollapsed ? "Coding Sandbox (Python, JS, TS, C++, Java, C, SQL)" : undefined}
                 >
                   <Code2 size={18} />
                   {!isSidebarCollapsed && <span className="sidebar-label">Coding Sandbox</span>}
@@ -2229,6 +2295,20 @@ export const App: React.FC = () => {
           />
         )}
 
+        {currentView === 'coding-concepts' && (
+          <CourseCatalogue
+            key={`catalog-fallback-${refreshTrigger}`}
+            db={db}
+            onSelectCourse={handleSelectCourse}
+            onLaunchLab={(slug: string) => {
+              setSelectedLabSlug(slug);
+              setCurrentView('lab-workspace');
+            }}
+            onNavigateHome={() => handleNavigate('home')}
+            initialDomain={selectedDomain}
+          />
+        )}
+
         {currentView === 'certificates' && (
           <CertificatesView
             key={`certs-${currentUserId}-${refreshTrigger}`}
@@ -2886,6 +2966,14 @@ export const App: React.FC = () => {
 
       {/* Real-Time Floating Toast Notification Stack */}
       <RealtimeToastStack onNavigate={handleNavigate} />
+
+      {/* Interactive Streak & Habit Calendar Modal */}
+      <StreakHabitModal
+        isOpen={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+        userProgress={userProgress}
+        userName={currentUser.name}
+      />
     </div>
   );
 };

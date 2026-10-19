@@ -31,6 +31,9 @@ export const RealtimeHeaderStatus: React.FC<{
         onClick={() => setConsoleOpen(true)}
         style={{
           height: '36px',
+          minHeight: '36px',
+          maxHeight: '36px',
+          boxSizing: 'border-box',
           display: 'inline-flex',
           alignItems: 'center',
           gap: '6px',

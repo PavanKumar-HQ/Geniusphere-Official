@@ -23,7 +23,7 @@ interface CourseDetailViewProps {
   courseSlug: string;
   currentUserId: string;
   onBack: () => void;
-  onStartLesson: (courseId: string, lessonId: string, initialTab?: 'video' | 'animation' | 'sandbox') => void;
+  onStartLesson: (courseId: string, lessonId: string, initialTab?: 'video' | 'lab' | 'animation' | 'sandbox') => void;
   onLaunchLab?: (labSlug: string) => void;
 }
 

@@ -178,6 +178,8 @@ export interface Course {
   availability_status: AvailabilityStatus;
   learning_path_id?: string;
   modules: CourseModule[];
+  linked_lab_id?: string;
+  linked_lab_slug?: string;
   created_at: string;
 }
 

@@ -1027,82 +1027,317 @@ export const PrivacyRadarSvg: React.FC<PrivacyRadarProps> = ({
 // ====================================================================
 // 10. DEFENSIVE SECURITY PIPELINE (Lab T5: Web Defense)
 // ====================================================================
-interface SecurityPipelineProps {
+export interface SecurityPipelineProps {
   paramQueries: boolean;
   outputEncoding: boolean;
   strictCsp: boolean;
+  payload?: string;
+  isSimulating?: boolean;
+  forceReducedMotion?: boolean;
 }
 
-export const SecurityPipelineSvg: React.FC<SecurityPipelineProps> = ({ paramQueries, outputEncoding, strictCsp }) => {
+export const SecurityPipelineSvg: React.FC<SecurityPipelineProps> = ({
+  paramQueries,
+  outputEncoding,
+  strictCsp,
+  payload = "' OR '1'='1",
+  isSimulating = false,
+  forceReducedMotion = false,
+}) => {
+  const isSqlThreat = payload.includes("'") || payload.toLowerCase().includes('select') || payload.toLowerCase().includes('or');
+  const isXssThreat = payload.includes('<script>') || payload.toLowerCase().includes('onerror') || payload.toLowerCase().includes('alert');
+
   return (
     <div
       style={{
-        padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        padding: '20px',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
-        boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
+        boxShadow: '0 2px 10px rgba(36, 76, 58, 0.04)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
       }}
     >
-      <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: '#26352A', letterSpacing: '0.04em', marginBottom: '14px' }}>
-        Defense-in-Depth Filter Inspection Pathway
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-primary)', letterSpacing: '0.04em' }}>
+          Interactive Defense Pipeline Architecture (Defense-in-Depth)
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+          <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: paramQueries && outputEncoding && strictCsp ? '#16A34A' : '#F59E0B' }} />
+          <span>Pipeline Status: {paramQueries && outputEncoding && strictCsp ? 'Hardened (Zero Trust)' : 'Partial Vulnerability Window'}</span>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+      {/* SVG Pipeline Canvas */}
+      <div style={{ width: '100%', overflowX: 'auto', backgroundColor: '#F8FAF7', borderRadius: '12px', padding: '8px', border: '1px solid #E5EBE1' }}>
+        <svg
+          viewBox="0 0 760 160"
+          style={{ width: '100%', minWidth: '680px', height: 'auto', display: 'block' }}
+          role="img"
+          aria-label="Defensive Security Pipeline SVG diagram showing untrusted input traversing SQL parameterization, HTML encoding, and CSP enforcement"
+        >
+          <defs>
+            <linearGradient id="pipeGradientActive" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#244C3A" />
+              <stop offset="100%" stopColor="#A9C86A" />
+            </linearGradient>
+            <linearGradient id="pipeGradientVulnerable" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#EF4444" />
+              <stop offset="100%" stopColor="#F87171" />
+            </linearGradient>
+            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#6B7280" />
+            </marker>
+          </defs>
+
+          {/* Connection Pathways */}
+          <path d="M 90 80 L 190 80" stroke="#CBD5E1" strokeWidth="4" strokeDasharray="4 4" markerEnd="url(#arrowhead)" />
+          <path d="M 270 80 L 370 80" stroke={paramQueries ? '#86EFAC' : '#FCA5A5'} strokeWidth="4" markerEnd="url(#arrowhead)" />
+          <path d="M 450 80 L 550 80" stroke={outputEncoding ? '#86EFAC' : '#FCA5A5'} strokeWidth="4" markerEnd="url(#arrowhead)" />
+          <path d="M 630 80 L 700 80" stroke={strictCsp ? '#86EFAC' : '#FCA5A5'} strokeWidth="4" markerEnd="url(#arrowhead)" />
+
+          {/* NODE 1: Untrusted Input Source */}
+          <g transform="translate(20, 45)">
+            <rect width="80" height="70" rx="10" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="2" />
+            <text x="40" y="28" textAnchor="middle" fontSize="10" fontWeight="700" fill="#334155">PAYLOAD</text>
+            <text x="40" y="44" textAnchor="middle" fontSize="8" fontFamily="monospace" fill="#64748B">
+              {payload.length > 9 ? payload.substring(0, 9) + '…' : payload}
+            </text>
+            <text x="40" y="58" textAnchor="middle" fontSize="7" fontWeight="600" fill={isSqlThreat || isXssThreat ? '#DC2626' : '#16A34A'}>
+              {isSqlThreat ? 'SQL PAYLOAD' : isXssThreat ? 'XSS PAYLOAD' : 'BENIGN DATA'}
+            </text>
+          </g>
+
+          {/* NODE 2: SQL Parameterization Gate */}
+          <g transform="translate(190, 40)">
+            <rect
+              width="86"
+              height="80"
+              rx="12"
+              fill={paramQueries ? '#ECFDF5' : '#FEF2F2'}
+              stroke={paramQueries ? '#10B981' : '#EF4444'}
+              strokeWidth="2.5"
+            />
+            <text x="43" y="24" textAnchor="middle" fontSize="9" fontWeight="800" fill={paramQueries ? '#065F46' : '#991B1B'}>
+              GATE 1
+            </text>
+            <text x="43" y="38" textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+              Parameterized
+            </text>
+            <text x="43" y="52" textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+              Query (?)
+            </text>
+            <rect
+              x="12"
+              y="58"
+              width="62"
+              height="16"
+              rx="4"
+              fill={paramQueries ? '#D1FAE5' : '#FEE2E2'}
+            />
+            <text
+              x="43"
+              y="69"
+              textAnchor="middle"
+              fontSize="8"
+              fontWeight="800"
+              fill={paramQueries ? '#047857' : '#B91C1C'}
+            >
+              {paramQueries ? 'PROTECTED' : 'VULNERABLE'}
+            </text>
+          </g>
+
+          {/* NODE 3: HTML Output Encoding Gate */}
+          <g transform="translate(370, 40)">
+            <rect
+              width="86"
+              height="80"
+              rx="12"
+              fill={outputEncoding ? '#ECFDF5' : '#FEF2F2'}
+              stroke={outputEncoding ? '#10B981' : '#EF4444'}
+              strokeWidth="2.5"
+            />
+            <text x="43" y="24" textAnchor="middle" fontSize="9" fontWeight="800" fill={outputEncoding ? '#065F46' : '#991B1B'}>
+              GATE 2
+            </text>
+            <text x="43" y="38" textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+              HTML Entity
+            </text>
+            <text x="43" y="52" textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+              Encoding
+            </text>
+            <rect
+              x="12"
+              y="58"
+              width="62"
+              height="16"
+              rx="4"
+              fill={outputEncoding ? '#D1FAE5' : '#FEE2E2'}
+            />
+            <text
+              x="43"
+              y="69"
+              textAnchor="middle"
+              fontSize="8"
+              fontWeight="800"
+              fill={outputEncoding ? '#047857' : '#B91C1C'}
+            >
+              {outputEncoding ? 'ENCODED' : 'BYPASSED'}
+            </text>
+          </g>
+
+          {/* NODE 4: Strict CSP Gate */}
+          <g transform="translate(550, 40)">
+            <rect
+              width="86"
+              height="80"
+              rx="12"
+              fill={strictCsp ? '#ECFDF5' : '#FEF2F2'}
+              stroke={strictCsp ? '#10B981' : '#EF4444'}
+              strokeWidth="2.5"
+            />
+            <text x="43" y="24" textAnchor="middle" fontSize="9" fontWeight="800" fill={strictCsp ? '#065F46' : '#991B1B'}>
+              GATE 3
+            </text>
+            <text x="43" y="38" textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+              Strict CSP
+            </text>
+            <text x="43" y="52" textAnchor="middle" fontSize="9" fontWeight="700" fill="#1E293B">
+              script-src
+            </text>
+            <rect
+              x="12"
+              y="58"
+              width="62"
+              height="16"
+              rx="4"
+              fill={strictCsp ? '#D1FAE5' : '#FEE2E2'}
+            />
+            <text
+              x="43"
+              y="69"
+              textAnchor="middle"
+              fontSize="8"
+              fontWeight="800"
+              fill={strictCsp ? '#047857' : '#B91C1C'}
+            >
+              {strictCsp ? 'ENFORCED' : 'DISABLED'}
+            </text>
+          </g>
+
+          {/* SINK: Database / Execution Sink */}
+          <g transform="translate(680, 50)">
+            <rect width="60" height="60" rx="8" fill="#FFFFFF" stroke="#64748B" strokeWidth="2" />
+            <text x="30" y="26" textAnchor="middle" fontSize="8" fontWeight="700" fill="#334155">DATABASE</text>
+            <text x="30" y="38" textAnchor="middle" fontSize="8" fontWeight="700" fill="#334155">&amp; DOM</text>
+            <text
+              x="30"
+              y="51"
+              textAnchor="middle"
+              fontSize="7"
+              fontWeight="800"
+              fill={
+                (isSqlThreat && !paramQueries) || (isXssThreat && !outputEncoding && !strictCsp)
+                  ? '#DC2626'
+                  : '#16A34A'
+              }
+            >
+              {(isSqlThreat && !paramQueries) || (isXssThreat && !outputEncoding && !strictCsp)
+                ? 'EXPLOITED'
+                : 'SECURE'}
+            </text>
+          </g>
+
+          {/* Animated Traversal Packet - respects reduced-motion preference */}
+          {!forceReducedMotion && (
+            <circle cx="100" cy="80" r="6" fill={isSqlThreat || isXssThreat ? '#EF4444' : '#10B981'}>
+              <animate
+                attributeName="cx"
+                values="100;190;370;550;690"
+                dur={isSimulating ? "1.6s" : "3.2s"}
+                repeatCount="indefinite"
+              />
+              <animate
+                attributeName="opacity"
+                values="1;1;0.9;0.8;0"
+                dur={isSimulating ? "1.6s" : "3.2s"}
+                repeatCount="indefinite"
+              />
+            </circle>
+          )}
+        </svg>
+      </div>
+
+      {/* Outcome Diagnostic Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '12px' }}>
         <div
           style={{
-            padding: '10px 14px',
+            padding: '12px 14px',
             borderRadius: '10px',
             backgroundColor: paramQueries ? '#EDF8EE' : '#FEF2F2',
             border: `1.5px solid ${paramQueries ? '#A4D9A9' : '#FCA5A5'}`,
-            textAlign: 'center',
-            flex: 1,
-            minWidth: '120px',
           }}
         >
-          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: paramQueries ? '#1E652E' : '#991B1B' }}>
-            SQL Parameterization
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: paramQueries ? '#1E652E' : '#991B1B' }}>
+              1. SQL Parameterization
+            </span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '2px 6px', borderRadius: '4px', backgroundColor: paramQueries ? '#DCFCE7' : '#FEE2E2', color: paramQueries ? '#166534' : '#991B1B' }}>
+              {paramQueries ? 'ACTIVE' : 'VULNERABLE'}
+            </span>
           </div>
-          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: paramQueries ? '#16A34A' : '#DC2626', marginTop: '2px' }}>
-            {paramQueries ? 'ACTIVE' : 'VULNERABLE'}
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            {paramQueries
+              ? 'Input bound as literal bytes; AST parser structure preserved.'
+              : 'Direct string concatenation allows WHERE condition breakout.'}
           </div>
         </div>
 
         <div
           style={{
-            padding: '10px 14px',
+            padding: '12px 14px',
             borderRadius: '10px',
             backgroundColor: outputEncoding ? '#EDF8EE' : '#FEF2F2',
             border: `1.5px solid ${outputEncoding ? '#A4D9A9' : '#FCA5A5'}`,
-            textAlign: 'center',
-            flex: 1,
-            minWidth: '120px',
           }}
         >
-          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: outputEncoding ? '#1E652E' : '#991B1B' }}>
-            HTML Entity Encoding
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: outputEncoding ? '#1E652E' : '#991B1B' }}>
+              2. HTML Entity Encoding
+            </span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '2px 6px', borderRadius: '4px', backgroundColor: outputEncoding ? '#DCFCE7' : '#FEE2E2', color: outputEncoding ? '#166534' : '#991B1B' }}>
+              {outputEncoding ? 'ENFORCED' : 'BYPASSED'}
+            </span>
           </div>
-          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: outputEncoding ? '#16A34A' : '#DC2626', marginTop: '2px' }}>
-            {outputEncoding ? 'ENFORCED' : 'BYPASSED'}
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            {outputEncoding
+              ? 'Metacharacters replaced (&lt; &gt; &amp; &quot;); rendered as text.'
+              : 'Raw untrusted HTML returned; triggers reflected script execution.'}
           </div>
         </div>
 
         <div
           style={{
-            padding: '10px 14px',
+            padding: '12px 14px',
             borderRadius: '10px',
             backgroundColor: strictCsp ? '#EDF8EE' : '#FEF2F2',
             border: `1.5px solid ${strictCsp ? '#A4D9A9' : '#FCA5A5'}`,
-            textAlign: 'center',
-            flex: 1,
-            minWidth: '120px',
           }}
         >
-          <div style={{ fontSize: '0.72rem', fontWeight: 800, color: strictCsp ? '#1E652E' : '#991B1B' }}>
-            Strict CSP Headers
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: strictCsp ? '#1E652E' : '#991B1B' }}>
+              3. Strict CSP Headers
+            </span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '2px 6px', borderRadius: '4px', backgroundColor: strictCsp ? '#DCFCE7' : '#FEE2E2', color: strictCsp ? '#166534' : '#991B1B' }}>
+              {strictCsp ? 'SECURED' : 'UNGUARDED'}
+            </span>
           </div>
-          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: strictCsp ? '#16A34A' : '#DC2626', marginTop: '2px' }}>
-            {strictCsp ? 'SECURED' : 'UNGUARDED'}
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+            {strictCsp
+              ? "Header script-src 'self' prevents inline execution even if injected."
+              : 'Inline <script> and eval() permitted without defense-in-depth.'}
           </div>
         </div>
       </div>

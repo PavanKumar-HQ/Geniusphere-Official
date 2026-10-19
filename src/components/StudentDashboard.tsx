@@ -54,6 +54,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     }
   });
 
+  // All canonical courses in catalog
+  const allCourses = db.getCanonicalCourses();
+
   // Calculate enrolled courses with progress
   const enrolledCoursesWithDetails = enrollments
     .map((enr) => {

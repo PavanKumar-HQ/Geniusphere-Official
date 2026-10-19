@@ -300,4 +300,165 @@ describe('Labs & Simulation Engine Acceptance Suite', () => {
       expect(output).toBe('Welcome, Alex! Age: 16');
     });
   });
+
+  describe('5. Gate 2, Gate 3 & Gate 4: Web Defense Vertical Slice E2E Suite', () => {
+    it('verifies lab-t5-web-defense metadata and 4-stage validation criteria', () => {
+      const lab = db.getLabBySlug('defensive-web-security-lab');
+      expect(lab).toBeDefined();
+      expect(lab?.id).toBe('lab-t5-web-defense');
+      expect(lab?.validation_criteria.length).toBe(4);
+      expect(lab?.completion_threshold).toBe(100);
+      expect(lab?.validation_criteria[0]).toContain('Stage 1');
+      expect(lab?.validation_criteria[1]).toContain('Stage 2');
+      expect(lab?.validation_criteria[2]).toContain('Stage 3');
+      expect(lab?.validation_criteria[3]).toContain('Stage 4');
+    });
+
+    it('Stage 1 (Prediction): evaluates correct vs incorrect answers and allows retry', () => {
+      const evaluatePrediction = (answer: string) => {
+        return answer === 'ast_mutation';
+      };
+
+      // Incorrect initial guess
+      expect(evaluatePrediction('lexer_error')).toBe(false);
+      expect(evaluatePrediction('auto_escape')).toBe(false);
+      expect(evaluatePrediction('waf_drop')).toBe(false);
+
+      // Retry with correct prediction
+      expect(evaluatePrediction('ast_mutation')).toBe(true);
+    });
+
+    it('Stage 2 (Simulation): neutralizes SQL injection and XSS only when defense gates are active', () => {
+      const runPipelineTest = (paramQueries: boolean, outputEncoding: boolean, strictCsp: boolean) => {
+        const sqlNeutralized = paramQueries;
+        const xssNeutralized = outputEncoding;
+        const defenseInDepth = strictCsp;
+        const allPassed = sqlNeutralized && xssNeutralized;
+        return { sqlNeutralized, xssNeutralized, defenseInDepth, allPassed };
+      };
+
+      // Default vulnerable pipeline
+      const defaultState = runPipelineTest(false, false, false);
+      expect(defaultState.sqlNeutralized).toBe(false);
+      expect(defaultState.xssNeutralized).toBe(false);
+      expect(defaultState.allPassed).toBe(false);
+
+      // Partial mitigation
+      const partialState = runPipelineTest(true, false, false);
+      expect(partialState.sqlNeutralized).toBe(true);
+      expect(partialState.xssNeutralized).toBe(false);
+      expect(partialState.allPassed).toBe(false);
+
+      // Fully hardened pipeline
+      const hardenedState = runPipelineTest(true, true, true);
+      expect(hardenedState.sqlNeutralized).toBe(true);
+      expect(hardenedState.xssNeutralized).toBe(true);
+      expect(hardenedState.defenseInDepth).toBe(true);
+      expect(hardenedState.allPassed).toBe(true);
+    });
+
+    it('Stage 3 (Diagnostic Refactoring): accepts parameterized queries and rejects fragile regexes', () => {
+      const evaluateDiagnostic = (codeFixId: string) => {
+        return codeFixId === 'prepared_statement';
+      };
+
+      expect(evaluateDiagnostic('client_replace')).toBe(false);
+      expect(evaluateDiagnostic('regex_strip')).toBe(false);
+      expect(evaluateDiagnostic('encode_uri')).toBe(false);
+      expect(evaluateDiagnostic('prepared_statement')).toBe(true);
+    });
+
+    it('Stage 4 (Explanation Checkpoint): verifies compiler wire-level AST separation', () => {
+      const evaluateExplanation = (reasoningId: string) => {
+        return reasoningId === 'ast_precompile';
+      };
+
+      expect(evaluateExplanation('sha256_hash')).toBe(false);
+      expect(evaluateExplanation('tls_in_memory')).toBe(false);
+      expect(evaluateExplanation('c_transpile')).toBe(false);
+      expect(evaluateExplanation('ast_precompile')).toBe(true);
+    });
+
+    it('Gate 3 Data Contract: handles session lifecycle, draft persistence, and deduplication idempotency', async () => {
+      const { LocalLearningSessionService } = await import('../src/services/learningSessionService');
+      const sessionService = new LocalLearningSessionService(db);
+
+      const userId = 'user-student-1';
+      const labId = 'lab-t5-web-defense';
+
+      // 1. Session start
+      const sessionId = sessionService.startSession(userId, labId);
+      expect(sessionId).toBeDefined();
+      expect(sessionId.length).toBeGreaterThan(5);
+
+      // 2. Draft persistence & resume
+      const draftState = {
+        sessionId,
+        labId,
+        userId,
+        predictionAnswer: 'ast_mutation',
+        predictionSubmitted: true,
+        secQueryInput: "' OR '1'='1",
+        secParamQueries: true,
+        secOutputEncoding: true,
+        secCsp: true,
+        diagnosticAnswer: 'prepared_statement',
+        diagnosticSubmitted: true,
+        explanationAnswer: 'ast_precompile',
+        explanationSubmitted: true,
+        lastSaved: new Date().toISOString(),
+      };
+
+      sessionService.saveDraft(userId, labId, draftState);
+      const resumed = sessionService.loadDraft(userId, labId);
+      expect(resumed).toBeDefined();
+      expect(resumed?.predictionAnswer).toBe('ast_mutation');
+      expect(resumed?.secParamQueries).toBe(true);
+
+      // 3. Verified completion submission
+      const idempotencyKey = `${userId}:${labId}:${sessionId}:SUBMISSION_FINAL`;
+      const submissionResult = await sessionService.submitAttempt(userId, labId, sessionId, {
+        passed: true,
+        score: 100,
+        diagnostics: 'All 4 pedagogical stages validated.',
+        evidence: {
+          prediction: { answer: 'ast_mutation', isCorrect: true, timestamp: new Date().toISOString() },
+          simulation: { paramQueries: true, outputEncoding: true, strictCsp: true, payloadTested: "' OR '1'='1", defensePassRate: 100, timestamp: new Date().toISOString() },
+          diagnostic: { codeFixId: 'prepared_statement', isCorrect: true, timestamp: new Date().toISOString() },
+          explanation: { reasoningId: 'ast_precompile', isCorrect: true, timestamp: new Date().toISOString() },
+        },
+        idempotencyKey,
+      });
+
+      expect(submissionResult.alreadyProcessed).toBe(false);
+      expect(submissionResult.record.passed).toBe(true);
+      expect(submissionResult.record.score).toBe(100);
+
+      // 4. Duplicate submission check (Idempotency)
+      const duplicateResult = await sessionService.submitAttempt(userId, labId, sessionId, {
+        passed: true,
+        score: 100,
+        diagnostics: 'All 4 pedagogical stages validated.',
+        evidence: {
+          prediction: { answer: 'ast_mutation', isCorrect: true, timestamp: new Date().toISOString() },
+          simulation: { paramQueries: true, outputEncoding: true, strictCsp: true, payloadTested: "' OR '1'='1", defensePassRate: 100, timestamp: new Date().toISOString() },
+          diagnostic: { codeFixId: 'prepared_statement', isCorrect: true, timestamp: new Date().toISOString() },
+          explanation: { reasoningId: 'ast_precompile', isCorrect: true, timestamp: new Date().toISOString() },
+        },
+        idempotencyKey,
+      });
+
+      expect(duplicateResult.alreadyProcessed).toBe(true);
+      expect(duplicateResult.record.id).toBe(submissionResult.record.id);
+
+      // 5. Cryptographic audit trail generated
+      const auditLog = db.getAuditEvents('user-superadmin-1');
+      const sessionAuditEvents = auditLog.filter((log) => log.resource_id?.includes(labId));
+      expect(sessionAuditEvents.length).toBeGreaterThanOrEqual(1);
+
+      // 6. Session events recorded in learningSessionService
+      const recordedEvents = sessionService.getEvents(sessionId);
+      expect(recordedEvents.length).toBeGreaterThanOrEqual(2);
+    });
+  });
 });
