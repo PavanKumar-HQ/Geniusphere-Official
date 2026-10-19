@@ -10,7 +10,10 @@ import {
   Briefcase,
   CheckCircle2,
   ListTodo,
+  Zap,
 } from 'lucide-react';
+import { CelebrationCrackers } from './CelebrationCrackers';
+import { backendEngine } from '../backend/RealtimeOrchestrator';
 
 interface StudentDashboardProps {
   db: InMemoryDatabase;
@@ -29,6 +32,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const enrollments = db.getUserEnrollments(currentUserId);
   const userProgress = db.getUserProgress(currentUserId);
   const certificates = db.getUserCertificates(currentUserId);
+  const [isCrackersActive, setIsCrackersActive] = React.useState(false);
+  const [streakClaimed, setStreakClaimed] = React.useState(false);
 
   // Student's completed lab submissions
   const allSubmissions: Array<{
@@ -734,8 +739,55 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   }}
                 />
               </div>
+
+              {/* Claim Streak Action Button */}
+              <div style={{ marginTop: '12px' }}>
+                <button
+                  type="button"
+                  className="btn-shimmer"
+                  disabled={streakClaimed}
+                  onClick={() => {
+                    setStreakClaimed(true);
+                    db.awardXp(currentUserId, 50, 'Daily Streak Active Check-In');
+                    backendEngine.notifications.dispatch(
+                      currentUserId,
+                      'Daily Streak Maintained (+50 XP)!',
+                      'Great consistency! You maintained your daily study streak and unlocked bonus XP.',
+                      'high',
+                      'grade'
+                    );
+                    setIsCrackersActive(true);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '8px 14px',
+                    borderRadius: '10px',
+                    backgroundColor: streakClaimed ? '#E5F0DF' : 'var(--brand-primary)',
+                    color: streakClaimed ? '#26352A' : '#FFFFFF',
+                    border: streakClaimed ? '1px solid #C8E3BF' : 'none',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    cursor: streakClaimed ? 'default' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <Flame size={14} color={streakClaimed ? '#43A85B' : '#F59E0B'} className={streakClaimed ? undefined : 'animate-flame'} />
+                  <span>{streakClaimed ? 'Streak Claimed Today (+50 XP)' : 'Claim Daily Streak (+50 XP)'}</span>
+                </button>
+              </div>
             </div>
           </div>
+
+          <CelebrationCrackers
+            active={isCrackersActive}
+            message="Daily Streak Maintained & +50 XP Collected!"
+            xpAmount={50}
+            onComplete={() => setIsCrackersActive(false)}
+          />
 
           {/* Overall Progress Widget */}
           <div

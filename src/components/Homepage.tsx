@@ -12,7 +12,12 @@ import {
   ChevronUp,
   BookOpen,
   Code2,
-  Sparkles,
+  FlaskConical,
+  TrendingUp,
+  Users,
+  Award,
+  Play,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface HomepageProps {
@@ -22,11 +27,11 @@ interface HomepageProps {
 }
 
 export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId: _currentUserId }) => {
-  const publishedCourses = db.getCourses({ publishedOnly: true });
+  const publishedCourses = db.getCanonicalCourses();
   const allLabs = db.getLabDefinitions();
 
   const [pilotModalOpen, setPilotModalOpen] = useState(false);
-  const [selectedDomainTab, setSelectedDomainTab] = useState<'all' | 'technology' | 'finance' | 'coding' | 'professional'>('all');
+  const [selectedDomainTab, setSelectedDomainTab] = useState<'all' | 'technology' | 'finance' | 'professional'>('all');
   const [openFaq, setOpenFaq] = useState<number | null>(0); // First FAQ open by default
 
   const toggleFaq = (idx: number) => {
@@ -35,11 +40,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
   const filteredCourses = publishedCourses.filter((c) => {
     if (selectedDomainTab === 'all') return true;
-    if (selectedDomainTab === 'technology') return c.domain === 'technology';
-    if (selectedDomainTab === 'finance') return c.domain === 'finance';
-    if (selectedDomainTab === 'coding') return c.domain === 'coding';
-    if (selectedDomainTab === 'professional') return c.domain === 'professional';
-    return true;
+    return c.domain === selectedDomainTab;
   });
 
   return (
@@ -640,18 +641,17 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                   margin: '6px 0 0',
                 }}
               >
-                Explore 12 High-Impact Courses
+                Explore All 18 Authoritative Courses
               </h2>
             </div>
 
             {/* Domain Filter Pills */}
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {[
-                { id: 'all', label: 'All Courses' },
-                { id: 'technology', label: 'Technology & AI' },
-                { id: 'finance', label: 'Finance & Markets' },
-                { id: 'coding', label: 'Programming & Logic' },
-                { id: 'professional', label: 'Professional Skills' },
+                { id: 'all', label: 'All Courses (18)' },
+                { id: 'technology', label: 'Technology & AI (7)' },
+                { id: 'finance', label: 'Finance & Markets (6)' },
+                { id: 'professional', label: 'Professional Skills (5)' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -684,130 +684,149 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               gap: '20px',
             }}
           >
-            {filteredCourses.map((c) => (
-              <div
-                key={c.id}
-                style={{
-                  padding: '24px',
-                  borderRadius: '16px',
-                  backgroundColor: 'var(--bg-surface)',
-                  border: '1px solid var(--border-subtle)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '14px',
-                  boxShadow: 'var(--shadow-sm)',
-                  transition: 'transform 0.15s ease',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span
-                    style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                      textTransform: 'uppercase',
-                      padding: '3px 10px',
-                      borderRadius: '100px',
-                      backgroundColor: 'var(--bg-surface-subdued)',
-                      color: 'var(--brand-primary)',
-                      border: '1px solid var(--border-subtle)',
-                    }}
-                  >
-                    {c.domain}
-                  </span>
-                  <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
-                    {c.duration_hours} hrs • {c.level}
-                  </span>
-                </div>
+            {filteredCourses.map((c) => {
+              const domainColor =
+                c.domain === 'technology'
+                  ? '#059669'
+                  : c.domain === 'finance'
+                  ? '#D97706'
+                  : '#7C3AED';
+              const DomainIcon =
+                c.domain === 'technology'
+                  ? Cpu
+                  : c.domain === 'finance'
+                  ? TrendingUp
+                  : Users;
 
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                  {c.title}
-                </h4>
-
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.55, margin: 0, flex: 1 }}>
-                  {c.summary}
-                </p>
-
+              return (
                 <div
+                  key={c.id}
+                  className="card-interactive-lift"
                   style={{
+                    padding: '24px',
+                    borderRadius: '16px',
+                    backgroundColor: 'var(--bg-surface)',
+                    border: '1.5px solid var(--border-subtle)',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingTop: '14px',
-                    borderTop: '1px solid var(--border-subtle)',
-                    gap: '10px',
+                    flexDirection: 'column',
+                    gap: '14px',
+                    boxShadow: 'var(--shadow-sm)',
+                    position: 'relative',
                   }}
                 >
-                  <button
-                    type="button"
-                    onClick={() => onNavigate('course-detail', c.slug)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '7px 14px',
-                      borderRadius: '8px',
-                      backgroundColor: 'var(--brand-primary)',
-                      color: '#FFFFFF',
-                      fontSize: '0.82rem',
-                      fontWeight: 700,
-                      border: 'none',
-                      cursor: 'pointer',
-                      boxShadow: '0 2px 6px rgba(40, 167, 69, 0.25)',
-                      transition: 'all 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--brand-primary-hover)';
-                      e.currentTarget.style.transform = 'translateY(-1px)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--brand-primary)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <span>View Course Hub</span>
-                    <ArrowRight size={14} />
-                  </button>
-
-                  {(() => {
-                    const matchingLab = allLabs.find(
-                      (l) => l.course_slug === c.slug || l.category === c.domain
-                    );
-                    if (!matchingLab) return null;
-                    return (
-                      <button
-                        type="button"
-                        onClick={() => onNavigate('lab-workspace', matchingLab.slug)}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <div
                         style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          padding: '7px 12px',
+                          width: '28px',
+                          height: '28px',
                           borderRadius: '8px',
-                          backgroundColor: 'var(--bg-canvas)',
-                          border: '1px solid var(--border-subtle)',
-                          fontSize: '0.82rem',
-                          fontWeight: 700,
-                          color: 'var(--text-primary)',
-                          cursor: 'pointer',
-                          transition: 'all 0.15s ease',
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'var(--bg-surface-subdued)';
-                          e.currentTarget.style.borderColor = 'var(--brand-primary)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'var(--bg-canvas)';
-                          e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                          backgroundColor: `${domainColor}15`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: domainColor,
                         }}
                       >
-                        <Terminal size={13} color="var(--brand-primary)" />
-                        <span>Interactive Lab</span>
-                      </button>
-                    );
-                  })()}
+                        <DomainIcon size={16} />
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          textTransform: 'uppercase',
+                          padding: '3px 10px',
+                          borderRadius: '100px',
+                          backgroundColor: `${domainColor}12`,
+                          color: domainColor,
+                          border: `1px solid ${domainColor}30`,
+                        }}
+                      >
+                        {c.domain}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                      {c.duration_hours} hrs • {c.level}
+                    </span>
+                  </div>
+
+                  <h4 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                    {c.title}
+                  </h4>
+
+                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.55, margin: 0, flex: 1 }}>
+                    {c.summary}
+                  </p>
+
+                  <div style={{ display: 'flex', gap: '14px', fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Play size={12} color="var(--brand-primary)" />
+                      10 Modules
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <FlaskConical size={12} color="#059669" />
+                      10 Sub-Module Labs
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingTop: '14px',
+                      borderTop: '1px solid var(--border-subtle)',
+                      gap: '10px',
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className="btn-shimmer"
+                      onClick={() => onNavigate('course-detail', c.slug)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--brand-primary)',
+                        color: '#FFFFFF',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        border: 'none',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 6px rgba(36, 76, 58, 0.25)',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <span>Explore Course</span>
+                      <ArrowRight size={14} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('course-detail', c.slug)}
+                      style={{
+                        padding: '8px 12px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-canvas)',
+                        border: '1px solid var(--border-subtle)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                      }}
+                    >
+                      <FlaskConical size={13} color="var(--brand-primary)" />
+                      <span>Labs</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -971,7 +990,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               boxShadow: '0 6px 18px rgba(67, 168, 91, 0.35)',
             }}
           >
-            <Sparkles size={28} />
+            <Award size={28} />
           </div>
 
           <h2

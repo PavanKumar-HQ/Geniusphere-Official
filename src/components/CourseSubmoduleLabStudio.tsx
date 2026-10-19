@@ -23,17 +23,23 @@ import {
   RotateCcw,
   Zap,
   ChevronRight,
-  ExternalLink,
-  Sparkles,
   Layers,
   ArrowRight,
   Activity,
   Flame,
   Check,
+  AlertCircle,
+  FlaskConical,
+  Target,
+  Trophy,
+  Shield,
+  Cpu,
+  Code2,
 } from 'lucide-react';
-import { Course, CourseModule, Lesson, CourseEnrollment } from '../types';
+import { Course, Lesson, CourseEnrollment } from '../types';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { backendEngine } from '../backend/RealtimeOrchestrator';
+import { CelebrationCrackers } from './CelebrationCrackers';
 
 export interface CourseSubmoduleLabStudioProps {
   course: Course;
@@ -103,11 +109,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
   // Hypothesis selection state
   const [hypothesis, setHypothesis] = useState<string | null>(null);
-  const [hasRunExperiment, setHasRunExperiment] = useState(false);
   const [completedSubmoduleIds, setCompletedSubmoduleIds] = useState<string[]>(() => {
     return enrollment.completed_lessons || [];
   });
-  const [celebrationToast, setCelebrationToast] = useState<string | null>(null);
+  const [isCrackersActive, setIsCrackersActive] = useState(false);
 
   // -------------------------------------------------------------
   // SIMULATION STATE VARIABLES FOR ALL 18 DOMAINS
@@ -119,7 +124,6 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
   // 2. Blockchain SHA-256 state
   const [bcNonce, setBcNonce] = useState(4281);
-  const [bcBlockData, setBcBlockData] = useState('TX: Alice -> Bob 2.5 BTC');
   const [bcIsTampered, setBcIsTampered] = useState(false);
 
   // 3. IoT Telemetry state
@@ -129,64 +133,11 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
   // 4. Cyber Defense state
   const [secPayload, setSecPayload] = useState<'legit' | 'sqli' | 'xss'>('legit');
-  const [secWafEnabled, setSecWafEnabled] = useState(true);
 
-  // 5. Cloud Microservices state
-  const [cloudReplicas, setCloudReplicas] = useState(3);
-  const [cloudTrafficRps, setCloudTrafficRps] = useState(450);
-
-  // 6. Fullstack API state
-  const [apiMethod, setApiMethod] = useState<'GET' | 'POST' | 'PUT'>('GET');
-  const [apiCached, setApiCached] = useState(true);
-
-  // 7. Stock Market state
-  const [stockVol, setStockVol] = useState(45);
-  const [stockSentiment, setStockSentiment] = useState(68);
-
-  // 8. Compound Wealth state
+  // 5. Compound Wealth state
   const [compPrincipal, setCompPrincipal] = useState(5000);
   const [compMonthly, setCompMonthly] = useState(250);
   const [compRate, setCompRate] = useState(8);
-
-  // 9. Banking Clearing state
-  const [bankClearMethod, setBankClearMethod] = useState<'ACH' | 'FedNow' | 'Wire'>('FedNow');
-  const [bankRiskThreshold, setBankRiskThreshold] = useState(85);
-
-  // 10. Web3 Crypto state
-  const [cryptoPoolBalanceA, setCryptoPoolBalanceA] = useState(100);
-  const [cryptoPoolBalanceB, setCryptoPoolBalanceB] = useState(250000);
-
-  // 11. Valuation DCF state
-  const [dcfWacc, setDcfWacc] = useState(9.5);
-  const [dcfGrowthRate, setDcfGrowthRate] = useState(14);
-
-  // 12. Global Economics state
-  const [econTariff, setEconTariff] = useState(10);
-  const [econInterestRate, setEconInterestRate] = useState(4.5);
-
-  // 13. Negotiation state
-  const [negBatna, setNegBatna] = useState(72);
-  const [negListeningScore, setNegListeningScore] = useState(84);
-
-  // 14. Leadership Sprint state
-  const [leadPsychSafety, setLeadPsychSafety] = useState(88);
-  const [leadSprintCapacity, setLeadSprintCapacity] = useState(40);
-
-  // 15. Productivity Flow state
-  const [prodFocusBlock, setProdFocusBlock] = useState(50);
-  const [prodDistractionRate, setProdDistractionRate] = useState(15);
-
-  // 16. Strategy Moat state
-  const [stratSwitchingCosts, setStratSwitchingCosts] = useState(78);
-  const [stratNetworkEffects, setStratNetworkEffects] = useState(85);
-
-  // 17. Brand Narrative state
-  const [brandAudienceAlignment, setBrandAudienceAlignment] = useState(82);
-  const [brandClarityIndex, setBrandClarityIndex] = useState(90);
-
-  // 18. Big Data & SQL state
-  const [dataIndexEnabled, setDataIndexEnabled] = useState(true);
-  const [dataRowCount, setDataRowCount] = useState(250000);
 
   // Determine which engine to use based on course domain and slug
   const engineType: SimulationEngineType = useMemo(() => {
@@ -243,7 +194,6 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     if (!completedSubmoduleIds.includes(activeSubmodule.id)) {
       setCompletedSubmoduleIds((prev) => [...prev, activeSubmodule.id]);
     }
-    setHasRunExperiment(true);
 
     // Award XP and complete lesson in DB
     db.awardXp(currentUserId, xpReward, `Interactive Lab: ${activeSubmodule.title}`);
@@ -252,7 +202,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     // Trigger realtime notification
     backendEngine.notifications.dispatch(
       currentUserId,
-      `🔬 Sub-Module Lab Verified! (+${xpReward} XP)`,
+      `Sub-Module Lab Verified! (+${xpReward} XP)`,
       `Successfully completed simulation benchmark for ${activeSubmodule.title}. Advanced daily streak!`,
       'high',
       'grade',
@@ -261,13 +211,50 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
       'Next Lab'
     );
 
-    setCelebrationToast(`✓ Lab Passed! +${xpReward} XP awarded & streak advanced!`);
-    setTimeout(() => setCelebrationToast(null), 4000);
+    // Trigger celebration crackers explosion
+    setIsCrackersActive(true);
 
     if (onCompleteSubmoduleLab) {
       onCompleteSubmoduleLab(activeSubmodule.id, xpReward);
     }
   };
+
+  // Node Icon Resolver - maps each submodule to an expressive Lucide icon
+  const getSubmoduleIcon = (idx: number) => {
+    const icons = [
+      Brain,
+      Cpu,
+      Wifi,
+      ShieldCheck,
+      Layers,
+      Terminal,
+      TrendingUp,
+      Database,
+      Compass,
+      Trophy,
+    ];
+    const IconComp = icons[idx % icons.length];
+    return <IconComp size={22} />;
+  };
+
+  // Mathematical coordinates for winding road nodes
+  const pathCoordinates = useMemo(() => {
+    const leftX = 75;
+    const rightX = 185;
+    const stepY = 135;
+    const startY = 60;
+
+    return allSubmodules.map((_, i) => {
+      const isLeft = i % 2 === 0;
+      const x = isLeft ? leftX : rightX;
+      const y = startY + i * stepY;
+      return { x, y, isLeft };
+    });
+  }, [allSubmodules]);
+
+  const totalPathHeight = useMemo(() => {
+    return 60 + allSubmodules.length * 135 + 40;
+  }, [allSubmodules]);
 
   return (
     <div
@@ -281,33 +268,16 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
         padding: '24px',
         border: '1px solid var(--border-subtle, #D6DED2)',
         boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+        position: 'relative',
       }}
     >
-      {/* Celebration Toast */}
-      {celebrationToast && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '24px',
-            right: '24px',
-            backgroundColor: '#244C3A',
-            color: '#FFFFFF',
-            padding: '14px 24px',
-            borderRadius: '12px',
-            fontWeight: 800,
-            fontSize: '0.9rem',
-            boxShadow: '0 8px 24px rgba(36, 76, 58, 0.35)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            animation: 'fadeInUp 0.3s ease',
-          }}
-        >
-          <Sparkles size={18} color="#A9C86A" />
-          <span>{celebrationToast}</span>
-        </div>
-      )}
+      {/* Celebration Crackers Effect */}
+      <CelebrationCrackers
+        active={isCrackersActive}
+        message="Sub-Module Lab Passed & Streak Advanced!"
+        xpAmount={50}
+        onComplete={() => setIsCrackersActive(false)}
+      />
 
       {/* Header bar */}
       <div
@@ -334,7 +304,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
               color: 'var(--brand-primary, #244C3A)',
             }}
           >
-            <Brain size={24} />
+            <FlaskConical size={24} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -385,20 +355,20 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(240px, 300px) 1fr',
+          gridTemplateColumns: 'minmax(270px, 300px) 1fr',
           gap: '24px',
           alignItems: 'start',
         }}
       >
         {/* ============================================================== */}
-        {/* LEFT COLUMN: THE WINDING GAMIFIED SNAKE ROADMAP OF SUBMODULES  */}
+        {/* LEFT COLUMN: MATHEMATICALLY ALIGNED GAMIFIED ROADMAP           */}
         {/* ============================================================== */}
         <div
           style={{
             backgroundColor: 'var(--bg-surface, #FFFFFF)',
             borderRadius: '16px',
             border: '1.5px solid var(--border-subtle, #D6DED2)',
-            padding: '24px 16px',
+            padding: '20px 10px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -414,82 +384,80 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
               textTransform: 'uppercase',
               color: 'var(--text-muted)',
               letterSpacing: '0.08em',
-              marginBottom: '16px',
+              marginBottom: '10px',
               textAlign: 'center',
+              width: '100%',
             }}
           >
             Course Milestones
           </div>
 
-          {/* SVG Dotted Curved Spine Connector */}
-          <svg
-            style={{
-              position: 'absolute',
-              top: '70px',
-              left: 0,
-              width: '100%',
-              height: `${allSubmodules.length * 105}px`,
-              pointerEvents: 'none',
-              zIndex: 0,
-            }}
-          >
-            {allSubmodules.map((_, i) => {
-              if (i === allSubmodules.length - 1) return null;
-              const y1 = 45 + i * 105;
-              const y2 = 45 + (i + 1) * 105;
-              const x1 = i % 2 === 0 ? 95 : 195;
-              const x2 = (i + 1) % 2 === 0 ? 95 : 195;
-              const cx1 = x1;
-              const cy1 = y1 + 50;
-              const cx2 = x2;
-              const cy2 = y2 - 50;
-              const isPast = completedSubmoduleIds.includes(allSubmodules[i].id);
-
-              return (
-                <path
-                  key={i}
-                  d={`M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`}
-                  fill="none"
-                  stroke={isPast ? '#43A85B' : '#D6DED2'}
-                  strokeWidth="3.5"
-                  strokeDasharray={isPast ? 'none' : '6 6'}
-                  strokeLinecap="round"
-                />
-              );
-            })}
-          </svg>
-
-          {/* Submodule milestone nodes along the snake path */}
+          {/* Absolute Winding Road Canvas */}
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '40px',
-              width: '100%',
               position: 'relative',
-              zIndex: 1,
+              width: '260px',
+              height: `${totalPathHeight}px`,
             }}
           >
+            {/* SVG Connecting Curves */}
+            <svg
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${totalPathHeight}px`,
+                pointerEvents: 'none',
+                zIndex: 0,
+              }}
+            >
+              {pathCoordinates.map((coord, i) => {
+                if (i === pathCoordinates.length - 1) return null;
+                const next = pathCoordinates[i + 1];
+                const isPast = completedSubmoduleIds.includes(allSubmodules[i].id);
+                const cyMid = (coord.y + next.y) / 2;
+
+                return (
+                  <path
+                    key={i}
+                    d={`M ${coord.x} ${coord.y} C ${coord.x} ${cyMid}, ${next.x} ${cyMid}, ${next.x} ${next.y}`}
+                    fill="none"
+                    stroke={isPast ? '#43A85B' : '#D6DED2'}
+                    strokeWidth="4"
+                    strokeDasharray={isPast ? 'none' : '6 6'}
+                    strokeLinecap="round"
+                  />
+                );
+              })}
+            </svg>
+
+            {/* Submodule milestone nodes positioned at exact (x, y) coordinates */}
             {allSubmodules.map((lesson, idx) => {
+              const coord = pathCoordinates[idx];
+              if (!coord) return null;
               const isCurrent = lesson.id === activeSubmoduleId;
               const isDone = completedSubmoduleIds.includes(lesson.id);
-              const xPos = idx % 2 === 0 ? 'flex-start' : 'flex-end';
 
               return (
                 <div
                   key={lesson.id}
                   style={{
+                    position: 'absolute',
+                    left: `${coord.x - 28}px`,
+                    top: `${coord.y - 28}px`,
+                    zIndex: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: idx % 2 === 0 ? 'flex-start' : 'flex-end',
-                    width: '100%',
-                    padding: idx % 2 === 0 ? '0 0 0 16px' : '0 16px 0 0',
+                    alignItems: 'center',
                   }}
                 >
                   {/* START pill indicator on first node */}
                   {idx === 0 && (
                     <div
                       style={{
+                        position: 'absolute',
+                        top: '-20px',
                         padding: '2px 8px',
                         borderRadius: '100px',
                         backgroundColor: '#43A85B',
@@ -497,16 +465,14 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                         fontSize: '0.62rem',
                         fontWeight: 900,
                         letterSpacing: '0.08em',
-                        marginBottom: '4px',
-                        alignSelf: idx % 2 === 0 ? 'flex-start' : 'flex-end',
-                        marginLeft: idx % 2 === 0 ? '12px' : 0,
-                        marginRight: idx % 2 !== 0 ? '12px' : 0,
+                        whiteSpace: 'nowrap',
                       }}
                     >
                       START
                     </div>
                   )}
 
+                  {/* Circular Node Button */}
                   <button
                     type="button"
                     onClick={() => {
@@ -514,13 +480,13 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       onSelectLesson(lesson.id);
                     }}
                     style={{
-                      width: '64px',
-                      height: '64px',
+                      width: '56px',
+                      height: '56px',
                       borderRadius: '50%',
                       backgroundColor: isCurrent
                         ? '#244C3A'
                         : isDone
-                        ? '#E5F0DF'
+                        ? '#43A85B'
                         : '#FFFFFF',
                       border: isCurrent
                         ? '3px solid #00F5A0'
@@ -529,23 +495,41 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                         : '2px solid #D6DED2',
                       boxShadow: isCurrent
                         ? '0 0 16px rgba(0,245,160,0.5), 0 4px 12px rgba(36,76,58,0.2)'
+                        : isDone
+                        ? '0 4px 12px rgba(67, 168, 91, 0.25)'
                         : '0 2px 6px rgba(0,0,0,0.06)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: isCurrent ? '#FFFFFF' : isDone ? '#43A85B' : '#6B786E',
+                      color: isCurrent ? '#FFFFFF' : isDone ? '#FFFFFF' : '#4A564D',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       position: 'relative',
                     }}
                     title={`Module ${idx + 1}: ${lesson.title}`}
                   >
-                    {isDone ? (
-                      <Check size={26} strokeWidth={3} />
-                    ) : (
-                      <span style={{ fontSize: '1rem', fontWeight: 900 }}>
-                        {idx + 1}
-                      </span>
+                    {getSubmoduleIcon(idx)}
+
+                    {/* Completed Checkmark Corner Badge */}
+                    {isDone && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: -3,
+                          right: -3,
+                          width: '18px',
+                          height: '18px',
+                          borderRadius: '50%',
+                          backgroundColor: '#00F5A0',
+                          color: '#03170E',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        <Check size={11} strokeWidth={3.5} />
+                      </div>
                     )}
 
                     {/* Active pulse ring */}
@@ -566,41 +550,43 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                     )}
                   </button>
 
-                  {/* Submodule Label and XP pill */}
+                  {/* Submodule Label and XP pill centered under node */}
                   <div
                     style={{
-                      textAlign: idx % 2 === 0 ? 'left' : 'right',
-                      marginTop: '8px',
-                      maxWidth: '170px',
+                      position: 'absolute',
+                      top: '62px',
+                      width: '136px',
+                      textAlign: 'center',
+                      pointerEvents: 'none',
                     }}
                   >
                     <div
                       style={{
-                        fontSize: '0.78rem',
+                        fontSize: '0.74rem',
                         fontWeight: isCurrent ? 800 : 700,
                         color: isCurrent
                           ? '#244C3A'
                           : isDone
                           ? '#43A85B'
                           : 'var(--text-primary)',
-                        lineHeight: 1.3,
+                        lineHeight: 1.25,
                       }}
                     >
                       {lesson.title.replace(/^Video \d+:\s*/, '')}
                     </div>
                     <div
                       style={{
-                        fontSize: '0.68rem',
+                        fontSize: '0.66rem',
                         color: 'var(--text-muted)',
                         marginTop: '2px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
-                        justifyContent: idx % 2 === 0 ? 'flex-start' : 'flex-end',
+                        justifyContent: 'center',
+                        gap: '3px',
                       }}
                     >
-                      <Zap size={11} color="#D97706" />
-                      <span>+{40 + (idx % 3) * 10} XP • Interactive</span>
+                      <Zap size={10} color="#D97706" />
+                      <span>+{40 + (idx % 3) * 10} XP</span>
                     </div>
                   </div>
                 </div>
@@ -760,9 +746,13 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                     fontWeight: 700,
                     alignSelf: 'center',
                     marginLeft: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
                   }}
                 >
-                  ✓ Hypothesis logged! Adjust the live controls below to verify.
+                  <CheckCircle2 size={13} color="var(--brand-primary, #244C3A)" />
+                  Hypothesis logged! Adjust the live controls below to verify.
                 </span>
               )}
             </div>
@@ -875,7 +865,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                     <line x1="280" y1="175" x2="480" y2="140" stroke="#43A85B" strokeOpacity={aiPhishingScore <= 50 ? 0.7 : 0.2} />
                   </g>
 
-                  {/* Flowing animated pulse dots along main active lines */}
+                  {/* Flowing animated pulse dots */}
                   <circle cx="200" cy="45" r="3" fill="#43A85B">
                     <animate attributeName="cx" from="120" to="280" dur="1.8s" repeatCount="indefinite" />
                     <animate attributeName="cy" from="50" to="40" dur="1.8s" repeatCount="indefinite" />
@@ -891,17 +881,14 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
                   {/* Input Nodes */}
                   <g>
-                    {/* Node 1: KW Density */}
                     <circle cx="120" cy="50" r="14" fill="#FFFFFF" stroke="#43A85B" strokeWidth="3" />
                     <text x="120" y="54" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#43A85B">x1</text>
                     <text x="35" y="54" fontSize="11" fontWeight="bold" fill="#252C27">KW Density</text>
 
-                    {/* Node 2: Urgency */}
                     <circle cx="120" cy="110" r="14" fill="#FFFFFF" stroke="#D97706" strokeWidth="3" />
                     <text x="120" y="114" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#D97706">x2</text>
                     <text x="30" y="114" fontSize="11" fontWeight="bold" fill="#252C27">Urgency Score</text>
 
-                    {/* Node 3: Domain Rep */}
                     <circle cx="120" cy="170" r="14" fill="#FFFFFF" stroke="#2563EB" strokeWidth="3" />
                     <text x="120" y="174" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#2563EB">x3</text>
                     <text x="35" y="174" fontSize="11" fontWeight="bold" fill="#252C27">Domain Rep</text>
@@ -919,7 +906,6 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
                   {/* Output Nodes */}
                   <g>
-                    {/* Phishing */}
                     <circle
                       cx="480"
                       cy="70"
@@ -935,7 +921,6 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       PHISHING
                     </text>
 
-                    {/* Legitimate */}
                     <circle
                       cx="480"
                       cy="140"
@@ -977,7 +962,19 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                   </div>
                   <div style={{ padding: '12px', borderRadius: '8px', backgroundColor: '#F7F6F0', border: '1px solid #D6DED2' }}>
                     <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>BLOCK #1049</div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#252C27' }}>Status: {bcIsTampered ? '❌ INVALIDATED' : '✓ VALID CHAIN'}</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#252C27', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {bcIsTampered ? (
+                        <>
+                          <AlertCircle size={15} color="#DC2626" />
+                          <span>INVALIDATED</span>
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 size={15} color="#43A85B" />
+                          <span>VALID CHAIN</span>
+                        </>
+                      )}
+                    </div>
                     <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: bcIsTampered ? '#DC2626' : '#2563EB' }}>
                       PrevHash: {bcIsTampered ? 'MISMATCH_DETECTED' : '0000a3f9c2d1b84e7...'}
                     </div>
@@ -1018,13 +1015,24 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                   <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>EMERGENCY COOLING RELAY</div>
                   <div
                     style={{
-                      fontSize: '1rem',
+                      fontSize: '0.95rem',
                       fontWeight: 800,
                       color: iotCoolingOn ? '#43A85B' : '#6B786E',
                       marginTop: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
                     }}
                   >
-                    {iotCoolingOn ? '⚡ ENGAGED (ACTIVE)' : 'STANDBY'}
+                    {iotCoolingOn ? (
+                      <>
+                        <Zap size={14} color="#43A85B" />
+                        <span>ENGAGED (ACTIVE)</span>
+                      </>
+                    ) : (
+                      <span>STANDBY</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1063,41 +1071,6 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                   {secPayload === 'legit' && 'GET /api/v1/students?grade=10 HTTP/1.1 -> 200 OK'}
                   {secPayload === 'sqli' && "SELECT * FROM users WHERE user_id = '' OR '1'='1' -- BLOCKED BY WAF"}
                   {secPayload === 'xss' && '<script>alert(document.cookie)</script> -- SANITIZED BY CSP HEADER'}
-                </div>
-              </div>
-            )}
-
-            {engineType === 'stock' && (
-              <div
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border-subtle, #D6DED2)',
-                  padding: '16px',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '16px',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700, marginBottom: '4px' }}>
-                    ORDER BOOK BIDS (BUY)
-                  </div>
-                  <div style={{ fontSize: '0.78rem', fontFamily: 'monospace', color: '#43A85B', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <div>100 shares @ $148.50</div>
-                    <div>250 shares @ $148.45</div>
-                    <div>500 shares @ $148.30</div>
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700, marginBottom: '4px' }}>
-                    ORDER BOOK ASKS (SELL)
-                  </div>
-                  <div style={{ fontSize: '0.78rem', fontFamily: 'monospace', color: '#DC2626', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                    <div>150 shares @ $148.55</div>
-                    <div>300 shares @ $148.60</div>
-                    <div>650 shares @ $148.75</div>
-                  </div>
                 </div>
               </div>
             )}
