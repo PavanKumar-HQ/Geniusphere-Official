@@ -35,11 +35,14 @@ import {
   Shield,
   Cpu,
   Code2,
+  BookOpen,
+  Info,
 } from 'lucide-react';
 import { Course, Lesson, CourseEnrollment } from '../types';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { backendEngine } from '../backend/RealtimeOrchestrator';
 import { CelebrationCrackers } from './CelebrationCrackers';
+import { MascotSphere } from './MascotSphere';
 
 export interface CourseSubmoduleLabStudioProps {
   course: Course;
@@ -107,8 +110,12 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
   const activeIndex = allSubmodules.findIndex((s) => s.id === activeSubmoduleId);
   const activeSubmodule = allSubmodules[activeIndex] || allSubmodules[0];
 
+  // Unit filter tab
+  const [unitFilter, setUnitFilter] = useState<'all' | 'foundations' | 'systems' | 'capstone'>('all');
+
   // Hypothesis selection state
   const [hypothesis, setHypothesis] = useState<string | null>(null);
+  const [hasAdjustedSliders, setHasAdjustedSliders] = useState(false);
   const [completedSubmoduleIds, setCompletedSubmoduleIds] = useState<string[]>(() => {
     return enrollment.completed_lessons || [];
   });
@@ -188,6 +195,13 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
   const iotCoolingOn = iotTemp > 38 || iotRelayActive;
 
+  // Real-time assessment criteria checks
+  const criterion1 = Boolean(hypothesis);
+  const criterion2 = hasAdjustedSliders;
+  const criterion3 = completedSubmoduleIds.includes(activeSubmodule.id);
+  const criteriaPassedCount = (criterion1 ? 1 : 0) + (criterion2 ? 1 : 0) + (criterion3 ? 1 : 0);
+  const criteriaScore = Math.round((criteriaPassedCount / 3) * 100);
+
   // Handle completing current submodule lab
   const handleVerifySubmodule = () => {
     const xpReward = 50;
@@ -236,6 +250,72 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     const IconComp = icons[idx % icons.length];
     return <IconComp size={22} />;
   };
+
+  // In-depth educational mechanics & real-world explanations
+  const deepDiveInfo = useMemo(() => {
+    const techDeepDives: Record<string, { principle: string; formula: string; industryAnalog: string; mechanics: string }> = {
+      ai: {
+        principle: 'Perceptron Weight Vector & Non-Linear Activation Thresholds',
+        formula: 'z = w_1 x_1 + w_2 x_2 + w_3 x_3 + b, \\quad \\hat{y} = \\sigma(z) = \\frac{1}{1 + e^{-z}}',
+        industryAnalog: 'Used in Gmail spam filters and Google Gemini classification layers to score 10B+ inbound tokens/second.',
+        mechanics: 'The classifier computes a linear dot product of input feature weights (Keyword Density, Urgency Score, Domain Reputation). When the combined activation score crosses the logistic inflection point, the decision boundary flips from Legitimate to Phishing.',
+      },
+      blockchain: {
+        principle: 'Cryptographic SHA-256 Hashing, Nonce Difficulty & Downstream Invalidation',
+        formula: '\\text{SHA-256}(\\text{BlockHeader}) < \\text{TargetThreshold}, \\quad H_i = \\text{Hash}(H_{i-1} \\parallel \\text{Nonce} \\parallel \\text{Data})',
+        industryAnalog: 'Secures $1.4T+ across Bitcoin, Ethereum, and enterprise supply chain ledgers with immutable audit trails.',
+        mechanics: 'Every block header encapsulates the cryptographic hash of the prior block. Altering a single transaction byte triggers an avalanche effect that invalidates all downstream hash pointers across the network.',
+      },
+      iot: {
+        principle: 'MQTT Publish/Subscribe Telemetry & Hysteresis Threshold Loop Logic',
+        formula: 'T_{\\text{sample}} \\le \\frac{1}{2 f_{\\text{max}}}, \\quad \\text{RelayState} = \\begin{cases} \\text{ACTIVE} & T \\ge 38^{\\circ}\\text{C} \\\\ \\text{STANDBY} & T < 35^{\\circ}\\text{C} \\end{cases}',
+        industryAnalog: 'Employed by Tesla Superchargers and industrial Siemens SCADA edge controllers to prevent thermal runaway.',
+        mechanics: 'Edge microcontrollers sample temperature and vibration sensors, serialize state into lightweight MQTT JSON packets, and trip hardware relay actuators deterministically when thermal thresholds are breached.',
+      },
+      security: {
+        principle: 'Abstract Syntax Tree (AST) Tokenization & Parameterized Query Binding',
+        formula: '\\text{SQL}_{\\text{safe}} = \\text{Prepare}(\\text{QueryTemplate}) \\circ \\text{Bind}(\\text{Parameters})',
+        industryAnalog: 'Standardized by Cloudflare WAF, AWS Shield, and Stripe API gateways to neutralize 55M+ exploit attempts daily.',
+        mechanics: 'Parameterized prepared statements enforce a strict wire-level boundary between query syntax and untrusted user input. The database compiler parses SQL commands before parameter injection, making code injection mathematically impossible.',
+      },
+      stock: {
+        principle: 'Continuous Double Auction Order Book Depth & Execution Slippage',
+        formula: '\\text{Spread} = P_{\\text{ask}} - P_{\\text{bid}}, \\quad \\text{Slippage} = \\frac{|P_{\\text{executed}} - P_{\\text{expected}}|}{P_{\\text{expected}}}',
+        industryAnalog: 'Powers NASDAQ and NYSE order matching engines handling 40,000+ limit orders per second.',
+        mechanics: 'Bids and asks form an active depth queue. High market volatility expands the bid-ask spread and drains resting liquidity, causing market orders to sweep multiple price levels with elevated execution slippage.',
+      },
+      compound: {
+        principle: 'Continuous Compounding Capital Accumulation & Real Purchasing Power',
+        formula: 'A(t) = P \\left(1 + \\frac{r}{n}\\right)^{nt} + \\text{PMT} \\times \\frac{\\left(1 + \\frac{r}{n}\\right)^{nt} - 1}{r/n}',
+        industryAnalog: 'The algorithmic foundation of sovereign wealth funds and automated Vanguard portfolio rebalancing.',
+        mechanics: 'Compounding frequency transforms linear savings into exponential growth. Over multi-decade investment horizons, reinvested yields generate compounding interest that eclipses cumulative principal contributions.',
+      },
+    };
+
+    return techDeepDives[engineType] || {
+      principle: 'System State Optimization & Deterministic Decision Architecture',
+      formula: 'S_{t+1} = f(S_t, A_t, \\Theta), \\quad R(\\Theta) \\to \\max',
+      industryAnalog: 'Standard production methodology across Fortune 500 decision systems.',
+      mechanics: 'Evaluates real-time parameter inputs against established decision boundaries to maximize output reliability and system safety.',
+    };
+  }, [engineType]);
+
+  // Coach Sphere context tip tailored to active submodule
+  const activeSubmoduleCoachTip = useMemo(() => {
+    if (engineType === 'ai') {
+      return `For Module ${activeIndex + 1}, notice how Urgency Score (${aiUrgencyScore}) and Keyword Density (${aiKeywordDensity}%) interact. Push Urgency above 70 to test boundary sensitivity!`;
+    }
+    if (engineType === 'blockchain') {
+      return `For Module ${activeIndex + 1}, observe block ${bcNonce}. Click "Mine Block" to increment nonces until leading zeros satisfy the cryptographic difficulty target!`;
+    }
+    if (engineType === 'iot') {
+      return `For Module ${activeIndex + 1}, slide temperature above 38°C to observe the automated cooling relay transition from STANDBY to ENGAGED.`;
+    }
+    if (engineType === 'security') {
+      return `For Module ${activeIndex + 1}, select 'SQLI' and observe how WAF rule filters block AST token tampering before query execution.`;
+    }
+    return `For Module ${activeIndex + 1}, calibrate the live parameters to verify how deterministic outcomes match your hypothesis.`;
+  }, [engineType, activeIndex, aiUrgencyScore, aiKeywordDensity, bcNonce]);
 
   // Mathematical coordinates for winding road nodes
   const pathCoordinates = useMemo(() => {
@@ -368,28 +448,84 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             backgroundColor: 'var(--bg-surface, #FFFFFF)',
             borderRadius: '16px',
             border: '1.5px solid var(--border-subtle, #D6DED2)',
-            padding: '20px 10px',
+            padding: '18px 12px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             position: 'relative',
-            maxHeight: '780px',
+            maxHeight: '840px',
             overflowY: 'auto',
           }}
         >
+          {/* Unit Track Filter Buttons (Matching Prototype Screenshot) */}
           <div
             style={{
-              fontSize: '0.75rem',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              color: 'var(--text-muted)',
-              letterSpacing: '0.08em',
-              marginBottom: '10px',
-              textAlign: 'center',
+              display: 'flex',
+              gap: '6px',
               width: '100%',
+              marginBottom: '14px',
+              justifyContent: 'center',
             }}
           >
-            Course Milestones
+            {[
+              { id: 'all', label: 'All Units' },
+              { id: 'foundations', label: 'Basics' },
+              { id: 'systems', label: 'Core' },
+              { id: 'capstone', label: 'Capstone' },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setUnitFilter(tab.id as any)}
+                style={{
+                  padding: '4px 10px',
+                  borderRadius: '100px',
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  border: '1px solid',
+                  backgroundColor: unitFilter === tab.id ? 'var(--brand-primary)' : 'var(--bg-canvas)',
+                  borderColor: unitFilter === tab.id ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                  color: unitFilter === tab.id ? '#FFFFFF' : 'var(--text-secondary)',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Coach Sphere Companion Card (Matching Prototype Screenshot) */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              backgroundColor: 'var(--bg-canvas)',
+              border: '1.5px solid var(--border-subtle)',
+              borderRadius: '14px',
+              padding: '10px 14px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+              width: '100%',
+              marginBottom: '16px',
+            }}
+          >
+            <div style={{ flexShrink: 0 }}>
+              <MascotSphere pose="happy" size={38} animated={true} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  Coach Sphere
+                </span>
+                <span style={{ fontSize: '0.62rem', fontWeight: 800, padding: '1px 6px', borderRadius: '4px', backgroundColor: '#E5F0DF', color: '#26352A' }}>
+                  ACTIVE
+                </span>
+              </div>
+              <p style={{ margin: '2px 0 0', fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.35, fontWeight: 500 }}>
+                {activeSubmoduleCoachTip}
+              </p>
+            </div>
           </div>
 
           {/* Absolute Winding Road Canvas */}
@@ -651,6 +787,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
             <button
               type="button"
+              className="btn-shimmer"
               onClick={handleVerifySubmodule}
               style={{
                 display: 'inline-flex',
@@ -1162,7 +1299,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       min="0"
                       max="100"
                       value={aiKeywordDensity}
-                      onChange={(e) => setAiKeywordDensity(Number(e.target.value))}
+                      onChange={(e) => {
+                        setAiKeywordDensity(Number(e.target.value));
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', accentColor: '#43A85B' }}
                     />
                   </div>
@@ -1177,7 +1317,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       min="0"
                       max="100"
                       value={aiUrgencyScore}
-                      onChange={(e) => setAiUrgencyScore(Number(e.target.value))}
+                      onChange={(e) => {
+                        setAiUrgencyScore(Number(e.target.value));
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', accentColor: '#D97706' }}
                     />
                   </div>
@@ -1192,7 +1335,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       min="0"
                       max="100"
                       value={aiSenderReputation}
-                      onChange={(e) => setAiSenderReputation(Number(e.target.value))}
+                      onChange={(e) => {
+                        setAiSenderReputation(Number(e.target.value));
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', accentColor: '#2563EB' }}
                     />
                   </div>
@@ -1206,7 +1352,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                     <button
                       type="button"
                       className="btn-secondary"
-                      onClick={() => setBcNonce((prev) => prev + 17)}
+                      onClick={() => {
+                        setBcNonce((prev) => prev + 17);
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', height: '36px', marginTop: '4px', fontSize: '0.78rem' }}
                     >
                       Increment Nonce (+17)
@@ -1217,7 +1366,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                     <button
                       type="button"
                       className="btn-secondary"
-                      onClick={() => setBcIsTampered((prev) => !prev)}
+                      onClick={() => {
+                        setBcIsTampered((prev) => !prev);
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{
                         width: '100%',
                         height: '36px',
@@ -1245,7 +1397,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       min="20"
                       max="55"
                       value={iotTemp}
-                      onChange={(e) => setIotTemp(Number(e.target.value))}
+                      onChange={(e) => {
+                        setIotTemp(Number(e.target.value));
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', accentColor: '#43A85B' }}
                     />
                   </div>
@@ -1254,7 +1409,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                     <button
                       type="button"
                       className="btn-secondary"
-                      onClick={() => setIotRelayActive((prev) => !prev)}
+                      onClick={() => {
+                        setIotRelayActive((prev) => !prev);
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', height: '36px', marginTop: '4px', fontSize: '0.78rem' }}
                     >
                       {iotRelayActive ? 'Disengage Manual Relay' : 'Force Emergency Cooling'}
@@ -1272,7 +1430,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                         <button
                           key={p}
                           type="button"
-                          onClick={() => setSecPayload(p)}
+                          onClick={() => {
+                            setSecPayload(p);
+                            setHasAdjustedSliders(true);
+                          }}
                           style={{
                             flex: 1,
                             padding: '6px',
@@ -1306,7 +1467,10 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       max="1500"
                       step="50"
                       value={compMonthly}
-                      onChange={(e) => setCompMonthly(Number(e.target.value))}
+                      onChange={(e) => {
+                        setCompMonthly(Number(e.target.value));
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', accentColor: '#244C3A' }}
                     />
                   </div>
@@ -1320,12 +1484,160 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       min="4"
                       max="16"
                       value={compRate}
-                      onChange={(e) => setCompRate(Number(e.target.value))}
+                      onChange={(e) => {
+                        setCompRate(Number(e.target.value));
+                        setHasAdjustedSliders(true);
+                      }}
                       style={{ width: '100%', accentColor: '#43A85B' }}
                     />
                   </div>
                 </>
               )}
+            </div>
+          </div>
+
+          {/* ============================================================ */}
+          {/* ASSESSMENT CRITERIA & PEDAGOGICAL DEEP DIVE (NEW!)           */}
+          {/* ============================================================ */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {/* Assessment Criteria Checklist (Matching Screenshot 1) */}
+            <div
+              style={{
+                backgroundColor: 'var(--bg-canvas, #F7F6F0)',
+                borderRadius: '14px',
+                border: '1.5px solid var(--border-subtle, #D6DED2)',
+                padding: '16px 18px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  ASSESSMENT CRITERIA
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    padding: '2px 8px',
+                    borderRadius: '6px',
+                    backgroundColor: criteriaPassedCount === 3 ? '#E5F0DF' : 'rgba(217, 119, 6, 0.12)',
+                    color: criteriaPassedCount === 3 ? '#26352A' : '#92400E',
+                  }}
+                >
+                  Score: {criteriaScore}/100
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: criterion1 ? '#252C27' : '#6B786E' }}>
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '4px',
+                      backgroundColor: criterion1 ? '#43A85B' : '#FFFFFF',
+                      border: `1.5px solid ${criterion1 ? '#43A85B' : '#D6DED2'}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    {criterion1 && <Check size={12} strokeWidth={3} />}
+                  </div>
+                  <span>1. Formulate developer hypothesis</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: criterion2 ? '#252C27' : '#6B786E' }}>
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '4px',
+                      backgroundColor: criterion2 ? '#43A85B' : '#FFFFFF',
+                      border: `1.5px solid ${criterion2 ? '#43A85B' : '#D6DED2'}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    {criterion2 && <Check size={12} strokeWidth={3} />}
+                  </div>
+                  <span>2. Induce state transition via parameter sliders</span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: criterion3 ? '#252C27' : '#6B786E' }}>
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '4px',
+                      backgroundColor: criterion3 ? '#43A85B' : '#FFFFFF',
+                      border: `1.5px solid ${criterion3 ? '#43A85B' : '#D6DED2'}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    {criterion3 && <Check size={12} strokeWidth={3} />}
+                  </div>
+                  <span>3. Verify deterministic output & zero drift</span>
+                </div>
+              </div>
+            </div>
+
+            {/* In-Depth Engineering Mechanics & Architecture */}
+            <div
+              style={{
+                backgroundColor: 'var(--bg-canvas, #F7F6F0)',
+                borderRadius: '14px',
+                border: '1.5px solid var(--border-subtle, #D6DED2)',
+                padding: '16px 18px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <BookOpen size={14} color="var(--brand-primary, #244C3A)" />
+                <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--brand-primary, #244C3A)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  UNDER THE HOOD: {deepDiveInfo.principle}
+                </span>
+              </div>
+
+              <p style={{ margin: 0, fontSize: '0.79rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                {deepDiveInfo.mechanics}
+              </p>
+
+              <div
+                style={{
+                  marginTop: '4px',
+                  padding: '6px 10px',
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '6px',
+                  border: '1px solid #D6DED2',
+                  fontSize: '0.72rem',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: '#244C3A',
+                }}
+              >
+                {deepDiveInfo.formula}
+              </div>
+
+              <div style={{ fontSize: '0.73rem', color: 'var(--text-muted)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Info size={12} />
+                <span>Industry Analog: {deepDiveInfo.industryAnalog}</span>
+              </div>
             </div>
           </div>
         </div>
