@@ -20,6 +20,7 @@ export interface AccountModule {
   icon: string;
   simplified: boolean;
   didYouKnow?: string;
+  smartTip?: string;
   status?: string;
 }
 
