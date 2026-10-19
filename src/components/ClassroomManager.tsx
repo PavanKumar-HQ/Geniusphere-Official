@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { KeyRound, CheckCircle2, AlertCircle, Calendar, RefreshCw, Ban, PlusCircle } from 'lucide-react';
 import { MascotSphere } from './MascotSphere';
+import { backendEngine } from '../backend/RealtimeOrchestrator';
 
 interface ClassroomManagerProps {
   db: InMemoryDatabase;
@@ -13,6 +14,13 @@ export const ClassroomManager: React.FC<ClassroomManagerProps> = ({ db, currentU
   const [joinCode, setJoinCode] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    const unsub = backendEngine.bus.subscribe('classroom:*', () => {
+      setRefreshTrigger((prev) => prev + 1);
+    });
+    return () => unsub();
+  }, []);
 
   // New classroom modal for teachers
   const [showCreateModal, setShowCreateModal] = useState(false);

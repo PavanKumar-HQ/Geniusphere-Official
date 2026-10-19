@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Assignment, Submission, User } from '../types';
-import { Users, BookOpen, Award, CheckCircle2, PlusCircle } from 'lucide-react';
+import { Users, BookOpen, Award, CheckCircle2, PlusCircle, Radio } from 'lucide-react';
 import { MascotSphere } from './MascotSphere';
+import { backendEngine } from '../backend/RealtimeOrchestrator';
 
 interface TeacherGradebookProps {
   db: InMemoryDatabase;
@@ -14,6 +15,14 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
   const [selectedClassId, setSelectedClassId] = useState<string>(
     teacherClassrooms[0]?.id || ''
   );
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  useEffect(() => {
+    const unsub = backendEngine.bus.subscribe('gradebook:*', () => {
+      setRefreshTrigger((prev) => prev + 1);
+    });
+    return () => unsub();
+  }, []);
 
   const [newDueDate, setNewDueDate] = useState<string>(
     new Date(Date.now() + 7 * 86400 * 1000).toISOString().split('T')[0]
@@ -29,6 +38,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
   const [reviewFeedback, setReviewFeedback] = useState<string>('');
 
   const selectedClass = teacherClassrooms.find((c) => c.id === selectedClassId);
+  void refreshTrigger;
 
   // Get assignments in selected class
   const classAssignments: Assignment[] = [];
@@ -117,12 +127,28 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
       <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <MascotSphere pose="teaching" size={56} animated={true} />
-          <div>
-            <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Teacher Gradebook & Classroom Roster</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Teacher Gradebook & Classroom Roster</h2>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  padding: '2px 8px',
+                  borderRadius: '100px',
+                  backgroundColor: 'rgba(67, 168, 91, 0.15)',
+                  color: 'var(--brand-primary)',
+                }}
+              >
+                <Radio size={12} />
+                <span>Live Sync Active</span>
+              </span>
+            </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: '4px 0 0' }}>
-              Authoritative institutional view with database-enforced classroom isolation
+              Authoritative institutional view with real-time submission ingestion and classroom isolation
             </p>
-          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

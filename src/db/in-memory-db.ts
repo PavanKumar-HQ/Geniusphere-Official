@@ -37,6 +37,9 @@ import {
 import { ALL_CANONICAL_COURSES, CANONICAL_STREAMS } from '../data/canonical-curriculum';
 import { APPROVED_LABS } from '../data/approved-labs';
 import { sovereignDB } from './indexed-db';
+import { realtimeBus } from '../backend/RealtimeBus';
+import { liveGradebookEngine } from '../backend/services/LiveGradebookEngine';
+import { auditStreamEngine } from '../backend/services/AuditStreamEngine';
 
 export class DatabaseError extends Error {
   code: string;
@@ -77,6 +80,17 @@ export class InMemoryDatabase {
   constructor() {
     this.seedDefaultData();
     this.hydrateState();
+    this.initRealtimeCrossTabSync();
+  }
+
+  private initRealtimeCrossTabSync(): void {
+    if (typeof window !== 'undefined') {
+      realtimeBus.subscribe('system:broadcast', (envelope) => {
+        if (envelope.event === 'CROSS_TAB_SYNC' && envelope.payload) {
+          this.applyHydratedState(envelope.payload);
+        }
+      });
+    }
   }
 
   /**
@@ -727,6 +741,27 @@ export class InMemoryDatabase {
 
     this.submissions.set(submissionId, updated);
 
+    // Real-time broadcast for live gradebook and student notification
+    try {
+      const student = this.users.get(sub.student_id);
+      const teacher = this.users.get(teacherUserId);
+      liveGradebookEngine.emitGradePosted(
+        assign.classroom_id,
+        assign.id,
+        sub.id,
+        sub.student_id,
+        student ? student.full_name : 'Student',
+        updated.score,
+        assign.max_score || 100,
+        updated.passed,
+        updated.teacher_feedback,
+        teacherUserId,
+        teacher ? teacher.full_name : 'Instructor'
+      );
+    } catch {
+      // Gracefully continue
+    }
+
     // Audit log the teacher review event
     this.logAuditEvent({
       organization_id: this.classrooms.get(assign.classroom_id)?.organization_id || null,
@@ -799,6 +834,13 @@ export class InMemoryDatabase {
       created_at,
     };
     this.auditEvents.set(newEvent.id, newEvent);
+
+    try {
+      auditStreamEngine.emitAuditEvent(newEvent);
+    } catch {
+      // Gracefully continue
+    }
+
     return newEvent;
   }
 
@@ -1543,6 +1585,19 @@ export class InMemoryDatabase {
       }
     }
 
+    try {
+      realtimeBus.publish(
+        `lab:${lab.slug}`,
+        'LAB_ATTEMPT_RECORDED',
+        { record, labTitle: lab.title, passed: result.passed, score: result.score },
+        userId,
+        'learner',
+        user.full_name
+      );
+    } catch {
+      // Gracefully continue
+    }
+
     return record;
   }
 
@@ -1581,6 +1636,7 @@ export class InMemoryDatabase {
         window.localStorage.setItem('geniusphere_db_v1', JSON.stringify(state));
       }
       sovereignDB.saveState(state).catch(() => {});
+      realtimeBus.publish('system:broadcast', 'CROSS_TAB_SYNC', state, 'db_kernel', 'kernel');
     } catch {
       // Gracefully ignore storage quota errors
     }

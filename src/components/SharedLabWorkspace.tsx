@@ -9,10 +9,10 @@ import {
   HelpCircle,
   Award,
   Zap,
-  Clock,
-  Layers,
   ChevronRight,
   Wind,
+  ShieldCheck,
+  X,
 } from 'lucide-react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { LabAttemptRecord, LabLifecycleState } from '../types';
@@ -52,6 +52,8 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [saveStatus, setSaveStatus] = useState<'SAVED' | 'LOCAL DRAFT' | 'UNSAVED'>('SAVED');
   const [mobileTab, setMobileTab] = useState<'instructions' | 'workspace' | 'results'>('workspace');
   const [completedAttempt, setCompletedAttempt] = useState<LabAttemptRecord | null>(null);
+  const [workspaceMode, setWorkspaceMode] = useState<'3-column' | 'focus' | 'zen'>('3-column');
+  const [showHint, setShowHint] = useState<boolean>(true);
 
   // Criteria checklist completion state
   const [checkedCriteria, setCheckedCriteria] = useState<boolean[]>(
@@ -193,6 +195,236 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
     if (nextAnswers[0]?.isFraud === true) next[1] = true;
     if (Object.keys(nextAnswers).length >= 3) next[2] = true;
     setCheckedCriteria(next);
+  };
+
+  // ------------------------------------------------------------------
+  // LAB T7: TrustLink Blockchain Consensus State
+  // ------------------------------------------------------------------
+  const [trustlinkPayload, setTrustlinkPayload] = useState<string>('Tx: Alice -> Bob 25 GEN (Hash Verification)');
+  const [trustlinkHash, setTrustlinkHash] = useState<string>('00f3a8b2c4d5e6f7a8b9c0d1e2f3a4b5');
+  const [trustlinkNonce, setTrustlinkNonce] = useState<number>(42);
+  const [trustlinkMining, setTrustlinkMining] = useState<boolean>(false);
+  const [trustlinkTampered, setTrustlinkTampered] = useState<boolean>(false);
+  const [trustlinkNodes, setTrustlinkNodes] = useState([
+    { id: 'Node-1 (Mumbai)', status: 'VALIDATED', blockHeight: 1042 },
+    { id: 'Node-2 (Singapore)', status: 'VALIDATED', blockHeight: 1042 },
+    { id: 'Node-3 (Frankfurt)', status: 'VALIDATED', blockHeight: 1042 },
+    { id: 'Node-4 (Tokyo)', status: 'VALIDATED', blockHeight: 1042 },
+  ]);
+
+  const handleTrustlinkMine = () => {
+    setTrustlinkMining(true);
+    setTimeout(() => {
+      const newNonce = Math.floor(Math.random() * 9000) + 1000;
+      const validHash = `00${Math.random().toString(16).substring(2, 10)}${Math.random().toString(16).substring(2, 10)}${Math.random().toString(16).substring(2, 10)}`;
+      setTrustlinkNonce(newNonce);
+      setTrustlinkHash(validHash);
+      setTrustlinkTampered(false);
+      setTrustlinkMining(false);
+      setTrustlinkNodes((nodes) => nodes.map((n) => ({ ...n, status: 'VALIDATED', blockHeight: n.blockHeight + 1 })));
+
+      const next = [...checkedCriteria];
+      next[0] = true;
+      next[1] = true;
+      setCheckedCriteria(next);
+      setSaveStatus('LOCAL DRAFT');
+    }, 400);
+  };
+
+  const handleTrustlinkTamper = () => {
+    setTrustlinkTampered(true);
+    setTrustlinkHash('9f8a3c2e1b0d4f5e6a7b8c9d0e1f2a3b');
+    setTrustlinkNodes((nodes) => nodes.map((n, i) => (i === 0 ? { ...n, status: 'DESYNCED' } : n)));
+    const next = [...checkedCriteria];
+    next[2] = true;
+    setCheckedCriteria(next);
+    setSaveStatus('LOCAL DRAFT');
+  };
+
+  // ------------------------------------------------------------------
+  // LAB F4: FinTech Discovery State
+  // ------------------------------------------------------------------
+  const [fintechUpiStep, setFintechUpiStep] = useState<number>(0);
+  const [fintechSimulating, setFintechSimulating] = useState<boolean>(false);
+  const [fintechRiskTolerance, setFintechRiskTolerance] = useState<number>(3);
+  const [fintechSimBinding, setFintechSimBinding] = useState<boolean>(true);
+  const [fintechGeoVelocity, setFintechGeoVelocity] = useState<boolean>(true);
+
+  const handleSimulateUpi = () => {
+    setFintechSimulating(true);
+    setFintechUpiStep(1);
+    setTimeout(() => setFintechUpiStep(2), 500);
+    setTimeout(() => setFintechUpiStep(3), 1000);
+    setTimeout(() => {
+      setFintechUpiStep(4);
+      setFintechSimulating(false);
+      const next = [...checkedCriteria];
+      next[0] = true;
+      if (fintechSimBinding && fintechGeoVelocity) next[1] = true;
+      if (fintechRiskTolerance) next[2] = true;
+      setCheckedCriteria(next);
+      setSaveStatus('LOCAL DRAFT');
+    }, 1500);
+  };
+
+  // ------------------------------------------------------------------
+  // LAB F5: Global Economics Policy Simulation State
+  // ------------------------------------------------------------------
+  const [econInterestRate, setEconInterestRate] = useState<number>(4.5);
+  const [econTaxRate, setEconTaxRate] = useState<number>(25);
+  const [econGovSpending, setEconGovSpending] = useState<number>(80);
+
+  const econCalculations = useMemo(() => {
+    const rawInflation = econGovSpending * 0.05 + 1.2 - econInterestRate * 0.5 + (30 - econTaxRate) * 0.08;
+    const rawGdp = econGovSpending * 0.038 + 2.5 - econInterestRate * 0.3 + (28 - econTaxRate) * 0.07;
+    const rawUnemployment = Math.max(3.2, 7.8 - rawGdp * 0.52 + econInterestRate * 0.18);
+
+    const inflation = Number(Math.max(0.5, rawInflation).toFixed(1));
+    const gdp = Number(Math.max(-2.0, rawGdp).toFixed(1));
+    const unemployment = Number(rawUnemployment.toFixed(1));
+
+    let regime = 'Optimal Economic Equilibrium';
+    let regimeColor = 'var(--success)';
+    if (inflation > 6.0) {
+      regime = 'Overheating Inflationary Expansion';
+      regimeColor = 'var(--danger)';
+    } else if (gdp < 1.0) {
+      regime = 'Recessionary Contraction';
+      regimeColor = 'var(--warning)';
+    }
+
+    return { inflation, gdp, unemployment, regime, regimeColor };
+  }, [econInterestRate, econTaxRate, econGovSpending]);
+
+  const handleApplyEconPolicy = () => {
+    const next = [...checkedCriteria];
+    next[0] = true;
+    if (econCalculations.inflation >= 2.0 && econCalculations.inflation <= 5.0) next[1] = true;
+    if (econCalculations.gdp >= 3.0 && econCalculations.unemployment <= 6.5) next[2] = true;
+    setCheckedCriteria(next);
+    setSaveStatus('LOCAL DRAFT');
+  };
+
+  // ------------------------------------------------------------------
+  // LAB P1: Communication Pro Interactive State
+  // ------------------------------------------------------------------
+  const [commScenarioIdx, setCommScenarioIdx] = useState<number>(0);
+  const [commScores, setCommScores] = useState({ clarity: 65, listening: 60, confidence: 70, respect: 75 });
+  const [commLastFeedback, setCommLastFeedback] = useState<string | null>(null);
+
+  const commScenarios = useMemo(() => [
+    {
+      id: 1,
+      title: 'Cross-Functional Feature Launch Conflict',
+      context: 'Engineering estimates 14 more days to resolve critical security vulnerabilities; Product Marketing has already scheduled a press release.',
+      options: [
+        {
+          text: 'Force engineering to push code immediately and fix security vulnerabilities in a post-release patch.',
+          feedback: 'High risk! Bypassing security reviews damages engineering trust and risks catastrophic data breaches.',
+          delta: { clarity: -10, listening: -20, confidence: 5, respect: -15 },
+        },
+        {
+          text: 'Convene an immediate 20-min alignment sync: scope an MVP release with security-certified modules on time, moving phase 2 to a 10-day fast follow.',
+          feedback: 'Executive excellence! Balances business deadlines with engineering integrity and clear stakeholder expectations.',
+          delta: { clarity: 20, listening: 20, confidence: 15, respect: 15 },
+        },
+        {
+          text: 'Silently delay the release without briefing leadership or marketing.',
+          feedback: 'Destroys stakeholder credibility. Executive communication demands early, proactive risk disclosure.',
+          delta: { clarity: -25, listening: -10, confidence: -20, respect: -15 },
+        },
+      ],
+    },
+    {
+      id: 2,
+      title: 'Peer Performance & Code Review Bottleneck',
+      context: 'A junior engineer regularly submits pull requests without running local test suites, triggering CI/CD build breaks.',
+      options: [
+        {
+          text: 'Publicly ping them in the team engineering channel highlighting every broken build.',
+          feedback: 'Poor psychological safety. Public shaming destroys team morale and causes defensive behavior.',
+          delta: { clarity: 5, listening: -25, confidence: -10, respect: -25 },
+        },
+        {
+          text: 'Pair with them during a 1-on-1 walk-through using the SBI framework (Situation, Behavior, Impact) and configure a pre-commit git hook together.',
+          feedback: 'Outstanding mentorship! Separates person from process and implements a systematic technical solution.',
+          delta: { clarity: 20, listening: 20, confidence: 20, respect: 20 },
+        },
+      ],
+    },
+  ], []);
+
+  const handleSelectCommOption = (optIdx: number) => {
+    const opt = commScenarios[commScenarioIdx].options[optIdx];
+    setCommLastFeedback(opt.feedback);
+    setCommScores((prev) => ({
+      clarity: Math.min(100, Math.max(0, prev.clarity + opt.delta.clarity)),
+      listening: Math.min(100, Math.max(0, prev.listening + opt.delta.listening)),
+      confidence: Math.min(100, Math.max(0, prev.confidence + opt.delta.confidence)),
+      respect: Math.min(100, Math.max(0, prev.respect + opt.delta.respect)),
+    }));
+
+    const next = [...checkedCriteria];
+    next[0] = true;
+    if (commScores.clarity > 70 && commScores.respect > 70) next[1] = true;
+    setCheckedCriteria(next);
+    setSaveStatus('LOCAL DRAFT');
+  };
+
+  // ------------------------------------------------------------------
+  // LAB P2: Professional Skills State
+  // ------------------------------------------------------------------
+  const [skillsPlacements, setSkillsPlacements] = useState<{ [taskId: string]: number }>({});
+  const skillsTasks = useMemo(() => [
+    { id: 't1', text: 'Critical production database failover alert', idealQ: 1 },
+    { id: 't2', text: 'Architecting local-first offline data sync strategy', idealQ: 2 },
+    { id: 't3', text: 'Unscheduled vendor sales cold call', idealQ: 3 },
+    { id: 't4', text: 'Endless notification scrolling during sprint retrospective', idealQ: 4 },
+  ], []);
+
+  const handlePlaceTask = (taskId: string, quadrant: number) => {
+    const nextPlacements = { ...skillsPlacements, [taskId]: quadrant };
+    setSkillsPlacements(nextPlacements);
+
+    const next = [...checkedCriteria];
+    if (Object.keys(nextPlacements).length >= 2) next[0] = true;
+    const allCorrect = skillsTasks.every((t) => nextPlacements[t.id] === t.idealQ);
+    if (allCorrect) next[1] = true;
+    setCheckedCriteria(next);
+    setSaveStatus('LOCAL DRAFT');
+  };
+
+  // ------------------------------------------------------------------
+  // LAB P3: Social Profile & Digital Reputation State
+  // ------------------------------------------------------------------
+  const [profileHeadline, setProfileHeadline] = useState<string>('Full-Stack Engineer & Cloud Security Analyst');
+  const [profileBio, setProfileBio] = useState<string>('Developing deterministic enterprise platforms and sovereign local-first systems.');
+  const [profilePublicSearch, setProfilePublicSearch] = useState<boolean>(true);
+  const [profile2FA, setProfile2FA] = useState<boolean>(true);
+  const [profileTelemetry, setProfileTelemetry] = useState<boolean>(false);
+
+  const profileScores = useMemo(() => {
+    let professionalism = 70;
+    if (profileHeadline.length > 25) professionalism += 15;
+    if (profileBio.length > 40) professionalism += 15;
+
+    let safety = 60;
+    if (profile2FA) safety += 25;
+    if (!profileTelemetry) safety += 15;
+
+    return {
+      professionalism: Math.min(100, professionalism),
+      safety: Math.min(100, safety),
+      credibility: Math.round((professionalism + safety) / 2),
+    };
+  }, [profileHeadline, profileBio, profile2FA, profileTelemetry]);
+
+  const handleAuditProfile = () => {
+    const next = [...checkedCriteria];
+    if (profileScores.professionalism >= 80) next[0] = true;
+    if (profileScores.safety >= 80) next[1] = true;
+    setCheckedCriteria(next);
+    setSaveStatus('LOCAL DRAFT');
   };
 
   // Check if previously completed in DB
@@ -600,10 +832,10 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       {/* ============================================================== */}
       <header
         style={{
-          height: '56px',
-          backgroundColor: '#FFFFFF',
+          height: '46px',
+          backgroundColor: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-subtle)',
-          padding: '0 20px',
+          padding: '0 16px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -611,26 +843,28 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           zIndex: 10,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             type="button"
             onClick={onNavigateBack}
             className="btn-secondary"
-            style={{ height: '34px', padding: '0 12px', fontSize: '0.84rem' }}
+            style={{ height: '30px', padding: '0 10px', fontSize: '0.78rem', gap: '5px' }}
             title="Back to Labs Catalogue"
           >
-            <ArrowLeft size={15} />
-            <span>Back to Labs</span>
+            <ArrowLeft size={14} />
+            <span>Labs</span>
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <h1 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+          <div style={{ height: '16px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h1 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
               {lab.title}
             </h1>
-            <span className="badge badge-brand" style={{ textTransform: 'capitalize' }}>
+            <span className="badge badge-brand" style={{ textTransform: 'capitalize', fontSize: '0.7rem', padding: '2px 8px' }}>
               {lab.category}
             </span>
-            <span className="badge badge-neutral" style={{ textTransform: 'capitalize' }}>
+            <span className="badge badge-neutral" style={{ textTransform: 'capitalize', fontSize: '0.7rem', padding: '2px 8px' }}>
               {lab.interaction_type}
             </span>
             {lab.course_slug && onSelectCourse && (
@@ -638,20 +872,93 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 type="button"
                 onClick={() => onSelectCourse(lab.course_slug!)}
                 className="btn-outline"
-                style={{ height: '26px', padding: '0 8px', fontSize: '0.72rem', borderRadius: 'var(--radius-sm)' }}
+                style={{ height: '22px', padding: '0 6px', fontSize: '0.68rem', borderRadius: '4px' }}
                 title="Go to associated course"
               >
-                View Course
+                Course
               </button>
             )}
           </div>
         </div>
 
         {/* Center / Right status & controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Layout Mode Pill (3-Column | Focus | Zen) */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '2px',
+              gap: '2px',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setWorkspaceMode('3-column')}
+              style={{
+                height: '26px',
+                padding: '0 9px',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                backgroundColor: workspaceMode === '3-column' ? 'var(--brand-primary)' : 'transparent',
+                color: workspaceMode === '3-column' ? '#FFFFFF' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Full 3-Column View: Instructions, Workspace, Assessment"
+            >
+              Split (3)
+            </button>
+            <button
+              type="button"
+              onClick={() => setWorkspaceMode('focus')}
+              style={{
+                height: '26px',
+                padding: '0 9px',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                backgroundColor: workspaceMode === 'focus' ? 'var(--brand-primary)' : 'transparent',
+                color: workspaceMode === 'focus' ? '#FFFFFF' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Focus View: Instructions + Wide Workspace"
+            >
+              Focus
+            </button>
+            <button
+              type="button"
+              onClick={() => setWorkspaceMode('zen')}
+              style={{
+                height: '26px',
+                padding: '0 9px',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                backgroundColor: workspaceMode === 'zen' ? 'var(--brand-primary)' : 'transparent',
+                color: workspaceMode === 'zen' ? '#FFFFFF' : 'var(--text-secondary)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+              title="Zen Mode: Full-Screen Workspace (Maximum Width)"
+            >
+              Zen Editor
+            </button>
+          </div>
+
+          <div style={{ height: '16px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
+
           {/* Save Status Indicator */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-            <Save size={14} color={saveStatus === 'SAVED' ? 'var(--success)' : 'var(--warning)'} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+            <Save size={13} color={saveStatus === 'SAVED' ? 'var(--success)' : 'var(--warning)'} />
             <span style={{ fontWeight: 600 }}>{saveStatus}</span>
           </div>
 
@@ -660,10 +967,10 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             type="button"
             onClick={handleResetLab}
             className="btn-outline"
-            style={{ height: '34px', padding: '0 12px', fontSize: '0.84rem' }}
+            style={{ height: '28px', padding: '0 10px', fontSize: '0.76rem', gap: '4px' }}
             title="Reset lab to initial state"
           >
-            <RotateCcw size={14} />
+            <RotateCcw size={12} />
             <span>Reset</span>
           </button>
         </div>
@@ -672,7 +979,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       {/* Mobile Tab Switcher */}
       <div
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-subtle)',
           padding: '8px 16px',
           gap: '8px',
@@ -736,51 +1043,48 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       {/* ============================================================== */}
       {/* 2. MAIN 3-PANEL WORKSPACE (Section 3.1)                         */}
       {/* ============================================================== */}
-      <main className="workspace-grid-container">
+      <main className={`workspace-grid-container mode-${workspaceMode}`}>
         {/* ============================================================ */}
         {/* PANEL 1 (LEFT): INSTRUCTIONS & PARAMETERS                    */}
         {/* ============================================================ */}
-        <aside
-          className={`workspace-panel-instructions ${mobileTab === 'instructions' ? 'active' : ''}`}
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderRight: '1px solid var(--border-subtle)',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '18px',
-          }}
-        >
-          <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--brand-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '4px' }}>
-              LEARNING OBJECTIVE
+        {workspaceMode !== 'zen' && (
+          <aside
+            className={`workspace-panel-instructions ${mobileTab === 'instructions' ? 'active' : ''}`}
+            style={{
+              backgroundColor: 'var(--bg-surface)',
+              borderRight: '1px solid var(--border-subtle)',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px',
+            }}
+          >
+            <div>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--brand-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '4px' }}>
+                LEARNING OBJECTIVE
+              </div>
+              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
+                {lab.learning_objective}
+              </p>
             </div>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-              {lab.learning_objective}
-            </p>
-          </div>
 
-          <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '10px' }}>
-              STEP-BY-STEP INSTRUCTIONS
+            <div>
+              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                STEP-BY-STEP INSTRUCTIONS
+              </div>
+              <ol style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
+                {lab.instructions.map((step, idx) => (
+                  <li key={idx}>{step}</li>
+                ))}
+              </ol>
             </div>
-            <ol style={{ paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              {lab.instructions.map((step, idx) => (
-                <li key={idx}>{step}</li>
-              ))}
-            </ol>
-          </div>
 
-          <div style={{ marginTop: 'auto', padding: '14px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subdued)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.82rem', marginBottom: '4px' }}>
-              <HelpCircle size={15} color="var(--brand-primary)" />
-              <span>Lab Architecture Note</span>
+            <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)', fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <ShieldCheck size={14} color="var(--brand-primary)" />
+              <span>Deterministic Sandbox Verified</span>
             </div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
-              This lab executes deterministic, bounded logic in your browser. State changes are verified client-side and committed authoritatively to your database progress record.
-            </div>
-          </div>
-        </aside>
+          </aside>
+        )}
 
         {/* ============================================================ */}
         {/* PANEL 2 (CENTRE): INTERACTIVE WORKSPACE ENGINE               */}
@@ -788,36 +1092,13 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         <section
           className={`workspace-panel-center ${mobileTab === 'workspace' ? 'active' : ''}`}
           style={{
-            padding: '20px',
+            padding: '16px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '18px',
+            gap: '16px',
             minWidth: 0,
           }}
         >
-          {/* Header Summary Card */}
-          <div className="card" style={{ padding: '18px 24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
-              <div>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
-                  {lab.title}
-                </h2>
-                <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                  {lab.summary}
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="badge badge-brand">
-                  <Clock size={12} />
-                  <span>{lab.duration_minutes} Mins</span>
-                </span>
-                <span className="badge badge-accent">
-                  <Layers size={12} />
-                  <span>v{lab.version}</span>
-                </span>
-              </div>
-            </div>
-          </div>
 
           {/* -------------------------------------------------------- */}
           {/* LAB ENGINE 1: AI CLASSIFICATION PLAYGROUND               */}
@@ -1645,19 +1926,22 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                   {lab.id === 'lab-c3-debugging-workshop' && (
                     <button
                       type="button"
-                      onClick={() => setHintsRevealed((prev) => Math.min(prev + 1, 2))}
+                      onClick={() => {
+                        setHintsRevealed((prev) => Math.min(prev + 1, 2));
+                        setShowHint(true);
+                      }}
                       className="btn-secondary"
-                      style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem' }}
+                      style={{ height: '32px', padding: '0 10px', fontSize: '0.78rem', gap: '4px' }}
                     >
                       <HelpCircle size={14} />
-                      <span>Reveal Hint ({hintsRevealed}/2)</span>
+                      <span>{hintsRevealed === 0 ? 'Hint' : `Hint (${hintsRevealed}/2)`}</span>
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={handleRunCode}
                     className="btn-primary"
-                    style={{ height: '34px', padding: '0 16px', fontSize: '0.85rem' }}
+                    style={{ height: '32px', padding: '0 14px', fontSize: '0.82rem', gap: '4px' }}
                   >
                     <Play size={14} />
                     <span>Run Code</span>
@@ -1665,14 +1949,24 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 </div>
               </div>
 
-              {hintsRevealed > 0 && lab.id === 'lab-c3-debugging-workshop' && (
-                <div style={{ padding: '12px', borderRadius: '6px', backgroundColor: 'var(--warning-bg)', border: '1px solid var(--warning-border)', fontSize: '0.82rem', color: 'var(--warning-text)' }}>
-                  {hintsRevealed === 1 && (
-                    <div><strong>Hint 1:</strong> Look at the condition <code>left &lt; right</code>. What happens when the search target is at index 0? Should it be <code>left &lt;= right</code>?</div>
-                  )}
-                  {hintsRevealed === 2 && (
-                    <div><strong>Hint 2:</strong> In the <code>else</code> branch when <code>arr[mid] &gt; target</code>, make sure to adjust <code>right = mid - 1</code> to prevent infinite loops.</div>
-                  )}
+              {hintsRevealed > 0 && showHint && lab.id === 'lab-c3-debugging-workshop' && (
+                <div style={{ padding: '10px 14px', borderRadius: '8px', backgroundColor: 'var(--warning-bg)', border: '1px solid var(--warning-border)', fontSize: '0.8rem', color: 'var(--warning-text)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1 }}>
+                    {hintsRevealed === 1 && (
+                      <div><strong>Hint 1:</strong> Look at condition <code>left &lt; right</code>. What happens when search target is at index 0? Should it be <code>left &lt;= right</code>?</div>
+                    )}
+                    {hintsRevealed === 2 && (
+                      <div><strong>Hint 2:</strong> In the <code>else</code> branch when <code>arr[mid] &gt; target</code>, make sure to adjust <code>right = mid - 1</code> to prevent infinite loops.</div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowHint(false)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--warning-text)', padding: '2px', display: 'flex', alignItems: 'center' }}
+                    title="Dismiss hint"
+                  >
+                    <X size={14} />
+                  </button>
                 </div>
               )}
 
@@ -1770,9 +2064,9 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 style={{
                   padding: '20px',
                   borderRadius: '12px',
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E5F0DF',
-                  boxShadow: '0 2px 8px rgba(38, 53, 42, 0.04)',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
@@ -1857,6 +2151,651 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               </div>
             </div>
           )}
+          {/* -------------------------------------------------------- */}
+          {/* LAB T7: TrustLink Blockchain Consensus Simulation        */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-t7-trustlink-blockchain' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    TrustLink Decentralized Consensus & Cryptographic Integrity Engine
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                    SHA-256 Hashing, Proof-of-Work Nonce Mining & Distributed Validator Consensus
+                  </div>
+                </div>
+                <span className={`badge ${trustlinkTampered ? 'badge-danger' : 'badge-brand'}`}>
+                  {trustlinkTampered ? 'CHAIN DESYNCHRONIZED' : 'CONSENSUS VERIFIED'}
+                </span>
+              </div>
+
+              {/* Data Payload Input */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Block Transaction Payload (Mempool Data):
+                </label>
+                <input
+                  type="text"
+                  value={trustlinkPayload}
+                  onChange={(e) => {
+                    setTrustlinkPayload(e.target.value);
+                    setTrustlinkTampered(true);
+                  }}
+                  className="input-field"
+                  style={{ width: '100%', height: '38px', borderRadius: '8px' }}
+                />
+              </div>
+
+              {/* Mining & Hash Display */}
+              <div
+                style={{
+                  padding: '16px',
+                  borderRadius: '12px',
+                  backgroundColor: 'var(--bg-canvas)',
+                  border: '1px solid var(--border-subtle)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    Proof-of-Work Nonce: <strong style={{ color: 'var(--text-primary)' }}>{trustlinkNonce}</strong>
+                  </div>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    Leading Zero Target: <strong style={{ color: 'var(--brand-primary)' }}>00 (2 Nibbles)</strong>
+                  </div>
+                </div>
+
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.84rem', wordBreak: 'break-all', padding: '10px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', color: trustlinkTampered ? 'var(--danger)' : 'var(--brand-primary)' }}>
+                  {trustlinkHash}
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={handleTrustlinkMine}
+                    disabled={trustlinkMining}
+                    className="btn-primary"
+                    style={{ height: '36px', padding: '0 16px', fontSize: '0.82rem' }}
+                  >
+                    <Zap size={14} />
+                    <span>{trustlinkMining ? 'Mining Proof-of-Work...' : 'Mine Valid Block Hash'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTrustlinkTamper}
+                    className="btn-outline"
+                    style={{ height: '36px', padding: '0 14px', fontSize: '0.82rem', borderColor: 'var(--danger)', color: 'var(--danger)' }}
+                  >
+                    <AlertTriangle size={14} />
+                    <span>Simulate Tamper Attack</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Validator Node Mesh */}
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+                  Peer Validator Node Synchronization Status:
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+                  {trustlinkNodes.map((node) => (
+                    <div
+                      key={node.id}
+                      style={{
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-surface)',
+                        border: '1px solid var(--border-subtle)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>{node.id}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Height: {node.blockHeight}</span>
+                        <span
+                          style={{
+                            fontSize: '0.7rem',
+                            fontWeight: 800,
+                            color: node.status === 'VALIDATED' ? 'var(--brand-primary)' : 'var(--danger)',
+                          }}
+                        >
+                          {node.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------- */}
+          {/* LAB F4: FinTech Discovery Simulation                     */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-f4-fintech-discovery' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    FinTech Infrastructure: Multi-Party UPI Clearing & Algorithmic Portfolios
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                    Simulate real-time payment protocol switches, fraud risk gates, and robo-advisory curves
+                  </div>
+                </div>
+                <span className="badge badge-brand">NPCI PROTOCOL v2.8</span>
+              </div>
+
+              {/* UPI Stage Flow Simulator */}
+              <div style={{ padding: '16px', borderRadius: '12px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '12px' }}>
+                  End-to-End UPI Clearing Pipeline:
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', overflowX: 'auto', paddingBottom: '8px' }}>
+                  {['Payer Device', 'PSP Application', 'NPCI Switch', 'Remitter Core Bank', 'Beneficiary Account'].map((stepName, sIdx) => {
+                    const isStepActive = fintechUpiStep >= sIdx;
+                    return (
+                      <div
+                        key={stepName}
+                        style={{
+                          flex: 1,
+                          minWidth: '110px',
+                          padding: '10px 8px',
+                          borderRadius: '8px',
+                          textAlign: 'center',
+                          backgroundColor: isStepActive ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                          color: isStepActive ? '#FFFFFF' : 'var(--text-muted)',
+                          border: '1px solid var(--border-subtle)',
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        <div style={{ fontSize: '0.7rem', fontWeight: 800, opacity: 0.8 }}>STEP {sIdx + 1}</div>
+                        <div style={{ fontSize: '0.78rem', fontWeight: 700, marginTop: '2px' }}>{stepName}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div style={{ marginTop: '14px', display: 'flex', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={handleSimulateUpi}
+                    disabled={fintechSimulating}
+                    className="btn-primary"
+                    style={{ height: '36px', padding: '0 16px', fontSize: '0.82rem' }}
+                  >
+                    <Play size={14} />
+                    <span>{fintechSimulating ? 'Processing Transaction...' : 'Execute ₹1,500 P2P Payment'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Fraud Risk Detection Rules */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                    Device SIM Binding Lock
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
+                    Validates cryptographic hardware token with telecom provider
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFintechSimBinding(!fintechSimBinding)}
+                    className="btn-outline"
+                    style={{ height: '30px', padding: '0 10px', fontSize: '0.76rem', borderColor: fintechSimBinding ? 'var(--brand-primary)' : 'var(--border-subtle)' }}
+                  >
+                    {fintechSimBinding ? '✓ Active Hardware Binding' : '⚠ Binding Disabled'}
+                  </button>
+                </div>
+
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                    Geo-Velocity Anomaly Check
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
+                    Prevents concurrent transactions originating &gt;500km apart
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFintechGeoVelocity(!fintechGeoVelocity)}
+                    className="btn-outline"
+                    style={{ height: '30px', padding: '0 10px', fontSize: '0.76rem', borderColor: fintechGeoVelocity ? 'var(--brand-primary)' : 'var(--border-subtle)' }}
+                  >
+                    {fintechGeoVelocity ? '✓ Velocity Guard Active' : '⚠ Guard Disabled'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Robo-Advisory Risk Tolerance */}
+              <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    Robo-Advisory Portfolio Profile: {fintechRiskTolerance <= 2 ? 'Conservative' : fintechRiskTolerance === 3 ? 'Balanced Allocation' : 'Aggressive Growth'}
+                  </span>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--brand-primary)', fontWeight: 800 }}>
+                    Risk Level {fintechRiskTolerance} / 5
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value={fintechRiskTolerance}
+                  onChange={(e) => setFintechRiskTolerance(parseInt(e.target.value))}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------- */}
+          {/* LAB F5: Global Economics Simulation                      */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-f5-global-economics' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    Macroeconomic Policy Laboratory: Fiscal & Monetary Levers
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                    Simulate real-time policy adjustments and balance the Taylor Rule with Okun's Law
+                  </div>
+                </div>
+                <span className="badge" style={{ backgroundColor: 'var(--bg-surface-subdued)', color: econCalculations.regimeColor, fontWeight: 800 }}>
+                  {econCalculations.regime}
+                </span>
+              </div>
+
+              {/* Sliders Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>Central Bank Rate</span>
+                    <strong style={{ fontSize: '0.82rem', color: 'var(--brand-primary)' }}>{econInterestRate}%</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min="1.0"
+                    max="12.0"
+                    step="0.25"
+                    value={econInterestRate}
+                    onChange={(e) => setEconInterestRate(parseFloat(e.target.value))}
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>Monetary Tightening Levers</div>
+                </div>
+
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>Corporate & Income Tax</span>
+                    <strong style={{ fontSize: '0.82rem', color: 'var(--brand-primary)' }}>{econTaxRate}%</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min="12"
+                    max="45"
+                    step="1"
+                    value={econTaxRate}
+                    onChange={(e) => setEconTaxRate(parseInt(e.target.value))}
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>Fiscal Revenue Levers</div>
+                </div>
+
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>Capital Infrastructure</span>
+                    <strong style={{ fontSize: '0.82rem', color: 'var(--brand-primary)' }}>${econGovSpending}B</strong>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="180"
+                    step="5"
+                    value={econGovSpending}
+                    onChange={(e) => setEconGovSpending(parseInt(e.target.value))}
+                    style={{ width: '100%' }}
+                  />
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>Fiscal Stimulus Multiplier</div>
+                </div>
+              </div>
+
+              {/* Economic Indicators Readout */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>ANNUAL INFLATION</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: econCalculations.inflation > 5.0 ? 'var(--danger)' : 'var(--text-primary)', margin: '4px 0' }}>
+                    {econCalculations.inflation}%
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: 2.0% - 4.5%</div>
+                </div>
+
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>REAL GDP GROWTH</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: econCalculations.gdp < 2.0 ? 'var(--warning)' : 'var(--brand-primary)', margin: '4px 0' }}>
+                    +{econCalculations.gdp}%
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: &gt; 3.5%</div>
+                </div>
+
+                <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)' }}>UNEMPLOYMENT RATE</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: econCalculations.unemployment > 6.5 ? 'var(--danger)' : 'var(--text-primary)', margin: '4px 0' }}>
+                    {econCalculations.unemployment}%
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Target: &lt; 5.5%</div>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={handleApplyEconPolicy}
+                  className="btn-primary"
+                  style={{ height: '36px', padding: '0 18px', fontSize: '0.82rem' }}
+                >
+                  Apply & Evaluate Policy Outcomes
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------- */}
+          {/* LAB P1: Communication Pro Simulation                     */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-p1-communication-pro' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    Communication Pro: Executive Conflict & Active Listening Simulator
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                    Navigate high-stakes team communication, stakeholder negotiations, and constructive reviews
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {commScenarios.map((_, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setCommScenarioIdx(idx);
+                        setCommLastFeedback(null);
+                      }}
+                      className="btn-outline"
+                      style={{
+                        height: '28px',
+                        padding: '0 10px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                        backgroundColor: commScenarioIdx === idx ? 'var(--brand-primary)' : undefined,
+                        color: commScenarioIdx === idx ? '#FFFFFF' : undefined,
+                      }}
+                    >
+                      Case {idx + 1}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Live Metric Gauges */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                {[
+                  { label: 'Clarity', val: commScores.clarity },
+                  { label: 'Listening', val: commScores.listening },
+                  { label: 'Confidence', val: commScores.confidence },
+                  { label: 'Respect', val: commScores.respect },
+                ].map((item) => (
+                  <div key={item.label} style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{item.label}</div>
+                    <div style={{ fontSize: '1.15rem', fontWeight: 800, color: item.val >= 70 ? 'var(--brand-primary)' : 'var(--text-primary)', margin: '2px 0' }}>
+                      {item.val}%
+                    </div>
+                    <div style={{ width: '100%', height: '4px', backgroundColor: 'var(--border-subtle)', borderRadius: '100px', overflow: 'hidden' }}>
+                      <div style={{ width: `${item.val}%`, height: '100%', backgroundColor: 'var(--brand-primary)' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Scenario Context */}
+              <div style={{ padding: '16px', borderRadius: '12px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '4px' }}>
+                  {commScenarios[commScenarioIdx].title}
+                </div>
+                <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '16px' }}>
+                  {commScenarios[commScenarioIdx].context}
+                </div>
+
+                <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  Select Your Communication Response:
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {commScenarios[commScenarioIdx].options.map((opt, oIdx) => (
+                    <button
+                      key={oIdx}
+                      type="button"
+                      onClick={() => handleSelectCommOption(oIdx)}
+                      className="btn-outline"
+                      style={{
+                        textAlign: 'left',
+                        padding: '12px 14px',
+                        fontSize: '0.84rem',
+                        lineHeight: 1.45,
+                        borderRadius: '8px',
+                        display: 'block',
+                        whiteSpace: 'normal',
+                        height: 'auto',
+                      }}
+                    >
+                      {opt.text}
+                    </button>
+                  ))}
+                </div>
+
+                {commLastFeedback && (
+                  <div style={{ marginTop: '14px', padding: '12px', borderRadius: '8px', backgroundColor: 'var(--bg-surface-subdued)', border: '1px solid var(--border-subtle)', fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
+                    <strong>Feedback Analysis:</strong> {commLastFeedback}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------- */}
+          {/* LAB P2: Professional Skills Simulation                   */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-p2-professional-skills' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    Professional Skills: Eisenhower Decision Matrix & Workplace Dilemmas
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                    Master time prioritization, stakeholder diplomacy, and constructive performance models
+                  </div>
+                </div>
+                <span className="badge badge-brand">EXECUTIVE SUITE</span>
+              </div>
+
+              {/* 2x2 Quadrant Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                {[
+                  { q: 1, title: 'Q1: Urgent & Important', subtitle: 'Do Immediately (Critical Crises)', color: 'var(--danger)' },
+                  { q: 2, title: 'Q2: Not Urgent, Important', subtitle: 'Schedule & Invest (Strategy & Growth)', color: 'var(--brand-primary)' },
+                  { q: 3, title: 'Q3: Urgent, Not Important', subtitle: 'Delegate or Minimize (Interruptions)', color: 'var(--warning)' },
+                  { q: 4, title: 'Q4: Not Urgent, Not Important', subtitle: 'Eliminate (Time Wasters)', color: 'var(--text-muted)' },
+                ].map((quad) => (
+                  <div
+                    key={quad.q}
+                    style={{
+                      padding: '14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 800, color: quad.color }}>{quad.title}</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Quadrant {quad.q}</span>
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{quad.subtitle}</div>
+                    <div style={{ minHeight: '60px', display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '6px' }}>
+                      {skillsTasks.filter((t) => skillsPlacements[t.id] === quad.q).map((t) => (
+                        <div key={t.id} style={{ padding: '6px 10px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', fontSize: '0.78rem', color: 'var(--text-primary)' }}>
+                          ✓ {t.text}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Unplaced Tasks */}
+              <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
+                  Assign Tasks into Matrix Quadrants:
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {skillsTasks.map((task) => (
+                    <div key={task.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                      <span style={{ fontSize: '0.82rem', color: 'var(--text-primary)' }}>{task.text}</span>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {[1, 2, 3, 4].map((qNum) => (
+                          <button
+                            key={qNum}
+                            type="button"
+                            onClick={() => handlePlaceTask(task.id, qNum)}
+                            className="btn-outline"
+                            style={{
+                              height: '26px',
+                              padding: '0 8px',
+                              fontSize: '0.72rem',
+                              backgroundColor: skillsPlacements[task.id] === qNum ? 'var(--brand-primary)' : undefined,
+                              color: skillsPlacements[task.id] === qNum ? '#FFFFFF' : undefined,
+                            }}
+                          >
+                            Q{qNum}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* -------------------------------------------------------- */}
+          {/* LAB P3: Social Profile & Digital Reputation Builder      */}
+          {/* -------------------------------------------------------- */}
+          {lab.id === 'lab-p3-social-profile' && (
+            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    Social Profile & Executive Digital Reputation Studio
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                    Optimize professional presence, portfolio artifacts, and privacy hygiene
+                  </div>
+                </div>
+                <span className="badge badge-brand">
+                  CREDIBILITY: {profileScores.credibility}/100
+                </span>
+              </div>
+
+              {/* Profile Headline Builder */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Professional Headline & Value Proposition:
+                </label>
+                <input
+                  type="text"
+                  value={profileHeadline}
+                  onChange={(e) => setProfileHeadline(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%', height: '38px', borderRadius: '8px' }}
+                />
+              </div>
+
+              {/* Bio Description */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Executive Bio & Specializations:
+                </label>
+                <textarea
+                  value={profileBio}
+                  onChange={(e) => setProfileBio(e.target.value)}
+                  className="input-field"
+                  style={{ width: '100%', minHeight: '65px', borderRadius: '8px', padding: '10px' }}
+                />
+              </div>
+
+              {/* Privacy & Safety Audit */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                <button
+                  type="button"
+                  onClick={() => setProfilePublicSearch(!profilePublicSearch)}
+                  className="btn-outline"
+                  style={{ padding: '10px', height: 'auto', textAlign: 'left', borderRadius: '8px' }}
+                >
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>Search Indexing</div>
+                  <div style={{ fontSize: '0.72rem', color: profilePublicSearch ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
+                    {profilePublicSearch ? '✓ Publicly Indexed' : 'Hidden from Search'}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setProfile2FA(!profile2FA)}
+                  className="btn-outline"
+                  style={{ padding: '10px', height: 'auto', textAlign: 'left', borderRadius: '8px' }}
+                >
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>Two-Factor Auth</div>
+                  <div style={{ fontSize: '0.72rem', color: profile2FA ? 'var(--brand-primary)' : 'var(--danger)' }}>
+                    {profile2FA ? '✓ Hardware / App 2FA' : '⚠ Disabled (Risk)'}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setProfileTelemetry(!profileTelemetry)}
+                  className="btn-outline"
+                  style={{ padding: '10px', height: 'auto', textAlign: 'left', borderRadius: '8px' }}
+                >
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-primary)' }}>Third-Party Trackers</div>
+                  <div style={{ fontSize: '0.72rem', color: !profileTelemetry ? 'var(--brand-primary)' : 'var(--warning)' }}>
+                    {!profileTelemetry ? '✓ Trackers Blocked' : '⚠ Telemetry Allowed'}
+                  </div>
+                </button>
+              </div>
+
+              <div>
+                <button
+                  type="button"
+                  onClick={handleAuditProfile}
+                  className="btn-primary"
+                  style={{ height: '36px', padding: '0 18px', fontSize: '0.82rem' }}
+                >
+                  Audit & Verify Digital Reputation Score
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Universal Domain Simulation Fallback */}
           {lab.id !== 'lab-t1-ai-classifier' &&
@@ -1871,7 +2810,13 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             lab.id !== 'lab-c1-programming-fundamentals' &&
             lab.id !== 'lab-c2-conditions-loops' &&
             lab.id !== 'lab-c3-debugging-workshop' &&
-            lab.id !== 'lab-sec-scam-defense' && (
+            lab.id !== 'lab-sec-scam-defense' &&
+            lab.id !== 'lab-t7-trustlink-blockchain' &&
+            lab.id !== 'lab-f4-fintech-discovery' &&
+            lab.id !== 'lab-f5-global-economics' &&
+            lab.id !== 'lab-p1-communication-pro' &&
+            lab.id !== 'lab-p2-professional-skills' &&
+            lab.id !== 'lab-p3-social-profile' && (
               <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
                   Interactive Domain Simulation Studio
@@ -1889,17 +2834,18 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         {/* ============================================================ */}
         {/* PANEL 3 (RIGHT): OUTPUT, CRITERIA & SUBMISSION VERIFICATION  */}
         {/* ============================================================ */}
-        <aside
-          className={`workspace-panel-criteria ${mobileTab === 'results' ? 'active' : ''}`}
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderLeft: '1px solid var(--border-subtle)',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '18px',
-          }}
-        >
+        {workspaceMode === '3-column' && (
+          <aside
+            className={`workspace-panel-criteria ${mobileTab === 'results' ? 'active' : ''}`}
+            style={{
+              backgroundColor: 'var(--bg-surface)',
+              borderLeft: '1px solid var(--border-subtle)',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px',
+            }}
+          >
           {/* Status Badge Card */}
           <div
             style={{
@@ -2013,6 +2959,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             )}
           </div>
         </aside>
+      )}
       </main>
     </div>
   );

@@ -39,12 +39,14 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
   const techCount = allLabs.filter((l) => l.category === 'technology').length;
   const finCount = allLabs.filter((l) => l.category === 'finance').length;
   const codeCount = allLabs.filter((l) => l.category === 'coding').length;
+  const profCount = allLabs.filter((l) => l.category === 'professional').length;
 
   const categories = [
     { id: 'all', label: `All Subjects (${allLabs.length})` },
     { id: 'technology', label: `Technology (${techCount})` },
     { id: 'finance', label: `Finance (${finCount})` },
     { id: 'coding', label: `Coding & Programming (${codeCount})` },
+    { id: 'professional', label: `Professional & Soft Skills (${profCount})` },
   ];
 
   const types = [

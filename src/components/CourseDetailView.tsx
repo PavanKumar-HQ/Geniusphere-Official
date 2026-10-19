@@ -15,7 +15,6 @@ import {
   Terminal,
   Award,
   Video,
-  Cpu,
   Code2,
 } from 'lucide-react';
 
@@ -24,7 +23,7 @@ interface CourseDetailViewProps {
   courseSlug: string;
   currentUserId: string;
   onBack: () => void;
-  onStartLesson: (courseId: string, lessonId: string) => void;
+  onStartLesson: (courseId: string, lessonId: string, initialTab?: 'video' | 'animation' | 'sandbox') => void;
   onLaunchLab?: (labSlug: string) => void;
 }
 
@@ -141,7 +140,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             <div>
               <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>Ready to begin?</div>
               <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                10 Comprehensive Modules • 10 Videos • 10 SVG Visualizers • 10 Sandbox Labs • Certificate
+                10 Comprehensive Modules • 10 Videos • 10 Interactive Labs • 10 Code Sandboxes • Certificate
               </div>
             </div>
           )}
@@ -377,7 +376,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800 }}>Complete 10-Module Syllabus</h3>
-              <span className="badge badge-accent">10 Videos • 10 SVG Animations • 10 Sandboxes</span>
+              <span className="badge badge-accent">10 Videos • 10 Interactive Labs • 10 Sandboxes</span>
             </div>
 
             {course.modules.length === 0 ? (
@@ -386,70 +385,91 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
               </p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {course.modules.map((mod, mIdx) => (
-                  <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'var(--bg-surface)' }}>
-                    <div style={{ backgroundColor: 'var(--bg-surface-subdued)', padding: '12px 18px', fontWeight: 700, fontSize: '0.95rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-primary)' }}>
-                      <span>Module {mIdx + 1}: {mod.title}</span>
-                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{mod.lessons.length} Lessons</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {mod.lessons.map((les, lIdx) => {
-                        const isCompleted = enrollment?.completed_lessons.includes(les.id);
+                {course.modules.map((mod, mIdx) => {
+                  const cleanModuleTitle = mod.title.replace(/^Module\s+\d+:\s*/i, '');
+                  return (
+                    <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'var(--bg-surface)' }}>
+                      <div style={{ backgroundColor: 'var(--bg-surface-subdued)', padding: '12px 18px', fontWeight: 700, fontSize: '0.95rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-primary)' }}>
+                        <span>Module {mIdx + 1}: {cleanModuleTitle}</span>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{mod.lessons.length} Lessons</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {mod.lessons.map((les, lIdx) => {
+                          const isCompleted = enrollment?.completed_lessons.includes(les.id);
 
-                        return (
-                          <div
-                            key={les.id}
-                            style={{
-                              padding: '14px 18px',
-                              borderTop: lIdx > 0 ? '1px solid var(--border-subtle)' : 'none',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              flexWrap: 'wrap',
-                              gap: '12px',
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1', minWidth: '240px' }}>
-                              {isCompleted ? (
-                                <CheckCircle2 size={20} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
-                              ) : (
-                                <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid var(--border-strong)', flexShrink: 0 }} />
-                              )}
-                              <div>
-                                <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>{les.title}</div>
-                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{les.summary}</div>
+                          return (
+                            <div
+                              key={les.id}
+                              style={{
+                                padding: '14px 18px',
+                                borderTop: lIdx > 0 ? '1px solid var(--border-subtle)' : 'none',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: '12px',
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1', minWidth: '240px' }}>
+                                {isCompleted ? (
+                                  <CheckCircle2 size={20} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
+                                ) : (
+                                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid var(--border-strong)', flexShrink: 0 }} />
+                                )}
+                                <div>
+                                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>{les.title}</div>
+                                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{les.summary}</div>
+                                </div>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+                                  <Clock size={11} style={{ marginRight: '3px' }} />
+                                  {les.duration_minutes}m
+                                </span>
+                                <button
+                                  type="button"
+                                  className="badge badge-brand"
+                                  onClick={() => onStartLesson(course.id, les.id, 'video')}
+                                  style={{ fontSize: '0.72rem', cursor: 'pointer', border: 'none' }}
+                                  title="Watch Video Lecture"
+                                >
+                                  <Video size={11} style={{ marginRight: '3px' }} /> Video
+                                </button>
+                                <button
+                                  type="button"
+                                  className="badge badge-accent"
+                                  onClick={() => onStartLesson(course.id, les.id, 'animation')}
+                                  style={{ fontSize: '0.72rem', cursor: 'pointer', border: 'none' }}
+                                  title="Open Interactive Lab Simulation"
+                                >
+                                  <Terminal size={11} style={{ marginRight: '3px' }} /> Lab
+                                </button>
+                                <button
+                                  type="button"
+                                  className="badge badge-success"
+                                  onClick={() => onStartLesson(course.id, les.id, 'sandbox')}
+                                  style={{ fontSize: '0.72rem', cursor: 'pointer', border: 'none' }}
+                                  title="Open Code Sandbox"
+                                >
+                                  <Terminal size={11} style={{ marginRight: '3px' }} /> Sandbox
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn-outline"
+                                  onClick={() => onStartLesson(course.id, les.id)}
+                                  style={{ height: '34px', padding: '0 12px', fontSize: '0.82rem' }}
+                                >
+                                  Launch
+                                </button>
                               </div>
                             </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                              <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
-                                <Clock size={11} style={{ marginRight: '3px' }} />
-                                {les.duration_minutes}m
-                              </span>
-                              <span className="badge badge-brand" style={{ fontSize: '0.72rem' }}>
-                                <Video size={11} style={{ marginRight: '3px' }} /> Video
-                              </span>
-                              <span className="badge badge-accent" style={{ fontSize: '0.72rem' }}>
-                                <Cpu size={11} style={{ marginRight: '3px' }} /> SVG
-                              </span>
-                              <span className="badge badge-success" style={{ fontSize: '0.72rem' }}>
-                                <Terminal size={11} style={{ marginRight: '3px' }} /> Sandbox
-                              </span>
-                              <button
-                                type="button"
-                                className="btn-outline"
-                                onClick={() => onStartLesson(course.id, les.id)}
-                                style={{ height: '34px', padding: '0 12px', fontSize: '0.82rem' }}
-                              >
-                                Launch
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

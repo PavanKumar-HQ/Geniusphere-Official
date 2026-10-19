@@ -12,30 +12,30 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
 
-  /* Master Botanical Palette: Warm Ivory + Soft Sage + Fresh Green + Lime + Charcoal */
-  --bg-canvas: #FAFAF4;                  /* Main Background: Warm Ivory */
+  /* Master Editorial Palette: Warm Ivory + Soft Sage + Forest Green + Muted Lime + Mist Green + Charcoal + Pure White */
+  --bg-canvas: #F7F6F0;                  /* Main Background: Warm Ivory */
   --bg-surface: #FFFFFF;                 /* Pure White Surface / Canvas Cards */
-  --bg-surface-subdued: #E5F0DF;         /* Secondary Surfaces: Soft Sage */
+  --bg-surface-subdued: #E8EDE4;         /* Secondary Surfaces: Soft Sage */
   --bg-surface-elevated: #FFFFFF;
 
-  --brand-primary: #43A85B;              /* Primary Brand & Buttons: Fresh Green */
-  --brand-primary-bright: #43A85B;
-  --brand-primary-hover: #388E4C;
-  --brand-primary-active: #2E763F;
-  --brand-forest: #43A85B;
+  --brand-primary: #244C3A;              /* Primary actions and active states: Forest Green */
+  --brand-primary-bright: #2d5e48;
+  --brand-primary-hover: #1b382b;
+  --brand-primary-active: #142920;
+  --brand-forest: #244C3A;
 
-  --brand-surface: #E5F0DF;              /* Secondary Surfaces: Soft Sage */
-  --brand-border: rgba(38, 53, 42, 0.12); /* Subtle Structural Hairline */
-  --border-subtle: rgba(38, 53, 42, 0.12);
-  --border-strong: rgba(38, 53, 42, 0.22);
+  --brand-surface: #E8EDE4;              /* Secondary Surfaces: Soft Sage */
+  --brand-border: #D6DED2;               /* Borders & Separators: Mist Green */
+  --border-subtle: #D6DED2;              /* Mist Green */
+  --border-strong: #BAC4B5;
 
-  --brand-lime: #D9F477;                 /* Highlights & Important Actions: Lime */
-  --brand-lime-text: #26352A;            /* Charcoal text on lime for WCAG AAA */
+  --brand-lime: #A9C86A;                 /* Restrained highlights and progress: Muted Lime */
+  --brand-lime-text: #252C27;            /* Charcoal text on lime for WCAG AAA */
 
-  --brand-blue: #43A85B;                 /* Pure Botanical: No Blue */
-  --brand-blue-hover: #388E4C;
-  --brand-blue-surface: #E5F0DF;
-  --brand-blue-border: rgba(38, 53, 42, 0.12);
+  --brand-blue: #244C3A;
+  --brand-blue-hover: #1b382b;
+  --brand-blue-surface: #E8EDE4;
+  --brand-blue-border: #D6DED2;
 
   --brand-quest: #D97706;                /* Warm Amber */
   --brand-quest-hover: #B45309;
@@ -44,11 +44,11 @@
   --brand-quest-text: #92400E;
   --brand-joy-of-quest: #D97706;
 
-  --brand-accent: #43A85B;
-  --brand-accent-hover: #388E4C;
-  --brand-accent-surface: #E5F0DF;
-  --brand-accent-border: rgba(38, 53, 42, 0.12);
-  --brand-always-questioning: #43A85B;
+  --brand-accent: #244C3A;
+  --brand-accent-hover: #1b382b;
+  --brand-accent-surface: #E8EDE4;
+  --brand-accent-border: #D6DED2;
+  --brand-always-questioning: #244C3A;
 
   /* Typography Sizing Tokens */
   --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
@@ -59,10 +59,10 @@
   --text-meta: 0.8125rem;                           /* 12-13px */
 
   /* Text & Ink Typography (Charcoal) */
-  --text-primary: #26352A;               /* Headings, Body Text & Labels: Charcoal */
-  --text-secondary: #4A5B4F;             /* Muted Charcoal Body Copy */
-  --text-muted: #6B7C70;                 /* Gentle Charcoal for Metadata */
-  --text-inverse: #FAFAF4;
+  --text-primary: #252C27;               /* Text: Charcoal */
+  --text-secondary: #4A564D;             /* Muted Charcoal Body Copy */
+  --text-muted: #6B786E;                 /* Gentle Charcoal for Metadata */
+  --text-inverse: #F7F6F0;
 
   /* Selected State */
   --selected-bg: #E5F0DF;
@@ -1194,27 +1194,36 @@ tr:hover td {
 
 /* Desktop Collapsed Rail Mode (Prevents content overflow & maximizes screen space) */
 .platform-sidebar.collapsed {
-  width: 72px;
-  padding: 16px 8px 24px;
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  padding: 16px 8px 24px !important;
+  overflow-x: hidden !important;
 }
 
 .platform-sidebar.collapsed .sidebar-label,
 .platform-sidebar.collapsed .sidebar-section-title,
 .platform-sidebar.collapsed .sidebar-mascot-card-text {
   display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 .platform-sidebar.collapsed .sidebar-nav-btn {
-  justify-content: center;
-  padding: 11px 0;
-  border-radius: 12px;
-  gap: 0;
+  justify-content: center !important;
+  padding: 11px 0 !important;
+  border-radius: 12px !important;
+  gap: 0 !important;
+  width: 100% !important;
 }
 
 .platform-sidebar.collapsed .sidebar-mascot-card {
-  padding: 8px 4px;
-  display: flex;
-  justify-content: center;
+  padding: 8px 4px !important;
+  display: flex !important;
+  justify-content: center !important;
 }
 
 .sidebar-nav-btn {
@@ -1286,20 +1295,6 @@ tr:hover td {
     transform: translateX(0);
   }
 
-  /* Ensure labels are always visible on mobile when drawer is open, even if desktop collapsed state is active */
-  .platform-sidebar.collapsed .sidebar-label,
-  .platform-sidebar.collapsed .sidebar-section-title,
-  .platform-sidebar.collapsed .sidebar-mascot-card-text {
-    display: initial !important;
-  }
-
-  .platform-sidebar.collapsed .sidebar-nav-btn {
-    justify-content: flex-start;
-    padding: 10px 14px;
-    border-radius: 100px;
-    gap: 12px;
-  }
-
   .platform-sidebar-backdrop {
     position: fixed;
     inset: 0;
@@ -1319,8 +1314,18 @@ tr:hover td {
 .sidebar-mobile-drawer-header {
   display: none !important;
 }
-.sidebar-desktop-collapse-header {
-  display: flex !important;
+
+/* Fluid Global Theme Palette Transitions */
+html,
+body,
+header,
+aside,
+.platform-sidebar,
+.platform-layout,
+.platform-main-content,
+.card-elevated,
+.sidebar-nav-btn {
+  transition: background-color 0.22s ease, color 0.22s ease, border-color 0.22s ease;
 }
 
 @media (max-width: 1023px) {
@@ -1332,9 +1337,6 @@ tr:hover td {
   }
   .sidebar-mobile-drawer-header {
     display: flex !important;
-  }
-  .sidebar-desktop-collapse-header {
-    display: none !important;
   }
   .theme-btn-label {
     display: none;
@@ -1489,14 +1491,26 @@ tr:hover td {
 /* ====================================================================
    Shared Lab Workspace Grid & Panels
    ==================================================================== */
+.mobile-tab-bar {
+  display: none !important;
+}
+
 .workspace-grid-container {
   display: grid;
-  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(260px, 300px);
+  grid-template-columns: 260px minmax(0, 1fr) 260px;
   gap: 0;
   height: 100%;
   width: 100%;
   overflow: hidden;
   background-color: var(--bg-canvas);
+}
+
+.workspace-grid-container.mode-focus {
+  grid-template-columns: 280px minmax(0, 1fr);
+}
+
+.workspace-grid-container.mode-zen {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .workspace-panel-instructions,
@@ -1509,7 +1523,7 @@ tr:hover td {
 
 @media (max-width: 1100px) {
   .workspace-grid-container {
-    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(240px, 280px);
+    grid-template-columns: 240px minmax(0, 1fr) 240px;
   }
 }
 
@@ -1524,6 +1538,140 @@ tr:hover td {
   .workspace-panel-instructions:not(.active),
   .workspace-panel-center:not(.active),
   .workspace-panel-criteria:not(.active) {
+    display: none !important;
+  }
+}
+
+/* ====================================================================
+   NATIVE MOBILE APP MODE & BOTTOM NAVIGATION TAB BAR
+   ==================================================================== */
+.mobile-app-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Main workspace padding to prevent content from hiding behind bottom bar */
+  .platform-main-content {
+    padding-bottom: 78px !important;
+  }
+
+  /* Fixed glassmorphic bottom navigation tab bar */
+  .mobile-app-bottom-bar {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: var(--bg-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-subtle);
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .mobile-tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 100%;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 2px;
+    transition: all 0.15s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tab-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .mobile-tab-btn:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-tab-btn.active {
+    color: var(--brand-primary) !important;
+    font-weight: 800;
+  }
+
+  .mobile-tab-btn.active svg {
+    color: var(--brand-primary) !important;
+    transform: translateY(-1px);
+    filter: drop-shadow(0 2px 6px rgba(67, 168, 91, 0.35));
+  }
+}
+
+/* ====================================================================
+   DESKTOP PRIMARY NAVIGATION & DECLUTTERED HEADER TABS
+   ==================================================================== */
+.desktop-primary-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 960px) {
+  .desktop-primary-nav {
+    display: none !important;
+  }
+}
+
+.nav-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.nav-tab-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-subdued);
+}
+
+.nav-tab-btn.active {
+  color: var(--brand-primary);
+  background-color: var(--bg-surface-subdued);
+  font-weight: 800;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 768px) {
+  .header-hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Gamified Learning Roadmap & Lab Studio Responsive Layout */
+@media (max-width: 960px) {
+  .gamified-path-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .mascot-speech-bubble-wrapper {
     display: none !important;
   }
 }

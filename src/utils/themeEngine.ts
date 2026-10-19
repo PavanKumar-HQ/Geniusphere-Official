@@ -36,15 +36,15 @@ export const THEME_DEFINITIONS: ThemeDefinition[] = [
   {
     id: 'light',
     name: 'Light (Default)',
-    subtitle: 'Warm Ivory + Sage + Forest Green',
-    description: 'Refined botanical palette inspired by natural ivory canvas and botanical flora.',
+    subtitle: 'Warm Ivory + Soft Sage + Forest Green',
+    description: 'Master educational editorial palette: Warm Ivory, Soft Sage, Forest Green and Muted Lime.',
     isDark: false,
     previewColors: {
-      bg: '#FAFAF4',
+      bg: '#F7F6F0',
       surface: '#FFFFFF',
-      primary: '#43A85B',
-      accent: '#D9F477',
-      text: '#26352A',
+      primary: '#244C3A',
+      accent: '#A9C86A',
+      text: '#252C27',
     },
   },
   {
@@ -206,13 +206,26 @@ export function applyTheme(themeId: ThemeId): void {
 
   const root = document.documentElement;
 
+  let resolvedTheme = themeId;
   if (themeId === 'system') {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-    root.setAttribute('data-theme-setting', 'system');
-  } else {
-    root.setAttribute('data-theme', themeId);
-    root.setAttribute('data-theme-setting', themeId);
+    resolvedTheme = prefersDark ? 'dark' : 'light';
+  }
+
+  root.setAttribute('data-theme', resolvedTheme);
+  root.setAttribute('data-theme-setting', themeId);
+
+  const def = THEME_DEFINITIONS.find((t) => t.id === resolvedTheme) || THEME_DEFINITIONS[0];
+  const isDark = def.isDark;
+
+  try {
+    root.style.colorScheme = isDark ? 'dark' : 'light';
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', def.previewColors.bg);
+    }
+  } catch (e) {
+    // Safe fallback in non-browser test environments
   }
 }
 

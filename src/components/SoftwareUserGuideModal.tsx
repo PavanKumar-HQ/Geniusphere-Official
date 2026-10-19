@@ -11,6 +11,7 @@ interface SoftwareUserGuideModalProps {
 
 interface GuideChapter {
   id: string;
+  tabLabel: string;
   title: string;
   subtitle: string;
   mascotPose: MascotExpression;
@@ -33,6 +34,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
   const chapters: GuideChapter[] = [
     {
       id: 'architecture',
+      tabLabel: '1. Overview',
       title: 'Geniusphere Software Overview',
       subtitle: 'Local-first architecture and deterministic learning',
       mascotPose: 'happy',
@@ -47,6 +49,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
     },
     {
       id: 'curriculum',
+      tabLabel: '2. 40 Canonical Courses',
       title: '40 Canonical Standard Courses',
       subtitle: 'Structured across 3 approved foundational streams',
       mascotPose: 'guidance',
@@ -62,6 +65,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
     },
     {
       id: 'labs',
+      tabLabel: '3. Interactive Labs',
       title: 'Interactive Labs & Coding Sandboxes',
       subtitle: 'Execute real code, parameter sweeps, and threat defense',
       mascotPose: 'coding',
@@ -77,6 +81,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
     },
     {
       id: 'teacher',
+      tabLabel: '4. Educator & Classes',
       title: 'Educator & Classroom Management',
       subtitle: 'Dedicated portal for teachers, cohorts, and gradebooks',
       mascotPose: 'teaching',
@@ -92,6 +97,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
     },
     {
       id: 'certificates',
+      tabLabel: '5. Certificates Vault',
       title: 'Cryptographic Verifiable Credentials',
       subtitle: 'SHA-256 integrity hashes for verifiable achievement',
       mascotPose: 'celebrating_certificate',
@@ -102,7 +108,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
         'Institutional reviewers and recruiters can independently verify credential provenance without centralized dependencies.',
       ],
       actionLabel: 'View Certificates Vault',
-      actionView: 'student-dashboard',
+      actionView: 'certificates',
     },
   ];
 
@@ -116,8 +122,9 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(38, 53, 42, 0.45)',
-        backdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
         zIndex: 2000,
         display: 'flex',
         alignItems: 'center',
@@ -131,14 +138,15 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
         style={{
           width: '100%',
           maxWidth: '840px',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'var(--bg-surface)',
           borderRadius: '24px',
-          border: '1px solid #E5F0DF',
-          boxShadow: '0 20px 50px rgba(38, 53, 42, 0.15)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.28)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           maxHeight: '90vh',
+          color: 'var(--text-primary)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -146,21 +154,21 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
         <div
           style={{
             padding: '20px 28px',
-            backgroundColor: '#F8FAF6',
-            borderBottom: '1px solid #E5F0DF',
+            backgroundColor: 'var(--bg-surface-subdued)',
+            borderBottom: '1px solid var(--border-subtle)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div
               style={{
-                width: '36px',
-                height: '36px',
+                width: '38px',
+                height: '38px',
                 borderRadius: '50%',
-                backgroundColor: '#D9F477',
-                color: '#26352A',
+                backgroundColor: 'var(--brand-primary)',
+                color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -170,10 +178,10 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
               <BookOpen size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1.15rem', color: '#26352A', fontFamily: 'Space Grotesk, sans-serif' }}>
+              <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                 Geniusphere Interactive Software Guide
               </div>
-              <div style={{ fontSize: '0.78rem', color: '#6A7D70' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 Guided Tour with Sphere Mascot • Chapter {activeChapterIndex + 1} of {chapters.length}
               </div>
             </div>
@@ -185,11 +193,16 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
             style={{
               background: 'none',
               border: 'none',
-              color: '#6A7D70',
+              color: 'var(--text-muted)',
               cursor: 'pointer',
-              padding: '6px',
+              padding: '8px',
               borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'color 0.15s ease',
             }}
+            aria-label="Close guide"
           >
             <X size={20} />
           </button>
@@ -201,8 +214,8 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
             display: 'flex',
             gap: '8px',
             padding: '12px 28px',
-            backgroundColor: '#FAFAF4',
-            borderBottom: '1px solid #E5F0DF',
+            backgroundColor: 'var(--bg-canvas)',
+            borderBottom: '1px solid var(--border-subtle)',
             overflowX: 'auto',
           }}
         >
@@ -214,9 +227,10 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
               style={{
                 padding: '6px 14px',
                 borderRadius: '100px',
-                border: 'none',
-                backgroundColor: idx === activeChapterIndex ? '#43A85B' : '#E5F0DF',
-                color: idx === activeChapterIndex ? '#FFFFFF' : '#26352A',
+                border: '1px solid',
+                borderColor: idx === activeChapterIndex ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                backgroundColor: idx === activeChapterIndex ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                color: idx === activeChapterIndex ? '#FFFFFF' : 'var(--text-primary)',
                 fontSize: '0.78rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -224,7 +238,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                 transition: 'all 0.15s ease',
               }}
             >
-              {idx + 1}. {ch.title.split(' ')[0]} {ch.title.split(' ')[1] || ''}
+              {ch.tabLabel}
             </button>
           ))}
         </div>
@@ -234,10 +248,11 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
           style={{
             padding: '32px 32px',
             display: 'grid',
-            gridTemplateColumns: '200px 1fr',
+            gridTemplateColumns: '180px 1fr',
             gap: '32px',
             alignItems: 'center',
             overflowY: 'auto',
+            backgroundColor: 'var(--bg-surface)',
           }}
         >
           {/* Left Column: Animated Mascot with Custom Pose */}
@@ -256,7 +271,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                 margin: 0,
                 fontSize: '1.4rem',
                 fontWeight: 800,
-                color: '#26352A',
+                color: 'var(--text-primary)',
                 fontFamily: 'Space Grotesk, sans-serif',
               }}
             >
@@ -266,7 +281,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
               style={{
                 margin: '4px 0 18px',
                 fontSize: '0.86rem',
-                color: '#43A85B',
+                color: 'var(--brand-primary)',
                 fontWeight: 600,
               }}
             >
@@ -276,8 +291,8 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {currentChapter.content.map((point, pIdx) => (
                 <div key={pIdx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                  <CheckCircle2 size={16} color="#43A85B" style={{ flexShrink: 0, marginTop: '3px' }} />
-                  <span style={{ fontSize: '0.88rem', color: '#3A4E40', lineHeight: 1.45 }}>{point}</span>
+                  <CheckCircle2 size={16} color="var(--brand-primary)" style={{ flexShrink: 0, marginTop: '3px' }} />
+                  <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>{point}</span>
                 </div>
               ))}
             </div>
@@ -294,14 +309,15 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  backgroundColor: '#D9F477',
-                  color: '#26352A',
-                  padding: '8px 18px',
+                  backgroundColor: 'var(--brand-primary)',
+                  color: '#FFFFFF',
+                  padding: '9px 20px',
                   borderRadius: '100px',
                   border: 'none',
                   fontSize: '0.84rem',
                   fontWeight: 800,
                   cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(67, 168, 91, 0.3)',
                   transition: 'transform 0.15s ease',
                 }}
               >
@@ -316,8 +332,8 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
         <div
           style={{
             padding: '18px 28px',
-            backgroundColor: '#F8FAF6',
-            borderTop: '1px solid #E5F0DF',
+            backgroundColor: 'var(--bg-surface-subdued)',
+            borderTop: '1px solid var(--border-subtle)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -331,21 +347,22 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E5F0DF',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
               padding: '8px 18px',
               borderRadius: '100px',
               fontSize: '0.82rem',
               fontWeight: 700,
-              color: activeChapterIndex === 0 ? '#A3B8A8' : '#26352A',
+              color: activeChapterIndex === 0 ? 'var(--text-muted)' : 'var(--text-primary)',
               cursor: activeChapterIndex === 0 ? 'not-allowed' : 'pointer',
+              opacity: activeChapterIndex === 0 ? 0.5 : 1,
             }}
           >
             <ArrowLeft size={14} />
             <span>Previous</span>
           </button>
 
-          <span style={{ fontSize: '0.8rem', color: '#6A7D70', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
             {activeChapterIndex + 1} / {chapters.length}
           </span>
 
@@ -357,7 +374,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                backgroundColor: '#43A85B',
+                backgroundColor: 'var(--brand-primary)',
                 color: '#FFFFFF',
                 border: 'none',
                 padding: '8px 20px',
@@ -378,17 +395,17 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                backgroundColor: '#43A85B',
+                backgroundColor: 'var(--brand-primary)',
                 color: '#FFFFFF',
                 border: 'none',
-                padding: '8px 22px',
+                padding: '8px 20px',
                 borderRadius: '100px',
                 fontSize: '0.84rem',
                 fontWeight: 800,
                 cursor: 'pointer',
               }}
             >
-              <span>Ready to Start!</span>
+              <span>Get Started</span>
               <CheckCircle2 size={14} />
             </button>
           )}

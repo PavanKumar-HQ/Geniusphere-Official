@@ -22,6 +22,7 @@ import { SharedLabWorkspace } from './components/SharedLabWorkspace';
 import { ScamDefenseJourney } from './components/ScamDefenseJourney';
 import { CIEAuditMatrix } from './components/CIEAuditMatrix';
 import { BackupExportModal } from './components/BackupExportModal';
+import { PilotApplicationModal } from './components/PilotApplicationModal';
 import { VectorScratchpadOverlay } from './components/VectorScratchpadOverlay';
 import { VisualDiagramStudio } from './components/VisualDiagramStudio';
 import { MascotSphere } from './components/MascotSphere';
@@ -32,10 +33,18 @@ import { MultiLanguageCodeSandbox } from './components/MultiLanguageCodeSandbox'
 import { SectionContextBar } from './components/SectionContextBar';
 import { CertificatesView } from './components/CertificatesView';
 import { ThemeSettingsModal } from './components/ThemeSettingsModal';
+import { RealtimeHeaderStatus } from './components/RealtimeHeaderStatus';
+import { RealtimeNotificationCenter, RealtimeToastStack } from './components/RealtimeNotificationCenter';
+import { backendEngine } from './backend/RealtimeOrchestrator';
+import { GeniusphereLoader } from './components/GeniusphereLoader';
+import { LegalPrivacyTermsView } from './components/LegalPrivacyTermsView';
+import { ContactCommunityView } from './components/ContactCommunityView';
+import { NotFoundView } from './components/NotFoundView';
 import {
   ThemeId,
   getStoredTheme,
   initThemeEngine,
+  applyTheme,
 } from './utils/themeEngine';
 import { Certificate } from './types';
 import {
@@ -51,8 +60,6 @@ import {
   Search,
   Bell,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Folder,
   Award,
   ArrowRight,
@@ -63,6 +70,8 @@ import {
   Palette,
   PanelLeftClose,
   PanelLeftOpen,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 export type AppView =
@@ -88,7 +97,12 @@ export type AppView =
   | 'audit'
   | 'scam-defense'
   | 'cie-audit'
-  | 'diagram-studio';
+  | 'diagram-studio'
+  | 'privacy'
+  | 'terms'
+  | 'contact'
+  | 'community'
+  | 'not-found';
 
 export const App: React.FC = () => {
   // Single persistent in-memory database instance for genuine state progression
@@ -125,9 +139,20 @@ export const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   const [userGuideOpen, setUserGuideOpen] = useState<boolean>(false);
 
-  // Theme & Appearance Palette State (10 Themes)
   const [currentTheme, setCurrentTheme] = useState<ThemeId>(() => getStoredTheme());
   const [themeModalOpen, setThemeModalOpen] = useState<boolean>(false);
+
+  const isDarkMode =
+    currentTheme === 'dark' ||
+    currentTheme === 'oled-dark' ||
+    currentTheme === 'midnight-blue' ||
+    currentTheme === 'high-contrast-dark';
+
+  const toggleTheme = () => {
+    const nextTheme: ThemeId = isDarkMode ? 'light' : 'dark';
+    applyTheme(nextTheme);
+    setCurrentTheme(nextTheme);
+  };
 
   // Desktop Collapsible Sidebar Rail State (Persisted in localStorage)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
@@ -138,31 +163,41 @@ export const App: React.FC = () => {
     }
   });
 
+  // Website Loading Animation States (Active throughout website)
+  const [initialLoading, setInitialLoading] = useState<boolean>(() => {
+    try {
+      if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') {
+        return false;
+      }
+    } catch {
+      // browser environment without process
+    }
+    return true;
+  });
+  const [viewLoading, setViewLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!initialLoading) return;
+    const timer = setTimeout(() => {
+      setInitialLoading(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [initialLoading]);
+
   // Initialize Theme Engine and System Scheme Listeners
   useEffect(() => {
     const cleanup = initThemeEngine();
     return cleanup;
   }, []);
 
-  // Keyboard shortcut: ⌘+B or Ctrl+B toggles sidebar collapse rail
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
-        e.preventDefault();
-        setIsSidebarCollapsed((prev) => {
-          const next = !prev;
-          try {
-            localStorage.setItem('geniusphere_sidebar_collapsed', String(next));
-          } catch {}
-          return next;
-        });
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const toggleSidebarCollapse = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setSidebarOpen((prev) => !prev);
+      return;
+    }
+    if (sidebarOpen) {
+      setSidebarOpen(false);
+    }
     setIsSidebarCollapsed((prev) => {
       const next = !prev;
       try {
@@ -172,10 +207,23 @@ export const App: React.FC = () => {
     });
   };
 
+  // Keyboard shortcut: ⌘+B or Ctrl+B toggles sidebar collapse rail / drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleSidebarCollapse();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [sidebarOpen]);
+
 
   // Sovereign Backup & Notes Overlay Modals
   const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
   const [scratchpadOpen, setScratchpadOpen] = useState<boolean>(false);
+  const [pilotModalOpen, setPilotModalOpen] = useState<boolean>(false);
 
   // Auth Modal State
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -183,8 +231,39 @@ export const App: React.FC = () => {
 
   const currentUser = users.find((u) => u.id === currentUserId) || users[0];
   const isTeacher = currentUser.role === 'teacher';
-  const isInstAdmin = currentUser.role === 'institution_admin';
+  const isInstAdmin = currentUser.role === 'institution_admin' || currentUser.role === 'admin';
   const isSuperadmin = currentUser.role === 'superadmin';
+  const isGuardian = currentUser.role === 'guardian';
+  const isLearner = !isTeacher && !isInstAdmin && !isSuperadmin && !isGuardian;
+
+  const [unreadCount, setUnreadCount] = useState<number>(() =>
+    backendEngine.notifications.getUnreadCount(currentUser.id)
+  );
+
+  useEffect(() => {
+    backendEngine.initialize(currentUser.id, currentUser.name, currentUser.role);
+
+    const updateUnread = () => {
+      setUnreadCount(backendEngine.notifications.getUnreadCount(currentUser.id));
+    };
+
+    updateUnread();
+    const unsub = backendEngine.bus.subscribe(`user:${currentUser.id}`, () => {
+      updateUnread();
+    });
+
+    return () => unsub();
+  }, [currentUser.id, currentUser.name, currentUser.role]);
+
+  useEffect(() => {
+    backendEngine.presence.sendHeartbeat(
+      currentUser.id,
+      currentUser.name,
+      currentUser.role,
+      currentView,
+      `Viewing ${currentView}`
+    );
+  }, [currentView, currentUser]);
 
   const allCourses = useMemo(() => db.getCanonicalCourses(), [db, refreshTrigger]);
   const allLabs = useMemo(() => db.getLabDefinitions(), [db]);
@@ -204,16 +283,50 @@ export const App: React.FC = () => {
   }, [allLabs, globalSearch]);
 
   const handleNavigate = (view: string, slug?: string) => {
+    setViewLoading(true);
+    setTimeout(() => {
+      setViewLoading(false);
+    }, 220);
+
     setSidebarOpen(false);
     setUserMenuOpen(false);
     setNotificationsOpen(false);
     setSearchSuggestionsOpen(false);
+
+    // STRICT ROLE ACCESS GUARD: Prevent students, teachers, and admins from interfering with each other
+    if (currentUser.role === 'learner') {
+      const restrictedForLearner = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'audit'];
+      if (restrictedForLearner.includes(view)) {
+        setCurrentView('student-dashboard');
+        return;
+      }
+    } else if (currentUser.role === 'teacher') {
+      const restrictedForTeacher = ['platform-workspace', 'parent'];
+      if (restrictedForTeacher.includes(view)) {
+        setCurrentView('gradebook');
+        return;
+      }
+    } else if (currentUser.role === 'institution_admin') {
+      const restrictedForAdmin = ['student-dashboard', 'platform-workspace', 'parent'];
+      if (restrictedForAdmin.includes(view)) {
+        setCurrentView('institution-workspace');
+        return;
+      }
+    } else if (currentUser.role === 'guardian') {
+      const restrictedForGuardian = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'student-dashboard'];
+      if (restrictedForGuardian.includes(view)) {
+        setCurrentView('parent');
+        return;
+      }
+    }
+
     if (view === 'course-detail' && slug) {
       setSelectedCourseSlug(slug);
       setCurrentView('course-detail');
     } else if (view === 'lab-workspace') {
       setSelectedLabSlug(slug || 'ai-classification-playground');
       setCurrentView('lab-workspace');
+      setIsSidebarCollapsed(true);
     } else if (view === 'labs') {
       setCurrentView('labs');
     } else if (view === 'catalogue') {
@@ -241,7 +354,12 @@ export const App: React.FC = () => {
       view === 'platform-workspace' ||
       view === 'scam-defense' ||
       view === 'cie-audit' ||
-      view === 'diagram-studio'
+      view === 'diagram-studio' ||
+      view === 'privacy' ||
+      view === 'terms' ||
+      view === 'contact' ||
+      view === 'community' ||
+      view === 'not-found'
     ) {
       setCurrentView(view as AppView);
     }
@@ -259,9 +377,12 @@ export const App: React.FC = () => {
     setCurrentView('course-detail');
   };
 
-  const handleStartLesson = (courseId: string, lessonId: string) => {
+  const [selectedLessonTab, setSelectedLessonTab] = useState<'video' | 'animation' | 'sandbox'>('video');
+
+  const handleStartLesson = (courseId: string, lessonId: string, initialTab: 'video' | 'animation' | 'sandbox' = 'video') => {
     setSelectedCourseId(courseId);
     setSelectedLessonId(lessonId);
+    setSelectedLessonTab(initialTab);
     setCurrentView('lesson-player');
   };
 
@@ -290,6 +411,17 @@ export const App: React.FC = () => {
             setCurrentView('catalogue');
           }
         }}
+      />
+    );
+  }
+
+  if (initialLoading) {
+    return (
+      <GeniusphereLoader
+        fullscreen
+        size="lg"
+        message="Geniusphere 2.0 Sovereign Platform"
+        submessage="Hydrating offline database, real-time IPC broker, and verified curriculum..."
       />
     );
   }
@@ -410,87 +542,241 @@ export const App: React.FC = () => {
                 Geniusphere
               </span>
             </button>
+
+            {/* PRIMARY DESKTOP NAVIGATION TABS (Linear / Apple HIG Standard) */}
+            <nav className="desktop-primary-nav" style={{ marginLeft: '12px' }}>
+              {isLearner && (
+                <>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'home' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('home')}
+                  >
+                    <Home size={14} />
+                    <span>Home</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('catalogue')}
+                  >
+                    <BookOpen size={14} />
+                    <span>Courses</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('labs')}
+                  >
+                    <Terminal size={14} />
+                    <span>Labs</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('code-sandbox')}
+                  >
+                    <Code2 size={14} />
+                    <span>Sandbox</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('student-dashboard')}
+                  >
+                    <GraduationCap size={14} />
+                    <span>My Learning</span>
+                  </button>
+                </>
+              )}
+
+              {isTeacher && (
+                <>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'home' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('home')}
+                  >
+                    <Home size={14} />
+                    <span>Home</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'gradebook' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('gradebook')}
+                  >
+                    <Users size={14} />
+                    <span>Gradebook</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'classrooms' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('classrooms')}
+                  >
+                    <School size={14} />
+                    <span>Classrooms</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'catalogue' || currentView === 'labs' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('catalogue')}
+                  >
+                    <BookOpen size={14} />
+                    <span>Curriculum</span>
+                  </button>
+                </>
+              )}
+
+              {isInstAdmin && (
+                <>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'home' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('home')}
+                  >
+                    <Home size={14} />
+                    <span>Home</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('institution-workspace')}
+                  >
+                    <School size={14} />
+                    <span>Institution Hub</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'audit' || currentView === 'cie-audit' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('audit')}
+                  >
+                    <ShieldCheck size={14} />
+                    <span>CIE Audit</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'classrooms' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('classrooms')}
+                  >
+                    <Users size={14} />
+                    <span>Classrooms</span>
+                  </button>
+                </>
+              )}
+            </nav>
           </div>
 
-          {/* CENTER: UNIVERSAL SEARCH BAR WITH LIVE DROPDOWN (Design Board 2) */}
-          <div style={{ flex: 1, maxWidth: '540px', position: 'relative' }}>
-            <div style={{ position: 'relative', width: '100%' }}>
-              <Search
-                size={18}
+          {/* CENTER: UNIVERSAL SEARCH BAR OR LAB BREADCRUMB */}
+          <div style={{ flex: '1 1 auto', maxWidth: currentView === 'lab-workspace' ? '300px' : '340px', minWidth: '160px', position: 'relative' }}>
+            {currentView === 'lab-workspace' ? (
+              <div
                 style={{
-                  position: 'absolute',
-                  left: '16px',
-                  top: '12px',
-                  color: '#6A7D70',
-                  pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '0.84rem',
+                  color: 'var(--text-muted)',
                 }}
-              />
-              <input
-                type="text"
-                value={globalSearch}
-                onChange={(e) => {
-                  setGlobalSearch(e.target.value);
-                  setSearchSuggestionsOpen(true);
-                }}
-                onFocus={() => setSearchSuggestionsOpen(true)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    setSearchSuggestionsOpen(false);
-                    handleNavigate('catalogue');
-                  }
-                }}
-                placeholder="Search for courses, skills or topics..."
-                style={{
-                  width: '100%',
-                  height: '42px',
-                  paddingLeft: '44px',
-                  paddingRight: globalSearch ? '36px' : '16px',
-                  borderRadius: '100px',
-                  border: '1.5px solid #E5F0DF',
-                  backgroundColor: '#FAFAF4',
-                  color: '#26352A',
-                  fontSize: '0.9rem',
-                  fontWeight: 500,
-                  outline: 'none',
-                  transition: 'all 0.15s ease',
-                  fontFamily: 'Inter, sans-serif',
-                }}
-              />
-              {globalSearch && (
+              >
                 <button
                   type="button"
-                  onClick={() => {
-                    setGlobalSearch('');
-                    setSearchSuggestionsOpen(false);
-                  }}
+                  onClick={() => handleNavigate('labs')}
                   style={{
-                    position: 'absolute',
-                    right: '12px',
-                    top: '12px',
                     background: 'none',
                     border: 'none',
-                    color: '#6A7D70',
-                    cursor: 'pointer',
                     padding: 0,
+                    cursor: 'pointer',
+                    color: 'var(--text-secondary)',
+                    fontWeight: 600,
+                    fontSize: '0.84rem',
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--brand-primary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
                 >
-                  <X size={16} />
+                  Labs & Simulations
                 </button>
-              )}
-            </div>
+                <span>/</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Interactive Studio</span>
+              </div>
+            ) : (
+              <div style={{ position: 'relative', width: '100%' }}>
+                <Search
+                  size={16}
+                  style={{
+                    position: 'absolute',
+                    left: '13px',
+                    top: '11px',
+                    color: '#6A7D70',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <input
+                  type="text"
+                  value={globalSearch}
+                  onChange={(e) => {
+                    setGlobalSearch(e.target.value);
+                    setSearchSuggestionsOpen(true);
+                  }}
+                  onFocus={() => setSearchSuggestionsOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      setSearchSuggestionsOpen(false);
+                      handleNavigate('catalogue');
+                    }
+                  }}
+                  placeholder="Search courses, skills, labs..."
+                  style={{
+                    width: '100%',
+                    height: '38px',
+                    paddingLeft: '38px',
+                    paddingRight: globalSearch ? '32px' : '14px',
+                    borderRadius: '100px',
+                    border: '1.5px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-canvas)',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.86rem',
+                    fontWeight: 500,
+                    outline: 'none',
+                    transition: 'all 0.15s ease',
+                    fontFamily: 'Inter, sans-serif',
+                  }}
+                />
+                {globalSearch && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGlobalSearch('');
+                      setSearchSuggestionsOpen(false);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '11px',
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--text-muted)',
+                      cursor: 'pointer',
+                      padding: 0,
+                    }}
+                  >
+                    <X size={15} />
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Live Autocomplete Dropdown */}
             {searchSuggestionsOpen && globalSearch.trim().length > 0 && (
               <div
                 style={{
                   position: 'absolute',
-                  top: '48px',
+                  top: '44px',
                   left: 0,
                   right: 0,
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
                   borderRadius: '16px',
-                  border: '1px solid #E5F0DF',
-                  boxShadow: '0 12px 32px rgba(0,0,0,0.08)',
+                  border: '1px solid var(--border-subtle)',
+                  boxShadow: '0 12px 32px rgba(0,0,0,0.18)',
                   padding: '12px',
                   zIndex: 200,
                   maxHeight: '380px',
@@ -499,7 +785,7 @@ export const App: React.FC = () => {
               >
                 {matchingCourses.length > 0 && (
                   <div style={{ marginBottom: '10px' }}>
-                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase', padding: '4px 8px' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', padding: '4px 8px' }}>
                       Courses ({matchingCourses.length})
                     </div>
                     {matchingCourses.map((c) => (
@@ -518,14 +804,14 @@ export const App: React.FC = () => {
                           cursor: 'pointer',
                           transition: 'background 0.15s ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E5F0DF')}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-surface-subdued)')}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <BookOpen size={15} color="#43A85B" />
-                          <span style={{ fontSize: '0.86rem', fontWeight: 700, color: '#26352A' }}>{c.title}</span>
+                          <BookOpen size={15} color="var(--brand-primary)" />
+                          <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>{c.title}</span>
                         </div>
-                        <span style={{ fontSize: '0.74rem', color: '#6A7D70' }}>{c.duration_hours}h • {c.level}</span>
+                        <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{c.duration_hours}h • {c.level}</span>
                       </div>
                     ))}
                   </div>
@@ -533,7 +819,7 @@ export const App: React.FC = () => {
 
                 {matchingLabs.length > 0 && (
                   <div>
-                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#6A7D70', textTransform: 'uppercase', padding: '4px 8px' }}>
+                    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', padding: '4px 8px' }}>
                       Interactive Labs ({matchingLabs.length})
                     </div>
                     {matchingLabs.map((l) => (
@@ -553,14 +839,14 @@ export const App: React.FC = () => {
                           cursor: 'pointer',
                           transition: 'background 0.15s ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#E5F0DF')}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-surface-subdued)')}
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Terminal size={15} color="#43A85B" />
-                          <span style={{ fontSize: '0.86rem', fontWeight: 700, color: '#26352A' }}>{l.title}</span>
+                          <Terminal size={15} color="var(--brand-primary)" />
+                          <span style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>{l.title}</span>
                         </div>
-                        <span style={{ fontSize: '0.74rem', color: '#6A7D70' }}>Lab Simulator</span>
+                        <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Lab Simulator</span>
                       </div>
                     ))}
                   </div>
@@ -575,174 +861,203 @@ export const App: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT: THEME PICKER, USER GUIDE, NOTIFICATIONS BELL & USER AVATAR PILL (Design Board 2) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
-            {/* Theme & Palette Picker Trigger (10 Styles) */}
-            <button
-              type="button"
-              onClick={() => setThemeModalOpen(true)}
+          {/* RIGHT: THEME PICKER, USER GUIDE, LIVE BACKEND STATUS, NOTIFICATIONS BELL & USER AVATAR PILL */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', flexShrink: 0 }}>
+            {/* Quick 1-Click Theme Toggle & Palette Picker (Sleek Compact Pill) */}
+            <div
               style={{
+                height: '36px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                backgroundColor: 'var(--bg-surface-subdued)',
+                backgroundColor: 'var(--bg-surface)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: '100px',
-                padding: '6px 14px',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
+                padding: '2px 4px',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                 transition: 'all 0.15s ease',
+                flexShrink: 0,
               }}
-              title="Customize Appearance & Theme (10 Curated Palettes: Light, Dark, Sepia, OLED, etc.)"
             >
-              <Palette size={16} color="var(--brand-primary)" />
-              <span className="theme-btn-label">Theme</span>
-            </button>
+              {/* Direct 1-Click Toggle Button (Light ⇄ Dark) */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                style={{
+                  height: '100%',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: 'none',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '0 8px',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: 'var(--text-primary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+                title={isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+                aria-label={isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+              >
+                {isDarkMode ? (
+                  <Sun size={15} color="#F59E0B" />
+                ) : (
+                  <Moon size={15} color="var(--brand-primary)" />
+                )}
+              </button>
 
-            {/* Interactive User Guide Button with Mascot */}
+              <div style={{ width: '1px', height: '16px', backgroundColor: 'var(--border-subtle)', margin: '0 1px' }} />
+
+              {/* Palette Picker Trigger for 10 Themes Modal */}
+              <button
+                type="button"
+                onClick={() => setThemeModalOpen(true)}
+                style={{
+                  height: '100%',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'none',
+                  border: 'none',
+                  borderRadius: '100px',
+                  padding: '0 6px',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  transition: 'color 0.15s ease',
+                }}
+                title="Choose from all 10 curated themes (Sepia, OLED, Midnight Blue, Ocean, etc.)"
+                aria-label="Open 10 Themes Palette"
+              >
+                <Palette size={14} />
+              </button>
+            </div>
+
+            {/* Interactive User Guide Button with Mascot (Clean compact) */}
             <button
               type="button"
               onClick={() => setUserGuideOpen(true)}
+              className="header-hide-mobile"
               style={{
+                height: '36px',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
                 backgroundColor: 'var(--bg-surface)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: '100px',
-                padding: '5px 14px',
-                fontSize: '0.8rem',
+                padding: '0 10px',
+                fontSize: '0.78rem',
                 fontWeight: 700,
                 color: 'var(--text-primary)',
                 cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                 transition: 'all 0.15s ease',
+                flexShrink: 0,
               }}
               title="Launch Interactive Software User Guide"
             >
-              <MascotSphere pose="happy" size={20} animated={false} />
-              <span>User Guide</span>
+              <MascotSphere pose="happy" size={18} animated={false} />
+              <span>Guide</span>
             </button>
 
-            {/* Notification Bell Button */}
-            <div style={{ position: 'relative' }}>
+            {/* Realtime Live Engine Status Indicator with Live Database Explorer */}
+            <RealtimeHeaderStatus currentUserId={currentUser.id} db={db} />
+
+            {/* Realtime Notification Bell Button */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 type="button"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '36px',
+                  height: '36px',
                   borderRadius: '50%',
-                  border: '1px solid #E5F0DF',
-                  backgroundColor: notificationsOpen ? '#E5F0DF' : '#FFFFFF',
-                  color: '#26352A',
+                  border: '1px solid var(--border-subtle)',
+                  backgroundColor: notificationsOpen ? 'var(--bg-surface-subdued)' : 'var(--bg-surface)',
+                  color: 'var(--text-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
                   position: 'relative',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                   transition: 'all 0.15s ease',
                 }}
                 aria-label="Notifications"
+                title={`Live Notifications (${unreadCount} unread)`}
               >
-                <Bell size={18} />
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '8px',
-                    right: '8px',
-                    width: '7px',
-                    height: '7px',
-                    borderRadius: '50%',
-                    backgroundColor: '#43A85B',
-                  }}
-                />
+                <Bell size={17} color="var(--text-primary)" />
+                {unreadCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-2px',
+                      right: '-2px',
+                      minWidth: '16px',
+                      height: '16px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--brand-primary)',
+                      color: '#FFFFFF',
+                      fontSize: '0.62rem',
+                      fontWeight: 800,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0 4px',
+                      boxShadow: '0 0 0 2px var(--bg-surface)',
+                    }}
+                  >
+                    {unreadCount}
+                  </span>
+                )}
               </button>
 
-              {/* Notification Popover */}
-              {notificationsOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '48px',
-                    right: 0,
-                    width: '320px',
-                    backgroundColor: '#FFFFFF',
-                    borderRadius: '16px',
-                    border: '1px solid #E5F0DF',
-                    boxShadow: '0 12px 32px rgba(0,0,0,0.1)',
-                    padding: '16px',
-                    zIndex: 200,
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>Notifications</div>
-                    <button
-                      type="button"
-                      onClick={() => setNotificationsOpen(false)}
-                      style={{ background: 'none', border: 'none', fontSize: '0.74rem', color: '#43A85B', fontWeight: 700, cursor: 'pointer' }}
-                    >
-                      Clear
-                    </button>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
-                      <div style={{ fontWeight: 700, color: '#26352A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <GraduationCap size={15} color="#43A85B" />
-                        <span>Welcome to Geniusphere Suite</span>
-                      </div>
-                      <div style={{ color: '#6A7D70', marginTop: '2px' }}>Explore 40 canonical courses, hands-on sandboxes, and gradebooks.</div>
-                    </div>
-                    <div style={{ padding: '8px', borderRadius: '8px', backgroundColor: '#FAFAF4', border: '1px solid #E5F0DF', fontSize: '0.78rem' }}>
-                      <div style={{ fontWeight: 700, color: '#26352A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Award size={15} color="#43A85B" />
-                        <span>Verified Credentials Active</span>
-                      </div>
-                      <div style={{ color: '#6A7D70', marginTop: '2px' }}>Certificates include tamper-proof SHA-256 integrity hashes.</div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Realtime Notification Center Popover */}
+              <RealtimeNotificationCenter
+                userId={currentUser.id}
+                isOpen={notificationsOpen}
+                onClose={() => setNotificationsOpen(false)}
+                onNavigate={handleNavigate}
+              />
             </div>
 
             {/* User Profile Pill matching Design Board 2 */}
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', flexShrink: 0 }}>
               <button
                 type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 style={{
+                  height: '36px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px',
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid #E5F0DF',
-                  padding: '4px 14px 4px 6px',
+                  gap: '8px',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  padding: '3px 12px 3px 4px',
                   borderRadius: '100px',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                 }}
               >
                 <img
                   src="/images/student_hero.jpg"
                   alt={currentUser.name}
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: '28px',
+                    height: '28px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '1.5px solid #43A85B',
+                    border: '1.5px solid var(--brand-primary)',
                   }}
                 />
                 <div style={{ textAlign: 'left', lineHeight: 1.15 }}>
-                  <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#26352A' }}>
+                  <div style={{ fontWeight: 800, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
                     {currentUser.name.split(' (')[0]}
                   </div>
-                  <div style={{ fontSize: '0.72rem', color: '#6A7D70', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                    <span>{isTeacher ? 'Faculty' : 'Learner'}</span>
-                    <ChevronDown size={11} />
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    <span>{isTeacher ? 'Faculty' : isInstAdmin ? 'Inst Admin' : isSuperadmin ? 'Superadmin' : currentUser.role === 'guardian' ? 'Parent' : 'Learner'}</span>
+                    <ChevronDown size={10} />
                   </div>
                 </div>
               </button>
@@ -754,67 +1069,180 @@ export const App: React.FC = () => {
                     position: 'absolute',
                     top: '48px',
                     right: 0,
-                    width: '290px',
-                    backgroundColor: '#FFFFFF',
+                    width: '310px',
+                    backgroundColor: 'var(--bg-surface)',
                     borderRadius: '16px',
-                    border: '1px solid #E5F0DF',
-                    boxShadow: '0 12px 32px rgba(0,0,0,0.1)',
+                    border: '1px solid var(--border-subtle)',
+                    boxShadow: '0 12px 32px rgba(0,0,0,0.18)',
                     padding: '16px',
                     zIndex: 200,
                   }}
                 >
-                  <div style={{ borderBottom: '1px solid #E5F0DF', paddingBottom: '10px', marginBottom: '12px' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: '#26352A' }}>{currentUser.name.split(' (')[0]}</div>
-                    <div style={{ fontSize: '0.74rem', color: '#43A85B', fontWeight: 600, marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px', marginBottom: '12px' }}>
+                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>{currentUser.name.split(' (')[0]}</div>
+                    <div style={{ fontSize: '0.74rem', color: 'var(--brand-primary)', fontWeight: 700, marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                       {isTeacher ? (
                         <>
-                          <GraduationCap size={13} />
-                          <span>Faculty & Educator Portal</span>
+                          <School size={13} />
+                          <span>Educator & Faculty Portal</span>
+                        </>
+                      ) : isInstAdmin ? (
+                        <>
+                          <ShieldCheck size={13} />
+                          <span>Institution Governance Portal</span>
+                        </>
+                      ) : isSuperadmin ? (
+                        <>
+                          <ShieldAlert size={13} />
+                          <span>Platform Superadmin Operations</span>
+                        </>
+                      ) : currentUser.role === 'guardian' ? (
+                        <>
+                          <Users size={13} />
+                          <span>Parent & Guardian Oversight</span>
                         </>
                       ) : (
                         <>
-                          <Users size={13} />
-                          <span>Student Learner Portal</span>
+                          <GraduationCap size={13} />
+                          <span>Student & Learner Suite</span>
                         </>
                       )}
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-                    {/* Toggle between Student & Teacher */}
+                    <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '2px 4px' }}>
+                      Switch User Role
+                    </div>
+
+                    {/* 1. Student Persona */}
                     <button
                       type="button"
                       onClick={() => {
-                        const nextUserId = isTeacher ? 'user-student-1' : 'user-teacher-1';
-                        setCurrentUserId(nextUserId);
+                        setCurrentUserId('user-student-1');
                         setUserMenuOpen(false);
-                        setCurrentView(isTeacher ? 'student-dashboard' : 'gradebook');
+                        setCurrentView('student-dashboard');
                       }}
                       style={{
-                        padding: '9px 12px',
-                        borderRadius: '10px',
-                        border: '1px solid #E5F0DF',
-                        backgroundColor: '#F8FAF6',
-                        color: '#26352A',
-                        fontWeight: 700,
-                        fontSize: '0.8rem',
-                        textAlign: 'left',
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        border: currentUser.id === 'user-student-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: currentUser.id === 'user-student-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                        color: 'var(--text-primary)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px',
-                        transition: 'background 0.15s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#E5F0DF';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#F8FAF6';
+                        justifyContent: 'space-between',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      {isTeacher ? <GraduationCap size={16} color="#43A85B" /> : <Users size={16} color="#43A85B" />}
-                      <span>{isTeacher ? 'Switch to Student View' : 'Switch to Teacher Portal'}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <GraduationCap size={16} color="var(--brand-primary)" />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Pavan Kumar</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Student • Learner Suite</div>
+                        </div>
+                      </div>
+                      {currentUser.id === 'user-student-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
                     </button>
+
+                    {/* 2. Educator Persona */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentUserId('user-teacher-1');
+                        setUserMenuOpen(false);
+                        setCurrentView('gradebook');
+                      }}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        border: currentUser.id === 'user-teacher-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: currentUser.id === 'user-teacher-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                        color: 'var(--text-primary)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <School size={16} color="var(--brand-primary)" />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Dr. Sharma</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Teacher • Educator Portal</div>
+                        </div>
+                      </div>
+                      {currentUser.id === 'user-teacher-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
+                    </button>
+
+                    {/* 3. Institution Admin Persona */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentUserId('user-admin-1');
+                        setUserMenuOpen(false);
+                        setCurrentView('institution-workspace');
+                      }}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        border: currentUser.id === 'user-admin-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: currentUser.id === 'user-admin-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                        color: 'var(--text-primary)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <ShieldCheck size={16} color="var(--brand-primary)" />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Principal Verma</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Admin • Institution Hub</div>
+                        </div>
+                      </div>
+                      {currentUser.id === 'user-admin-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
+                    </button>
+
+                    {/* 4. Superadmin Persona */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentUserId('user-superadmin-1');
+                        setUserMenuOpen(false);
+                        setCurrentView('platform-workspace');
+                      }}
+                      style={{
+                        padding: '8px 10px',
+                        borderRadius: '8px',
+                        border: currentUser.id === 'user-superadmin-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                        backgroundColor: currentUser.id === 'user-superadmin-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                        color: 'var(--text-primary)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <ShieldAlert size={16} color="var(--brand-primary)" />
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>System Superadmin</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Operations • Platform Console</div>
+                        </div>
+                      </div>
+                      {currentUser.id === 'user-superadmin-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
+                    </button>
+                  </div>
 
                     <button
                       type="button"
@@ -825,9 +1253,9 @@ export const App: React.FC = () => {
                       style={{
                         padding: '9px 12px',
                         borderRadius: '10px',
-                        border: '1px solid #E5F0DF',
-                        backgroundColor: '#FFFFFF',
-                        color: '#26352A',
+                        border: '1px solid var(--border-subtle)',
+                        backgroundColor: 'var(--bg-surface)',
+                        color: 'var(--text-primary)',
                         fontWeight: 600,
                         fontSize: '0.8rem',
                         textAlign: 'left',
@@ -837,7 +1265,7 @@ export const App: React.FC = () => {
                         gap: '8px',
                       }}
                     >
-                      <Sparkles size={16} color="#43A85B" />
+                      <Sparkles size={16} color="var(--brand-primary)" />
                       <span>Software User Guide</span>
                     </button>
 
@@ -865,7 +1293,6 @@ export const App: React.FC = () => {
                       <Palette size={16} color="var(--brand-primary)" />
                       <span>Appearance & Theme Palette</span>
                     </button>
-                  </div>
 
                   <button
                     type="button"
@@ -877,8 +1304,8 @@ export const App: React.FC = () => {
                       width: '100%',
                       padding: '9px',
                       borderRadius: '10px',
-                      backgroundColor: '#FAFAF4',
-                      border: '1px solid #E5F0DF',
+                      backgroundColor: 'var(--bg-surface-subdued)',
+                      border: '1px solid var(--border-subtle)',
                       color: '#DC2626',
                       fontWeight: 700,
                       fontSize: '0.82rem',
@@ -912,7 +1339,15 @@ export const App: React.FC = () => {
         )}
 
         {/* LEFT SIDEBAR NAVIGATION RAIL (Collapsible Desktop Mini-Rail + Mobile Off-Canvas Drawer) */}
-        <aside className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+        <aside
+          className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
+          style={{
+            width: isSidebarCollapsed ? '72px' : '260px',
+            minWidth: isSidebarCollapsed ? '72px' : '260px',
+            maxWidth: isSidebarCollapsed ? '72px' : '260px',
+            overflowX: 'hidden',
+          }}
+        >
           {/* Mobile Drawer Top Header (Only visible on mobile screens) */}
           <div
             className="sidebar-mobile-drawer-header"
@@ -966,171 +1401,108 @@ export const App: React.FC = () => {
             </button>
           </div>
 
-          {/* Desktop Mini-Rail Header & Collapse Toggle */}
-          <div
-            className="sidebar-desktop-collapse-header"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: isSidebarCollapsed ? 'center' : 'space-between',
-              marginBottom: '12px',
-              padding: isSidebarCollapsed ? '0 0 10px' : '0 4px 10px',
-              borderBottom: '1px solid var(--border-subtle)',
-            }}
-          >
-            {!isSidebarCollapsed && (
-              <span
-                className="sidebar-section-title"
-                style={{
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  color: 'var(--text-muted)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                {isTeacher ? 'Faculty Portal' : 'Navigation'}
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={toggleSidebarCollapse}
-              className="sidebar-collapse-btn"
-              title={isSidebarCollapsed ? 'Expand Sidebar Rail (⌘+B)' : 'Collapse Sidebar to Rail (⌘+B)'}
-              style={{
-                background: 'none',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '8px',
-                width: '28px',
-                height: '28px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                color: 'var(--text-secondary)',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              {isSidebarCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
-            </button>
-          </div>
+
 
           <div style={{ flex: 1 }}>
             {isTeacher ? (
-              /* TEACHER / EDUCATOR DEDICATED NAVIGATION RAIL */
+              /* ============================================================ */
+              /* 1. TEACHER / EDUCATOR DEDICATED NAVIGATION RAIL              */
+              /* ============================================================ */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <div
-                  className="sidebar-section-title"
-                  style={{
-                    fontSize: '0.72rem',
-                    fontWeight: 800,
-                    color: 'var(--brand-primary)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                    padding: '0 16px 8px',
-                  }}
-                >
-                  Educator Portal
-                </div>
+                {!isSidebarCollapsed && (
+                  <div
+                    className="sidebar-section-title"
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: 'var(--brand-primary)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      padding: '0 16px 8px',
+                    }}
+                  >
+                    Educator Portal
+                  </div>
+                )}
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('gradebook')}
                   className={`sidebar-nav-btn ${currentView === 'gradebook' ? 'active' : ''}`}
-                  title="Class Gradebook"
+                  title={isSidebarCollapsed ? "Class Gradebook" : undefined}
                 >
                   <Users size={18} />
-                  <span className="sidebar-label">Class Gradebook</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Class Gradebook</span>}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('classrooms')}
                   className={`sidebar-nav-btn ${currentView === 'classrooms' ? 'active' : ''}`}
-                  title="Manage Classes"
+                  title={isSidebarCollapsed ? "Manage Classes" : undefined}
                 >
                   <School size={18} />
-                  <span className="sidebar-label">Manage Classes</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Manage Classes</span>}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('catalogue')}
                   className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
-                  title="Curriculum & Courses"
+                  title={isSidebarCollapsed ? "Curriculum & Courses" : undefined}
                 >
                   <BookOpen size={18} />
-                  <span className="sidebar-label">Curriculum & Courses</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum & Courses</span>}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('labs')}
                   className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
-                  title="Lab Environments"
+                  title={isSidebarCollapsed ? "Lab Environments" : undefined}
                 >
                   <Terminal size={18} />
-                  <span className="sidebar-label">Lab Environments</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Lab Environments</span>}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('code-sandbox')}
                   className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
-                  title="Coding Sandbox (Python, C, JS, SQL)"
+                  title={isSidebarCollapsed ? "Coding Sandbox (Python, C, JS, SQL)" : undefined}
                 >
                   <Code2 size={18} />
-                  <span className="sidebar-label">Coding Sandbox (Python, C)</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('institution-workspace')}
-                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
-                  title="Institution Workspace"
-                >
-                  <ShieldCheck size={18} />
-                  <span className="sidebar-label">Institution Workspace</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('platform-workspace')}
-                  className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
-                  title="Platform Admin & Content"
-                >
-                  <ShieldAlert size={18} />
-                  <span className="sidebar-label">Platform Admin & Content</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('certificates')}
-                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
-                  title="Certificate Registry"
-                >
-                  <Award size={18} />
-                  <span className="sidebar-label">Certificate Registry</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Coding Sandbox</span>}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleNavigate('resources')}
                   className={`sidebar-nav-btn ${currentView === 'resources' ? 'active' : ''}`}
-                  title="Teaching Resources"
+                  title={isSidebarCollapsed ? "Teaching Resources" : undefined}
                 >
                   <Folder size={18} />
-                  <span className="sidebar-label">Teaching Resources</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Teaching Resources</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('certificates')}
+                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Certificate Registry" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Certificate Registry</span>}
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setThemeModalOpen(true)}
                   className="sidebar-nav-btn"
-                  title="Appearance & Theme Palette"
+                  title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  <span className="sidebar-label">Theme Settings</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -1140,180 +1512,434 @@ export const App: React.FC = () => {
                     setSidebarOpen(false);
                   }}
                   className="sidebar-nav-btn"
-                  title="Software User Guide"
+                  title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <Sparkles size={18} />
-                  <span className="sidebar-label">Software User Guide</span>
+                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
-            ) : (
-              /* STUDENT / LEARNER DEDICATED NAVIGATION RAIL */
-              <div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('home')}
-                    className={`sidebar-nav-btn ${currentView === 'home' ? 'active' : ''}`}
-                    title="Home"
-                  >
-                    <Home size={18} />
-                    <span className="sidebar-label">Home</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('catalogue')}
-                    className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'active' : ''}`}
-                    title="Courses"
-                  >
-                    <BookOpen size={18} />
-                    <span className="sidebar-label">Courses</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('student-dashboard')}
-                    className={`sidebar-nav-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
-                    title="My Learning"
-                  >
-                    <GraduationCap size={18} />
-                    <span className="sidebar-label">My Learning</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('labs')}
-                    className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
-                    title="Labs & Projects"
-                  >
-                    <Terminal size={18} />
-                    <span className="sidebar-label">Labs & Projects</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('code-sandbox')}
-                    className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
-                    title="Coding Sandbox (Python & C)"
-                  >
-                    <Code2 size={18} />
-                    <span className="sidebar-label">Coding Sandbox (Python & C)</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('leaderboard')}
-                    className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
-                    title="Community"
-                  >
-                    <Users size={18} />
-                    <span className="sidebar-label">Community</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('resources')}
-                    className={`sidebar-nav-btn ${currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'active' : ''}`}
-                    title="Resources"
-                  >
-                    <Folder size={18} />
-                    <span className="sidebar-label">Resources</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate('certificates')}
-                    className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
-                    title="Certificates"
-                  >
-                    <Award size={18} />
-                    <span className="sidebar-label">Certificates</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setThemeModalOpen(true)}
-                    className="sidebar-nav-btn"
-                    title="Appearance & Theme Palette"
-                  >
-                    <Palette size={18} />
-                    <span className="sidebar-label">Theme Settings</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUserGuideOpen(true);
-                      setSidebarOpen(false);
-                    }}
-                    className="sidebar-nav-btn"
-                    title="Software User Guide"
-                  >
-                    <Sparkles size={18} />
-                    <span className="sidebar-label">Software User Guide</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNotificationsOpen(!notificationsOpen);
-                      setSidebarOpen(false);
-                    }}
-                    className="sidebar-nav-btn"
-                    title="Notifications"
-                  >
-                    <Bell size={18} />
-                    <span className="sidebar-label">Notifications</span>
-                  </button>
-                </div>
-
-                {/* For Institutions Group */}
-                <div style={{ marginTop: '20px' }}>
+            ) : isInstAdmin ? (
+              /* ============================================================ */
+              /* 2. INSTITUTION ADMIN DEDICATED NAVIGATION RAIL               */
+              /* ============================================================ */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {!isSidebarCollapsed && (
                   <div
                     className="sidebar-section-title"
                     style={{
                       fontSize: '0.72rem',
                       fontWeight: 800,
-                      color: 'var(--text-muted)',
+                      color: 'var(--brand-primary)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                       padding: '0 16px 8px',
                     }}
                   >
-                    For Institutions
+                    Institution Governance
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('institution-workspace')}
-                      className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
-                      title="Institution Workspace"
-                    >
-                      <School size={18} />
-                      <span className="sidebar-label">Institution Workspace</span>
-                    </button>
+                )}
 
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('classrooms')}
-                      className={`sidebar-nav-btn ${currentView === 'classrooms' || currentView === 'gradebook' ? 'active' : ''}`}
-                      title="Manage Classes"
-                    >
-                      <Users size={18} />
-                      <span className="sidebar-label">Manage Classes</span>
-                    </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('institution-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Institution Workspace" : undefined}
+                >
+                  <School size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Institution Workspace</span>}
+                </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleNavigate('platform-workspace')}
-                      className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
-                      title="Platform Admin & Content"
-                    >
-                      <ShieldAlert size={18} />
-                      <span className="sidebar-label">Platform Admin & Content</span>
-                    </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('classrooms')}
+                  className={`sidebar-nav-btn ${currentView === 'classrooms' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Class Rosters & Batches" : undefined}
+                >
+                  <Users size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Class Rosters</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('gradebook')}
+                  className={`sidebar-nav-btn ${currentView === 'gradebook' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Academic Gradebook" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Gradebook Performance</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('cie-audit')}
+                  className={`sidebar-nav-btn ${currentView === 'cie-audit' || currentView === 'audit' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "CIE Compliance & Audit" : undefined}
+                >
+                  <ShieldCheck size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">CIE Audit Log</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('catalogue')}
+                  className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Curriculum Oversight" : undefined}
+                >
+                  <BookOpen size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum Oversight</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('labs')}
+                  className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Lab Environments" : undefined}
+                >
+                  <Terminal size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Lab Environments</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('certificates')}
+                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Verified Credentials Registry" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Credentials Registry</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setThemeModalOpen(true)}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
+                >
+                  <Palette size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserGuideOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Software User Guide" : undefined}
+                >
+                  <Sparkles size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                </button>
+              </div>
+            ) : isSuperadmin ? (
+              /* ============================================================ */
+              /* 3. PLATFORM SUPERADMIN DEDICATED NAVIGATION RAIL             */
+              /* ============================================================ */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {!isSidebarCollapsed && (
+                  <div
+                    className="sidebar-section-title"
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: 'var(--brand-primary)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      padding: '0 16px 8px',
+                    }}
+                  >
+                    Platform Operations
                   </div>
-                </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('platform-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Platform Admin Console" : undefined}
+                >
+                  <ShieldAlert size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Platform Admin</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('institution-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Institution Directory" : undefined}
+                >
+                  <School size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Institutions</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('audit')}
+                  className={`sidebar-nav-btn ${currentView === 'audit' || currentView === 'cie-audit' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "System Audit Ledger" : undefined}
+                >
+                  <ShieldCheck size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">System Audit Ledger</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('catalogue')}
+                  className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Curriculum Management" : undefined}
+                >
+                  <BookOpen size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum CMS</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('labs')}
+                  className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Lab Sandboxes" : undefined}
+                >
+                  <Terminal size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Lab Sandboxes</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('code-sandbox')}
+                  className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Code Runner Engine" : undefined}
+                >
+                  <Code2 size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Code Runner</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('certificates')}
+                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Global Certificates" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Global Certificates</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setThemeModalOpen(true)}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
+                >
+                  <Palette size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserGuideOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Software User Guide" : undefined}
+                >
+                  <Sparkles size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                </button>
+              </div>
+            ) : isGuardian ? (
+              /* ============================================================ */
+              /* 4. PARENT & GUARDIAN DEDICATED NAVIGATION RAIL               */
+              /* ============================================================ */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {!isSidebarCollapsed && (
+                  <div
+                    className="sidebar-section-title"
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: 'var(--brand-primary)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      padding: '0 16px 8px',
+                    }}
+                  >
+                    Parent Oversight
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('parent')}
+                  className={`sidebar-nav-btn ${currentView === 'parent' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Student Progress & Consent" : undefined}
+                >
+                  <Users size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Student Progress</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('catalogue')}
+                  className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Course Curriculum" : undefined}
+                >
+                  <BookOpen size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('certificates')}
+                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Verified Certificates" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Credentials</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setThemeModalOpen(true)}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
+                >
+                  <Palette size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserGuideOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Software User Guide" : undefined}
+                >
+                  <Sparkles size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                </button>
+              </div>
+            ) : (
+              /* ============================================================ */
+              /* 5. STUDENT / LEARNER DEDICATED NAVIGATION RAIL               */
+              /* ============================================================ */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('home')}
+                  className={`sidebar-nav-btn ${currentView === 'home' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Landing Page" : undefined}
+                >
+                  <Home size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Landing Page</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('catalogue')}
+                  className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' || currentView === 'lesson-player' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Courses" : undefined}
+                >
+                  <BookOpen size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Courses</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('student-dashboard')}
+                  className={`sidebar-nav-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "My Learning" : undefined}
+                >
+                  <GraduationCap size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">My Learning</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('labs')}
+                  className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Labs & Projects" : undefined}
+                >
+                  <Terminal size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Labs & Projects</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('code-sandbox')}
+                  className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Coding Sandbox (Python, C, JS, SQL)" : undefined}
+                >
+                  <Code2 size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Coding Sandbox</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('leaderboard')}
+                  className={`sidebar-nav-btn ${currentView === 'leaderboard' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Community" : undefined}
+                >
+                  <Users size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Community</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('resources')}
+                  className={`sidebar-nav-btn ${currentView === 'resources' || currentView === 'schoolkit' || currentView === 'resume-builder' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Resources" : undefined}
+                >
+                  <Folder size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Resources</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('certificates')}
+                  className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Certificates" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Certificates</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setThemeModalOpen(true)}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
+                >
+                  <Palette size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserGuideOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Software User Guide" : undefined}
+                >
+                  <Sparkles size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNotificationsOpen(!notificationsOpen);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Notifications" : undefined}
+                >
+                  <Bell size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Notifications</span>}
+                </button>
               </div>
             )}
           </div>
@@ -1325,24 +1951,29 @@ export const App: React.FC = () => {
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
               border: '1px solid var(--border-subtle)',
-              padding: isSidebarCollapsed ? '8px' : '16px',
+              padding: isSidebarCollapsed ? '8px 4px' : '16px',
               marginTop: '16px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
               transition: 'all 0.15s ease',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: isSidebarCollapsed ? 'center' : 'stretch',
             }}
           >
             {isTeacher ? (
-              <div>
+              <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
                   <MascotSphere pose="teaching" size={isSidebarCollapsed ? 30 : 40} />
-                  <div className="sidebar-mascot-card-text">
-                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
-                      Educator Suite
+                  {!isSidebarCollapsed && (
+                    <div className="sidebar-mascot-card-text">
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Educator Suite
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
+                        Class 10-A: 24 students enrolled, 82% completion.
+                      </div>
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
-                      Class 10-A: 24 students enrolled, 82% completion.
-                    </div>
-                  </div>
+                  )}
                 </div>
                 {!isSidebarCollapsed && (
                   <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
@@ -1368,23 +1999,102 @@ export const App: React.FC = () => {
                   </div>
                 )}
               </div>
+            ) : isInstAdmin ? (
+              <div style={{ width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
+                  <MascotSphere pose="thinking" size={isSidebarCollapsed ? 30 : 40} />
+                  {!isSidebarCollapsed && (
+                    <div className="sidebar-mascot-card-text">
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Institution Hub
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
+                        Accreditation verified. 248 learners active.
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {!isSidebarCollapsed && (
+                  <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('institution-workspace')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--brand-primary)',
+                        fontWeight: 800,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                      }}
+                    >
+                      <span>Open Workspace</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : isSuperadmin ? (
+              <div style={{ width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
+                  <MascotSphere pose="happy" size={isSidebarCollapsed ? 30 : 40} />
+                  {!isSidebarCollapsed && (
+                    <div className="sidebar-mascot-card-text">
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Platform Ops
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
+                        Tamper-proof node synced. Zero critical alerts.
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {!isSidebarCollapsed && (
+                  <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleNavigate('platform-workspace')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--brand-primary)',
+                        fontWeight: 800,
+                        fontSize: '0.78rem',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                      }}
+                    >
+                      <span>Open Console</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <div>
+              <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
                   <MascotSphere pose="happy" size={isSidebarCollapsed ? 28 : 38} />
-                  <div className="sidebar-mascot-card-text">
-                    <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
-                      Keep going!
+                  {!isSidebarCollapsed && (
+                    <div className="sidebar-mascot-card-text">
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                        Keep going!
+                      </div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
+                        Every skill you learn builds a bigger you.
+                      </div>
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
-                      Every skill you learn builds a bigger you.
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 {!isSidebarCollapsed && (
                   <div className="sidebar-mascot-card-text">
-                    {/* Progress Bar */}
                     <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
                       <div style={{ width: '60%', height: '100%', backgroundColor: 'var(--brand-primary)', borderRadius: '100px' }} />
                     </div>
@@ -1424,6 +2134,7 @@ export const App: React.FC = () => {
             currentView={currentView}
             courseTitle={selectedCourse?.title}
             labTitle={selectedLab?.title}
+            userRole={currentUser.role}
             onNavigate={handleNavigate}
             onBack={() => {
               if (currentView === 'course-detail' || currentView === 'lesson-player') {
@@ -1438,6 +2149,7 @@ export const App: React.FC = () => {
           <main
             style={{
               flex: 1,
+              position: 'relative',
               padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 28px 80px',
               maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1320px',
               margin: '0 auto',
@@ -1447,6 +2159,14 @@ export const App: React.FC = () => {
               minHeight: currentView === 'lab-workspace' ? undefined : 'calc(100vh - 70px)',
             }}
           >
+            {viewLoading && (
+              <GeniusphereLoader
+                overlay
+                size="sm"
+                message="Opening Workspace..."
+                submessage="Applying role-partitioned views and state sync"
+              />
+            )}
 
           {currentView === 'home' && (
             <Homepage
@@ -1561,6 +2281,7 @@ export const App: React.FC = () => {
             db={db}
             courseId={selectedCourseId}
             initialLessonId={selectedLessonId}
+            initialTab={selectedLessonTab}
             currentUserId={currentUserId}
             onBackToCourse={() => handleNavigate('course-detail', selectedCourseSlug)}
             onLaunchLab={() => {
@@ -1673,6 +2394,30 @@ export const App: React.FC = () => {
         {currentView === 'diagram-studio' && (
           <VisualDiagramStudio
             key={`diagram-studio-${refreshTrigger}`}
+          />
+        )}
+
+        {(currentView === 'privacy' || currentView === 'terms') && (
+          <LegalPrivacyTermsView
+            initialTab={currentView === 'terms' ? 'terms' : 'privacy'}
+            onNavigateHome={() => handleNavigate('home')}
+          />
+        )}
+
+        {(currentView === 'contact' || currentView === 'community') && (
+          <ContactCommunityView
+            db={db}
+            initialTab={currentView === 'community' ? 'community' : 'contact'}
+            onNavigateHome={() => handleNavigate('home')}
+            onNavigateCatalogue={() => handleNavigate('catalogue')}
+          />
+        )}
+
+        {currentView === 'not-found' && (
+          <NotFoundView
+            onNavigateHome={() => handleNavigate('home')}
+            onNavigateCatalogue={() => handleNavigate('catalogue')}
+            onNavigateLabs={() => handleNavigate('labs')}
           />
         )}
       </main>
@@ -1797,9 +2542,10 @@ export const App: React.FC = () => {
               </strong>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
                 <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>About Geniusphere Mission</button>
+                <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Institutional Contact & Support</button>
+                <button type="button" onClick={() => handleNavigate('community')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Student Community Guidelines</button>
                 <span style={{ color: 'var(--text-muted)' }}>PES University CIE Incubated</span>
                 <span style={{ color: 'var(--text-muted)' }}>Bengaluru, Karnataka, India</span>
-                <span style={{ color: 'var(--text-muted)' }}>contact@geniusphere.tech</span>
               </div>
             </div>
           </div>
@@ -1824,11 +2570,30 @@ export const App: React.FC = () => {
             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
               <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '2px 8px' }}>Active Pilot Deployment</span>
               <span>•</span>
-              <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Privacy Policy</button>
+              <button type="button" onClick={() => handleNavigate('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Privacy Policy</button>
               <span>•</span>
-              <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
+              <button type="button" onClick={() => handleNavigate('terms')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
+              <span>•</span>
+              <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Contact</button>
               <span>•</span>
               <span>40 Canonical Courses • 3 Learning Streams • 10 Interactive Labs</span>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => setPilotModalOpen(true)}
+                style={{
+                  background: 'rgba(230, 81, 0, 0.08)',
+                  border: '1px solid rgba(230, 81, 0, 0.25)',
+                  borderRadius: '100px',
+                  padding: '3px 10px',
+                  color: '#e65100',
+                  fontSize: '0.72rem',
+                  cursor: 'pointer',
+                  fontWeight: 700,
+                }}
+              >
+                <span>Institutional Pilot</span>
+              </button>
               <span>•</span>
               <button
                 type="button"
@@ -1862,6 +2627,11 @@ export const App: React.FC = () => {
         onRestoreSuccess={() => setRefreshTrigger((v) => v + 1)}
       />
 
+      <PilotApplicationModal
+        isOpen={pilotModalOpen}
+        onClose={() => setPilotModalOpen(false)}
+      />
+
       <VectorScratchpadOverlay
         isOpen={scratchpadOpen}
         onClose={() => setScratchpadOpen(false)}
@@ -1882,6 +2652,223 @@ export const App: React.FC = () => {
         currentTheme={currentTheme}
         onThemeChange={(newTheme) => setCurrentTheme(newTheme)}
       />
+
+      {/* ============================================================ */}
+      {/* 8. NATIVE MOBILE APP BOTTOM NAVIGATION BAR (Screens <= 768px)  */}
+      {/* ============================================================ */}
+      <nav className="mobile-app-bottom-bar" aria-label="Mobile Navigation">
+        {isTeacher ? (
+          <>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'gradebook' ? 'active' : ''}`}
+              onClick={() => handleNavigate('gradebook')}
+            >
+              <Users size={20} />
+              <span>Gradebook</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'classrooms' ? 'active' : ''}`}
+              onClick={() => handleNavigate('classrooms')}
+            >
+              <School size={20} />
+              <span>Classes</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+              onClick={() => handleNavigate('catalogue')}
+            >
+              <BookOpen size={20} />
+              <span>Courses</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+              onClick={() => handleNavigate('labs')}
+            >
+              <Terminal size={20} />
+              <span>Labs</span>
+            </button>
+            <button
+              type="button"
+              className="mobile-tab-btn"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+              <span>Menu</span>
+            </button>
+          </>
+        ) : isInstAdmin ? (
+          <>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+              onClick={() => handleNavigate('institution-workspace')}
+            >
+              <School size={20} />
+              <span>Institution</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'classrooms' ? 'active' : ''}`}
+              onClick={() => handleNavigate('classrooms')}
+            >
+              <Users size={20} />
+              <span>Classes</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'gradebook' ? 'active' : ''}`}
+              onClick={() => handleNavigate('gradebook')}
+            >
+              <Award size={20} />
+              <span>Grades</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'cie-audit' || currentView === 'audit' ? 'active' : ''}`}
+              onClick={() => handleNavigate('cie-audit')}
+            >
+              <ShieldCheck size={20} />
+              <span>Audit</span>
+            </button>
+            <button
+              type="button"
+              className="mobile-tab-btn"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+              <span>Menu</span>
+            </button>
+          </>
+        ) : isSuperadmin ? (
+          <>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+              onClick={() => handleNavigate('platform-workspace')}
+            >
+              <ShieldAlert size={20} />
+              <span>Platform</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+              onClick={() => handleNavigate('institution-workspace')}
+            >
+              <School size={20} />
+              <span>Tenants</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'catalogue' ? 'active' : ''}`}
+              onClick={() => handleNavigate('catalogue')}
+            >
+              <BookOpen size={20} />
+              <span>Curriculum</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'audit' || currentView === 'cie-audit' ? 'active' : ''}`}
+              onClick={() => handleNavigate('audit')}
+            >
+              <ShieldCheck size={20} />
+              <span>Audit</span>
+            </button>
+            <button
+              type="button"
+              className="mobile-tab-btn"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+              <span>Menu</span>
+            </button>
+          </>
+        ) : isGuardian ? (
+          <>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'parent' ? 'active' : ''}`}
+              onClick={() => handleNavigate('parent')}
+            >
+              <Users size={20} />
+              <span>Progress</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'catalogue' ? 'active' : ''}`}
+              onClick={() => handleNavigate('catalogue')}
+            >
+              <BookOpen size={20} />
+              <span>Courses</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'certificates' ? 'active' : ''}`}
+              onClick={() => handleNavigate('certificates')}
+            >
+              <Award size={20} />
+              <span>Credentials</span>
+            </button>
+            <button
+              type="button"
+              className="mobile-tab-btn"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+              <span>Menu</span>
+            </button>
+          </>
+        ) : isLearner ? (
+          <>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'home' ? 'active' : ''}`}
+              onClick={() => handleNavigate('home')}
+            >
+              <Home size={20} />
+              <span>Home</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+              onClick={() => handleNavigate('catalogue')}
+            >
+              <BookOpen size={20} />
+              <span>Courses</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+              onClick={() => handleNavigate('labs')}
+            >
+              <Terminal size={20} />
+              <span>Labs</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'student-dashboard' ? 'active' : ''}`}
+              onClick={() => handleNavigate('student-dashboard')}
+            >
+              <GraduationCap size={20} />
+              <span>Learning</span>
+            </button>
+            <button
+              type="button"
+              className="mobile-tab-btn"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+              <span>Menu</span>
+            </button>
+          </>
+        ) : null}
+      </nav>
+
+      {/* Real-Time Floating Toast Notification Stack */}
+      <RealtimeToastStack onNavigate={handleNavigate} />
     </div>
   );
 };

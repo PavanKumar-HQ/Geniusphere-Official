@@ -10,16 +10,18 @@ describe('Labs & Simulation Engine Acceptance Suite', () => {
   });
 
   describe('1. Approved Lab Catalogue & Data Contract', () => {
-    it('initializes all 13 approved labs across Technology, Finance, and Coding', () => {
+    it('initializes all approved labs across Technology, Finance, Professional, and Coding', () => {
       const labs = db.getLabDefinitions();
-      expect(labs.length).toBe(13);
+      expect(labs.length).toBe(19);
 
       const techLabs = labs.filter((l) => l.category === 'technology');
       const finLabs = labs.filter((l) => l.category === 'finance');
+      const profLabs = labs.filter((l) => l.category === 'professional');
       const codingLabs = labs.filter((l) => l.category === 'coding');
 
-      expect(techLabs.length).toBe(7);
-      expect(finLabs.length).toBe(3);
+      expect(techLabs.length).toBe(8);
+      expect(finLabs.length).toBe(5);
+      expect(profLabs.length).toBe(3);
       expect(codingLabs.length).toBe(3);
     });
 
@@ -27,9 +29,9 @@ describe('Labs & Simulation Engine Acceptance Suite', () => {
       const simulations = db.getLabDefinitions({ interaction_type: 'simulation' });
       const sandboxes = db.getLabDefinitions({ interaction_type: 'sandbox' });
 
-      // Simulations: T1, T2, T3, T4, T7, F1, F2, F3 (8)
-      expect(simulations.length).toBe(8);
-      // Sandboxes: T5, T6, C1, C2, C3 (5)
+      // Simulations: 14 rule-based simulation engines
+      expect(simulations.length).toBe(14);
+      // Sandboxes: T5, T6, C1, C2, C3 (5 interactive sandboxes)
       expect(sandboxes.length).toBe(5);
 
       // Verify simulations are rule-based models

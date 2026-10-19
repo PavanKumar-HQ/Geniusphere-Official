@@ -1,18 +1,12 @@
 import React from 'react';
 import {
-  Home,
-  BookOpen,
-  Terminal,
-  GraduationCap,
-  Users,
-  Folder,
-  Award,
   ChevronRight,
   ArrowLeft,
-  School,
+  BookOpen,
   Sparkles,
+  FileText,
   ShieldCheck,
-  Code2,
+  Layout,
 } from 'lucide-react';
 import { AppView } from '../App';
 
@@ -20,6 +14,7 @@ interface SectionContextBarProps {
   currentView: AppView;
   courseTitle?: string;
   labTitle?: string;
+  userRole?: string;
   onNavigate: (view: string, slug?: string) => void;
   onBack?: () => void;
 }
@@ -28,128 +23,65 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
   currentView,
   courseTitle,
   labTitle: _labTitle,
+  userRole: _userRole,
   onNavigate,
   onBack,
 }) => {
-  // If we are on home page or inside the full-screen lab workspace, skip to avoid double headers and offset overlap
-  if (currentView === 'home' || currentView === 'lab-workspace') {
+  // Only render on deeply nested drill-down views where a back button and breadcrumb path are essential
+  const isNested =
+    currentView === 'course-detail' ||
+    currentView === 'lesson-player' ||
+    currentView === 'resume-builder' ||
+    currentView === 'schoolkit' ||
+    currentView === 'cie-audit' ||
+    currentView === 'diagram-studio';
+
+  if (!isNested) {
     return null;
   }
 
   // Derive section metadata
   const getSectionMeta = () => {
     switch (currentView) {
-      case 'catalogue':
-        return {
-          title: 'Curriculum & Courses',
-          subtitle: '40 Canonical Enterprise Courses with Interactive Modules',
-          icon: BookOpen,
-          parent: 'Home',
-          parentView: 'home',
-        };
       case 'course-detail':
         return {
           title: courseTitle || 'Course Overview',
-          subtitle: 'Module syllabus, interactive labs, and certification path',
           icon: BookOpen,
           parent: 'Courses',
           parentView: 'catalogue',
         };
       case 'lesson-player':
         return {
-          title: 'Interactive Lesson Player',
-          subtitle: 'Step-by-step concepts with verified assessment checkpoints',
+          title: 'Interactive Lesson',
           icon: Sparkles,
           parent: courseTitle || 'Course',
           parentView: 'course-detail',
         };
-      case 'labs':
+      case 'resume-builder':
         return {
-          title: 'Interactive Labs & Simulators',
-          subtitle: 'In-browser concept simulators and experimentation suites',
-          icon: Terminal,
-          parent: 'Home',
-          parentView: 'home',
+          title: 'Resume & Portfolio Studio',
+          icon: FileText,
+          parent: 'My Learning',
+          parentView: 'student-dashboard',
         };
-      case 'code-sandbox':
+      case 'cie-audit':
         return {
-          title: 'Multi-Language Coding Sandbox',
-          subtitle: 'Live Python 3.12 & C Compiler Simulation with Real-Time Output',
-          icon: Code2,
-          parent: 'Home',
-          parentView: 'home',
-          badge: 'Python & C Engine',
-        };
-      case 'student-dashboard':
-        return {
-          title: 'My Learning & Progress',
-          subtitle: 'Enrolled courses, completed checkpoints, and XP milestones',
-          icon: GraduationCap,
-          parent: 'Home',
-          parentView: 'home',
-        };
-      case 'certificates':
-        return {
-          title: 'Certificates & Verified Credentials',
-          subtitle: 'Cryptographically validated certificates with SHA-256 integrity hashes',
-          icon: Award,
-          parent: 'Home',
-          parentView: 'home',
-          badge: 'Tamper-Proof Ledger',
-        };
-      case 'leaderboard':
-        return {
-          title: 'Community & Peer Rankings',
-          subtitle: 'Collaborative achievements, school rankings, and challenge streaks',
-          icon: Users,
-          parent: 'Home',
-          parentView: 'home',
-        };
-      case 'resources':
-        return {
-          title: 'Learning Resources & Toolkits',
-          subtitle: 'Curated references, developer toolkits, and sovereign study kits',
-          icon: Folder,
-          parent: 'Home',
-          parentView: 'home',
-        };
-      case 'gradebook':
-        return {
-          title: 'Educator Gradebook',
-          subtitle: 'Student roster mastery tracking and lab submission review',
-          icon: Users,
-          parent: 'Home',
-          parentView: 'home',
-        };
-      case 'classrooms':
-        return {
-          title: 'Classroom Management',
-          subtitle: 'Join codes, assigned curriculum modules, and roster controls',
-          icon: School,
-          parent: 'Home',
-          parentView: 'home',
-        };
-      case 'institution-workspace':
-        return {
-          title: 'Institution Workspace',
-          subtitle: 'Institutional enrollment analytics, curriculum audit, and compliance',
+          title: 'CIE Audit Ledger Explorer',
           icon: ShieldCheck,
-          parent: 'Home',
-          parentView: 'home',
+          parent: 'Administration',
+          parentView: 'audit',
         };
-      case 'platform-workspace':
+      case 'diagram-studio':
         return {
-          title: 'Platform Superadmin Console',
-          subtitle: 'System health, database logs, and telemetry controls',
-          icon: ShieldCheck,
+          title: 'Visual Diagram & Architecture Studio',
+          icon: Layout,
           parent: 'Home',
           parentView: 'home',
         };
       default:
         return {
           title: 'Workspace',
-          subtitle: 'Geniusphere Software Workspace',
-          icon: Home,
+          icon: BookOpen,
           parent: 'Home',
           parentView: 'home',
         };
@@ -159,15 +91,13 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
   const meta = getSectionMeta();
   const Icon = meta.icon;
 
-  const isNested = currentView === 'course-detail' || currentView === 'lesson-player';
-
   return (
     <div
       style={{
-        backgroundColor: '#FFFFFF',
-        borderBottom: '1px solid #E5F0DF',
-        padding: '12px 28px',
-        boxShadow: '0 1px 3px rgba(38, 53, 42, 0.02)',
+        backgroundColor: 'var(--bg-surface)',
+        borderBottom: '1px solid var(--border-subtle)',
+        padding: '10px 24px',
+        transition: 'background-color 0.2s ease, border-color 0.2s ease',
       }}
     >
       <div
@@ -177,227 +107,68 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
         }}
       >
-        {/* Left Side: Breadcrumb Trail & Page Title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-          {isNested && (
-            <button
-              type="button"
-              onClick={onBack || (() => onNavigate(meta.parentView))}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                border: '1.5px solid #E5F0DF',
-                backgroundColor: '#FAFAF4',
-                color: '#26352A',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#E5F0DF';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#FAFAF4';
-              }}
-            >
-              <ArrowLeft size={14} />
-              <span>Back</span>
-            </button>
-          )}
+        {/* Left Side: Back Button & Clean Breadcrumb Path */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            type="button"
+            onClick={onBack || (() => onNavigate(meta.parentView))}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 14px',
+              borderRadius: '8px',
+              border: '1px solid var(--border-subtle)',
+              backgroundColor: 'var(--bg-canvas)',
+              color: 'var(--text-primary)',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--bg-surface-subdued)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--bg-canvas)';
+            }}
+          >
+            <ArrowLeft size={14} />
+            <span>Back to {meta.parent}</span>
+          </button>
 
-          {/* Breadcrumb Path */}
+          <div style={{ width: '1px', height: '18px', backgroundColor: 'var(--border-subtle)' }} />
+
+          {/* Breadcrumb Trail */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}>
             <button
               type="button"
-              onClick={() => onNavigate('home')}
+              onClick={() => onNavigate(meta.parentView)}
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#6A7D70',
+                color: 'var(--text-muted)',
                 cursor: 'pointer',
-                padding: 0,
+                padding: '2px 4px',
                 fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
+                borderRadius: '4px',
+                transition: 'color 0.15s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#43A85B')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#6A7D70')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--brand-primary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
             >
-              <Home size={14} />
-              <span>Home</span>
+              {meta.parent}
             </button>
 
-            <ChevronRight size={13} color="#A0B2A4" />
+            <ChevronRight size={13} color="var(--border-strong)" />
 
-            {meta.parent !== 'Home' && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => onNavigate(meta.parentView)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#6A7D70',
-                    cursor: 'pointer',
-                    padding: 0,
-                    fontWeight: 600,
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#43A85B')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#6A7D70')}
-                >
-                  {meta.parent}
-                </button>
-                <ChevronRight size={13} color="#A0B2A4" />
-              </>
-            )}
-
-            <span style={{ fontWeight: 800, color: '#26352A', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Icon size={15} color="#43A85B" />
+            <span style={{ fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Icon size={14} color="var(--brand-primary)" />
               <span>{meta.title}</span>
             </span>
-
-            {meta.badge && (
-              <span
-                style={{
-                  backgroundColor: '#E5F0DF',
-                  color: '#26352A',
-                  fontSize: '0.7rem',
-                  fontWeight: 800,
-                  padding: '2px 8px',
-                  borderRadius: '100px',
-                  marginLeft: '4px',
-                }}
-              >
-                {meta.badge}
-              </span>
-            )}
           </div>
-        </div>
-
-        {/* Right Side: Quick Section Jump Shortcuts */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '0.74rem', fontWeight: 700, color: '#8A9D90', marginRight: '4px' }}>
-            Quick Nav:
-          </span>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('catalogue')}
-            style={{
-              padding: '5px 12px',
-              borderRadius: '100px',
-              border: currentView === 'catalogue' ? '1.5px solid #43A85B' : '1px solid #E5F0DF',
-              backgroundColor: currentView === 'catalogue' ? '#E5F0DF' : '#FFFFFF',
-              color: '#26352A',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <BookOpen size={13} color="#43A85B" />
-            <span>Courses</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('labs')}
-            style={{
-              padding: '5px 12px',
-              borderRadius: '100px',
-              border: currentView === 'labs' ? '1.5px solid #43A85B' : '1px solid #E5F0DF',
-              backgroundColor: currentView === 'labs' ? '#E5F0DF' : '#FFFFFF',
-              color: '#26352A',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Terminal size={13} color="#43A85B" />
-            <span>Labs</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('code-sandbox')}
-            style={{
-              padding: '5px 12px',
-              borderRadius: '100px',
-              border: currentView === 'code-sandbox' ? '1.5px solid #43A85B' : '1.5px solid #C8E3BF',
-              backgroundColor: currentView === 'code-sandbox' ? '#43A85B' : '#F2F8EF',
-              color: currentView === 'code-sandbox' ? '#FFFFFF' : '#26352A',
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Code2 size={13} color={currentView === 'code-sandbox' ? '#FFFFFF' : '#43A85B'} />
-            <span>Python & C Sandbox</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('student-dashboard')}
-            style={{
-              padding: '5px 12px',
-              borderRadius: '100px',
-              border: currentView === 'student-dashboard' ? '1.5px solid #43A85B' : '1px solid #E5F0DF',
-              backgroundColor: currentView === 'student-dashboard' ? '#E5F0DF' : '#FFFFFF',
-              color: '#26352A',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <GraduationCap size={13} color="#43A85B" />
-            <span>My Learning</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('certificates')}
-            style={{
-              padding: '5px 12px',
-              borderRadius: '100px',
-              border: currentView === 'certificates' ? '1.5px solid #43A85B' : '1px solid #E5F0DF',
-              backgroundColor: currentView === 'certificates' ? '#E5F0DF' : '#FFFFFF',
-              color: '#26352A',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Award size={13} color="#43A85B" />
-            <span>Certificates</span>
-          </button>
         </div>
       </div>
     </div>

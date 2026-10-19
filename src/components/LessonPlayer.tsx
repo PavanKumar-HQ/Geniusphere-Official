@@ -15,7 +15,6 @@ import {
   Flame,
   Award,
   Video as VideoIcon,
-  Cpu,
   Terminal as TerminalIcon,
   BookOpen,
   Sparkles,
@@ -26,22 +25,286 @@ interface LessonPlayerProps {
   db: InMemoryDatabase;
   courseId: string;
   initialLessonId: string;
+  initialTab?: 'video' | 'animation' | 'sandbox';
   currentUserId: string;
   onBackToCourse: () => void;
   onLaunchLab?: (courseSlug: string) => void;
 }
 
+const renderFormattedInline = (text: string): React.ReactNode => {
+  const parts: React.ReactNode[] = [];
+  const regex = /(\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
+  let match: RegExpExecArray | null;
+  let lastIndex = 0;
+  let key = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith('**') && token.endsWith('**')) {
+      parts.push(
+        <strong key={key++} style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+          {token.slice(2, -2)}
+        </strong>
+      );
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      parts.push(<em key={key++}>{token.slice(1, -1)}</em>);
+    } else if (token.startsWith('`') && token.endsWith('`')) {
+      parts.push(
+        <code
+          key={key++}
+          style={{
+            fontFamily: 'var(--font-mono, monospace)',
+            fontSize: '0.85em',
+            padding: '2px 5px',
+            borderRadius: '4px',
+            backgroundColor: 'var(--editor-bg, #111827)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--brand-primary)',
+          }}
+        >
+          {token.slice(1, -1)}
+        </code>
+      );
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts.length > 0 ? parts : text;
+};
+
+const renderMarkdownNotes = (markdown: string): React.ReactNode => {
+  if (!markdown) return null;
+
+  const lines = markdown.split('\n');
+  const elements: React.ReactNode[] = [];
+  let codeBlockBuffer: string[] | null = null;
+  let listBuffer: { type: 'ul' | 'ol'; items: string[] } | null = null;
+  let elemKey = 0;
+
+  const flushList = () => {
+    if (!listBuffer) return;
+    const ListTag = listBuffer.type;
+    const items = listBuffer.items;
+    elements.push(
+      <ListTag
+        key={elemKey++}
+        style={{
+          paddingLeft: '24px',
+          margin: '4px 0 12px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+        }}
+      >
+        {items.map((it, idx) => (
+          <li key={idx} style={{ color: 'var(--text-primary)', lineHeight: 1.6 }}>
+            {renderFormattedInline(it)}
+          </li>
+        ))}
+      </ListTag>
+    );
+    listBuffer = null;
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const trimmed = rawLine.trim();
+
+    if (trimmed.startsWith('```')) {
+      flushList();
+      if (codeBlockBuffer !== null) {
+        const codeText = codeBlockBuffer.join('\n');
+        elements.push(
+          <pre
+            key={elemKey++}
+            style={{
+              backgroundColor: 'var(--editor-bg, #111827)',
+              color: '#E5E7EB',
+              padding: '16px',
+              borderRadius: '8px',
+              overflowX: 'auto',
+              fontFamily: 'var(--font-mono, monospace)',
+              fontSize: '0.85rem',
+              border: '1px solid var(--border-subtle)',
+              margin: '8px 0 14px',
+              lineHeight: 1.5,
+            }}
+          >
+            <code>{codeText}</code>
+          </pre>
+        );
+        codeBlockBuffer = null;
+      } else {
+        codeBlockBuffer = [];
+      }
+      continue;
+    }
+
+    if (codeBlockBuffer !== null) {
+      codeBlockBuffer.push(rawLine);
+      continue;
+    }
+
+    if (!trimmed) {
+      flushList();
+      continue;
+    }
+
+    if (trimmed.startsWith('### ')) {
+      flushList();
+      elements.push(
+        <h3
+          key={elemKey++}
+          style={{
+            fontSize: '1.25rem',
+            fontWeight: 800,
+            marginTop: '16px',
+            marginBottom: '8px',
+            color: 'var(--text-primary)',
+          }}
+        >
+          {trimmed.replace('### ', '')}
+        </h3>
+      );
+      continue;
+    }
+
+    if (trimmed.startsWith('#### ')) {
+      flushList();
+      elements.push(
+        <h4
+          key={elemKey++}
+          style={{
+            fontSize: '1.05rem',
+            fontWeight: 700,
+            marginTop: '16px',
+            marginBottom: '6px',
+            color: 'var(--brand-primary)',
+          }}
+        >
+          {trimmed.replace('#### ', '')}
+        </h4>
+      );
+      continue;
+    }
+
+    if (trimmed.startsWith('## ')) {
+      flushList();
+      elements.push(
+        <h2
+          key={elemKey++}
+          style={{
+            fontSize: '1.4rem',
+            fontWeight: 800,
+            marginTop: '20px',
+            marginBottom: '10px',
+            color: 'var(--text-primary)',
+          }}
+        >
+          {trimmed.replace('## ', '')}
+        </h2>
+      );
+      continue;
+    }
+
+    if (trimmed.startsWith('# ')) {
+      flushList();
+      elements.push(
+        <h1
+          key={elemKey++}
+          style={{
+            fontSize: '1.6rem',
+            fontWeight: 800,
+            marginTop: '24px',
+            marginBottom: '12px',
+            color: 'var(--text-primary)',
+          }}
+        >
+          {trimmed.replace('# ', '')}
+        </h1>
+      );
+      continue;
+    }
+
+    const ulMatch = trimmed.match(/^[-*]\s+(.*)$/);
+    if (ulMatch) {
+      if (!listBuffer || listBuffer.type !== 'ul') {
+        flushList();
+        listBuffer = { type: 'ul', items: [] };
+      }
+      listBuffer.items.push(ulMatch[1]);
+      continue;
+    }
+
+    const olMatch = trimmed.match(/^\d+\.\s+(.*)$/);
+    if (olMatch) {
+      if (!listBuffer || listBuffer.type !== 'ol') {
+        flushList();
+        listBuffer = { type: 'ol', items: [] };
+      }
+      listBuffer.items.push(olMatch[1]);
+      continue;
+    }
+
+    flushList();
+    elements.push(
+      <p
+        key={elemKey++}
+        style={{
+          margin: '0 0 10px',
+          color: 'var(--text-primary)',
+          lineHeight: 1.7,
+          fontSize: '0.95rem',
+        }}
+      >
+        {renderFormattedInline(trimmed)}
+      </p>
+    );
+  }
+
+  flushList();
+
+  if (codeBlockBuffer !== null) {
+    elements.push(
+      <pre
+        key={elemKey++}
+        style={{
+          backgroundColor: 'var(--editor-bg, #111827)',
+          color: '#E5E7EB',
+          padding: '16px',
+          borderRadius: '8px',
+          overflowX: 'auto',
+          fontFamily: 'var(--font-mono, monospace)',
+          fontSize: '0.85rem',
+          border: '1px solid var(--border-subtle)',
+          margin: '8px 0 14px',
+        }}
+      >
+        <code>{codeBlockBuffer.join('\n')}</code>
+      </pre>
+    );
+  }
+
+  return elements;
+};
+
 export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   db,
   courseId,
   initialLessonId,
+  initialTab,
   currentUserId,
   onBackToCourse,
   onLaunchLab,
 }) => {
   const course = db.getCourseById(courseId);
   const [currentLessonId, setCurrentLessonId] = useState<string>(initialLessonId);
-  const [activeTab, setActiveTab] = useState<'video' | 'animation' | 'sandbox'>('video');
+  const [activeTab, setActiveTab] = useState<'video' | 'animation' | 'sandbox'>(initialTab || 'video');
   const [enrollment, setEnrollment] = useState<CourseEnrollment>(
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
@@ -359,8 +622,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     cursor: 'pointer',
                   }}
                 >
-                  <Cpu size={15} />
-                  <span>2. Interactive SVG Visualizer</span>
+                  <TerminalIcon size={15} />
+                  <span>2. Interactive Lab Simulation</span>
                 </button>
 
                 <button
@@ -487,10 +750,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     <div
                       style={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
-                        gap: '10px',
-                        maxHeight: '260px',
-                        overflowY: 'auto',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(215px, 1fr))',
+                        gap: '12px',
                         padding: '4px 2px',
                       }}
                     >
@@ -504,17 +765,24 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                             style={{
                               display: 'flex',
                               flexDirection: 'column',
+                              alignItems: 'stretch',
+                              justifyContent: 'space-between',
                               textAlign: 'left',
-                              padding: '10px 12px',
+                              padding: '12px 14px',
                               borderRadius: '10px',
                               backgroundColor: isCurrent ? 'var(--brand-surface)' : 'var(--bg-canvas)',
                               border: isCurrent ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
                               cursor: 'pointer',
                               transition: 'all 0.15s ease',
-                              gap: '5px',
+                              gap: '8px',
+                              minHeight: '112px',
+                              width: '100%',
+                              boxSizing: 'border-box',
+                              overflow: 'hidden',
+                              boxShadow: isCurrent ? '0 4px 12px rgba(46, 125, 50, 0.15)' : 'none',
                             }}
                           >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                               <span
                                 style={{
                                   fontSize: '0.66rem',
@@ -522,40 +790,48 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                                   textTransform: 'uppercase',
                                   backgroundColor: isCurrent ? 'var(--brand-primary)' : '#E5F0DF',
                                   color: isCurrent ? '#FFFFFF' : '#26352A',
-                                  padding: '2px 6px',
+                                  padding: '2px 7px',
                                   borderRadius: '6px',
+                                  letterSpacing: '0.04em',
                                 }}
                               >
                                 {v.category}
                               </span>
-                              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                              <span style={{ fontSize: '0.72rem', fontWeight: 600, color: 'var(--text-muted)' }}>
                                 {v.duration_minutes}m
                               </span>
                             </div>
 
                             <div
                               style={{
-                                fontSize: '0.79rem',
+                                fontSize: '0.8rem',
                                 fontWeight: 700,
                                 color: 'var(--text-primary)',
-                                lineHeight: 1.3,
+                                lineHeight: 1.35,
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                width: '100%',
                               }}
+                              title={v.title}
                             >
                               {vIdx + 1}. {v.title}
                             </div>
 
                             <div
                               style={{
-                                fontSize: '0.71rem',
+                                fontSize: '0.72rem',
                                 color: 'var(--text-muted)',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
+                                width: '100%',
+                                textAlign: 'left',
+                                marginTop: 'auto',
                               }}
+                              title={v.instructor_name || 'Academic Institution'}
                             >
                               {v.instructor_name || 'Academic Institution'}
                             </div>
@@ -580,26 +856,10 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       color: 'var(--text-primary)',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '14px',
+                      gap: '4px',
                     }}
                   >
-                    {activeLesson.content_markdown.split('\n\n').map((paragraph, pIdx) => {
-                      if (paragraph.startsWith('### ')) {
-                        return <h3 key={pIdx} style={{ fontSize: '1.25rem', marginTop: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>{paragraph.replace('### ', '')}</h3>;
-                      }
-                      if (paragraph.startsWith('#### ')) {
-                        return <h4 key={pIdx} style={{ fontSize: '1.05rem', marginTop: '8px', fontWeight: 600, color: 'var(--text-secondary)' }}>{paragraph.replace('#### ', '')}</h4>;
-                      }
-                      if (paragraph.startsWith('```')) {
-                        const cleanCode = paragraph.replace(/```[a-z]*\n?/g, '');
-                        return (
-                          <pre key={pIdx} style={{ backgroundColor: 'var(--editor-bg)', color: 'var(--text-primary)', padding: '14px', borderRadius: 'var(--radius-sm)', overflowX: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', border: '1px solid var(--border-subtle)' }}>
-                            <code>{cleanCode}</code>
-                          </pre>
-                        );
-                      }
-                      return <p key={pIdx}>{paragraph}</p>;
-                    })}
+                    {renderMarkdownNotes(activeLesson.content_markdown)}
                   </div>
                 </div>
 
@@ -682,6 +942,9 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                 <ConceptSvgAnimation
                   type={activeLesson.svg_animation_type || 'logic_gates'}
                   title={activeLesson.title}
+                  moduleId={activeLesson.module_id}
+                  lessonId={activeLesson.id}
+                  courseTitle={course.title}
                 />
               </div>
             )}
