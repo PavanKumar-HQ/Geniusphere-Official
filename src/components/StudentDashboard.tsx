@@ -496,78 +496,98 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div
                   key={course!.id}
                   style={{
-                    padding: '18px 20px',
+                    padding: '20px 22px',
                     borderRadius: '16px',
-                    border: '1px solid var(--border-subtle)',
-                    backgroundColor: 'var(--bg-surface-subdued)',
+                    border: '1.5px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-surface)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '12px',
+                    gap: '14px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span
                       style={{
-                        backgroundColor: 'var(--bg-surface)',
+                        backgroundColor: 'var(--bg-surface-subdued)',
                         color: 'var(--brand-primary)',
-                        padding: '3px 8px',
+                        padding: '4px 10px',
                         borderRadius: '6px',
                         fontSize: '0.72rem',
                         fontWeight: 800,
                         textTransform: 'uppercase',
                         border: '1px solid var(--border-subtle)',
+                        letterSpacing: '0.04em',
                       }}
                     >
                       {course!.domain}
                     </span>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
-                      {enrollment.progress_percent}% Complete
+                    <span
+                      style={{
+                        backgroundColor: 'rgba(0, 245, 160, 0.12)',
+                        color: 'var(--brand-primary)',
+                        padding: '3px 10px',
+                        borderRadius: '100px',
+                        fontSize: '0.75rem',
+                        fontWeight: 800,
+                        border: '1px solid rgba(0, 245, 160, 0.25)',
+                      }}
+                    >
+                      {enrollment.completed_lessons.length} of {course!.modules.length || 10} Modules ({enrollment.progress_percent}%)
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                     {course!.title}
                   </h3>
 
-                  {/* Progress Bar */}
-                  <div
-                    style={{
-                      height: '8px',
-                      borderRadius: '4px',
-                      backgroundColor: 'var(--border-subtle)',
-                      overflow: 'hidden',
-                    }}
-                  >
+                  {/* Realtime Glowing Gradient Course Progress Bar */}
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>
+                      <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Course Progress</span>
+                      <span style={{ color: 'var(--brand-primary)' }}>{enrollment.progress_percent}% COMPLETED</span>
+                    </div>
                     <div
                       style={{
-                        height: '100%',
-                        width: `${enrollment.progress_percent}%`,
-                        backgroundColor: 'var(--brand-primary)',
-                        borderRadius: '4px',
-                        transition: 'width 0.4s ease',
+                        height: '10px',
+                        borderRadius: '5px',
+                        backgroundColor: 'var(--bg-surface-subdued)',
+                        overflow: 'hidden',
+                        border: '1px solid var(--border-subtle)',
                       }}
-                    />
+                    >
+                      <div
+                        style={{
+                          height: '100%',
+                          width: `${enrollment.progress_percent}%`,
+                          background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
+                          boxShadow: '0 0 10px rgba(0, 245, 160, 0.45)',
+                          borderRadius: '5px',
+                          transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        }}
+                      />
+                    </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                      Completed {enrollment.completed_lessons.length} of {course!.modules.flatMap((m) => m.lessons).length} lessons
+                      Next: Module {Math.min((course!.modules.length || 10), enrollment.completed_lessons.length + 1)} Video & Lab
                     </span>
                     <button
                       type="button"
                       onClick={() => onSelectCourse(course!.slug)}
+                      className="btn-primary"
                       style={{
-                        backgroundColor: 'var(--brand-primary)',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '100px',
-                        padding: '6px 16px',
-                        fontSize: '0.82rem',
+                        height: '36px',
+                        padding: '0 18px',
+                        fontSize: '0.84rem',
                         fontWeight: 700,
-                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
                       }}
                     >
-                      Continue
+                      <span>Continue Lesson</span>
                     </button>
                   </div>
                 </div>
@@ -576,35 +596,143 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           )}
         </div>
 
-        {/* Right Column: Mascot Widget & Overall Progress */}
+        {/* Right Column: Daily Learning Habit & Streak Tracker (Matching Prototype) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Mascot Encouragement Card (matching Design Board 1) */}
+          {/* DAILY LEARNING HABIT & STREAK TRACKER WIDGET */}
           <div
+            className="card-elevated"
             style={{
-              backgroundColor: 'var(--bg-surface-subdued)',
+              backgroundColor: 'var(--bg-surface)',
               borderRadius: '20px',
-              padding: '24px',
-              border: '1px solid var(--border-subtle)',
+              border: '1.5px solid var(--border-subtle)',
+              padding: '22px',
               display: 'flex',
-              alignItems: 'center',
+              flexDirection: 'column',
               gap: '16px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
             }}
           >
-            <MascotSphere pose="encouraging" size={88} />
-            <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  DAILY LEARNING HABIT
+                </span>
+                <h3 style={{ margin: '2px 0 0', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  & Streak Tracker
+                </h3>
+              </div>
               <div
                 style={{
-                  fontWeight: 800,
-                  fontSize: '1.05rem',
-                  color: 'var(--text-primary)',
-                  lineHeight: 1.3,
-                  fontFamily: 'Space Grotesk, sans-serif',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                Small steps lead to big achievements!
+                <Flame size={20} color="#F59E0B" fill="#F59E0B" />
               </div>
-              <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '6px', lineHeight: 1.4 }}>
-                Every lesson, lab assertion, and quiz takes you closer to verified career mastery.
+            </div>
+
+            {/* 7-Day Mon-Sun Grid (Matches Prototype Image) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
+              {[
+                { day: 'M', active: true, shielded: false },
+                { day: 'T', active: true, shielded: false },
+                { day: 'W', active: true, shielded: false },
+                { day: 'T', active: true, shielded: false },
+                { day: 'F', active: (userProgress.streak_days || 5) >= 5, shielded: false },
+                { day: 'S', active: (userProgress.streak_days || 5) >= 6, shielded: (userProgress.streak_days || 5) < 6 },
+                { day: 'S', active: (userProgress.streak_days || 5) >= 7, shielded: (userProgress.streak_days || 5) < 7 },
+              ].map((item, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 2px',
+                    borderRadius: '10px',
+                    backgroundColor: item.active
+                      ? 'rgba(0, 245, 160, 0.08)'
+                      : 'var(--bg-canvas)',
+                    border: item.active
+                      ? '1.5px solid var(--brand-primary)'
+                      : '1px solid var(--border-subtle)',
+                  }}
+                >
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: item.active ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
+                    {item.day}
+                  </span>
+                  <div
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      backgroundColor: item.active ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                      color: item.active ? '#03170E' : 'var(--text-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {item.active ? (
+                      <CheckCircle2 size={13} strokeWidth={2.5} />
+                    ) : item.shielded ? (
+                      <Shield size={11} color="#F59E0B" />
+                    ) : (
+                      <span style={{ fontSize: '0.65rem' }}>•</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Current Streak & Milestone */}
+            <div style={{ paddingTop: '8px', borderTop: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>{userProgress.streak_days || 5}-Day Current Streak</span>
+                  <Flame size={18} color="#F59E0B" fill="#F59E0B" />
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    color: '#F59E0B',
+                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                    padding: '2px 8px',
+                    borderRadius: '100px',
+                  }}
+                >
+                  Shield Active
+                </span>
+              </div>
+
+              {/* Goal Progress */}
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                Next Goal: 7-Day Achievement! (+100 XP Bonus)
+              </div>
+              <div
+                style={{
+                  width: '100%',
+                  height: '6px',
+                  borderRadius: '3px',
+                  backgroundColor: 'var(--bg-canvas)',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    height: '100%',
+                    width: `${Math.min(100, Math.round(((userProgress.streak_days || 5) / 7) * 100))}%`,
+                    backgroundColor: 'var(--brand-primary)',
+                    borderRadius: '3px',
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -615,41 +743,63 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '20px',
               border: '1px solid var(--border-subtle)',
-              padding: '24px',
+              padding: '22px',
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
-              textAlign: 'center',
-              gap: '14px',
+              gap: '18px',
             }}
           >
             <div
               style={{
-                width: '100px',
-                height: '100px',
+                width: '74px',
+                height: '74px',
                 borderRadius: '50%',
                 backgroundColor: 'var(--bg-surface-subdued)',
-                border: '8px solid var(--brand-primary)',
+                border: '6px solid var(--brand-primary)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
-              <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>
+              <span style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1 }}>
                 {avgProgress}%
               </span>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700 }}>
+              <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700 }}>
                 Done
               </span>
             </div>
 
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
-                Overall Completion
+              <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--text-primary)' }}>
+                Overall Curriculum Completion
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                Across all enrolled active subjects
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                {userProgress.completed_lessons.length} total lessons validated across active subjects
+              </div>
+            </div>
+          </div>
+
+          {/* Mascot Encouragement Card */}
+          <div
+            style={{
+              backgroundColor: 'var(--bg-surface-subdued)',
+              borderRadius: '20px',
+              padding: '20px',
+              border: '1px solid var(--border-subtle)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+            }}
+          >
+            <MascotSphere pose="encouraging" size={72} />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                Keep building momentum!
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>
+                Daily practical asserts solidify real developer skills.
               </div>
             </div>
           </div>

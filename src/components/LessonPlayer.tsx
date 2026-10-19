@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Lesson, CourseEnrollment, Certificate } from '../types';
-import { SharedLabWorkspace } from './SharedLabWorkspace';
+import { EmbeddedLabRenderer } from './EmbeddedLabRenderer';
 import { LessonCodingSandbox } from './LessonCodingSandbox';
 import { CertificateModal } from './CertificateModal';
 import {
@@ -23,6 +23,7 @@ import {
 
 import { SupportedLanguage } from '../utils/codeSandboxRunner';
 import { CODING_CONCEPTS } from '../data/codingConcepts';
+import { backendEngine } from '../backend/RealtimeOrchestrator';
 
 interface LessonPlayerProps {
   db: InMemoryDatabase;
@@ -405,12 +406,34 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
     setEnrollment({ ...updated });
 
+    // Realtime notification for lesson completion
+    backendEngine.notifications.dispatch(
+      currentUserId,
+      `Module Completed: ${activeLesson.title}`,
+      `Total progress: ${updated.progress_percent}%. You earned +50 XP and advanced your daily streak!`,
+      'medium',
+      'assignment',
+      'course-detail',
+      course.slug,
+      'View Course'
+    );
+
     if (updated.progress_percent >= 100) {
       const certs = db.getCertificates(currentUserId);
       const match = certs.find((c) => c.course_id === courseId);
       if (match) {
         setEarnedCertificate(match);
       }
+      backendEngine.notifications.dispatch(
+        currentUserId,
+        `🎓 Certificate Unlocked: ${course.title}`,
+        `Congratulations! You finished all 10 modules with 100% completion and unlocked your verified certificate.`,
+        'urgent',
+        'certificate',
+        'certificates',
+        undefined,
+        'View Certificate'
+      );
     }
 
     if (nextLesson) {
@@ -437,6 +460,17 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     setQuizSubmitted(true);
 
     if (pct >= 50) {
+      backendEngine.notifications.dispatch(
+        currentUserId,
+        `Quiz Passed (${pct}%)!`,
+        `Knowledge check passed for ${activeLesson.title}. +50 XP awarded!`,
+        'high',
+        'grade',
+        'course-detail',
+        course.slug,
+        'Next Module'
+      );
+
       const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
       setEnrollment({ ...updated });
       if (updated.progress_percent >= 100) {
@@ -1150,51 +1184,79 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               </div>
             )}
 
-            {/* TAB 2: INTEGRATED COURSE LAB (REAL WORKING LAB, NO FAKE HUD SIMULATION) */}
+            {/* TAB 2: INTEGRATED COURSE LAB — Real animated lab apps */}
             {activeTab === 'lab' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {/* Real-time progress hint bar */}
                 <div
-                  className="card"
                   style={{
-                    padding: '16px 20px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    padding: '12px 18px',
+                    background: 'linear-gradient(135deg, rgba(0,245,160,0.05) 0%, rgba(0,210,135,0.03) 100%)',
+                    border: '1px solid rgba(0,245,160,0.15)',
+                    borderRadius: '12px',
                     flexWrap: 'wrap',
-                    gap: '12px',
-                    borderLeft: '4px solid var(--brand-primary)',
-                    backgroundColor: 'var(--bg-surface)',
+                    gap: '10px',
                   }}
                 >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span className="badge badge-accent" style={{ fontSize: '0.72rem' }}>PRACTICAL LAB</span>
-                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                        {course.title} — Integrated Hands-On Lab
-                      </h3>
-                    </div>
-                    <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                      Complete real-world engineering objectives, run validation benchmarks, and earn XP.
-                    </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{
+                      width: '8px', height: '8px', borderRadius: '50%',
+                      background: '#00F5A0', boxShadow: '0 0 8px #00F5A0',
+                      animation: 'liveGlow 2s ease-in-out infinite',
+                    }} />
+                    <style>{`@keyframes liveGlow { 0%,100%{opacity:1;} 50%{opacity:0.4;} }`}</style>
+                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      🔬 {course.title} — Interactive Lab
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
+                      {enrollment.progress_percent}% Complete • {enrollment.completed_lessons.length} of {allLessons.length} modules done
+                    </span>
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button
-                      type="button"
-                      className="btn-secondary"
-                      onClick={() => setActiveTab('video')}
-                      style={{ height: '36px', fontSize: '0.8rem' }}
-                    >
-                      <ArrowLeft size={14} /> Back to Video Lectures
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setActiveTab('video')}
+                    style={{ height: '34px', fontSize: '0.78rem' }}
+                  >
+                    <ArrowLeft size={13} /> Video Lectures
+                  </button>
                 </div>
 
-                <SharedLabWorkspace
-                  db={db}
+                {/* Real progress bar */}
+                <div style={{ height: '5px', borderRadius: '4px', background: 'var(--bg-canvas)', overflow: 'hidden' }}>
+                  <div style={{
+                    height: '100%',
+                    width: `${enrollment.progress_percent}%`,
+                    background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
+                    boxShadow: '0 0 8px rgba(0,245,160,0.4)',
+                    transition: 'width 0.5s ease',
+                    borderRadius: '4px',
+                  }} />
+                </div>
+
+                {/* The actual animated lab */}
+                <EmbeddedLabRenderer
                   labSlug={course.linked_lab_slug || 'ai-classification-playground'}
-                  currentUserId={currentUserId}
-                  onNavigateBack={() => setActiveTab('video')}
-                  onSelectCourse={() => onBackToCourse()}
+                  courseTitle={course.title}
+                  onClose={() => {
+                    // Dispatch notification when lab is exited (completed session)
+                    backendEngine.notifications.dispatch(
+                      currentUserId,
+                      `Lab Session Completed: ${course.title}`,
+                      `You finished an interactive lab session. +100 XP bonus awarded!`,
+                      'high',
+                      'grade',
+                      'course-detail',
+                      course.slug,
+                      'View Course'
+                    );
+                    // Award lab XP
+                    db.awardXp(currentUserId, 100, 'Lab session completed');
+                    setActiveTab('video');
+                  }}
                 />
               </div>
             )}
@@ -1288,6 +1350,13 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     db.awardXp(currentUserId, 100);
                     const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
                     setEnrollment({ ...updated });
+                    backendEngine.notifications.dispatch(
+                      currentUserId,
+                      `Sandbox Challenge Solved (+100 XP)!`,
+                      `Executed validated code for ${activeLesson.title}. XP awarded and streak maintained!`,
+                      'high',
+                      'grade'
+                    );
                   }}
                 />
               </div>

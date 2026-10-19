@@ -98,7 +98,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                     title="Social Profile Development"
                     description="Building a Responsible Digital Identity"
                     badges={[
-                        <MobileBadge variant="blue" key="b1">STEP {activeStep}/10</MobileBadge>,
+                        <MobileBadge variant="cyan" key="b1">STEP {activeStep}/10</MobileBadge>,
                         !isPaused ? <MobileBadge variant="green" key="b2">ACTIVE</MobileBadge> : null
                     ]}
                     visualContent={

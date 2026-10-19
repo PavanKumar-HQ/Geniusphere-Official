@@ -51,16 +51,15 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
           title="Global Economy Lab"
           description={currentStepData.title}
           badges={[
-            <MobileBadge variant="blue" key="b1">STEP {state.currentStep}/{SIMULATION_STEPS.length}</MobileBadge>,
+            <MobileBadge variant="cyan" key="b1">STEP {state.currentStep}/{SIMULATION_STEPS.length}</MobileBadge>,
             state.isPlaying ? <MobileBadge variant="green" key="b2">SIMULATING</MobileBadge> : null
           ]}
           visualContent={
             <div className="h-full p-4">
               <GlobeVisualizer
-                event={selectedEventData}
-                step={currentStepData}
-                isPlaying={state.isPlaying}
-                simplified={state.isSimplified}
+                currentStep={state.currentStep}
+                selectedEvent={selectedEventData}
+                isSimplified={state.isSimplified}
               />
             </div>
           }

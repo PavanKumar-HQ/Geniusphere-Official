@@ -5,6 +5,7 @@ import { CertificateModal } from './CertificateModal';
 import { SharedLabWorkspace } from './SharedLabWorkspace';
 import { MultiLanguageCodeSandbox } from './MultiLanguageCodeSandbox';
 import { SupportedLanguage } from '../utils/codeSandboxRunner';
+import { backendEngine } from '../backend/RealtimeOrchestrator';
 import {
   ArrowLeft,
   BookOpen,
@@ -67,6 +68,17 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   const handleEnroll = () => {
     const newEnr = db.enrollInCourse(currentUserId, course.id);
     setEnrollment(newEnr);
+
+    backendEngine.notifications.dispatch(
+      currentUserId,
+      `Enrolled in ${course.title}`,
+      `10 modules and practical lab ready. Start with Module 1!`,
+      'medium',
+      'system',
+      'course-detail',
+      course.slug,
+      'Start Course'
+    );
 
     // If course has lessons, start the first one
     if (course.modules[0]?.lessons[0]) {

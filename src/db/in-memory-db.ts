@@ -1452,6 +1452,23 @@ export class InMemoryDatabase {
     lessonId: string
   ): { progress: UserProgressState; completedCourse: boolean; certificate?: Certificate } {
     const prog = this.getUserProgress(userId);
+    const today = new Date().toISOString().split('T')[0];
+    if (prog.last_active_date !== today) {
+      if (prog.last_active_date) {
+        const lastDate = new Date(prog.last_active_date);
+        const currentDate = new Date(today);
+        const diffDays = Math.round((currentDate.getTime() - lastDate.getTime()) / (1000 * 3600 * 24));
+        if (diffDays === 1) {
+          prog.streak_days = (prog.streak_days || 0) + 1;
+        } else if (diffDays > 1) {
+          prog.streak_days = 1;
+        }
+      } else {
+        prog.streak_days = 1;
+      }
+      prog.last_active_date = today;
+    }
+
     if (!prog.completed_lessons.includes(lessonId)) {
       prog.completed_lessons.push(lessonId);
       prog.xp += 50; // +50 XP for completing lesson

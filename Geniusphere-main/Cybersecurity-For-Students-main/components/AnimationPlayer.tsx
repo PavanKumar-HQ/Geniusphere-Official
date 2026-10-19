@@ -698,7 +698,7 @@ const ZeroDayAnimation: React.FC<AnimationComponentProps> = ({ module, currentSt
             
             {showDefense && isAfter(4) && (
                 <>
-                    <PatchIcon x="190" y="90" className="text-green-500" />
+                    <PatchIcon x={190} y={90} className="text-green-500" />
                     {/* Fix: Use number for strokeWidth */}
                     <circle cx={200} cy={100} r={5} fill="none" stroke="#32D74B" strokeWidth={1} />
                 </>

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { learningSessionService } from '../services/learningSessionService';
+import { backendEngine } from '../backend/RealtimeOrchestrator';
 import { LabAttemptRecord, LabLifecycleState } from '../types';
 import {
   NeuralNetworkSvg,
@@ -1031,6 +1032,20 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       setCompletedAttempt(record);
       setLifecycleState(passed ? 'success' : 'incorrect');
       setSaveStatus('SAVED');
+
+      // Realtime notification dispatch
+      backendEngine.notifications.dispatch(
+        currentUserId,
+        passed ? `🎉 Practical Lab Passed: ${lab.title}` : `Lab Attempt Evaluated: ${lab.title}`,
+        passed
+          ? `Outstanding! You achieved ${score}/100 and validated all practical criteria.`
+          : `Evaluation completed with score ${score}/100. Review criteria to retry.`,
+        passed ? 'high' : 'medium',
+        'grade',
+        'lab-workspace',
+        lab.slug,
+        'View Workspace'
+      );
     } catch (err: any) {
       alert(`Submission error: ${err.message}`);
       setLifecycleState('error');

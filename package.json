@@ -15,9 +15,12 @@
     "@codemirror/lang-sql": "^6.8.0",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.36.4",
+    "@google/genai": "^2.30.0",
+    "framer-motion": "^14.4.0",
     "lucide-react": "^1.16.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "recharts": "^3.10.1",
     "sql.js": "^1.12.0"
   },
   "devDependencies": {

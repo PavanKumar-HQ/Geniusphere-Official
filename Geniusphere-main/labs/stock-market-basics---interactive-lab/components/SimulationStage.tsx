@@ -248,7 +248,7 @@ const SimulationStage: React.FC<SimulationStageProps> = ({ step, isSimplified })
                     contentStyle={{ backgroundColor: '#0F172A', border: '1px solid #334155', borderRadius: '8px' }}
                     labelStyle={{ color: '#94A3B8', fontSize: '10px' }}
                     itemStyle={{ color: '#00FFA3', fontSize: '12px', fontWeight: 'bold' }}
-                    formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}
+                    formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price'] as [string, string]}
                   />
                   <Line
                     type="monotone"
