@@ -87,6 +87,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
         >
           {/* Eyebrow Live Indicator Pill */}
           <div
+            className="animate-pulse-glow"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -150,8 +151,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               fontWeight: 500,
             }}
           >
-            The educational platform with <strong>12 canonical courses</strong>,{' '}
-            <strong>14 interactive simulation labs</strong>, and an{' '}
+            The educational platform with <strong>18 canonical courses</strong>,{' '}
+            <strong>180 interactive sub-module simulation labs</strong>, and an{' '}
             <strong>in-browser multi-language code sandbox</strong>. Zero cloud costs, 100% deterministic.
           </p>
 
@@ -168,6 +169,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
           >
             <button
               type="button"
+              className="btn-shimmer"
               onClick={() => onNavigate('catalogue')}
               style={{
                 backgroundColor: '#1E293B',
@@ -303,12 +305,12 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               <BookOpen size={22} />
             </div>
             <div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1 }}>12</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1 }}>18</div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Canonical Courses</div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div className="card-interactive-lift" style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '12px 18px', borderRadius: '14px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
             <div
               style={{
                 width: '44px',
@@ -325,8 +327,8 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
               <Terminal size={22} />
             </div>
             <div>
-              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1 }}>14</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Simulation Engines</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.1 }}>180</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Sub-Module Labs</div>
             </div>
           </div>
 
@@ -410,6 +412,7 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
         >
           {/* Pillar 1: Canonical Courses */}
           <div
+            className="card-interactive-lift"
             style={{
               padding: '32px',
               borderRadius: '20px',

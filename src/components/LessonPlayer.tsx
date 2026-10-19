@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Lesson, CourseEnrollment, Certificate } from '../types';
 import { EmbeddedLabRenderer } from './EmbeddedLabRenderer';
+import { CourseSubmoduleLabStudio } from './CourseSubmoduleLabStudio';
 import { LessonCodingSandbox } from './LessonCodingSandbox';
 import { CertificateModal } from './CertificateModal';
 import {
@@ -1237,26 +1238,23 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   }} />
                 </div>
 
-                {/* The actual animated lab */}
-                <EmbeddedLabRenderer
-                  labSlug={course.linked_lab_slug || 'ai-classification-playground'}
-                  courseTitle={course.title}
-                  onClose={() => {
-                    // Dispatch notification when lab is exited (completed session)
-                    backendEngine.notifications.dispatch(
-                      currentUserId,
-                      `Lab Session Completed: ${course.title}`,
-                      `You finished an interactive lab session. +100 XP bonus awarded!`,
-                      'high',
-                      'grade',
-                      'course-detail',
-                      course.slug,
-                      'View Course'
-                    );
-                    // Award lab XP
-                    db.awardXp(currentUserId, 100, 'Lab session completed');
-                    setActiveTab('video');
+                {/* Dedicated Sub-Module Interactive Laboratory & Gamified Pathway */}
+                <CourseSubmoduleLabStudio
+                  course={course}
+                  currentLessonId={currentLessonId}
+                  onSelectLesson={(lessonId) => {
+                    setCurrentLessonId(lessonId);
+                    setQuizSubmitted(false);
+                    setSelectedAnswers({});
                   }}
+                  db={db}
+                  currentUserId={currentUserId}
+                  enrollment={enrollment}
+                  onCompleteSubmoduleLab={(_lessonId, _xp) => {
+                    const updated = db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId);
+                    setEnrollment({ ...updated });
+                  }}
+                  onClose={() => setActiveTab('video')}
                 />
               </div>
             )}

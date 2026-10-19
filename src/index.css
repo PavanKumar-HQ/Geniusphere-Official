@@ -1697,11 +1697,197 @@ aside,
   }
 }
 
-@media (max-width: 640px) {
-  .mascot-speech-bubble-wrapper {
-    display: none !important;
+html {
+  scroll-behavior: smooth;
+}
+
+/* ====================================================================
+   Modern Living Animations & Scroll Effects Suite
+   ==================================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(0.5deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(36, 76, 58, 0.15), 0 0 0 1px rgba(36, 76, 58, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(67, 168, 91, 0.35), 0 0 0 2px rgba(67, 168, 91, 0.25);
+  }
+}
+
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    filter: drop-shadow(0 0 6px #F59E0B);
+  }
+  25% {
+    transform: scale(1.08) rotate(1deg);
+    filter: drop-shadow(0 0 10px #D97706);
+  }
+  50% {
+    transform: scale(0.96) rotate(-2deg);
+    filter: drop-shadow(0 0 5px #F59E0B);
+  }
+  75% {
+    transform: scale(1.05) rotate(2deg);
+    filter: drop-shadow(0 0 9px #EF4444);
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes lineDashFlow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@keyframes meshRotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Utility Living Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float-slow {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-flame {
+  animation: flameFlicker 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+/* Card Interactive 3D Lift & Illumination */
+.card-interactive-lift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease;
+  will-change: transform, box-shadow;
+}
+
+.card-interactive-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(36, 76, 58, 0.12), 0 0 0 1px var(--brand-lime, #A9C86A) !important;
+}
+
+/* Button Shimmer Sweep */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.75s ease;
+}
+
+.btn-shimmer:hover::after {
+  left: 140%;
+}
+
+/* Ambient Radial Mesh Layer */
+.ambient-mesh-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  animation: meshRotate 20s linear infinite;
+}
+
+/* Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas, #F7F6F0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong, #BAC4B5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-primary, #244C3A);
+}
