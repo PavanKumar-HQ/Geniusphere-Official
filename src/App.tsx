@@ -2389,6 +2389,7 @@ export const App: React.FC = () => {
             }}
             onNavigateHome={() => handleNavigate('home')}
             onOpenCodingSandbox={() => handleNavigate('code-sandbox')}
+            onSelectCourse={handleSelectCourse}
           />
         )}
 

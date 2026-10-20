@@ -1459,19 +1459,21 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 borderRadius: '16px',
                 overflow: 'hidden',
                 border: '1.5px solid var(--border-subtle)',
-                minHeight: '680px',
-                height: '760px',
+                minHeight: '700px',
+                height: '780px',
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
-                backgroundColor: '#070B19',
+                backgroundColor: '#070B1A',
                 boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
               }}
             >
-              {React.createElement(standaloneLabMeta.component, {
-                onClose: () => setCenterLabViewMode('svg-parameters'),
-                onExit: () => setCenterLabViewMode('svg-parameters'),
-              })}
+              <div style={{ flex: 1, minHeight: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                {React.createElement(standaloneLabMeta.component, {
+                  onClose: () => setCenterLabViewMode('svg-parameters'),
+                  onExit: () => setCenterLabViewMode('svg-parameters'),
+                })}
+              </div>
             </div>
           ) : (
             <>

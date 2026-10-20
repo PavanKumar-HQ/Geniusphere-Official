@@ -1891,3 +1891,95 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--brand-primary, #244C3A);
 }
+
+/* ====================================================================
+   INTERACTIVE LABS & SIMULATION SUITES DESIGN TOKENS & UTILITIES
+   ==================================================================== */
+:root {
+  --lab-bg: #070B1A;
+  --lab-card: #0F1629;
+  --lab-blue: #3BF0FF;
+  --lab-purple: #7C6BFF;
+  --lab-green: #00FFA3;
+  --lab-red: #FF4D4D;
+  --lab-text: #E6E9F0;
+}
+
+.bg-lab-bg { background-color: #070B1A !important; }
+.bg-lab-card { background-color: #0F1629 !important; }
+.bg-lab-blue { background-color: #3BF0FF !important; }
+.bg-lab-purple { background-color: #7C6BFF !important; }
+.bg-lab-green { background-color: #00FFA3 !important; }
+.bg-lab-red { background-color: #FF4D4D !important; }
+
+.text-lab-text { color: #E6E9F0 !important; }
+.text-lab-blue { color: #3BF0FF !important; }
+.text-lab-purple { color: #7C6BFF !important; }
+.text-lab-green { color: #00FFA3 !important; }
+.text-lab-red { color: #FF4D4D !important; }
+
+.border-lab-blue { border-color: #3BF0FF !important; }
+.border-lab-purple { border-color: #7C6BFF !important; }
+.border-lab-green { border-color: #00FFA3 !important; }
+.border-lab-red { border-color: #FF4D4D !important; }
+
+/* Visual Glass Panels & Atmospheric Grids */
+.glass-panel {
+  background: rgba(13, 20, 43, 0.7) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(59, 240, 255, 0.15) !important;
+  border-radius: 12px !important;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(59, 240, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 240, 255, 0.05) 1px, transparent 1px) !important;
+  background-size: 40px 40px !important;
+}
+
+.glow-blue { box-shadow: 0 0 16px rgba(59, 240, 255, 0.25) !important; }
+.glow-green { box-shadow: 0 0 16px rgba(0, 255, 163, 0.25) !important; }
+.glow-purple { box-shadow: 0 0 16px rgba(124, 107, 255, 0.25) !important; }
+
+.neon-glow-cyan { filter: drop-shadow(0 0 6px rgba(59, 240, 255, 0.45)); }
+.neon-glow-purple { filter: drop-shadow(0 0 6px rgba(124, 107, 255, 0.45)); }
+.neon-glow-green { filter: drop-shadow(0 0 6px rgba(0, 255, 163, 0.45)); }
+.neon-glow-red { filter: drop-shadow(0 0 6px rgba(255, 77, 77, 0.45)); }
+
+/* Fix embedded labs with h-screen or rigid 100vh overflowing workspace */
+.workspace-panel-center .h-screen,
+.workspace-panel-center .min-h-screen {
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+}
+
+.workspace-panel-center aside,
+.workspace-panel-center main,
+.workspace-panel-center section {
+  box-sizing: border-box;
+}
+
+/* Custom dark scrollbar for labs */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #070B1A;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1F2937;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
+
