@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import websocket from '@fastify/websocket';
+import bcrypt from 'bcryptjs';
 import { config } from './config';
 import { runMigrations, query } from './db';
 import { seedDatabase } from './seed';
@@ -48,25 +49,47 @@ export async function createServer() {
 
   // 4. Authentication Endpoints
   fastify.post('/api/auth/login', async (request, reply) => {
-    const { email, userId } = (request.body as any) || {};
-    const identifier = email || userId;
-    if (!identifier) {
-      return reply.status(400).send({ error: 'Email or userId is required' });
+    const { email, password } = (request.body as any) || {};
+
+    // 1. Mandatory input validation
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      return reply.status(400).send({ error: 'Email is required' });
+    }
+    if (!password || typeof password !== 'string') {
+      return reply.status(400).send({ error: 'Password is required' });
     }
 
+    // 2. Query user from authoritative database
     const userRes = await query(
       `SELECT u.*, om.role, om.organization_id 
        FROM public.users u
        LEFT JOIN public.organization_memberships om ON om.user_id = u.id AND om.is_active = TRUE
-       WHERE u.email = $1 OR u.id::text = $1 LIMIT 1`,
-      [identifier]
+       WHERE LOWER(u.email) = LOWER($1) LIMIT 1`,
+      [email.trim()]
     );
 
     if (userRes.rowCount === 0) {
-      return reply.status(404).send({ error: 'User not found in system' });
+      return reply.status(401).send({ error: 'Invalid email or password' });
     }
 
     const user = userRes.rows[0];
+
+    // 3. Account status checks
+    if (user.account_status === 'suspended') {
+      return reply.status(403).send({ error: 'Account is suspended. Please contact support.' });
+    }
+
+    // 4. Verify password hash
+    if (!user.password_hash) {
+      return reply.status(401).send({ error: 'Invalid email or password' });
+    }
+
+    const passwordValid = await bcrypt.compare(password, user.password_hash);
+    if (!passwordValid) {
+      return reply.status(401).send({ error: 'Invalid email or password' });
+    }
+
+    // 5. Build session payload and issue token
     const sessionPayload: UserSessionPayload = {
       userId: user.id,
       email: user.email,

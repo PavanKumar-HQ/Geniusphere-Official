@@ -1,6 +1,9 @@
+import bcrypt from 'bcryptjs';
 import { query, withTransaction } from './db';
 import { ALL_CANONICAL_COURSES } from '../src/data/canonical-curriculum';
 import { APPROVED_LABS } from '../src/data/approved-labs';
+
+const DEFAULT_DEV_HASH = bcrypt.hashSync('TestPass123!', 10);
 
 export async function seedDatabase(): Promise<void> {
   console.log('[Seed] Checking and seeding initial production records...');
@@ -75,11 +78,11 @@ export async function seedDatabase(): Promise<void> {
 
     for (const u of usersToSeed) {
       await client.query(
-        `INSERT INTO public.users (id, email, full_name, date_of_birth, is_minor, is_superadmin, account_status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'active')
+        `INSERT INTO public.users (id, email, full_name, date_of_birth, is_minor, is_superadmin, account_status, password_hash)
+         VALUES ($1, $2, $3, $4, $5, $6, 'active', $7)
          ON CONFLICT (email) DO UPDATE 
-         SET full_name = EXCLUDED.full_name, is_superadmin = EXCLUDED.is_superadmin`,
-        [u.id, u.email, u.fullName, u.dob, u.isMinor, u.isSuperadmin]
+         SET full_name = EXCLUDED.full_name, is_superadmin = EXCLUDED.is_superadmin, password_hash = COALESCE(users.password_hash, EXCLUDED.password_hash)`,
+        [u.id, u.email, u.fullName, u.dob, u.isMinor, u.isSuperadmin, DEFAULT_DEV_HASH]
       );
 
       // Organization membership

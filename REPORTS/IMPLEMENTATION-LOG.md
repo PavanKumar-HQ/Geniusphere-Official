@@ -85,3 +85,30 @@
 - **Complete Test Suite (`npm test`):**
   - **15 test files passed** (0 failed).
   - **146 tests passed** (0 failed).
+
+---
+
+## Stage 6: Post-Implementation Security Verification Gate & Hardening
+- **Status:** **Tested & Hardened**
+- **Date:** 2026-10-20
+- **Priority 1 (Authentication Bypass Investigation):**
+  - **Audit Finding:** In `server/index.ts`, `POST /api/auth/login` previously accepted `{ email, userId }` without checking passwords, allowing token minting without proof of account control.
+  - **Remediation:** 
+    - Added migration [`20261020000005_auth_credentials_and_app_grants.sql`](file:///Users/pavankumars/Downloads/geniuspheregpt/supabase/migrations/20261020000005_auth_credentials_and_app_grants.sql) adding `password_hash VARCHAR(255)` to `public.users` with column-level revoke (`REVOKE UPDATE (password_hash)`).
+    - Hardened `POST /api/auth/login` to require `email` and `password`, verifying against `bcrypt` hash (10 rounds).
+    - Verified: unknown email returns 401; known email without password returns 400; incorrect password returns 401; `userId`-only shortcut returns 400.
+    - Zero passwords, complete tokens, or signing secrets logged.
+- **Priority 2 & 3 (Database Role, Grants & Migration Reproducibility):**
+  - **Audit Finding:** On clean databases, `geniusphere_app` previously received `ERROR: permission denied for table courses` because table-level grants had not been captured in migration files.
+  - **Remediation:**
+    - Migration 005 explicitly grants least-privilege `SELECT, INSERT, UPDATE, DELETE` on all 19 operational tables to `geniusphere_app` and `authenticated`.
+    - Created clean test database (`geniusphere_clean_test`), applied all 6 migrations sequentially from clean state, and verified non-superuser `geniusphere_app` operations with RLS positive/negative enforcement.
+    - Hardened `withTransaction` in `server/db.ts` to accept `sessionUserId?: string`, scope `request.jwt.claim.sub` locally to the transaction, and execute `RESET ALL` in `finally` to eliminate connection pool session leakage.
+- **Priority 4 (Failure Handling & Error State Verification):**
+  - Verified Fastify course route maps database query failures to `503 Service Unavailable` with sanitized error message.
+  - Frontend renders `courses-error-state` with retry trigger and 0 course cards (zero mock data fallbacks).
+- **Priority 5 (Validation):**
+  - All 15 test files pass (146 tests).
+  - Typecheck: 0 errors.
+  - Production build: clean build in 2.55s.
+

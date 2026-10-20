@@ -28,11 +28,15 @@ export async function query<R extends QueryResultRow = any, I extends any[] = an
 }
 
 export async function withTransaction<T>(
-  callback: (client: PoolClient) => Promise<T>
+  callback: (client: PoolClient) => Promise<T>,
+  sessionUserId?: string
 ): Promise<T> {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    if (sessionUserId) {
+      await client.query("SELECT set_config('request.jwt.claim.sub', $1, true)", [sessionUserId]);
+    }
     const result = await callback(client);
     await client.query('COMMIT');
     return result;
@@ -40,6 +44,11 @@ export async function withTransaction<T>(
     await client.query('ROLLBACK');
     throw error;
   } finally {
+    try {
+      await client.query('RESET ALL');
+    } catch {
+      // Ignore cleanup error if connection was closed
+    }
     client.release();
   }
 }

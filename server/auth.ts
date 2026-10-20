@@ -60,13 +60,6 @@ export async function authenticateRequest(
     return;
   }
 
-  // Set PostgreSQL session context for RLS in subsequent queries
-  try {
-    await query(`SELECT set_config('request.jwt.claim.sub', $1, true)`, [payload.userId]);
-  } catch (err) {
-    // Non-fatal if connection is pooled
-  }
-
   request.user = payload;
 }
 

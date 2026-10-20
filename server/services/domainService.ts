@@ -64,7 +64,7 @@ export class DomainService {
       );
 
       return res.rows[0];
-    });
+    }, userId);
   }
 
   public async getUserEnrollments(userId: string) {
@@ -172,7 +172,7 @@ export class DomainService {
         completion: compRes.rows[0],
         progress: { xp: newXp, streak: currentStreak },
       };
-    });
+    }, userId);
   }
 
   /**
@@ -283,7 +283,7 @@ export class DomainService {
       );
 
       return updated.rows[0];
-    });
+    }, actor.userId);
   }
 
   public calculateStreak(

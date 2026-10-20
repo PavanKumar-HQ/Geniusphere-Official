@@ -71,10 +71,10 @@ export class ApiClient {
     }
   }
 
-  public async login(email: string): Promise<{ token: string; user: ApiUserSession }> {
+  public async login(email: string, password: string = 'TestPass123!'): Promise<{ token: string; user: ApiUserSession }> {
     const res = await this.request<{ token: string; user: ApiUserSession }>('/api/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, password }),
     });
     this.setToken(res.token);
     this.initWebSocket();
