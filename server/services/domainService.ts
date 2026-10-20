@@ -82,6 +82,9 @@ export class DomainService {
   /**
    * Complete a lesson, update XP, update streak, and create outbox event in ONE transaction
    */
+  /**
+   * Complete a lesson, atomically award XP via xp_ledger, update streak, and create outbox event in ONE transaction
+   */
   public async completeLesson(
     userId: string,
     courseId: string,
@@ -98,14 +101,7 @@ export class DomainService {
         throw new Error('Course not found');
       }
 
-      // 2. Check if lesson was already completed previously to guarantee idempotency
-      const existingComp = await client.query(
-        `SELECT id, score FROM public.lesson_completions WHERE user_id = $1 AND course_id = $2 AND lesson_id = $3`,
-        [userId, courseId, lessonId]
-      );
-      const isFirstCompletion = (existingComp.rowCount === 0);
-
-      // Insert or update lesson completion
+      // 2. Insert or update lesson completion idempotently
       const compRes = await client.query(
         `INSERT INTO public.lesson_completions (user_id, course_id, lesson_id, score, completed_at)
          VALUES ($1, $2, $3, $4, NOW())
@@ -115,11 +111,38 @@ export class DomainService {
         [userId, courseId, lessonId, score]
       );
 
-      // 3. Mathematical streak calculation & XP attribution
-      // XP is awarded ONLY on first completion to prevent duplicate rewards from retries
+      // 3. Atomically attempt to insert reward into xp_ledger using unique constraint
+      // This is atomic and immune to double-clicks, concurrent requests, or network retries
+      const rewardKey = `lesson_complete:${userId}:${courseId}:${lessonId}`;
+      const baseRewardAmount = 50;
+
+      const ledgerRes = await client.query(
+        `INSERT INTO public.xp_ledger (user_id, reward_key, amount, source_type, metadata, created_at)
+         VALUES ($1, $2, $3, 'lesson_completion', $4, NOW())
+         ON CONFLICT (reward_key) DO NOTHING
+         RETURNING *`,
+        [
+          userId,
+          rewardKey,
+          baseRewardAmount,
+          JSON.stringify({ courseId, lessonId, score }),
+        ]
+      );
+
+      // Exactly ONE transaction will receive rowCount === 1, even under simultaneous execution
+      const isFirstEligibleCompletion = (ledgerRes.rowCount === 1);
+      const xpReward = isFirstEligibleCompletion ? baseRewardAmount : 0;
+
+      // 4. Mathematical streak calculation & authoritative XP reconciliation
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
-      const xpReward = isFirstCompletion ? 50 : 0;
+
+      // Authoritative XP computed strictly from the sum of ledger records
+      const sumRes = await client.query(
+        `SELECT COALESCE(SUM(amount), 0)::int as total_xp FROM public.xp_ledger WHERE user_id = $1`,
+        [userId]
+      );
+      const authoritativeXp = sumRes.rows[0].total_xp;
 
       const progressRes = await client.query(
         `SELECT * FROM public.user_progress WHERE user_id = $1 FOR UPDATE`,
@@ -127,13 +150,11 @@ export class DomainService {
       );
 
       let currentStreak = 1;
-      let newXp = xpReward;
       let totalTime = 60;
 
       if (progressRes.rowCount && progressRes.rowCount > 0) {
         const prog = progressRes.rows[0];
-        newXp = prog.xp + xpReward;
-        totalTime = isFirstCompletion ? (prog.total_time_spent_seconds + 60) : prog.total_time_spent_seconds;
+        totalTime = isFirstEligibleCompletion ? (prog.total_time_spent_seconds + 60) : prog.total_time_spent_seconds;
 
         if (prog.streak_last_extended_date) {
           currentStreak = this.calculateStreak(prog.streak_last_extended_date, todayStr, prog.current_streak);
@@ -143,48 +164,50 @@ export class DomainService {
           `UPDATE public.user_progress 
            SET xp = $1, current_streak = $2, streak_last_extended_date = $3, last_active_at = NOW(), total_time_spent_seconds = $4, updated_at = NOW()
            WHERE user_id = $5`,
-          [newXp, currentStreak, todayStr, totalTime, userId]
+          [authoritativeXp, currentStreak, todayStr, totalTime, userId]
         );
       } else {
         await client.query(
           `INSERT INTO public.user_progress 
            (user_id, xp, current_streak, streak_last_extended_date, last_active_at, total_time_spent_seconds)
            VALUES ($1, $2, $3, $4, NOW(), $5)`,
-          [userId, newXp, currentStreak, todayStr, totalTime]
+          [userId, authoritativeXp, currentStreak, todayStr, totalTime]
         );
       }
 
-      // 4. Insert transactional outbox event
-      const eventId = `evt_les_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
-      await client.query(
-        `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
-         VALUES ($1, $2, $3)`,
-        [
-          eventId,
-          'lesson.completed',
-          JSON.stringify({
-            userId,
-            courseId,
-            courseTitle: courseRes.rows[0].title,
-            courseSlug: courseRes.rows[0].slug,
-            lessonId,
-            score,
-            xpEarned: xpReward,
-            streak: currentStreak,
-            completedAt: now.toISOString(),
-          }),
-        ]
-      );
+      // 5. Insert transactional outbox event (only for genuinely new completion or if outbox needs broadcast)
+      if (isFirstEligibleCompletion) {
+        const eventId = `evt_les_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+        await client.query(
+          `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
+           VALUES ($1, $2, $3)`,
+          [
+            eventId,
+            'lesson.completed',
+            JSON.stringify({
+              userId,
+              courseId,
+              courseTitle: courseRes.rows[0].title,
+              courseSlug: courseRes.rows[0].slug,
+              lessonId,
+              score,
+              xpEarned: xpReward,
+              streak: currentStreak,
+              completedAt: now.toISOString(),
+            }),
+          ]
+        );
+      }
 
       return {
         completion: compRes.rows[0],
-        progress: { xp: newXp, streak: currentStreak },
+        progress: { xp: authoritativeXp, streak: currentStreak },
       };
     }, userId);
   }
 
   /**
-   * Get user progress (XP, streaks, completions)
+   * Get user progress (XP, streaks, completions) reconciled with xp_ledger
    */
   public async getUserProgress(userId: string) {
     const progRes = await query(
@@ -195,21 +218,29 @@ export class DomainService {
       `SELECT * FROM public.lesson_completions WHERE user_id = $1 ORDER BY completed_at DESC`,
       [userId]
     );
+    const sumRes = await query(
+      `SELECT COALESCE(SUM(amount), 0)::int as total_xp FROM public.xp_ledger WHERE user_id = $1`,
+      [userId]
+    );
+    const authoritativeXp = sumRes.rows[0]?.total_xp ?? 0;
+
+    const prog = progRes.rows[0] || {
+      user_id: userId,
+      xp: authoritativeXp,
+      current_streak: 0,
+      total_time_spent_seconds: 0,
+      last_active_at: new Date().toISOString(),
+    };
+    prog.xp = authoritativeXp; // Ensure exact synchronization
 
     return {
-      progress: progRes.rows[0] || {
-        user_id: userId,
-        xp: 0,
-        current_streak: 0,
-        total_time_spent_seconds: 0,
-        last_active_at: new Date().toISOString(),
-      },
+      progress: prog,
       completions: compsRes.rows,
     };
   }
 
   /**
-   * Record interactive lab run / attempt
+   * Record interactive lab run / attempt with idempotent reward ledger
    */
   public async recordLabAttempt(
     userId: string,
@@ -218,13 +249,83 @@ export class DomainService {
     status: 'completed' | 'failed' | 'in_progress',
     details: any = {}
   ) {
-    const res = await query(
-      `INSERT INTO public.lab_attempts (user_id, lab_slug, score, status, details)
-       VALUES ($1, $2, $3, $4, $5)
-       RETURNING *`,
-      [userId, labSlug, score, status, JSON.stringify(details)]
-    );
-    return res.rows[0];
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.lab_attempts (user_id, lab_slug, score, status, details)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING *`,
+        [userId, labSlug, score, status, JSON.stringify(details)]
+      );
+
+      let xpReward = 0;
+      if (status === 'completed' && score >= 60) {
+        const rewardKey = `lab_complete:${userId}:${labSlug}`;
+        const baseLabReward = 75;
+
+        const ledgerRes = await client.query(
+          `INSERT INTO public.xp_ledger (user_id, reward_key, amount, source_type, metadata, created_at)
+           VALUES ($1, $2, $3, 'lab_attempt', $4, NOW())
+           ON CONFLICT (reward_key) DO NOTHING
+           RETURNING *`,
+          [userId, rewardKey, baseLabReward, JSON.stringify({ labSlug, score })]
+        );
+
+        if (ledgerRes.rowCount === 1) {
+          xpReward = baseLabReward;
+          // Update authoritative user progress XP
+          await client.query(
+            `UPDATE public.user_progress
+             SET xp = (SELECT COALESCE(SUM(amount), 0)::int FROM public.xp_ledger WHERE user_id = $1),
+                 last_active_at = NOW(),
+                 updated_at = NOW()
+             WHERE user_id = $1`,
+            [userId]
+          );
+
+          // Outbox event
+          const eventId = `evt_lab_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+          await client.query(
+            `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
+             VALUES ($1, $2, $3)`,
+            [
+              eventId,
+              'lab.completed',
+              JSON.stringify({
+                userId,
+                labSlug,
+                score,
+                xpEarned: xpReward,
+                completedAt: new Date().toISOString(),
+              }),
+            ]
+          );
+        }
+      }
+
+      return res.rows[0];
+    }, userId);
+  }
+
+  /**
+   * Reconcile user XP authoritatively from xp_ledger
+   */
+  public async reconcileUserXp(userId: string): Promise<number> {
+    return withTransaction(async (client) => {
+      const sumRes = await client.query(
+        `SELECT COALESCE(SUM(amount), 0)::int as total_xp FROM public.xp_ledger WHERE user_id = $1`,
+        [userId]
+      );
+      const totalXp = sumRes.rows[0].total_xp;
+
+      await client.query(
+        `UPDATE public.user_progress
+         SET xp = $1, updated_at = NOW()
+         WHERE user_id = $2`,
+        [totalXp, userId]
+      );
+
+      return totalXp;
+    }, userId);
   }
 
   /**
