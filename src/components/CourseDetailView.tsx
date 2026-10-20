@@ -42,7 +42,14 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   );
   const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
   const [activeCourseTab, setActiveCourseTab] = useState<'syllabus' | 'lab' | 'sandbox'>('syllabus');
-  const matchingLab = course ? db.getLabDefinitions().find((l) => l.course_slug === courseSlug || l.category === course.domain) : null;
+  const matchingLab = course
+    ? db.getLabDefinitions().find(
+        (l) =>
+          l.course_slug === courseSlug ||
+          (course.linked_lab_slug && (l.slug === course.linked_lab_slug || l.id === course.linked_lab_slug)) ||
+          l.slug === courseSlug
+      ) || null
+    : null;
 
   const getInitialSandboxLanguage = (_domain: string, slug: string): SupportedLanguage => {
     if (slug.includes('sql') || slug.includes('database')) return 'sql';
@@ -174,23 +181,25 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
               </button>
             )}
 
-            <button
-              type="button"
-              className={activeCourseTab === 'lab' ? 'btn-primary' : 'btn-secondary'}
-              onClick={() => setActiveCourseTab('lab')}
-              style={{
-                height: '44px',
-                padding: '0 18px',
-                fontSize: '0.9rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-              title="Open associated interactive concept lab"
-            >
-              <Terminal size={18} />
-              <span>Interactive Lab</span>
-            </button>
+            {matchingLab && (
+              <button
+                type="button"
+                className={activeCourseTab === 'lab' ? 'btn-primary' : 'btn-secondary'}
+                onClick={() => setActiveCourseTab('lab')}
+                style={{
+                  height: '44px',
+                  padding: '0 18px',
+                  fontSize: '0.9rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+                title={`Open associated interactive concept lab: ${matchingLab.title}`}
+              >
+                <Terminal size={18} />
+                <span>Interactive Lab ({matchingLab.title})</span>
+              </button>
+            )}
 
             <button
               type="button"
@@ -281,28 +290,28 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
           </span>
         </button>
 
-        <button
-          type="button"
-          onClick={() => setActiveCourseTab('lab')}
-          style={{
-            padding: '12px 20px',
-            borderRadius: '10px 10px 0 0',
-            border: 'none',
-            borderBottom: activeCourseTab === 'lab' ? '3px solid var(--brand-primary)' : '3px solid transparent',
-            backgroundColor: activeCourseTab === 'lab' ? 'var(--bg-surface)' : 'transparent',
-            color: activeCourseTab === 'lab' ? 'var(--brand-primary)' : 'var(--text-secondary)',
-            fontWeight: activeCourseTab === 'lab' ? 800 : 600,
-            fontSize: '0.92rem',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <Terminal size={18} />
-          <span>Interactive Concept Lab</span>
-          {matchingLab && (
+        {matchingLab && (
+          <button
+            type="button"
+            onClick={() => setActiveCourseTab('lab')}
+            style={{
+              padding: '12px 20px',
+              borderRadius: '10px 10px 0 0',
+              border: 'none',
+              borderBottom: activeCourseTab === 'lab' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+              backgroundColor: activeCourseTab === 'lab' ? 'var(--bg-surface)' : 'transparent',
+              color: activeCourseTab === 'lab' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              fontWeight: activeCourseTab === 'lab' ? 800 : 600,
+              fontSize: '0.92rem',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <Terminal size={18} />
+            <span>Interactive Concept Lab</span>
             <span
               style={{
                 fontSize: '0.7rem',
@@ -315,8 +324,8 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             >
               Sim Available
             </span>
-          )}
-        </button>
+          </button>
+        )}
 
         <button
           type="button"
@@ -489,7 +498,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
       )}
 
       {/* TAB 2: INTERACTIVE CONCEPT LAB EMBEDDED IN COURSE */}
-      {activeCourseTab === 'lab' && (
+      {activeCourseTab === 'lab' && matchingLab && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div
             className="card"
@@ -507,7 +516,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             <div>
               <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Terminal size={18} color="var(--brand-primary)" />
-                <span>{matchingLab ? matchingLab.title : 'Course Interactive Laboratory'}</span>
+                <span>{matchingLab.title}</span>
               </div>
               <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
                 Integrated concept laboratory directly mapped to {course.title}. Conduct live simulations without leaving this course workspace.
@@ -526,7 +535,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
 
           <SharedLabWorkspace
             db={db}
-            labSlug={matchingLab ? matchingLab.slug : 'ai-classification-playground'}
+            labSlug={matchingLab.slug}
             currentUserId={currentUserId}
             onNavigateBack={() => setActiveCourseTab('syllabus')}
             onSelectCourse={undefined}

@@ -358,6 +358,15 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   const nextLesson = allLessons[currentIdx + 1];
   const isCompleted = enrollment.completed_lessons.includes(activeLesson?.id || '');
 
+  const matchingLab = useMemo(() => {
+    return db.getLabDefinitions().find(
+      (l) =>
+        l.course_slug === course.slug ||
+        l.slug === (course as any).linked_lab_slug ||
+        l.slug === course.slug
+    );
+  }, [db, course.slug, (course as any).linked_lab_slug]);
+
   // Fallback domain-appropriate educational video mapping
   const fallbackVideoId = useMemo(() => {
     const domainVideos: Record<string, string[]> = {
@@ -724,7 +733,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   <span>3. Hands-On Code Sandbox (+100 XP)</span>
                 </button>
 
-                {onLaunchLab && (
+                {onLaunchLab && matchingLab && (
                   <button
                     type="button"
                     onClick={() => onLaunchLab(course.slug)}
@@ -742,7 +751,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       border: '1px solid var(--brand-border)',
                       cursor: 'pointer',
                     }}
-                    title="Open lab in full screen workspace"
+                    title={`Open dedicated lab: ${matchingLab.title}`}
                   >
                     <FlaskConical size={14} />
                     <span>Open Full-Screen Lab</span>

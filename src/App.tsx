@@ -2486,9 +2486,13 @@ export const App: React.FC = () => {
             currentUserId={currentUserId}
             onBackToCourse={() => handleNavigate('course-detail', selectedCourseSlug)}
             onLaunchLab={() => {
-              const matchedLab = db.getLabDefinitions().find((l) => l.course_slug === selectedCourseSlug || l.category === selectedDomain) || db.getLabDefinitions()[0];
-              setSelectedLabSlug(matchedLab.slug);
-              setCurrentView('lab-workspace');
+              const matchedLab = db.getLabDefinitions().find(
+                (l) => l.course_slug === selectedCourseSlug || l.slug === selectedCourseSlug
+              );
+              if (matchedLab) {
+                setSelectedLabSlug(matchedLab.slug);
+                setCurrentView('lab-workspace');
+              }
             }}
           />
         )}

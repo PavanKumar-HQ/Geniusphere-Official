@@ -32,10 +32,8 @@ import {
   ClassroomSvg,
 } from './LabSvgVisualizers';
 import { AnimatedStepGuide } from './AnimatedStepGuide';
-import { BlockchainLabFull } from '../labs/blockchain-lab/App';
-import { CyberLabFull } from '../labs/cybersecurity/CyberLabFull';
-import AILabFull from '../labs/ai-lab/AILabFull';
 import { UniversalLab } from './lab/UniversalLab';
+import { getStandaloneLab, StandaloneLabMetadata } from '../labs/registry';
 import { Sparkles, Maximize2, ExternalLink } from 'lucide-react';
 
 export interface SharedLabWorkspaceProps {
@@ -55,6 +53,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
 }) => {
   const lab = useMemo(() => db.getLabBySlug(labSlug) || db.getLabDefinitions()[0], [db, labSlug]);
 
+  const standaloneLabMeta = useMemo<StandaloneLabMetadata | null>(() => {
+    return (
+      getStandaloneLab(labSlug) ||
+      getStandaloneLab(lab.slug) ||
+      getStandaloneLab(lab.id) ||
+      (lab.course_slug ? getStandaloneLab(lab.course_slug) : null)
+    );
+  }, [labSlug, lab.slug, lab.id, lab.course_slug]);
+
   useEffect(() => {
     learningSessionService.setDatabase(db);
   }, [db]);
@@ -70,7 +77,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   // Animated Step-by-Step state
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
   const [completedStepIndices, setCompletedStepIndices] = useState<number[]>([]);
-  const [activeFullLab, setActiveFullLab] = useState<'none' | 'blockchain' | 'cyber' | 'ai' | 'universal'>('none');
+  const [activeFullLab, setActiveFullLab] = useState<string | null>(null);
 
   // Criteria checklist completion state
   const [checkedCriteria, setCheckedCriteria] = useState<boolean[]>(
@@ -1198,10 +1205,11 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           <button
             type="button"
             onClick={() => {
-              if (lab.id.includes('blockchain') || lab.id.includes('t2') || lab.id.includes('t7')) setActiveFullLab('blockchain');
-              else if (lab.id.includes('ai') || lab.id.includes('t1')) setActiveFullLab('ai');
-              else if (lab.id.includes('defense') || lab.id.includes('sec') || lab.id.includes('t5')) setActiveFullLab('cyber');
-              else setActiveFullLab('universal');
+              if (standaloneLabMeta) {
+                setActiveFullLab(standaloneLabMeta.id);
+              } else {
+                setActiveFullLab('universal');
+              }
             }}
             className="btn-outline"
             style={{
@@ -1213,10 +1221,10 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               color: 'var(--brand-primary)',
               borderRadius: '6px',
             }}
-            title="Launch full animated interactive simulation suite"
+            title={standaloneLabMeta ? `Open ${standaloneLabMeta.suiteTitle}` : 'Launch Universal Simulation Engine'}
           >
             <Sparkles size={13} color="var(--brand-primary)" />
-            <span>Interactive Suite</span>
+            <span>{standaloneLabMeta ? standaloneLabMeta.name : 'Interactive Suite'}</span>
           </button>
 
           {/* Save Status Indicator */}
@@ -1485,7 +1493,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => setActiveFullLab('blockchain')}
+                    onClick={() => setActiveFullLab('blockchain-lab')}
                     className="btn-outline"
                     style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px', color: 'var(--brand-primary)', borderColor: 'rgba(0, 245, 160, 0.4)' }}
                   >
@@ -3851,7 +3859,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       </main>
 
       {/* FULL STANDALONE INTERACTIVE LAB MODAL OVERLAYS */}
-      {activeFullLab !== 'none' && (
+      {activeFullLab && (
         <div
           style={{
             position: 'fixed',
@@ -3862,18 +3870,19 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             flexDirection: 'column',
           }}
         >
-          {activeFullLab === 'blockchain' && (
-            <BlockchainLabFull onClose={() => setActiveFullLab('none')} />
-          )}
-          {activeFullLab === 'cyber' && (
-            <CyberLabFull onExit={() => setActiveFullLab('none')} />
-          )}
-          {activeFullLab === 'ai' && (
-            <AILabFull onExit={() => setActiveFullLab('none')} />
-          )}
-          {activeFullLab === 'universal' && (
-            <UniversalLab simulationId={lab.id} onClose={() => setActiveFullLab('none')} />
-          )}
+          {(() => {
+            const currentStandalone = getStandaloneLab(activeFullLab) || standaloneLabMeta;
+            if (currentStandalone) {
+              const LabComponent = currentStandalone.component;
+              return (
+                <LabComponent
+                  onClose={() => setActiveFullLab(null)}
+                  onExit={() => setActiveFullLab(null)}
+                />
+              );
+            }
+            return <UniversalLab simulationId={lab.id} onClose={() => setActiveFullLab(null)} />;
+          })()}
         </div>
       )}
     </div>

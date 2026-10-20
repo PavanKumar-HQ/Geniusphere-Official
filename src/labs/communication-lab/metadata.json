@@ -1,0 +1,8 @@
+{
+  "name": "Communication Pro: Interactive Lab",
+  "description": "A simulation-based practical lab teaching students (Class 7-10) how to express clearly and confidently through real-life scenarios, active listening, and body language analysis.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

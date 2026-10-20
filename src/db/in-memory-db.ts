@@ -1789,7 +1789,9 @@ export class InMemoryDatabase {
   }
 
   getLabBySlug(slug: string): LabDefinition | undefined {
-    return Array.from(this.labDefinitions.values()).find((l) => l.slug === slug);
+    return Array.from(this.labDefinitions.values()).find(
+      (l) => l.slug === slug || l.id === slug || l.course_slug === slug
+    );
   }
 
   getLabById(id: string): LabDefinition | undefined {
