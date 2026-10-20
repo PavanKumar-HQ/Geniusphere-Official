@@ -1,21 +1,5 @@
-import React, { Suspense, lazy, useCallback } from 'react';
-
-// Lazy-import all real lab apps
-const AILab = lazy(() => import('../../Geniusphere-main/labs/geniusphere-ai-lab/App'));
-const BlockchainLab = lazy(() => import('../../Geniusphere-main/labs/trustlink-blockchain-lab/App'));
-const IoTLab = lazy(() => import('../../Geniusphere-main/labs/iot-cybersecurity-lab/App'));
-const PrivacyLab = lazy(() => import('../../Geniusphere-main/labs/digital-privacy-&-footprint-lab/App'));
-const CybersecurityLab = lazy(() => import('../../Geniusphere-main/Cybersecurity-For-Students-main/App'));
-const MicrosoftOfficeLab = lazy(() => import('../../Geniusphere-main/labs/microsoft-office---real-world-skills-lab/App'));
-const IntroFinanceLab = lazy(() => import('../../Geniusphere-main/labs/introduction-to-finance-lab/App'));
-const StockMarketLab = lazy(() => import('../../Geniusphere-main/labs/stock-market-basics---interactive-lab/App'));
-const CryptoLab = lazy(() => import('../../Geniusphere-main/labs/cryptolab_-how-digital-money-works/App'));
-const FintechLab = lazy(() => import('../../Geniusphere-main/labs/fintech-discovery-lab/App'));
-const GlobalEconomicsLab = lazy(() => import('../../Geniusphere-main/labs/global-economics-simulation-lab/App'));
-const BankingLab = lazy(() => import('../../Geniusphere-main/labs/banking-accounts-lab/App'));
-const CommunicationLab = lazy(() => import('../../Geniusphere-main/labs/communication-pro_-interactive-lab/App'));
-const ProfessionalSkillsLab = lazy(() => import('../../Geniusphere-main/labs/professional-skills-lab_-how-success-really-works/App'));
-const SocialProfileLab = lazy(() => import('../../Geniusphere-main/labs/social-profile-development-lab/App'));
+import React, { Suspense, useCallback } from 'react';
+import { getStandaloneLab } from '../labs/registry';
 
 const LabLoadingSpinner: React.FC<{ labName: string }> = ({ labName }) => (
   <div style={{
@@ -62,54 +46,6 @@ const UnknownLab: React.FC<{ slug: string; onClose: () => void }> = ({ slug, onC
   </div>
 );
 
-type LabFC = React.LazyExoticComponent<React.ComponentType<{ onClose?: () => void }>>;
-
-// All slugs from canonical-curriculum.ts → real lab app
-const LAB_SLUG_MAP: Record<string, LabFC> = {
-  // Technology
-  'ai-classification-playground':    AILab as LabFC,
-  'blockchain-block-builder':         BlockchainLab as LabFC,
-  'microsoft-productivity-exercise':  MicrosoftOfficeLab as LabFC,
-  'defensive-web-security-lab':       CybersecurityLab as LabFC,
-  'programming-fundamentals-sandbox': AILab as LabFC,
-  'iot-sensor-threshold-engine':      IoTLab as LabFC,
-  'digital-privacy-decision-lab':     PrivacyLab as LabFC,
-  // Finance
-  'financial-market-explorer':        IntroFinanceLab as LabFC,
-  'portfolio-risk-analyzer':          StockMarketLab as LabFC,
-  'crypto-ledger-simulator':          CryptoLab as LabFC,
-  'fintech-discovery-lab':            FintechLab as LabFC,
-  'global-economics-policy-simulator':GlobalEconomicsLab as LabFC,
-  'financial-institution-flow':       BankingLab as LabFC,
-  // Professional Skills
-  'workplace-communication-simulator':CommunicationLab as LabFC,
-  'professional-skills-lab':          ProfessionalSkillsLab as LabFC,
-  'workplace-conflict-simulator':     ProfessionalSkillsLab as LabFC,
-  'system-architecture-designer':     AILab as LabFC,
-  'social-profile-lab':               SocialProfileLab as LabFC,
-};
-
-const LAB_NAMES: Record<string, string> = {
-  'ai-classification-playground':    'AI Simulation Engine v2.1',
-  'blockchain-block-builder':         'TrustLink Blockchain Lab',
-  'microsoft-productivity-exercise':  'Microsoft Office Skills Lab',
-  'defensive-web-security-lab':       'Cybersecurity Defense Lab',
-  'programming-fundamentals-sandbox': 'Programming Fundamentals Lab',
-  'iot-sensor-threshold-engine':      'IoT Sensor Threshold Lab',
-  'digital-privacy-decision-lab':     'Digital Privacy & Footprint Lab',
-  'financial-market-explorer':        'Introduction to Finance Lab',
-  'portfolio-risk-analyzer':          'Stock Market Interactive Lab',
-  'crypto-ledger-simulator':          'CryptoLab — Digital Money Works',
-  'fintech-discovery-lab':            'FinTech Discovery Lab',
-  'global-economics-policy-simulator':'Global Economics Simulation',
-  'financial-institution-flow':       'Banking Accounts Lab',
-  'workplace-communication-simulator':'Communication Pro Lab',
-  'professional-skills-lab':          'Professional Skills Lab',
-  'workplace-conflict-simulator':     'Professional Skills Lab',
-  'system-architecture-designer':     'Startup Ideation & Architecture Lab',
-  'social-profile-lab':               'Social Profile Development Lab',
-};
-
 export interface EmbeddedLabRendererProps {
   labSlug: string;
   onClose: () => void;
@@ -117,8 +53,9 @@ export interface EmbeddedLabRendererProps {
 }
 
 export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlug, onClose, courseTitle }) => {
-  const LabApp = LAB_SLUG_MAP[labSlug];
-  const labDisplayName = LAB_NAMES[labSlug] || courseTitle || labSlug;
+  const labMeta = getStandaloneLab(labSlug);
+  const LabApp = labMeta?.component;
+  const labDisplayName = labMeta?.name || courseTitle || labSlug;
   const handleClose = useCallback(() => { onClose(); }, [onClose]);
 
   if (!LabApp) {
