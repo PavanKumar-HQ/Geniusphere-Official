@@ -32,16 +32,28 @@ const jwtSecret = process.env.JWT_SECRET || (nodeEnv === 'development' || nodeEn
   ? 'geniusphere_jwt_secret_dev_2026_default_key'
   : '');
 
+export function validateProductionConfig(env: { NODE_ENV?: string; DATABASE_URL?: string; JWT_SECRET?: string }) {
+  const nodeEnv = env.NODE_ENV || 'development';
+  if (nodeEnv === 'production') {
+    if (!env.DATABASE_URL) {
+      throw new Error('[CRITICAL PRODUCTION CONFIGURATION ERROR] DATABASE_URL must be explicitly provided in production environment.');
+    }
+    if (!env.JWT_SECRET || env.JWT_SECRET.length < 32 || env.JWT_SECRET.includes('default_key') || env.JWT_SECRET.includes('dev-')) {
+      throw new Error('[CRITICAL PRODUCTION CONFIGURATION ERROR] A cryptographically strong JWT_SECRET (>= 32 chars) must be configured in production.');
+    }
+  }
+}
+
 // Fail-fast configuration checks for production
-if (nodeEnv === 'production') {
-  if (!databaseUrl) {
-    console.error('[FATAL CONFIG ERROR] DATABASE_URL must be explicitly provided in production environment.');
-    process.exit(1);
-  }
-  if (!jwtSecret || jwtSecret.length < 32 || jwtSecret.includes('default_key')) {
-    console.error('[FATAL CONFIG ERROR] A cryptographically strong JWT_SECRET (>= 32 chars) must be configured in production.');
-    process.exit(1);
-  }
+try {
+  validateProductionConfig({
+    NODE_ENV: nodeEnv,
+    DATABASE_URL: databaseUrl,
+    JWT_SECRET: jwtSecret,
+  });
+} catch (err: any) {
+  console.error(err.message);
+  process.exit(1);
 }
 
 export const config = {

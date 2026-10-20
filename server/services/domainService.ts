@@ -128,21 +128,7 @@ export class DomainService {
         totalTime = prog.total_time_spent_seconds + 60;
 
         if (prog.streak_last_extended_date) {
-          const lastDate = new Date(prog.streak_last_extended_date);
-          const diffDays = Math.floor(
-            (new Date(todayStr).getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
-          );
-
-          if (diffDays === 0) {
-            // Already extended today, maintain streak
-            currentStreak = prog.current_streak;
-          } else if (diffDays === 1) {
-            // Consecutive day, increment streak
-            currentStreak = prog.current_streak + 1;
-          } else {
-            // Broken streak, reset to 1
-            currentStreak = 1;
-          }
+          currentStreak = this.calculateStreak(prog.streak_last_extended_date, todayStr, prog.current_streak);
         }
 
         await client.query(
@@ -298,6 +284,22 @@ export class DomainService {
 
       return updated.rows[0];
     });
+  }
+
+  public calculateStreak(
+    lastExtendedDateStr: string | null,
+    todayDateStr: string,
+    currentStreak: number
+  ): number {
+    if (!lastExtendedDateStr) return 1;
+    const lastDate = new Date(lastExtendedDateStr);
+    const today = new Date(todayDateStr);
+    const diffDays = Math.floor(
+      (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    if (diffDays === 0) return currentStreak;
+    if (diffDays === 1) return currentStreak + 1;
+    return 1;
   }
 }
 

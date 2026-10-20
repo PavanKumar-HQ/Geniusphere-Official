@@ -64,7 +64,7 @@ describe('Stage 4 Acceptance Test Suite: First Authenticated API Slice & Databas
     });
     expect(tamperedRes.status).toBe(401);
     const tamperedData = await tamperedRes.json();
-    expect(tamperedData.error).toContain('Invalid or expired authentication token');
+    expect(tamperedData.error).toContain('Invalid or expired authorization token');
 
     // 3. Non-bearer scheme
     const wrongSchemeRes = await fetch(`${API_BASE}/api/courses`, {
