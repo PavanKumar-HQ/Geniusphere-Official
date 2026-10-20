@@ -448,22 +448,22 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
           <div
             style={{
               position: 'relative',
-              padding: '20px 0',
+              padding: '24px 0',
               display: 'flex',
               flexDirection: 'column',
-              gap: '24px',
+              gap: '32px',
               alignItems: 'center',
             }}
           >
-            {/* Smooth SVG Connecting Circuit Line */}
+            {/* Smooth SVG Connecting Circuit Line spanning all 6 nodes */}
             <svg
               style={{
                 position: 'absolute',
-                top: '20px',
+                top: '24px',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 width: '180px',
-                height: '520px',
+                height: '780px',
                 pointerEvents: 'none',
                 zIndex: 1,
               }}
@@ -471,19 +471,22 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
               <defs>
                 <linearGradient id="roadmap-path-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#244C3A" stopOpacity="0.8" />
-                  <stop offset="50%" stopColor="#2563EB" stopOpacity="0.8" />
-                  <stop offset="100%" stopColor="#D97706" stopOpacity="0.8" />
+                  <stop offset="30%" stopColor="#2563EB" stopOpacity="0.8" />
+                  <stop offset="60%" stopColor="#10B981" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.8" />
                 </linearGradient>
               </defs>
+              {/* Dual-layer circuit road: Underlay track */}
               <path
-                d="M 90 20 Q 30 110, 30 135 T 150 235 T 90 335 T 30 435 T 90 510"
+                d="M 90 32 C 90 90, 63 100, 63 158 C 63 216, 117 226, 117 284 C 117 342, 90 352, 90 410 C 90 468, 66 478, 66 536 C 66 594, 112 604, 112 662"
                 fill="none"
                 stroke="var(--border-subtle)"
-                strokeWidth="6"
+                strokeWidth="7"
                 strokeLinecap="round"
               />
+              {/* Animated pulsed signal road */}
               <path
-                d="M 90 20 Q 30 110, 30 135 T 150 235 T 90 335 T 30 435 T 90 510"
+                d="M 90 32 C 90 90, 63 100, 63 158 C 63 216, 117 226, 117 284 C 117 342, 90 352, 90 410 C 90 468, 66 478, 66 536 C 66 594, 112 604, 112 662"
                 fill="none"
                 stroke="url(#roadmap-path-gradient)"
                 strokeWidth="4"
@@ -556,32 +559,55 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                         : `0 5px 0 var(--border-subtle), 0 6px 12px rgba(0, 0, 0, 0.05)`,
                       transform: isSelected ? 'translateY(-2px)' : 'translateY(0)',
                       transition: 'all 0.15s ease',
+                      zIndex: 6,
                     }}
                     title={`${node.title} — ${node.subtitle}`}
                   >
                     {isCompleted && !isSelected ? <Check size={26} strokeWidth={2.5} /> : <NodeIcon size={24} />}
                   </button>
 
-                  {/* Clean Node Label Card */}
+                  {/* Clean Node Label Card (Solid pill container masks background road line cleanly) */}
                   <div
                     style={{
                       marginTop: '8px',
                       textAlign: 'center',
-                      maxWidth: '160px',
+                      maxWidth: '170px',
+                      backgroundColor: 'var(--bg-surface)',
+                      padding: '5px 12px 6px',
+                      borderRadius: '12px',
+                      border: isSelected ? `1.5px solid ${node.color}` : '1px solid var(--border-subtle)',
+                      boxShadow: isSelected
+                        ? '0 4px 12px rgba(0, 0, 0, 0.08)'
+                        : '0 2px 6px rgba(0, 0, 0, 0.03)',
+                      zIndex: 7,
+                      position: 'relative',
                     }}
                   >
                     <div
                       style={{
-                        fontSize: '0.8rem',
+                        fontSize: '0.78rem',
                         fontWeight: 800,
-                        color: isSelected ? 'var(--brand-primary)' : 'var(--text-primary)',
+                        color: isSelected ? node.color : 'var(--text-primary)',
                         lineHeight: 1.25,
                       }}
                     >
                       {node.title}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      +{node.xp} XP • {node.status === 'completed' ? 'Verified' : 'Interactive'}
+                    <div
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 600,
+                        color: 'var(--text-muted)',
+                        marginTop: '2px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <span>+{node.xp} XP</span>
+                      <span>•</span>
+                      <span>{node.status === 'completed' ? 'Verified' : 'Interactive'}</span>
                     </div>
                   </div>
                 </div>
