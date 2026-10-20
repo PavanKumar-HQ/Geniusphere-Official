@@ -803,26 +803,33 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
                       <ArrowRight size={14} />
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('course-detail', c.slug)}
-                      style={{
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        backgroundColor: 'var(--bg-canvas)',
-                        border: '1px solid var(--border-subtle)',
-                        color: 'var(--text-primary)',
-                        fontSize: '0.78rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '5px',
-                      }}
-                    >
-                      <FlaskConical size={13} color="var(--brand-primary)" />
-                      <span>Labs</span>
-                    </button>
+                    {(() => {
+                      const linkedLab = allLabs.find((l) => l.course_slug === c.slug || l.slug === (c as any).linked_lab_slug || l.slug === c.slug);
+                      if (!linkedLab) return null;
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => onNavigate('lab-workspace', linkedLab.slug)}
+                          style={{
+                            padding: '8px 12px',
+                            borderRadius: '8px',
+                            backgroundColor: 'var(--brand-surface)',
+                            border: '1px solid var(--brand-border)',
+                            color: 'var(--brand-primary)',
+                            fontSize: '0.78rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                          }}
+                          title={`Launch ${linkedLab.title}`}
+                        >
+                          <FlaskConical size={13} color="var(--brand-primary)" />
+                          <span>Interactive Lab</span>
+                        </button>
+                      );
+                    })()}
                   </div>
                 </div>
               );
