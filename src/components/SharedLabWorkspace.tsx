@@ -58,9 +58,10 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
       getStandaloneLab(labSlug) ||
       getStandaloneLab(lab.slug) ||
       getStandaloneLab(lab.id) ||
-      (lab.course_slug ? getStandaloneLab(lab.course_slug) : null)
+      (lab.course_slug ? getStandaloneLab(lab.course_slug) : null) ||
+      (lab.title ? getStandaloneLab(lab.title) : null)
     );
-  }, [labSlug, lab.slug, lab.id, lab.course_slug]);
+  }, [labSlug, lab.slug, lab.id, lab.course_slug, lab.title]);
 
   useEffect(() => {
     learningSessionService.setDatabase(db);

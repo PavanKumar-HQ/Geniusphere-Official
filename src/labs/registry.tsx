@@ -39,9 +39,9 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     id: 'blockchain-lab',
     name: 'TrustLink Decentralized Blockchain Explorer',
     suiteTitle: '19-Module TrustLink Blockchain & Cryptography Suite',
-    courseSlugs: ['blockchain-technology', 'cryptocurrency', 'cryptocurrency-digital-assets', 'topic-blockchain', 'topic-cryptocurrency'],
+    courseSlugs: ['blockchain-technology', 'topic-blockchain'],
     labSlugs: ['blockchain-block-builder', 'trustlink-blockchain-lab', 'lab-t2-blockchain-builder', 'lab-t7-trustlink-blockchain'],
-    keywords: ['blockchain', 'trustlink', 'hash', 'sha-256', 'proof of work', 'block builder', 'crypto'],
+    keywords: ['blockchain', 'trustlink', 'hash', 'sha-256', 'proof of work', 'block builder'],
     component: BlockchainLab,
   },
   {
@@ -50,7 +50,7 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     suiteTitle: 'CyberSphere Attack Visualizer & Defense Simulation',
     courseSlugs: ['cybersecurity-basics', 'topic-cybersecurity-basics'],
     labSlugs: ['defensive-web-security-lab', 'recognising-digital-payment-scams', 'lab-t5-web-defense', 'lab-sec-scam-defense'],
-    keywords: ['cybersecurity', 'cyber', 'security', 'defense', 'attack', 'phishing', 'scam', 'web defense', 'firewall'],
+    keywords: ['cybersecurity', 'cybersecurtiy', 'cyber security', 'cyber', 'security', 'defense', 'attack', 'phishing', 'scam', 'web defense', 'firewall'],
     component: CyberLab,
   },
   {
@@ -66,18 +66,18 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     id: 'privacy-lab',
     name: 'Digital Privacy & Footprint Decision Lab',
     suiteTitle: 'Data Broker Tracking & Digital Footprint Audit',
-    courseSlugs: ['digital-footprint-privacy', 'topic-social-profile'],
+    courseSlugs: ['digital-footprint-privacy', 'topic-social-profile', 'digital-privacy-and-footprint'],
     labSlugs: ['digital-privacy-decision-lab', 'lab-t4-privacy-decision'],
-    keywords: ['privacy', 'footprint', 'broker', 'permission', 'tracking', 'digital footprint', 'data broker'],
+    keywords: ['digital privacy and footprint', 'digital privacy', 'privacy', 'footprint', 'broker', 'permission', 'tracking', 'digital footprint', 'data broker'],
     component: PrivacyLab,
   },
   {
     id: 'banking-lab',
     name: 'Banking Account Types & Settlement Lab',
     suiteTitle: 'Banking Accounts, Interest Compounding & Clearing Rails',
-    courseSlugs: ['types-of-banking-accounts', 'banking-account-types', 'topic-banking-accounts'],
+    courseSlugs: ['types-of-banking-accounts', 'banking-account-types', 'financial-institutions', 'topic-banking-accounts'],
     labSlugs: ['financial-institution-flow', 'financial-institution-flow-simulator', 'lab-f3-institution-flow'],
-    keywords: ['banking', 'bank', 'interest', 'settlement', 'account', 'banking accounts', 'clearing'],
+    keywords: ['financial institutions', 'financial institution', 'banking', 'bank', 'interest', 'settlement', 'account', 'banking accounts', 'clearing'],
     component: BankingLab,
   },
   {
@@ -86,7 +86,7 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     suiteTitle: 'Ledger Mechanics, Proof-of-Work & Mempool Transactions',
     courseSlugs: ['cryptocurrency', 'cryptocurrency-digital-assets', 'topic-cryptocurrency'],
     labSlugs: ['crypto-ledger-simulator'],
-    keywords: ['crypto', 'cryptocurrency', 'digital money', 'token', 'bitcoin', 'mempool', 'ledger'],
+    keywords: ['cryptocurrency', 'crypto', 'digital money', 'token', 'bitcoin', 'mempool', 'ledger'],
     component: CryptoLab,
   },
   {
@@ -102,18 +102,18 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     id: 'economics-lab',
     name: 'Global Economics & Monetary Policy Lab',
     suiteTitle: 'Central Bank Levers, Macro Shocks & Inflation Equilibrium',
-    courseSlugs: ['global-economy', 'global-economy-trade', 'topic-global-economy'],
+    courseSlugs: ['global-economy', 'global-economy-trade', 'global-events-and-impact', 'topic-global-economy'],
     labSlugs: ['global-economics-simulation-lab', 'global-economics-policy-simulator', 'lab-f5-global-economics'],
-    keywords: ['economics', 'global economy', 'economy', 'monetary', 'inflation', 'central bank', 'macro'],
+    keywords: ['global events and impact', 'global events', 'economics', 'global economy', 'economy', 'monetary', 'inflation', 'central bank', 'macro'],
     component: EconomicsLab,
   },
   {
     id: 'intro-finance-lab',
     name: 'Personal Finance & Budgeting Lab',
     suiteTitle: '50/30/20 Budgeting & Compound Interest Engine',
-    courseSlugs: ['introduction-to-finance', 'topic-intro-finance'],
+    courseSlugs: ['introduction-to-finance', 'intro-to-finance', 'topic-intro-finance'],
     labSlugs: ['compound-interest-calculator', 'lab-f2-compound-interest'],
-    keywords: ['intro finance', 'personal finance', 'budget', 'budgeting', 'compound interest', 'finance', '50/30/20'],
+    keywords: ['intro to finance', 'intro finance', 'introduction to finance', 'personal finance', 'budget', 'budgeting', 'compound interest', 'finance', '50/30/20'],
     component: IntroFinanceLab,
   },
   {
@@ -122,16 +122,16 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     suiteTitle: 'Spreadsheet Formula Engine & Productivity Sandbox',
     courseSlugs: ['microsoft-office', 'topic-microsoft-office'],
     labSlugs: ['microsoft-productivity-exercise', 'lab-t6-microsoft-productivity'],
-    keywords: ['office', 'microsoft', 'spreadsheet', 'excel', 'productivity', 'formulas'],
+    keywords: ['microsoft office', 'office', 'microsoft', 'spreadsheet', 'excel', 'productivity', 'formulas'],
     component: OfficeLab,
   },
   {
     id: 'professional-skills-lab',
     name: 'Professional Skills & Success Engine Lab',
     suiteTitle: 'Eisenhower Time-Matrix & Conflict De-escalation',
-    courseSlugs: ['time-management', 'soft-skills', 'topic-time-management', 'topic-soft-skills'],
+    courseSlugs: ['time-management', 'soft-skills', 'professional-skills', 'topic-time-management', 'topic-soft-skills'],
     labSlugs: ['professional-skills-lab', 'workplace-conflict-simulator', 'lab-p2-professional-skills'],
-    keywords: ['professional skills', 'time management', 'soft skills', 'conflict', 'workplace', 'eisenhower'],
+    keywords: ['professional skills lab', 'professional skills', 'time management', 'soft skills', 'conflict', 'workplace', 'eisenhower'],
     component: ProfessionalSkillsLab,
   },
   {
@@ -140,7 +140,7 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     suiteTitle: 'Professional Presence, 2FA Security & Identity Audit',
     courseSlugs: ['social-profile-development', 'topic-social-profile'],
     labSlugs: ['social-profile-lab', 'social-profile-development-lab', 'lab-p3-social-profile'],
-    keywords: ['social profile', 'social media', 'digital identity', 'linkedin', 'identity'],
+    keywords: ['social profile development', 'social profile', 'social media', 'digital identity', 'linkedin', 'identity'],
     component: SocialProfileLab,
   },
   {
@@ -158,7 +158,7 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
     suiteTitle: 'Executive Email Tone Analyzer & Stakeholder Feedback',
     courseSlugs: ['communication-skills', 'topic-communication'],
     labSlugs: ['communication-pro-interactive-lab', 'workplace-communication-simulator', 'lab-p1-communication-pro'],
-    keywords: ['communication', 'email', 'tone', 'stakeholder', 'verbal', 'communication skills'],
+    keywords: ['communication skills', 'communication', 'email', 'tone', 'stakeholder', 'verbal'],
     component: CommunicationLab,
   },
 ];
@@ -170,21 +170,46 @@ export function getStandaloneLab(identifier: string): StandaloneLabMetadata | nu
   if (!identifier) return null;
   const clean = identifier.toLowerCase().trim();
 
-  // 1. Direct ID, courseSlug, or labSlug exact match
-  const directMatch = STANDALONE_LABS.find(
-    (m) =>
-      m.id === clean ||
-      m.courseSlugs.some((c) => c === clean || clean.includes(c) || c.includes(clean)) ||
-      m.labSlugs.some((l) => l === clean || clean.includes(l) || l.includes(clean))
-  );
-  if (directMatch) return directMatch;
+  // 1. Direct ID exact match
+  const idMatch = STANDALONE_LABS.find((m) => m.id === clean);
+  if (idMatch) return idMatch;
 
-  // 2. Keyword heuristic match
-  return (
-    STANDALONE_LABS.find((m) =>
-      m.keywords?.some((k) => clean.includes(k) || k.includes(clean))
-    ) || null
+  // 2. Exact courseSlug match
+  const courseMatch = STANDALONE_LABS.find((m) => m.courseSlugs.includes(clean));
+  if (courseMatch) return courseMatch;
+
+  // 3. Exact labSlug match
+  const labSlugMatch = STANDALONE_LABS.find((m) => m.labSlugs.includes(clean));
+  if (labSlugMatch) return labSlugMatch;
+
+  // 4. Exact keyword match
+  const exactKeywordMatch = STANDALONE_LABS.find((m) => m.keywords.includes(clean));
+  if (exactKeywordMatch) return exactKeywordMatch;
+
+  // 5. Clean contains courseSlug or labSlug
+  const slugContainedMatch = STANDALONE_LABS.find(
+    (m) =>
+      m.courseSlugs.some((c) => clean.includes(c)) ||
+      m.labSlugs.some((l) => clean.includes(l))
   );
+  if (slugContainedMatch) return slugContainedMatch;
+
+  // 6. Longest keyword substring match (prioritizes multi-word phrases like 'financial institutions' or 'global events and impact')
+  const matchingByKeyword: { lab: StandaloneLabMetadata; matchLength: number }[] = [];
+  for (const lab of STANDALONE_LABS) {
+    for (const keyword of lab.keywords) {
+      if (clean.includes(keyword) || (keyword.length > 3 && keyword.includes(clean))) {
+        matchingByKeyword.push({ lab, matchLength: keyword.length });
+      }
+    }
+  }
+
+  if (matchingByKeyword.length > 0) {
+    matchingByKeyword.sort((a, b) => b.matchLength - a.matchLength);
+    return matchingByKeyword[0].lab;
+  }
+
+  return null;
 }
 
 /**
