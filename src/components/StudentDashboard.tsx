@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { MascotSphere } from './MascotSphere';
 import {
@@ -11,9 +11,26 @@ import {
   CheckCircle2,
   ListTodo,
   Zap,
+  RotateCcw,
+  Play,
+  FlaskConical,
+  X,
+  ExternalLink,
+  Layers,
+  Video,
+  Check,
 } from 'lucide-react';
 import { CelebrationCrackers } from './CelebrationCrackers';
 import { backendEngine } from '../backend/RealtimeOrchestrator';
+import {
+  ALL_CANONICAL_17_TOPICS,
+  getLearnerProgress,
+  SimulationLab,
+  VideoLesson,
+  TopicSpecification,
+  saveLearnerLessonCompletion,
+} from '../curriculum';
+import { CurriculumLabRunner } from './CurriculumLabRunner';
 
 interface StudentDashboardProps {
   db: InMemoryDatabase;
@@ -34,6 +51,13 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const certificates = db.getUserCertificates(currentUserId);
   const [isCrackersActive, setIsCrackersActive] = React.useState(false);
   const [streakClaimed, setStreakClaimed] = React.useState(false);
+  const [activeCurriculumLab, setActiveCurriculumLab] = useState<{ lab: SimulationLab; topicTitle: string } | null>(null);
+  const [selectedCurriculumCategory, setSelectedCurriculumCategory] = useState<'all' | 'technology' | 'finance' | 'professional'>('all');
+  const [selectedTopicDrawer, setSelectedTopicDrawer] = useState<TopicSpecification | null>(null);
+  const [activeTopicDrawerTab, setActiveTopicDrawerTab] = useState<'labs' | 'lessons'>('labs');
+  const [activeVideoLesson, setActiveVideoLesson] = useState<{ lesson: VideoLesson; topicTitle: string; topicId: string } | null>(null);
+  const [refreshSeed, setRefreshSeed] = useState(0);
+  const realProgress = getLearnerProgress(currentUserId);
   const studyMetrics = backendEngine.tracker.getUserMetrics(currentUserId);
   const streakDays = studyMetrics.current_streak_days > 0 ? studyMetrics.current_streak_days : (userProgress.streak_days || 0);
   const totalStudyMinutes = studyMetrics.total_study_minutes || ((userProgress.completed_lessons?.length || 0) * 25) || 0;
@@ -122,17 +146,25 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     });
   }
 
-  // Pending assignments
-  const pendingAssignments = [
-    {
-      id: 'assign-lab-101',
-      title: 'Course Assessment: Web Defense & Security Controls',
-      course: 'Cybersecurity & Defensive Web Security',
-      due: '14 days remaining',
-      status: hasPassedLab ? 'Completed (100/100)' : 'Pending Submission',
-      isCompleted: hasPassedLab,
-    },
-  ];
+  // Derive genuine classroom assignments for student
+  const studentEnrollments = Array.from(db.enrollments.values()).filter(
+    (ce) => ce.student_id === currentUserId
+  );
+  const enrolledClassroomIds = new Set(studentEnrollments.map((ce) => ce.classroom_id));
+  const pendingAssignments = Array.from(db.assignments.values())
+    .filter((a) => enrolledClassroomIds.has(a.classroom_id))
+    .map((a) => {
+      const isCompleted = allSubmissions.some((s) => s.assignment_id === a.id && s.passed);
+      const lab = db.labs.get(a.lab_id);
+      return {
+        id: a.id,
+        title: lab?.title || 'Classroom Assessment Lab',
+        course: 'Cohort Lab Assignment',
+        due: a.due_date ? new Date(a.due_date).toLocaleDateString() : 'No deadline',
+        status: isCompleted ? 'Completed (Verified)' : 'Pending Submission',
+        isCompleted,
+      };
+    });
 
   const pendingAssignmentsCount = pendingAssignments.filter((a) => !a.isCompleted).length;
 
@@ -263,6 +295,37 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             >
               <BookOpen size={16} />
               <span>Explore {allCourses.length} Courses</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== 'undefined' && window.confirm('Reset local cache to start with a completely fresh, clean 0-state?')) {
+                  localStorage.removeItem('geniusphere_db_v1');
+                  localStorage.removeItem(`geniusphere_progress_${currentUserId}`);
+                  localStorage.removeItem(`geniusphere_notifications_${currentUserId}`);
+                  localStorage.removeItem(`geniusphere_study_tracker_${currentUserId}`);
+                  window.location.reload();
+                }
+              }}
+              style={{
+                backgroundColor: 'var(--bg-surface)',
+                color: 'var(--text-secondary)',
+                height: '44px',
+                fontSize: '0.84rem',
+                fontWeight: 600,
+                padding: '0 16px',
+                borderRadius: '100px',
+                border: '1px solid var(--border-subtle)',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+              title="Wipe previous test cache and experience clean 0-state progression"
+            >
+              <RotateCcw size={15} />
+              <span>Reset Demo State</span>
             </button>
           </div>
         </div>
@@ -645,58 +708,54 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             </div>
 
             {/* 7-Day Mon-Sun Grid (Matches Prototype Image) */}
+            {/* 7-Day Mon-Sun Grid (Reflecting genuine active streak) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
-              {[
-                { day: 'M', active: true, shielded: false },
-                { day: 'T', active: true, shielded: false },
-                { day: 'W', active: true, shielded: false },
-                { day: 'T', active: true, shielded: false },
-                { day: 'F', active: streakDays >= 5, shielded: false },
-                { day: 'S', active: streakDays >= 6, shielded: streakDays < 6 },
-                { day: 'S', active: streakDays >= 7, shielded: streakDays < 7 },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '8px 2px',
-                    borderRadius: '10px',
-                    backgroundColor: item.active
-                      ? 'rgba(0, 245, 160, 0.08)'
-                      : 'var(--bg-canvas)',
-                    border: item.active
-                      ? '1.5px solid var(--brand-primary)'
-                      : '1px solid var(--border-subtle)',
-                  }}
-                >
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, color: item.active ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
-                    {item.day}
-                  </span>
+              {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => {
+                const now = new Date();
+                const currentDayIndex = (now.getDay() + 6) % 7; // 0 = Mon, ..., 6 = Sun
+                const isActive = streakDays > 0 && idx <= currentDayIndex && idx >= currentDayIndex - streakDays + 1;
+                return (
                   <div
+                    key={idx}
                     style={{
-                      width: '22px',
-                      height: '22px',
-                      borderRadius: '50%',
-                      backgroundColor: item.active ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
-                      color: item.active ? '#03170E' : 'var(--text-muted)',
                       display: 'flex',
+                      flexDirection: 'column',
                       alignItems: 'center',
-                      justifyContent: 'center',
+                      gap: '6px',
+                      padding: '8px 2px',
+                      borderRadius: '10px',
+                      backgroundColor: isActive
+                        ? 'rgba(0, 245, 160, 0.08)'
+                        : 'var(--bg-canvas)',
+                      border: isActive
+                        ? '1.5px solid var(--brand-primary)'
+                        : '1px solid var(--border-subtle)',
                     }}
                   >
-                    {item.active ? (
-                      <CheckCircle2 size={13} strokeWidth={2.5} />
-                    ) : item.shielded ? (
-                      <Shield size={11} color="#F59E0B" />
-                    ) : (
-                      <span style={{ fontSize: '0.65rem' }}>•</span>
-                    )}
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
+                      {day}
+                    </span>
+                    <div
+                      style={{
+                        width: '22px',
+                        height: '22px',
+                        borderRadius: '50%',
+                        backgroundColor: isActive ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                        color: isActive ? '#03170E' : 'var(--text-muted)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {isActive ? (
+                        <CheckCircle2 size={13} strokeWidth={2.5} />
+                      ) : (
+                        <span style={{ fontSize: '0.65rem' }}>•</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Current Streak & Milestone */}
@@ -1092,6 +1151,742 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           </div>
         </div>
       </div>
+
+      {/* ================================================================ */}
+      {/* 17 CANONICAL CURRICULUM TOPICS & INTERACTIVE SIMULATION LABS */}
+      {/* ================================================================ */}
+      <div
+        className="card-elevated"
+        style={{
+          backgroundColor: 'var(--bg-surface)',
+          borderRadius: '24px',
+          border: '1.5px solid var(--border-subtle)',
+          padding: '32px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '24px',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+              <span
+                style={{
+                  backgroundColor: 'rgba(0, 245, 160, 0.12)',
+                  color: 'var(--brand-primary)',
+                  padding: '4px 10px',
+                  borderRadius: '100px',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                17 TOPICS • 170 LESSONS • 170 LABS
+              </span>
+            </div>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              Practical Learning Topics & Interactive Simulation Labs
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: '4px 0 0' }}>
+              Explore real school-age technology, financial literacy, and career skills through genuine video lessons and interactive SVG simulators.
+            </p>
+          </div>
+
+          {/* Category Tabs */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {[
+              { id: 'all', label: 'All Topics (17)' },
+              { id: 'technology', label: 'Technology (6)' },
+              { id: 'finance', label: 'Finance (6)' },
+              { id: 'professional', label: 'Professional Skills (5)' },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCurriculumCategory(cat.id as any)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '100px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: selectedCurriculumCategory === cat.id
+                    ? '1.5px solid var(--brand-primary)'
+                    : '1px solid var(--border-subtle)',
+                  backgroundColor: selectedCurriculumCategory === cat.id
+                    ? 'rgba(0, 245, 160, 0.12)'
+                    : 'var(--bg-surface-subdued)',
+                  color: selectedCurriculumCategory === cat.id
+                    ? 'var(--brand-primary)'
+                    : 'var(--text-secondary)',
+                }}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 17 Topic Cards Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '20px',
+          }}
+        >
+          {ALL_CANONICAL_17_TOPICS.filter((t) =>
+            selectedCurriculumCategory === 'all' ? true : t.category === selectedCurriculumCategory
+          ).map((topic) => {
+            const topicRecord = realProgress[topic.id];
+            const pct = topicRecord?.percentComplete || 0;
+            const completedLessonsCount = topicRecord?.completedLessonIds?.length || 0;
+            const completedLabsCount = topicRecord?.completedLabIds?.length || 0;
+
+            return (
+              <div
+                key={topic.id}
+                style={{
+                  backgroundColor: 'var(--bg-surface-subdued)',
+                  borderRadius: '18px',
+                  border: '1px solid var(--border-subtle)',
+                  padding: '22px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <span
+                      style={{
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        backgroundColor:
+                          topic.category === 'technology'
+                            ? 'rgba(0, 245, 160, 0.15)'
+                            : topic.category === 'finance'
+                            ? 'rgba(59, 130, 246, 0.15)'
+                            : 'rgba(168, 85, 247, 0.15)',
+                        color:
+                          topic.category === 'technology'
+                            ? 'var(--brand-primary)'
+                            : topic.category === 'finance'
+                            ? '#3B82F6'
+                            : '#A855F7',
+                      }}
+                    >
+                      #{topic.canonicalIndex} • {topic.category}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                      10 Lessons • 10 Labs
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+                    {topic.title}
+                  </h3>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    {topic.summary}
+                  </p>
+                </div>
+
+                <div>
+                  {/* Progress Bar */}
+                  <div style={{ marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>
+                      <span>Topic Progress</span>
+                      <span style={{ color: 'var(--brand-primary)' }}>{pct}% Complete</span>
+                    </div>
+                    <div
+                      style={{
+                        height: '6px',
+                        borderRadius: '3px',
+                        backgroundColor: 'var(--bg-canvas)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: '100%',
+                          width: `${pct}%`,
+                          backgroundColor: 'var(--brand-primary)',
+                          borderRadius: '3px',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTopicDrawer(topic)}
+                      style={{
+                        flex: 1,
+                        padding: '9px 12px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--brand-primary)',
+                        color: '#000000',
+                        border: 'none',
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px',
+                      }}
+                    >
+                      <Layers size={14} />
+                      <span>Explore 10 Labs & Lessons</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveCurriculumLab({ lab: topic.labs[0], topicTitle: topic.title })}
+                      title="Quick Launch Lab #1"
+                      style={{
+                        padding: '9px 12px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--bg-surface)',
+                        color: 'var(--text-primary)',
+                        border: '1px solid var(--border-subtle)',
+                        fontSize: '0.8rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <FlaskConical size={14} />
+                      <span>Lab #1</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* CURRICULUM LAB RUNNER MODAL */}
+      {activeCurriculumLab && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            overflowY: 'auto',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'var(--bg-surface)',
+              borderRadius: '24px',
+              maxWidth: '1150px',
+              width: '100%',
+              maxHeight: '92vh',
+              overflowY: 'auto',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <CurriculumLabRunner
+              lab={activeCurriculumLab.lab}
+              topicTitle={activeCurriculumLab.topicTitle}
+              currentUserId={currentUserId}
+              onClose={() => setActiveCurriculumLab(null)}
+              onLabCompleted={(labId, score) => {
+                db.awardXp(currentUserId, 100, `Completed Simulation Lab: ${activeCurriculumLab.lab.title}`);
+                setRefreshSeed((s) => s + 1);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* TOPIC CURRICULUM DRAWER: ALL 10 LABS & ALL 10 LESSONS */}
+      {selectedTopicDrawer && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9990,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'var(--bg-surface)',
+              borderRadius: '24px',
+              maxWidth: '960px',
+              width: '100%',
+              maxHeight: '88vh',
+              display: 'flex',
+              flexDirection: 'column',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                padding: '24px 28px',
+                borderBottom: '1px solid var(--border-subtle)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                backgroundColor: 'var(--bg-surface-subdued)',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      backgroundColor: 'rgba(0, 245, 160, 0.15)',
+                      color: 'var(--brand-primary)',
+                    }}
+                  >
+                    Topic #{selectedTopicDrawer.canonicalIndex} • {selectedTopicDrawer.category}
+                  </span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Canonical Syllabus
+                  </span>
+                </div>
+                <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px' }}>
+                  {selectedTopicDrawer.title}
+                </h2>
+                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', margin: 0, maxWidth: '680px' }}>
+                  {selectedTopicDrawer.summary}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedTopicDrawer(null)}
+                style={{
+                  padding: '8px',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Tab Selector */}
+            <div
+              style={{
+                display: 'flex',
+                borderBottom: '1px solid var(--border-subtle)',
+                padding: '0 28px',
+                gap: '16px',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setActiveTopicDrawerTab('labs')}
+                style={{
+                  padding: '14px 0',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  background: 'none',
+                  borderBottom: activeTopicDrawerTab === 'labs' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+                  color: activeTopicDrawerTab === 'labs' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <FlaskConical size={16} />
+                <span>10 Interactive Simulation Labs</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTopicDrawerTab('lessons')}
+                style={{
+                  padding: '14px 0',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  background: 'none',
+                  borderBottom: activeTopicDrawerTab === 'lessons' ? '3px solid var(--brand-primary)' : '3px solid transparent',
+                  color: activeTopicDrawerTab === 'lessons' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                <Video size={16} />
+                <span>10 Video Lessons</span>
+              </button>
+            </div>
+
+            {/* Tab Body */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
+              {activeTopicDrawerTab === 'labs' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {selectedTopicDrawer.labs.map((lab, idx) => {
+                    const isDone = (realProgress[selectedTopicDrawer.id]?.completedLabIds || []).includes(lab.id);
+                    return (
+                      <div
+                        key={lab.id}
+                        style={{
+                          backgroundColor: 'var(--bg-surface-subdued)',
+                          borderRadius: '14px',
+                          border: '1px solid var(--border-subtle)',
+                          padding: '18px 20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '16px',
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <span
+                              style={{
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                backgroundColor: 'var(--bg-canvas)',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                color: 'var(--brand-primary)',
+                              }}
+                            >
+                              Lab #{idx + 1}
+                            </span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                              {lab.controls.length} Interactive Controls
+                            </span>
+                            {isDone && (
+                              <span
+                                style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  backgroundColor: 'rgba(0, 245, 160, 0.15)',
+                                  color: 'var(--brand-primary)',
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                }}
+                              >
+                                <Check size={12} />
+                                Completed (+100 XP)
+                              </span>
+                            )}
+                          </div>
+                          <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 4px', color: 'var(--text-primary)' }}>
+                            {lab.title}
+                          </h4>
+                          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                            {lab.summary}
+                          </p>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveCurriculumLab({ lab, topicTitle: selectedTopicDrawer.title });
+                          }}
+                          style={{
+                            padding: '10px 18px',
+                            borderRadius: '10px',
+                            backgroundColor: isDone ? 'var(--bg-surface)' : 'var(--brand-primary)',
+                            color: isDone ? 'var(--text-primary)' : '#000000',
+                            border: isDone ? '1px solid var(--border-subtle)' : 'none',
+                            fontSize: '0.82rem',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          <FlaskConical size={15} />
+                          <span>{isDone ? 'Re-run Lab' : 'Launch Simulation'}</span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {selectedTopicDrawer.lessons.map((lesson, idx) => {
+                    const isDone = (realProgress[selectedTopicDrawer.id]?.completedLessonIds || []).includes(lesson.id);
+                    return (
+                      <div
+                        key={lesson.id}
+                        style={{
+                          backgroundColor: 'var(--bg-surface-subdued)',
+                          borderRadius: '14px',
+                          border: '1px solid var(--border-subtle)',
+                          padding: '18px 20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '16px',
+                        }}
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <span
+                              style={{
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                backgroundColor: 'var(--bg-canvas)',
+                                padding: '2px 8px',
+                                borderRadius: '4px',
+                                color: '#3B82F6',
+                              }}
+                            >
+                              Lesson #{idx + 1}
+                            </span>
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                              {lesson.durationMinutes} mins • Verified YouTube Resource
+                            </span>
+                            {isDone && (
+                              <span
+                                style={{
+                                  fontSize: '0.72rem',
+                                  fontWeight: 800,
+                                  backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                                  color: '#3B82F6',
+                                  padding: '2px 8px',
+                                  borderRadius: '4px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                }}
+                              >
+                                <Check size={12} />
+                                Completed (+50 XP)
+                              </span>
+                            )}
+                          </div>
+                          <h4 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 4px', color: 'var(--text-primary)' }}>
+                            {lesson.title}
+                          </h4>
+                          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: '0 0 4px', lineHeight: 1.4 }}>
+                            {lesson.learningObjectives?.join(' • ') || lesson.description}
+                          </p>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveVideoLesson({
+                                lesson,
+                                topicTitle: selectedTopicDrawer.title,
+                                topicId: selectedTopicDrawer.id,
+                              });
+                            }}
+                            style={{
+                              padding: '10px 16px',
+                              borderRadius: '10px',
+                              backgroundColor: '#3B82F6',
+                              color: '#FFFFFF',
+                              border: 'none',
+                              fontSize: '0.82rem',
+                              fontWeight: 800,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            <Play size={14} />
+                            <span>Watch</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* VIDEO LESSON VIEWER MODAL */}
+      {activeVideoLesson && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'var(--bg-surface)',
+              borderRadius: '24px',
+              maxWidth: '900px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                padding: '18px 24px',
+                borderBottom: '1px solid var(--border-subtle)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <div>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    color: '#3B82F6',
+                  }}
+                >
+                  {activeVideoLesson.topicTitle} • Verified Video Lesson
+                </span>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '4px 0 0', color: 'var(--text-primary)' }}>
+                  {activeVideoLesson.lesson.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveVideoLesson(null)}
+                style={{
+                  padding: '8px',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--bg-surface-subdued)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Video Player */}
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, backgroundColor: '#000000' }}>
+              <iframe
+                title={activeVideoLesson.lesson.title}
+                src={`https://www.youtube.com/embed/${activeVideoLesson.lesson.youtubeVideoId}?autoplay=1&rel=0`}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+
+            {/* Objectives & Mark as Complete */}
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+              <div>
+                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-primary)' }}>
+                  🎯 Core Learning Objective
+                </h4>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>
+                  {activeVideoLesson.lesson.learningObjectives?.join(' • ') || activeVideoLesson.lesson.description}
+                </p>
+              </div>
+
+              <div
+                style={{
+                  paddingTop: '16px',
+                  borderTop: '1px solid var(--border-subtle)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  Estimated Watch Time: {activeVideoLesson.lesson.durationMinutes} minutes
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    saveLearnerLessonCompletion(
+                      currentUserId,
+                      activeVideoLesson.topicId,
+                      activeVideoLesson.lesson.id
+                    );
+                    db.awardXp(currentUserId, 50, `Completed Lesson: ${activeVideoLesson.lesson.title}`);
+                    setRefreshSeed((s) => s + 1);
+                    setActiveVideoLesson(null);
+                  }}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--brand-primary)',
+                    color: '#000000',
+                    border: 'none',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <Check size={16} />
+                  <span>Mark Completed & Earn 50 XP</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

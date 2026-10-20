@@ -340,29 +340,8 @@ export class NotificationEngine {
       // ignore
     }
 
-    // Default seed notifications for fresh users
-    const defaultList: AppNotification[] = [
-      {
-        id: `seed_1_${userId}`,
-        user_id: userId,
-        title: 'Real-Time Sync Activated',
-        message: 'Your workspace is connected to the Geniusphere high-throughput event bus.',
-        priority: 'medium',
-        category: 'system',
-        is_read: false,
-        created_at: new Date(Date.now() - 3600000).toISOString(),
-      },
-      {
-        id: `seed_2_${userId}`,
-        user_id: userId,
-        title: 'Tamper-Proof Verification Ready',
-        message: 'All course completions and lab attempts are signed with SHA-256 integrity hashes.',
-        priority: 'low',
-        category: 'certificate',
-        is_read: false,
-        created_at: new Date(Date.now() - 7200000).toISOString(),
-      },
-    ];
+    // Genuine fresh user starts with clean empty notification inbox
+    const defaultList: AppNotification[] = [];
     this.notifications.set(userId, defaultList);
   }
 

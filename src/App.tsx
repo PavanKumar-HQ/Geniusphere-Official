@@ -1059,7 +1059,7 @@ export const App: React.FC = () => {
               aria-label="View Daily Learning Streak"
             >
               <Flame size={17} color="#F59E0B" fill="#F59E0B" />
-              <span>{userProgress.streak_days || 5}-Day Streak</span>
+              <span>{userProgress.streak_days || 0}-Day Streak</span>
             </button>
 
             {/* Dynamic XP Pill (Matches Prototype) */}
@@ -1082,7 +1082,7 @@ export const App: React.FC = () => {
               title="Total Earned Experience Points"
             >
               <Zap size={15} color="var(--brand-primary)" fill="var(--brand-primary)" />
-              <span>{userProgress.xp || 450} XP</span>
+              <span>{userProgress.xp || 0} XP</span>
             </div>
 
             {/* Realtime Notification Bell Button */}

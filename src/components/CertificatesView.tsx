@@ -28,44 +28,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
   const user = db.getUser(currentUserId, currentUserId);
   const userCertificates = db.getUserCertificates(currentUserId);
 
-  // If user has no certificates in memory, provide a canonical verifiable default credential
-  const certificates: Certificate[] =
-    userCertificates.length > 0
-      ? userCertificates
-      : [
-          {
-            id: 'cert-cybersec-2026',
-            user_id: currentUserId,
-            course_id: 'course-web-sec',
-            course_title: 'Defensive Web Security & Zero-Trust Architecture',
-            student_name: user?.full_name?.split(' (')[0] || 'Pavan Kumar',
-            issue_date: '2026-03-15',
-            verification_hash: 'sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
-            grade: 98,
-            skills_acquired: [
-              'Zero-Trust Architecture',
-              'OWASP Top 10 Defense',
-              'CSRF & Token Validation',
-              'Cryptographic Key Management',
-            ],
-          },
-          {
-            id: 'cert-python-wasm-2026',
-            user_id: currentUserId,
-            course_id: 'course-python-foundations',
-            course_title: 'Multi-Language Software Engineering: Python & C',
-            student_name: user?.full_name?.split(' (')[0] || 'Pavan Kumar',
-            issue_date: '2026-04-02',
-            verification_hash: 'sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-            grade: 100,
-            skills_acquired: [
-              'Python 3.12 Core Syntax',
-              'C Pointer Arithmetic & Memory Safety',
-              'Algorithm Complexity & Shannon Entropy',
-              'Buffer Overflow Mitigation',
-            ],
-          },
-        ];
+  // Only display genuine user certificates earned through verified course completion
+  const certificates: Certificate[] = userCertificates;
 
   return (
     <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '28px' }}>
@@ -118,9 +82,60 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
         />
       </div>
 
-      {/* Certificates Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '24px' }}>
-        {certificates.map((cert) => (
+      {/* Honest Empty State or Certificates Grid */}
+      {certificates.length === 0 ? (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '64px 24px',
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1.5px solid #E5F0DF',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+          }}
+        >
+          <div
+            style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '20px',
+              backgroundColor: '#E5F0DF',
+              color: '#43A85B',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+            }}
+          >
+            <Award size={32} />
+          </div>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#26352A', margin: '0 0 8px' }}>
+            No Certificates Earned Yet
+          </h2>
+          <p style={{ color: '#6B7C70', maxWidth: '520px', margin: '0 auto 24px', lineHeight: 1.6, fontSize: '0.92rem' }}>
+            You haven't completed a full curriculum yet. To earn a verifiable credential with an immutable cryptographic SHA-256 integrity hash, complete all 10 video lessons and simulation labs in any course!
+          </p>
+          <button
+            type="button"
+            onClick={onNavigateCourses}
+            style={{
+              padding: '12px 28px',
+              borderRadius: '12px',
+              backgroundColor: '#43A85B',
+              color: '#FFFFFF',
+              fontWeight: 800,
+              fontSize: '0.9rem',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(67, 168, 91, 0.25)',
+            }}
+          >
+            Explore Course Curriculum
+          </button>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: '24px' }}>
+          {certificates.map((cert) => (
           <div
             key={cert.id}
             className="card"
@@ -284,6 +299,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
           </div>
         ))}
       </div>
+      )}
 
       {/* Earn More Credentials Callout */}
       <div

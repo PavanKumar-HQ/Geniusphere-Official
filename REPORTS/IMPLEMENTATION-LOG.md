@@ -111,4 +111,40 @@
   - All 15 test files pass (146 tests).
   - Typecheck: 0 errors.
   - Production build: clean build in 2.55s.
+---
 
+## Stage 7: Canonical 17-Topic Curriculum, 170 Real Video Lessons & 170 Interactive Simulation Labs
+- **Status:** **Implemented**, **Integrated** & **Tested**
+- **Date:** 2026-10-20
+- **Canonical Deliverables:**
+  - **17 Canonical Topics Fully Implemented:**
+    1. Artificial Intelligence & Machine Learning (`artificial-intelligence-machine-learning`)
+    2. Blockchain & Web3 Technologies (`blockchain-web3-technologies`)
+    3. Microsoft Office & Productivity Suite (`microsoft-office-productivity-suite`)
+    4. Cybersecurity & Ethical Hacking (`cybersecurity-ethical-hacking`)
+    5. Web & App Development (`web-app-development`)
+    6. Internet of Things (IoT) & Hardware (`internet-of-things-iot-smart-devices`)
+    7. Personal Finance Fundamentals (`financial-literacy-foundations`)
+    8. Stock Market & Investing (`stock-market-investing`)
+    9. Cryptocurrency & Digital Assets (`cryptocurrency-digital-assets`)
+    10. FinTech & Future of Money (`fintech-future-of-money`)
+    11. Global Economics & Trade (`global-economics-trade`)
+    12. Banking, Credit & Debt (`banking-credit-debt-management`)
+    13. Communication & Public Speaking (`communication-public-speaking`)
+    14. Time Management & Productivity (`time-management-productivity`)
+    15. Soft Skills & Leadership (`soft-skills-leadership`)
+    16. Startup Ideation & Entrepreneurship (`startup-ideation-entrepreneurship`)
+    17. Social Profile & Brand Development (`social-profile-brand-development`)
+  - **170 Verified Video Lessons:**
+    - Exactly 10 YouTube-linked lessons per topic with real embed URLs, durations, and targeted educational learning objectives.
+  - **170 Interactive Simulation Labs:**
+    - Exactly 10 simulation labs per topic with real mathematical computation (e.g. Perceptron decision boundaries, LTV/CAC ratio, compound interest, subnet masking, hash-rate proof-of-work, TAM/SAM/SOM market sizing), interactive inputs/sliders/toggles, real-time reactive SVG rendering, reflection questions, and local-first progress persistence.
+  - **Zero-Mockup Learner Experience:**
+    - `src/components/StudentDashboard.tsx`: Removed static hardcoded mock statistics and hardcoded M-T-W-T active streaks. Real streaks and pending assignments are now derived relationally from user enrollment and assignment databases.
+    - Added "Reset Demo State" button allowing immediate zero-state clean testing.
+    - Added 1-click launch into [`src/components/CurriculumLabRunner.tsx`](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CurriculumLabRunner.tsx) for interactive execution of all 170 simulation labs.
+- **Verification & Test Evidence:**
+  - Automated test suite [`tests/canonical-17-topics-and-labs.test.ts`](file:///Users/pavankumars/Downloads/geniuspheregpt/tests/canonical-17-topics-and-labs.test.ts): 6 comprehensive tests passing.
+  - Complete test suite: **16 test files passed, 152 tests passed, 0 failed**.
+  - TypeScript type check (`npx tsc --noEmit`): **0 errors**.
+  - Production build (`npm run build`): **Clean Vite build in 2.51s**.

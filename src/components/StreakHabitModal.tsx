@@ -25,22 +25,37 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const streakDays = userProgress.streak_days || 5;
-  const currentXp = userProgress.xp || 450;
+  const streakDays = userProgress.streak_days || 0;
+  const currentXp = userProgress.xp || 0;
 
-  // Days of current week (Monday through Sunday)
-  const daysOfWeek = [
-    { day: 'Mon', full: 'Monday', active: true, shielded: false },
-    { day: 'Tue', full: 'Tuesday', active: true, shielded: false },
-    { day: 'Wed', full: 'Wednesday', active: true, shielded: false },
-    { day: 'Thu', full: 'Thursday', active: true, shielded: false },
-    { day: 'Fri', full: 'Friday', active: true, shielded: false },
-    { day: 'Sat', full: 'Saturday', active: streakDays >= 6, shielded: streakDays < 6 },
-    { day: 'Sun', full: 'Sunday', active: streakDays >= 7, shielded: streakDays < 7 },
+  // Calculate real active days of the week based on streak and current day
+  const now = new Date();
+  const currentDayIndex = (now.getDay() + 6) % 7; // 0 = Mon, 1 = Tue, ..., 6 = Sun
+  const dayNames = [
+    { day: 'Mon', full: 'Monday' },
+    { day: 'Tue', full: 'Tuesday' },
+    { day: 'Wed', full: 'Wednesday' },
+    { day: 'Thu', full: 'Thursday' },
+    { day: 'Fri', full: 'Friday' },
+    { day: 'Sat', full: 'Saturday' },
+    { day: 'Sun', full: 'Sunday' },
   ];
 
+  const daysOfWeek = dayNames.map((d, idx) => {
+    const isActive =
+      streakDays > 0 &&
+      idx <= currentDayIndex &&
+      idx >= currentDayIndex - streakDays + 1;
+    return {
+      day: d.day,
+      full: d.full,
+      active: isActive,
+      shielded: false,
+    };
+  });
+
   const nextMilestone = streakDays < 7 ? 7 : streakDays < 14 ? 14 : streakDays < 30 ? 30 : streakDays + 7;
-  const progressToMilestone = Math.min(100, Math.round((streakDays / nextMilestone) * 100));
+  const progressToMilestone = streakDays > 0 ? Math.min(100, Math.round((streakDays / nextMilestone) * 100)) : 0;
 
   return (
     <div

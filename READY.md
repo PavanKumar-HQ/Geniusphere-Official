@@ -74,6 +74,7 @@ All tables exist in PostgreSQL with constraints, foreign keys, triggers, and Row
 ```
  RUN  v5.0.5 /Users/pavankumars/Downloads/geniuspheregpt
 
+ ✓ tests/canonical-17-topics-and-labs.test.ts (6 tests)
  ✓ tests/canonical-curriculum.test.ts (5 tests)
  ✓ tests/code-sandbox-runner.test.ts (19 tests)
  ✓ tests/curriculum-workflow.test.ts (12 tests)
@@ -90,14 +91,29 @@ All tables exist in PostgreSQL with constraints, foreign keys, triggers, and Row
  ✓ tests/sanity.test.ts (1 test)
  ✓ tests/sidebar-toggle.test.tsx (2 tests)
 
- Test Files  15 passed (15)
-      Tests  146 passed (146)
-   Duration  799ms
+ Test Files  16 passed (16)
+      Tests  152 passed (152)
+   Duration  777ms
 ```
 
 - **Typecheck (`tsc --noEmit`):** 0 errors.
-- **Production Build (`npm run build`):** Clean build in 2.40s (`dist/`).
-- **Acceptance Test Suite (`tests/first-api-slice.test.tsx`):** 9/9 passed (Tests A through I verifying real persistence, auth rejection, RLS boundary, database outage behavior, empty database states, and production config guards).
+- **Production Build (`npm run build`):** Clean build in 2.42s (`dist/`).
+- **Curriculum & 170 Labs Suite (`tests/canonical-17-topics-and-labs.test.ts`):** 6/6 passed verifying 17 canonical topics, 170 verified video lessons, 170 interactive simulation labs, mathematical precision, and clean-state progress persistence.
+- **Acceptance Test Suite (`tests/first-api-slice.test.tsx`):** 9/9 passed.
 - **Integration Test Suite (`npm run test:integration`):** 9/9 passed against live PostgreSQL database and Fastify server.
-- **Implementation Log:** [`REPORTS/IMPLEMENTATION-LOG.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/REPORTS/IMPLEMENTATION-LOG.md).
-
+- **Research & Architectural Deliverables:**
+  - Audit: [`GENIUSPHERE_CURRENT_STATE_AUDIT.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_CURRENT_STATE_AUDIT.md)
+  - Research & Brainstorm: [`GENIUSPHERE_RESEARCH_AND_BRAINSTORM.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_RESEARCH_AND_BRAINSTORM.md)
+  - Architecture Proposal: [`GENIUSPHERE_ARCHITECTURE_PROPOSAL.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_ARCHITECTURE_PROPOSAL.md)
+  - Database Design: [`GENIUSPHERE_DATABASE_DESIGN.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_DATABASE_DESIGN.md)
+  - Lab Framework Design: [`GENIUSPHERE_LAB_FRAMEWORK_DESIGN.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_LAB_FRAMEWORK_DESIGN.md)
+  - Implementation Roadmap: [`GENIUSPHERE_IMPLEMENTATION_ROADMAP.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_IMPLEMENTATION_ROADMAP.md)
+  - Decisions & Questions: [`GENIUSPHERE_DECISIONS_AND_OPEN_QUESTIONS.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/GENIUSPHERE_DECISIONS_AND_OPEN_QUESTIONS.md)
+  - Project Log: [`docs/project-log.md`](file:///Users/pavankumars/Downloads/geniuspheregpt/docs/project-log.md)
+- **Zero-Mockup Real-Time Progression Hardening:**
+  - **Dynamic Streak Calculation:** Mathematical streak tracking based on real activity timestamps. If inactive for > 1 day, streak automatically resets to 0. Weekly calendar displays actual days active instead of hardcoded checkmarks.
+  - **True Zero-State XP:** Fresh accounts start at genuine 0 XP and 0-Day Streak. Removed all arbitrary `|| 5` or `|| 450` fallback values from navbar and dashboard widgets.
+  - **Honest Certificates View:** Removed fake mock credentials. Displays an educational empty state until all 10 lessons and simulation labs in a course are completed.
+  - **Cryptographic Certificate Hashes:** Verified credentials compute a real deterministic SHA-256 integrity hash from user, course, and date invariants.
+  - **Clean Notification Inbox:** Removed fabricated seed notifications. Inboxes populate solely from real user mutations and events.
+  - **Complete Local Cache Wipe:** Added deep local storage purge on "Reset Demo State" covering DB, progress, notifications, and study tracker for immediate fresh zero-state testing.
