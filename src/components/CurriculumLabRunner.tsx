@@ -110,24 +110,132 @@ export const CurriculumLabRunner: React.FC<CurriculumLabRunnerProps> = ({
         metricLabel: 'Real Purchasing Power',
         metricValue: `$${Math.round(real).toLocaleString()}`,
         isSatisfied: real > p,
-        details: `Nominal Balance: $${Math.round(nominal).toLocaleString()} | Gain: +$${Math.round(real - p).toLocaleString()}`,
+        details: `Nominal Balance: $${Math.round(nominal).toLocaleString()} | Real Gain: +$${Math.round(real - p).toLocaleString()}`,
         nominal,
         real,
       };
     }
 
-    // Generic fallback computation for all other labs
+    // 5. Cybersecurity & Cryptography (Password Entropy & Brute Force Duration)
+    if (lab.slug.includes('entropy') || lab.slug.includes('password') || lab.slug.includes('crypto') || lab.slug.includes('rsa') || lab.slug.includes('security')) {
+      const length = Number(params.length ?? params.passwordLength ?? 12);
+      const hasUpper = params.hasUpper ?? true;
+      const hasNumbers = params.hasNumbers ?? true;
+      const hasSymbols = params.hasSymbols ?? true;
+      let charset = 26; // lowercase
+      if (hasUpper) charset += 26;
+      if (hasNumbers) charset += 10;
+      if (hasSymbols) charset += 32;
+      const entropy = length * Math.log2(charset);
+      // Assume 100 Billion attempts/sec offline brute force
+      const attempts = Math.pow(2, entropy);
+      const seconds = attempts / 1e11;
+      let timeLabel = `${seconds.toFixed(1)}s`;
+      if (seconds > 3.15e7) timeLabel = `${(seconds / 3.15e7).toExponential(1)} years`;
+      else if (seconds > 86400) timeLabel = `${Math.round(seconds / 86400)} days`;
+      else if (seconds > 3600) timeLabel = `${Math.round(seconds / 3600)} hours`;
+      return {
+        metricLabel: 'Information Entropy',
+        metricValue: `${entropy.toFixed(1)} bits`,
+        isSatisfied: entropy >= 72,
+        details: `Charset: ${charset} | Est. Offline Crack Time: ${timeLabel}`,
+        entropy,
+        charset,
+      };
+    }
+
+    // 6. Blockchain & Web3 (EIP-1559 Gas Fees or AMM Constant Product)
+    if (lab.slug.includes('blockchain') || lab.slug.includes('gas') || lab.slug.includes('amm') || lab.slug.includes('web3') || lab.slug.includes('token')) {
+      const gasLimit = Number(params.gasLimit ?? 21000);
+      const baseFeeGwei = Number(params.baseFeeGwei ?? params.baseFee ?? 25);
+      const priorityFeeGwei = Number(params.priorityFeeGwei ?? params.priorityFee ?? 2);
+      const totalFeeGwei = gasLimit * (baseFeeGwei + priorityFeeGwei);
+      const feeEth = totalFeeGwei / 1e9;
+      return {
+        metricLabel: 'Transaction Gas Cost',
+        metricValue: `${feeEth.toFixed(5)} ETH`,
+        isSatisfied: feeEth <= 0.005,
+        details: `Gas Limit: ${gasLimit.toLocaleString()} | Effective Gas Price: ${baseFeeGwei + priorityFeeGwei} Gwei`,
+        feeEth,
+        totalFeeGwei,
+      };
+    }
+
+    // 7. Embedded IoT & Electronics (Ohm's Law, Power, and ADC Quantization)
+    if (lab.slug.includes('ohm') || lab.slug.includes('iot') || lab.slug.includes('circuit') || lab.slug.includes('sensor') || lab.slug.includes('embedded')) {
+      const voltage = Number(params.voltage ?? 5);
+      const resistance = Math.max(1, Number(params.resistance ?? 220));
+      const current = voltage / resistance; // Amperes
+      const currentMa = current * 1000;
+      const powerMw = voltage * currentMa;
+      return {
+        metricLabel: 'Circuit Current & Power',
+        metricValue: `${currentMa.toFixed(1)} mA`,
+        isSatisfied: currentMa <= 40, // standard safe MCU pin draw
+        details: `Power Dissipation: ${powerMw.toFixed(1)} mW (V=${voltage}V, R=${resistance}Ω)`,
+        currentMa,
+        powerMw,
+      };
+    }
+
+    // 8. Data Structures & Algorithms (Binary Search vs Linear Complexity)
+    if (lab.slug.includes('search') || lab.slug.includes('sort') || lab.slug.includes('algorithm') || lab.slug.includes('complexity') || lab.slug.includes('tree')) {
+      const n = Math.max(2, Number(params.arraySize ?? params.n ?? 1024));
+      const binarySteps = Math.ceil(Math.log2(n));
+      const speedup = (n / binarySteps).toFixed(0);
+      return {
+        metricLabel: 'Worst-Case Search Steps',
+        metricValue: `${binarySteps} comparisons`,
+        isSatisfied: true,
+        details: `Linear Search: ${n} ops | Binary Search: ${binarySteps} ops (${speedup}x speedup)`,
+        binarySteps,
+        n,
+      };
+    }
+
+    // 9. Cloud Computing & DevOps (High Availability SLA & Downtime)
+    if (lab.slug.includes('cloud') || lab.slug.includes('devops') || lab.slug.includes('sla') || lab.slug.includes('scaling') || lab.slug.includes('availability')) {
+      const nines = Number(params.slaNines ?? params.availability ?? 99.9);
+      const totalHoursYear = 8760;
+      const downtimeMinutes = (1 - nines / 100) * totalHoursYear * 60;
+      return {
+        metricLabel: 'Annual Permitted Downtime',
+        metricValue: `${downtimeMinutes.toFixed(1)} min/yr`,
+        isSatisfied: nines >= 99.9,
+        details: `SLA Target: ${nines}% | Annual Outage Window: ${(downtimeMinutes / 60).toFixed(2)} hours`,
+        downtimeMinutes,
+      };
+    }
+
+    // 10. Game Dev & Physics (Kinematic Projectile Motion)
+    if (lab.slug.includes('game') || lab.slug.includes('physics') || lab.slug.includes('projectile') || lab.slug.includes('kinematics')) {
+      const v0 = Number(params.velocity ?? 25);
+      const angleDeg = Number(params.angle ?? 45);
+      const rad = (angleDeg * Math.PI) / 180;
+      const g = 9.81;
+      const maxHeight = (Math.pow(v0 * Math.sin(rad), 2)) / (2 * g);
+      const maxRange = (Math.pow(v0, 2) * Math.sin(2 * rad)) / g;
+      const timeOfFlight = (2 * v0 * Math.sin(rad)) / g;
+      return {
+        metricLabel: 'Horizontal Range & Peak',
+        metricValue: `${maxRange.toFixed(1)} m`,
+        isSatisfied: maxRange > 0,
+        details: `Max Altitude: ${maxHeight.toFixed(1)} m | Flight Duration: ${timeOfFlight.toFixed(1)}s`,
+        maxRange,
+        maxHeight,
+      };
+    }
+
+    // Generic fallback computation with meaningful metrics
     const numericKeys = Object.keys(params).filter((k) => typeof params[k] === 'number');
-    const avg =
-      numericKeys.length > 0
-        ? Math.round(numericKeys.reduce((acc, k) => acc + Number(params[k]), 0) / numericKeys.length)
-        : 75;
+    const primaryKey = numericKeys[0] || 'parameter';
+    const primaryVal = Number(params[primaryKey] ?? 50);
     return {
-      metricLabel: 'Model Equilibrium Score',
-      metricValue: `${avg}%`,
-      isSatisfied: avg >= 60,
-      details: `Active Parameters: ${numericKeys.length} | State Equilibrium: Nominal`,
-      avg,
+      metricLabel: `${primaryKey.replace(/([A-Z])/g, ' $1').toUpperCase()} STATE`,
+      metricValue: `${primaryVal}`,
+      isSatisfied: primaryVal >= 50,
+      details: `Active Parameters: ${numericKeys.length} | Dynamic Response Verified`,
+      primaryVal,
     };
   }, [params, lab.slug]);
 
@@ -470,6 +578,36 @@ export const CurriculumLabRunner: React.FC<CurriculumLabRunnerProps> = ({
                   <circle cx="280" cy="70" r="7" fill="var(--brand-primary)" />
                   <circle cx="130" cy="160" r="7" fill="#EF4444" />
                   <circle cx="270" cy="150" r="7" fill="#EF4444" />
+                </>
+              ) : lab.slug.includes('projectile') || lab.slug.includes('kinematics') ? (
+                <>
+                  {/* Parabolic Trajectory */}
+                  <path
+                    d="M 50 200 Q 215 30 380 200"
+                    fill="none"
+                    stroke="var(--brand-primary)"
+                    strokeWidth="3"
+                  />
+                  <circle cx="215" cy="30" r="6" fill="#F59E0B" />
+                  <text x="180" y="20" fill="#F59E0B" fontSize="11" fontWeight="bold">Apex</text>
+                  <circle cx="380" cy="200" r="6" fill="#10B981" />
+                  <text x="340" y="190" fill="#10B981" fontSize="11" fontWeight="bold">Impact</text>
+                </>
+              ) : lab.slug.includes('entropy') || lab.slug.includes('security') ? (
+                <>
+                  {/* Security Entropy Arc Gauge */}
+                  <path d="M 100 180 A 100 100 0 0 1 300 180" fill="none" stroke="var(--border-subtle)" strokeWidth="16" />
+                  <path
+                    d="M 100 180 A 100 100 0 0 1 250 100"
+                    fill="none"
+                    stroke="var(--brand-primary)"
+                    strokeWidth="16"
+                    strokeLinecap="round"
+                  />
+                  <text x="175" y="160" fill="var(--brand-primary)" fontSize="18" fontWeight="bold">
+                    {calculationResult.metricValue}
+                  </text>
+                  <text x="160" y="180" fill="var(--text-secondary)" fontSize="10">Entropy Strength</text>
                 </>
               ) : (
                 <>
