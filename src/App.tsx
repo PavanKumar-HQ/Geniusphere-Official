@@ -50,6 +50,7 @@ import {
 } from './utils/themeEngine';
 import { Certificate } from './types';
 import { StreakHabitModal } from './components/StreakHabitModal';
+import { StudentProfileModal } from './components/StudentProfileModal';
 import {
   ShieldCheck,
   BookOpen,
@@ -77,6 +78,7 @@ import {
   Moon,
   Flame,
   Zap,
+  User,
 } from 'lucide-react';
 
 export type AppView =
@@ -251,7 +253,16 @@ export const App: React.FC = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalMode] = useState<'signin' | 'getstarted'>('signin');
 
-  const currentUser = users.find((u) => u.id === currentUserId) || users[0];
+  const baseUser = users.find((u) => u.id === currentUserId) || users[0];
+  const dbUser = db.users.get(currentUserId);
+  const currentUser = useMemo(() => {
+    return {
+      ...baseUser,
+      name: dbUser?.full_name || baseUser.name,
+      email: dbUser?.email || 'learner@geniusphere.tech',
+    };
+  }, [baseUser, dbUser?.full_name, dbUser?.email, refreshTrigger]);
+
   const isTeacher = currentUser.role === 'teacher';
   const isInstAdmin = currentUser.role === 'institution_admin' || currentUser.role === 'admin';
   const isSuperadmin = currentUser.role === 'superadmin';
@@ -262,6 +273,7 @@ export const App: React.FC = () => {
     backendEngine.notifications.getUnreadCount(currentUser.id)
   );
   const [streakModalOpen, setStreakModalOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const userProgress = useMemo(() => db.getUserProgress(currentUser.id), [db, currentUser.id, refreshTrigger]);
 
   useEffect(() => {
@@ -300,6 +312,23 @@ export const App: React.FC = () => {
   useEffect(() => {
     const unsub = backendEngine.bus.subscribe('courses:catalog', () => {
       setRefreshTrigger((prev) => prev + 1);
+    });
+    return () => unsub();
+  }, []);
+
+  // Live WebSocket cross-device & cross-session sync
+  useEffect(() => {
+    apiClient.initWebSocket();
+    const unsub = apiClient.onRealtimeEvent((event) => {
+      if (
+        event?.eventType === 'user.profile_updated' ||
+        event?.type === 'PROFILE_UPDATED' ||
+        event?.eventType === 'lesson.completed' ||
+        event?.eventType === 'streak.updated' ||
+        event?.eventType === 'enrollment.created'
+      ) {
+        setRefreshTrigger((prev) => prev + 1);
+      }
     });
     return () => unsub();
   }, []);
@@ -1239,6 +1268,34 @@ export const App: React.FC = () => {
                       )}
                     </div>
                   </div>
+
+                  {/* Student Profile Action */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      setProfileModalOpen(true);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '9px 12px',
+                      marginBottom: '12px',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border-subtle)',
+                      backgroundColor: 'var(--brand-surface)',
+                      color: 'var(--brand-primary)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontWeight: 800,
+                      fontSize: '0.82rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <User size={15} />
+                    <span>View & Edit Student Profile</span>
+                  </button>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
                     <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '2px 4px' }}>
@@ -3020,6 +3077,27 @@ export const App: React.FC = () => {
         onClose={() => setStreakModalOpen(false)}
         userProgress={userProgress}
         userName={currentUser.name}
+      />
+
+      {/* Authenticated Student Profile & Record Verification Modal */}
+      <StudentProfileModal
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        currentUser={{
+          id: currentUser.id,
+          name: currentUser.name,
+          email: currentUser.email,
+          role: currentUser.role,
+        }}
+        onProfileUpdated={(updatedName) => {
+          const userInDb = db.users.get(currentUser.id);
+          if (userInDb) {
+            userInDb.full_name = updatedName;
+            db.users.set(currentUser.id, userInDb);
+            db.persistState();
+          }
+          setRefreshTrigger((prev) => prev + 1);
+        }}
       />
     </div>
   );

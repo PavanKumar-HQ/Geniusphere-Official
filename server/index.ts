@@ -117,6 +117,36 @@ export async function createServer() {
     };
   });
 
+  // 4b. Student Profile & Real-Time Identity Sync
+  fastify.get('/api/profile', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    try {
+      return await domainService.getUserProfile(request.user!.userId);
+    } catch (err: any) {
+      return reply.status(404).send({ error: err.message || 'Profile not found' });
+    }
+  });
+
+  fastify.patch('/api/profile', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { fullName } = (request.body as any) || {};
+    try {
+      const updated = await domainService.updateUserProfile(request.user!.userId, { fullName });
+      // Direct WebSocket push to user sockets for zero-latency multi-tab sync
+      wsGateway.broadcast({
+        event_id: `evt_sock_prof_${Date.now()}`,
+        event_type: 'user.profile_updated',
+        payload: {
+          userId: request.user!.userId,
+          fullName: updated.full_name,
+          updatedAt: updated.updated_at,
+        },
+        target_user_id: request.user!.userId,
+      });
+      return { success: true, user: updated };
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message || 'Invalid profile update' });
+    }
+  });
+
   // 5. Course Catalog & Lifecycle Endpoints
   fastify.get('/api/courses', { preHandler: [authenticateRequest] }, async (request, reply) => {
     try {

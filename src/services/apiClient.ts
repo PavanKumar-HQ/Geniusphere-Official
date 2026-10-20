@@ -85,6 +85,41 @@ export class ApiClient {
     return this.request('/api/auth/me');
   }
 
+  public async getProfile(): Promise<{
+    personalInfo: {
+      id: string;
+      email: string;
+      fullName: string;
+      dateOfBirth: string;
+      isMinor: boolean;
+      isSuperadmin: boolean;
+      accountStatus: string;
+      role: string;
+      organization: { id: string; name: string; type: string } | null;
+      createdAt: string;
+      updatedAt: string;
+    };
+    learningStats: {
+      xp: number;
+      currentStreak: number;
+      streakLastExtendedDate: string | null;
+      totalTimeSpentSeconds: number;
+      lastActiveAt: string;
+      completedLessonsCount: number;
+      enrolledCoursesCount: number;
+      labAttemptsCount: number;
+    };
+  }> {
+    return this.request('/api/profile');
+  }
+
+  public async updateProfile(updates: { fullName: string }): Promise<{ success: boolean; user: any }> {
+    return this.request('/api/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+  }
+
   public async getCourses(): Promise<any[]> {
     return this.request('/api/courses');
   }

@@ -498,7 +498,79 @@ export class InMemoryDatabase {
     };
 
     this.users.set(targetUserId, updatedUser);
+    this.persistState();
     return updatedUser;
+  }
+
+  getStudentProfile(callerUserId: string, targetUserId: string) {
+    if (callerUserId !== targetUserId && !this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Cannot access another student profile', '42501', 403);
+    }
+
+    const user = this.users.get(targetUserId);
+    if (!user) {
+      throw new DatabaseError('Student not found', '23503', 404);
+    }
+
+    // Role & Org
+    let role = user.is_superadmin ? 'superadmin' : 'learner';
+    let org: { id: string; name: string; type: string } | null = null;
+    for (const mem of this.memberships.values()) {
+      if (mem.user_id === targetUserId && mem.is_active) {
+        role = mem.role;
+        const organization = this.organizations.get(mem.organization_id);
+        if (organization) {
+          org = { id: organization.id, name: organization.name, type: organization.org_type };
+        }
+        break;
+      }
+    }
+
+    // Calculated learning stats from authoritative state
+    const prog = this.getUserProgress(targetUserId);
+    let completedLessonsCount = prog.completed_lessons ? prog.completed_lessons.length : 0;
+    
+    // Enrollments count
+    let enrolledCoursesCount = 0;
+    for (const enr of this.courseEnrollments.values()) {
+      if (enr.user_id === targetUserId) {
+        enrolledCoursesCount++;
+      }
+    }
+
+    // Lab attempts count
+    let labAttemptsCount = 0;
+    for (const attempt of this.labAttempts.values()) {
+      if (attempt.user_id === targetUserId) {
+        labAttemptsCount++;
+      }
+    }
+
+    return {
+      personalInfo: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        dateOfBirth: user.date_of_birth,
+        isMinor: user.is_minor,
+        isSuperadmin: user.is_superadmin,
+        accountStatus: user.account_status,
+        role,
+        organization: org,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+      },
+      learningStats: {
+        xp: prog.xp || 0,
+        currentStreak: prog.streak_days || 0,
+        streakLastExtendedDate: prog.last_active_date || null,
+        totalTimeSpentSeconds: 0,
+        lastActiveAt: prog.last_active_date || user.created_at,
+        completedLessonsCount,
+        enrolledCoursesCount,
+        labAttemptsCount,
+      },
+    };
   }
 
   // ==================================================================
@@ -1891,4 +1963,6 @@ export class InMemoryDatabase {
     }
   }
 }
+
+export const db = new InMemoryDatabase();
 

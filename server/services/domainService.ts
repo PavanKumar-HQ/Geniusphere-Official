@@ -301,6 +301,136 @@ export class DomainService {
     if (diffDays === 1) return currentStreak + 1;
     return 1;
   }
+
+  /**
+   * Get student profile distinguishing editable identity from calculated metrics
+   */
+  public async getUserProfile(userId: string) {
+    const userRes = await query(
+      `SELECT u.id, u.email, u.full_name, u.date_of_birth, u.is_minor, u.is_superadmin, u.account_status, u.created_at, u.updated_at,
+              om.role, om.organization_id, o.name as org_name, o.org_type
+       FROM public.users u
+       LEFT JOIN public.organization_memberships om ON om.user_id = u.id AND om.is_active = TRUE
+       LEFT JOIN public.organizations o ON o.id = om.organization_id
+       WHERE u.id = $1 LIMIT 1`,
+      [userId]
+    );
+
+    if (userRes.rowCount === 0) {
+      throw new Error('User not found');
+    }
+    const user = userRes.rows[0];
+
+    const progressRes = await query(
+      `SELECT xp, current_streak, streak_last_extended_date, total_time_spent_seconds, last_active_at
+       FROM public.user_progress WHERE user_id = $1`,
+      [userId]
+    );
+    const prog = progressRes.rows[0] || {
+      xp: 0,
+      current_streak: 0,
+      streak_last_extended_date: null,
+      total_time_spent_seconds: 0,
+      last_active_at: user.created_at,
+    };
+
+    const completionsRes = await query(
+      `SELECT COUNT(*)::int as count FROM public.lesson_completions WHERE user_id = $1`,
+      [userId]
+    );
+    const completedLessonsCount = completionsRes.rows[0]?.count || 0;
+
+    const enrollmentsRes = await query(
+      `SELECT COUNT(*)::int as count FROM public.course_enrollments WHERE user_id = $1`,
+      [userId]
+    );
+    const enrolledCoursesCount = enrollmentsRes.rows[0]?.count || 0;
+
+    const labAttemptsRes = await query(
+      `SELECT COUNT(*)::int as count FROM public.lab_attempts WHERE user_id = $1`,
+      [userId]
+    );
+    const labAttemptsCount = labAttemptsRes.rows[0]?.count || 0;
+
+    return {
+      personalInfo: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        dateOfBirth: user.date_of_birth,
+        isMinor: user.is_minor,
+        isSuperadmin: user.is_superadmin,
+        accountStatus: user.account_status,
+        role: user.role || (user.is_superadmin ? 'superadmin' : 'learner'),
+        organization: user.org_name
+          ? { id: user.organization_id, name: user.org_name, type: user.org_type }
+          : null,
+        createdAt: user.created_at,
+        updatedAt: user.updated_at,
+      },
+      learningStats: {
+        xp: prog.xp,
+        currentStreak: prog.current_streak,
+        streakLastExtendedDate: prog.streak_last_extended_date,
+        totalTimeSpentSeconds: prog.total_time_spent_seconds,
+        lastActiveAt: prog.last_active_at,
+        completedLessonsCount,
+        enrolledCoursesCount,
+        labAttemptsCount,
+      },
+    };
+  }
+
+  /**
+   * Update student profile with strict input validation and outbox audit event
+   */
+  public async updateUserProfile(userId: string, updates: { fullName?: string }) {
+    if (!updates || typeof updates.fullName !== 'string') {
+      throw new Error('Valid full name is required');
+    }
+
+    const trimmedName = updates.fullName.trim();
+    if (trimmedName.length < 2 || trimmedName.length > 100) {
+      throw new Error('Full name must be between 2 and 100 characters');
+    }
+
+    if (/<[^>]*>/.test(trimmedName)) {
+      throw new Error('Full name cannot contain HTML or script characters');
+    }
+
+    return withTransaction(async (client) => {
+      const updateRes = await client.query(
+        `UPDATE public.users 
+         SET full_name = $1, updated_at = NOW() 
+         WHERE id = $2 
+         RETURNING id, email, full_name, date_of_birth, is_minor, is_superadmin, account_status, updated_at`,
+        [trimmedName, userId]
+      );
+
+      if (updateRes.rowCount === 0) {
+        throw new Error('User not found');
+      }
+
+      const updatedUser = updateRes.rows[0];
+
+      const eventId = `evt_prof_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      await client.query(
+        `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
+         VALUES ($1, $2, $3)`,
+        [
+          eventId,
+          'user.profile_updated',
+          JSON.stringify({
+            userId,
+            fullName: updatedUser.full_name,
+            updatedAt: updatedUser.updated_at,
+          }),
+        ]
+      );
+
+      return updatedUser;
+    }, userId);
+  }
 }
 
 export const domainService = new DomainService();
