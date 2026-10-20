@@ -31,6 +31,12 @@ import {
   ConversationSvg,
   ClassroomSvg,
 } from './LabSvgVisualizers';
+import { AnimatedStepGuide } from './AnimatedStepGuide';
+import { BlockchainLabFull } from '../labs/blockchain-lab/App';
+import { CyberLabFull } from '../labs/cybersecurity/CyberLabFull';
+import AILabFull from '../labs/ai-lab/AILabFull';
+import { UniversalLab } from './lab/UniversalLab';
+import { Sparkles, Maximize2, ExternalLink } from 'lucide-react';
 
 export interface SharedLabWorkspaceProps {
   db: InMemoryDatabase;
@@ -60,6 +66,11 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [completedAttempt, setCompletedAttempt] = useState<LabAttemptRecord | null>(null);
   const [workspaceMode, setWorkspaceMode] = useState<'3-column' | 'focus' | 'zen'>('3-column');
   const [showHint, setShowHint] = useState<boolean>(true);
+
+  // Animated Step-by-Step state
+  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
+  const [completedStepIndices, setCompletedStepIndices] = useState<number[]>([]);
+  const [activeFullLab, setActiveFullLab] = useState<'none' | 'blockchain' | 'cyber' | 'ai' | 'universal'>('none');
 
   // Criteria checklist completion state
   const [checkedCriteria, setCheckedCriteria] = useState<boolean[]>(
@@ -1183,6 +1194,31 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
 
           <div style={{ height: '16px', width: '1px', backgroundColor: 'var(--border-subtle)' }} />
 
+          {/* Full Interactive Suite Trigger */}
+          <button
+            type="button"
+            onClick={() => {
+              if (lab.id.includes('blockchain') || lab.id.includes('t2') || lab.id.includes('t7')) setActiveFullLab('blockchain');
+              else if (lab.id.includes('ai') || lab.id.includes('t1')) setActiveFullLab('ai');
+              else if (lab.id.includes('defense') || lab.id.includes('sec') || lab.id.includes('t5')) setActiveFullLab('cyber');
+              else setActiveFullLab('universal');
+            }}
+            className="btn-outline"
+            style={{
+              height: '28px',
+              padding: '0 10px',
+              fontSize: '0.74rem',
+              gap: '5px',
+              borderColor: 'rgba(0, 245, 160, 0.4)',
+              color: 'var(--brand-primary)',
+              borderRadius: '6px',
+            }}
+            title="Launch full animated interactive simulation suite"
+          >
+            <Sparkles size={13} color="var(--brand-primary)" />
+            <span>Interactive Suite</span>
+          </button>
+
           {/* Save Status Indicator */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
             <Save size={13} color={saveStatus === 'SAVED' ? 'var(--success)' : 'var(--warning)'} />
@@ -1280,36 +1316,25 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             style={{
               backgroundColor: 'var(--bg-surface)',
               borderRight: '1px solid var(--border-subtle)',
-              padding: '16px',
+              padding: '18px 16px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '14px',
+              gap: '16px',
+              overflowY: 'auto',
             }}
           >
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--brand-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '4px' }}>
-                LEARNING OBJECTIVE
-              </div>
-              <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
-                {lab.learning_objective}
-              </p>
-            </div>
-
-            <div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '8px' }}>
-                STEP-BY-STEP INSTRUCTIONS
-              </div>
-              <ol style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
-                {lab.instructions.map((step, idx) => (
-                  <li key={idx}>{step}</li>
-                ))}
-              </ol>
-            </div>
-
-            <div style={{ marginTop: 'auto', paddingTop: '10px', borderTop: '1px solid var(--border-subtle)', fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <ShieldCheck size={14} color="var(--brand-primary)" />
-              <span>Deterministic Sandbox Verified</span>
-            </div>
+            <AnimatedStepGuide
+              learningObjective={lab.learning_objective}
+              instructions={lab.instructions}
+              activeStepIndex={activeStepIndex}
+              onStepChange={(idx) => setActiveStepIndex(idx)}
+              completedStepIndices={completedStepIndices}
+              onToggleCompleteStep={(idx) => {
+                setCompletedStepIndices((prev) =>
+                  prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+                );
+              }}
+            />
           </aside>
         )}
 
@@ -1453,19 +1478,30 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           {/* -------------------------------------------------------- */}
           {lab.id === 'lab-t2-blockchain-builder' && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
                 <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
                   Chained Cryptographic Blocks (SHA-256)
                 </div>
-                <button
-                  type="button"
-                  onClick={handleTamperBlock1}
-                  className="btn-danger"
-                  style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem' }}
-                >
-                  <AlertTriangle size={14} />
-                  <span>Simulate Tamper on Block 1</span>
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveFullLab('blockchain')}
+                    className="btn-outline"
+                    style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px', color: 'var(--brand-primary)', borderColor: 'rgba(0, 245, 160, 0.4)' }}
+                  >
+                    <Sparkles size={14} color="var(--brand-primary)" />
+                    <span>Open 19-Module TrustLink Suite</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleTamperBlock1}
+                    className="btn-danger"
+                    style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px' }}
+                  >
+                    <AlertTriangle size={14} />
+                    <span>Simulate Tamper on Block 1</span>
+                  </button>
+                </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -3813,6 +3849,33 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         </aside>
       )}
       </main>
+
+      {/* FULL STANDALONE INTERACTIVE LAB MODAL OVERLAYS */}
+      {activeFullLab !== 'none' && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            backgroundColor: '#070B19',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {activeFullLab === 'blockchain' && (
+            <BlockchainLabFull onClose={() => setActiveFullLab('none')} />
+          )}
+          {activeFullLab === 'cyber' && (
+            <CyberLabFull onExit={() => setActiveFullLab('none')} />
+          )}
+          {activeFullLab === 'ai' && (
+            <AILabFull onExit={() => setActiveFullLab('none')} />
+          )}
+          {activeFullLab === 'universal' && (
+            <UniversalLab simulationId={lab.id} onClose={() => setActiveFullLab('none')} />
+          )}
+        </div>
+      )}
     </div>
   );
 };
