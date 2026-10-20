@@ -228,7 +228,7 @@ export const PROF_PART_1: TopicSpecification[] = [
         summary: 'Edit a verbose 280-word workplace email to place the Bottom Line Up Front (BLUF) and prune filler corporate jargon.',
         learningObjective: 'Increase executive email readability and response rate by stating key decisions and deadlines in the first 2 sentences.',
         conceptModelled: 'Executive Writing, BLUF Principles & Flesch Readability',
-        initialState: { useBluf: false, wordCount: 280, jargonDensity: 'high' },
+        initialState: { useBluf: false, pruneJargon: false, wordCount: 280, jargonDensity: 'high' },
         controls: [
           { id: 'useBluf', label: 'Apply Bottom Line Up Front (BLUF) Format', type: 'toggle', defaultValue: false },
           { id: 'pruneJargon', label: 'Remove Filler Buzzwords ("circle back", "synergy")', type: 'toggle', defaultValue: false },
@@ -380,7 +380,7 @@ export const PROF_PART_1: TopicSpecification[] = [
         summary: 'Respond to an escalating stakeholder across 3 dialogue turns; observe a visual tension thermometer rise or fall based on your choices.',
         learningObjective: 'Apply de-escalation techniques: validating underlying frustration, lowering voice volume, and moving toward joint problem-solving.',
         conceptModelled: 'Emotional De-escalation Dynamics & Tension Thermometers',
-        initialState: { currentTurn: 1, tensionScore: 65 },
+        initialState: { turn1Choice: 'calm', currentTurn: 1, tensionScore: 65 },
         controls: [
           { id: 'turn1Choice', label: 'Turn 1 Response to Angry Partner', type: 'select', options: [
             { label: 'Calmly Acknowledge: "I hear your frustration, let\'s look at what happened"', value: 'calm' },

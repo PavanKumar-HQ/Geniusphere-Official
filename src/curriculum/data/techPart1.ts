@@ -232,7 +232,7 @@ export const TECH_PART_1: TopicSpecification[] = [
         ],
         algorithmDescription: 'Iterative parameter update rule: x_{t+1} = x_t - α * (2 * x_t) for loss function f(x) = x^2.',
         formula: 'x_{t+1} = x_t - \\alpha \\nabla f(x_t)',
-        reflectionQuestion: 'What happens when the learning rate exceeds 1.0 in a quadratic bowl? Explain the observed oscillation.',
+        reflectionQuestion: 'What happens when the learning rate exceeds 1.0 in a quadratic bowl, and why does oscillation occur?',
         completionCriteria: ['Step parameters until loss f(x) < 0.05', 'Test learning rate > 1.0 to witness parameter overshoot'],
         modelLimitations: '1D quadratic convex loss function; real deep learning involves non-convex high-dimensional landscapes.',
       },

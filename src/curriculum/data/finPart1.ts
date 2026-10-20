@@ -204,7 +204,7 @@ export const FIN_PART_1: TopicSpecification[] = [
         summary: 'Input monthly take-home pay to allocate Needs (50%), Wants (30%), and Savings (20%) with dynamic interactive visual pie chart.',
         learningObjective: 'Structure personal cashflow to ensure living expenses never exceed 50% of after-tax income.',
         conceptModelled: '50/30/20 Budgeting Rule & Discretionary Cashflow',
-        initialState: { monthlyIncome: 4000, needsAmount: 2000, wantsAmount: 1200, savingsAmount: 800 },
+        initialState: { monthlyIncome: 4000, needsPercent: 50, needsAmount: 2000, wantsAmount: 1200, savingsAmount: 800 },
         controls: [
           { id: 'monthlyIncome', label: 'Net Monthly Income ($)', type: 'slider', min: 2000, max: 12000, step: 250, defaultValue: 4000 },
           { id: 'needsPercent', label: 'Needs Allocation (%)', type: 'slider', min: 30, max: 70, step: 5, defaultValue: 50 },

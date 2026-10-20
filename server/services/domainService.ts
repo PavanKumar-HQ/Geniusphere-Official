@@ -98,7 +98,14 @@ export class DomainService {
         throw new Error('Course not found');
       }
 
-      // 2. Insert or update lesson completion
+      // 2. Check if lesson was already completed previously to guarantee idempotency
+      const existingComp = await client.query(
+        `SELECT id, score FROM public.lesson_completions WHERE user_id = $1 AND course_id = $2 AND lesson_id = $3`,
+        [userId, courseId, lessonId]
+      );
+      const isFirstCompletion = (existingComp.rowCount === 0);
+
+      // Insert or update lesson completion
       const compRes = await client.query(
         `INSERT INTO public.lesson_completions (user_id, course_id, lesson_id, score, completed_at)
          VALUES ($1, $2, $3, $4, NOW())
@@ -109,9 +116,10 @@ export class DomainService {
       );
 
       // 3. Mathematical streak calculation & XP attribution
+      // XP is awarded ONLY on first completion to prevent duplicate rewards from retries
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
-      const xpReward = 50;
+      const xpReward = isFirstCompletion ? 50 : 0;
 
       const progressRes = await client.query(
         `SELECT * FROM public.user_progress WHERE user_id = $1 FOR UPDATE`,
@@ -125,7 +133,7 @@ export class DomainService {
       if (progressRes.rowCount && progressRes.rowCount > 0) {
         const prog = progressRes.rows[0];
         newXp = prog.xp + xpReward;
-        totalTime = prog.total_time_spent_seconds + 60;
+        totalTime = isFirstCompletion ? (prog.total_time_spent_seconds + 60) : prog.total_time_spent_seconds;
 
         if (prog.streak_last_extended_date) {
           currentStreak = this.calculateStreak(prog.streak_last_extended_date, todayStr, prog.current_streak);
