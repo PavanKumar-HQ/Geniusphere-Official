@@ -95,8 +95,13 @@ export async function createServer() {
   });
 
   // 5. Course Catalog & Lifecycle Endpoints
-  fastify.get('/api/courses', async () => {
-    return domainService.getCourses();
+  fastify.get('/api/courses', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    try {
+      const isSuperadmin = request.user?.isSuperadmin ?? false;
+      return await domainService.getCourses(isSuperadmin);
+    } catch (err) {
+      return reply.status(503).send({ error: 'Service Unavailable: Authoritative database query failed' });
+    }
   });
 
   fastify.get('/api/courses/:identifier', async (request, reply) => {

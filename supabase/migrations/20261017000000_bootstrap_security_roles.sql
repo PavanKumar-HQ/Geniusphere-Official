@@ -12,9 +12,10 @@ BEGIN
   IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'service_role') THEN
     CREATE ROLE service_role;
   END IF;
-  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'anon') THEN
-    CREATE ROLE anon;
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'geniusphere_app') THEN
+    CREATE ROLE geniusphere_app WITH LOGIN PASSWORD 'geniusphere_dev_password';
   END IF;
+  GRANT authenticated TO geniusphere_app;
 END
 $$;
 

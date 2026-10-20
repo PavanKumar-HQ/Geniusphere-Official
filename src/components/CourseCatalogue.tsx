@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { MascotSphere } from './MascotSphere';
 import { Course } from '../types';
+import { apiClient } from '../services/apiClient';
 import {
   BookOpen,
   ArrowRight,
@@ -18,6 +19,8 @@ import {
   Grid,
   Layers,
   Filter,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 
 interface CourseCatalogueProps {
@@ -42,14 +45,72 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grid');
 
+  const [apiCourses, setApiCourses] = useState<Course[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const fetchAuthoritativeCourses = () => {
+    setIsLoading(true);
+    setApiError(null);
+    apiClient
+      .getCourses()
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const canonicalMap = new Map(db.getCanonicalCourses().map((c) => [c.slug, c]));
+          const enriched: Course[] = data.map((dbCourse: any) => {
+            const canonical = canonicalMap.get(dbCourse.slug);
+            return {
+              ...(canonical || {}),
+              id: dbCourse.id,
+              title: dbCourse.title,
+              slug: dbCourse.slug,
+              domain: dbCourse.domain,
+              subject: canonical?.subject || dbCourse.domain,
+              level: canonical?.level || 'beginner',
+              summary: canonical?.summary || canonical?.description || `Authoritative ${dbCourse.domain} course`,
+              description: canonical?.description || `Authoritative ${dbCourse.domain} course`,
+              learning_objectives: canonical?.learning_objectives || [],
+              prerequisites: canonical?.prerequisites || [],
+              duration_hours: canonical?.duration_hours || 4,
+              is_published: dbCourse.is_published ?? true,
+              availability_status: canonical?.availability_status || 'available',
+              modules: canonical?.modules || [],
+              created_at: dbCourse.created_at || new Date().toISOString(),
+            } as Course;
+          });
+          setApiCourses(enriched);
+        } else {
+          setApiCourses([]);
+        }
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setApiError(err.message || 'Unable to connect to authoritative PostgreSQL database');
+        setApiCourses(null); // CRITICAL: NEVER fabricate course cards when request fails!
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchAuthoritativeCourses();
+  }, [db]);
+
   const streams = db.getCanonicalStreams();
-  const allCanonicalCourses = db.getCanonicalCourses();
 
   // Filtered courses for search or filter selection
-  const filteredCourses = db.getCanonicalCourses({
-    stream: selectedStream === 'all' ? undefined : selectedStream,
-    search: search.trim() ? search : undefined,
-    level: selectedLevel === 'all' ? undefined : selectedLevel,
+  const rawCourses = apiCourses !== null ? apiCourses : [];
+  const allCanonicalCourses: Course[] = rawCourses;
+  const filteredCourses = rawCourses.filter((course) => {
+    if (selectedStream !== 'all' && course.domain !== selectedStream) return false;
+    if (selectedLevel !== 'all' && course.level !== selectedLevel) return false;
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      return (
+        course.title.toLowerCase().includes(q) ||
+        (course.description && course.description.toLowerCase().includes(q))
+      );
+    }
+    return true;
   });
 
   const getStreamIcon = (streamId: string, size: number = 18) => {
@@ -681,9 +742,103 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       </div>
 
       {/* ================================================================ */}
-      {/* ZERO RESULTS EMPTY STATE                                         */}
+      {/* AUTHORITATIVE DATA STATES (LOADING, ERROR, EMPTY, RESULTS)       */}
       {/* ================================================================ */}
-      {filteredCourses.length === 0 ? (
+      {isLoading ? (
+        <div
+          role="status"
+          aria-live="polite"
+          data-testid="courses-loading-state"
+          style={{
+            backgroundColor: 'var(--bg-surface)',
+            borderRadius: '24px',
+            padding: '64px 24px',
+            textAlign: 'center',
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '16px',
+            margin: '20px 0',
+          }}
+        >
+          <RefreshCw size={36} color="var(--brand-primary)" style={{ animation: 'spin 1.5s linear infinite' }} />
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            Loading Authoritative Courses from PostgreSQL...
+          </h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
+            Establishing authenticated connection and retrieving canonical curriculum records.
+          </p>
+        </div>
+      ) : apiError ? (
+        <div
+          role="alert"
+          data-testid="courses-error-state"
+          style={{
+            backgroundColor: 'rgba(239, 68, 68, 0.05)',
+            borderRadius: '24px',
+            padding: '52px 24px',
+            textAlign: 'center',
+            border: '1.5px solid rgba(239, 68, 68, 0.25)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '14px',
+            margin: '20px 0',
+          }}
+        >
+          <AlertCircle size={44} color="#EF4444" />
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#B91C1C', margin: 0 }}>
+            Authoritative Database Connection Unavailable
+          </h3>
+          <p style={{ color: '#7F1D1D', fontSize: '0.94rem', maxWidth: '480px', lineHeight: 1.5, margin: 0 }}>
+            {apiError}
+          </p>
+          <button
+            type="button"
+            onClick={fetchAuthoritativeCourses}
+            style={{
+              backgroundColor: '#EF4444',
+              color: '#FFFFFF',
+              fontWeight: 700,
+              border: 'none',
+              padding: '10px 24px',
+              borderRadius: '100px',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginTop: '8px',
+            }}
+          >
+            <RefreshCw size={16} />
+            <span>Retry Connection</span>
+          </button>
+        </div>
+      ) : rawCourses.length === 0 ? (
+        <div
+          data-testid="courses-empty-state"
+          style={{
+            backgroundColor: 'var(--bg-surface)',
+            borderRadius: '24px',
+            padding: '64px 24px',
+            textAlign: 'center',
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            margin: '20px 0',
+          }}
+        >
+          <MascotSphere pose="idea" size={130} />
+          <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: '20px 0 8px' }}>
+            No published courses found
+          </h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', margin: 0 }}>
+            The authoritative database currently contains zero published courses.
+          </p>
+        </div>
+      ) : filteredCourses.length === 0 ? (
         <div
           style={{
             backgroundColor: 'var(--bg-surface)',
