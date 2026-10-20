@@ -28,6 +28,7 @@ export type RealtimeEventType =
   | 'NOTIFICATION_DISPATCHED'
   | 'NOTIFICATION_READ'
   | 'NOTIFICATION_CLEARED'
+  | 'NOTIFICATION_PREFERENCES_UPDATED'
   | 'XP_AWARDED'
   | 'CERTIFICATE_ISSUED'
   // Labs & Telemetry
@@ -91,11 +92,38 @@ export interface AppNotification {
   priority: NotificationPriority;
   category: NotificationCategory;
   is_read: boolean;
+  read_at?: string;
+  dedup_key?: string;
   action_view?: string;
   action_slug?: string;
   action_label?: string;
   created_at: string;
   metadata?: Record<string, any>;
+}
+
+export interface NotificationPreferences {
+  user_id: string;
+  push_enabled: boolean;
+  email_enabled: boolean;
+  in_app_enabled: boolean;
+  assignment_reminders: boolean;
+  grade_alerts: boolean;
+  streak_reminders: boolean;
+  quiet_hours_enabled: boolean;
+  updated_at: string;
+}
+
+export interface PushSubscriptionRecord {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+  device_name?: string;
+  created_at: string;
+  last_used_at: string;
 }
 
 export interface RealtimeTelemetry {

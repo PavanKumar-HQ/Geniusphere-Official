@@ -1,0 +1,19 @@
+{
+  "name": "Geniusphere — Practical Technology, Security & Skills Platform",
+  "short_name": "Geniusphere",
+  "description": "Interactive practical skills, cybersecurity, and financial technology learning labs with real-time tracking.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF4",
+  "theme_color": "#43A85B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/sphere-mascot.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity", "utilities"]
+}

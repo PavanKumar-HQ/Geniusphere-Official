@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Shield,
   FileText,
-  Sparkles,
   ArrowRight,
   Bot,
   CreditCard,
@@ -180,7 +179,7 @@ export const PilotApplicationModal: React.FC<PilotApplicationModalProps> = ({
               color: 'var(--brand-primary)',
             }}
           >
-            <Sparkles size={16} style={{ flexShrink: 0 }} />
+            <CheckCircle2 size={16} style={{ flexShrink: 0 }} />
             <span>
               <strong>Pilot Guarantee:</strong> Zero installation required. Runs inside any modern browser on school desktop labs or student laptops.
             </span>

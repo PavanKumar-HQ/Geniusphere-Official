@@ -1,6 +1,6 @@
 // ====================================================================
-// Geniusphere 2.0 — Real-Time Notification Center & Toast Alert Stack
-// Live unread counter, priority categorization, interactive toast alerts
+// Geniusphere 2.0 — Real-Time Notification Center, Preferences & Toast Stack
+// Persistent records, cross-tab sync, category tabs, and Web Push controls
 // ====================================================================
 
 import React, { useEffect, useState } from 'react';
@@ -15,9 +15,15 @@ import {
   ShieldCheck,
   X,
   ExternalLink,
+  Settings,
+  Wifi,
+  Radio,
+  Sliders,
+  Check,
 } from 'lucide-react';
-import { AppNotification } from '../backend/types';
+import { AppNotification, NotificationCategory, NotificationPreferences } from '../backend/types';
 import { backendEngine } from '../backend/RealtimeOrchestrator';
+import { webPushService } from '../services/WebPushService';
 
 interface RealtimeNotificationCenterProps {
   userId: string;
@@ -33,15 +39,22 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
   onNavigate,
 }) => {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [activeTab, setActiveTab] = useState<'notifications' | 'preferences'>('notifications');
+  const [filter, setFilter] = useState<'all' | 'unread' | 'assignment' | 'grade' | 'system'>('all');
+  const [preferences, setPreferences] = useState<NotificationPreferences>(
+    backendEngine.notifications.getUserPreferences(userId)
+  );
+  const [pushStatus, setPushStatus] = useState<string>(webPushService.getPermissionStatus());
+  const [isRequestingPush, setIsRequestingPush] = useState(false);
 
   const refreshList = () => {
     setNotifications([...backendEngine.notifications.getUserNotifications(userId)]);
+    setPreferences(backendEngine.notifications.getUserPreferences(userId));
+    setPushStatus(webPushService.getPermissionStatus());
   };
 
   useEffect(() => {
     refreshList();
-    // Subscribe to real-time notification events for this user
     const unsubscribe = backendEngine.bus.subscribe(`user:${userId}`, () => {
       refreshList();
     });
@@ -63,8 +76,40 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
     refreshList();
   };
 
+  const handleTogglePush = async () => {
+    if (preferences.push_enabled) {
+      await webPushService.unsubscribe(userId);
+      const updated = backendEngine.notifications.updateUserPreferences(userId, { push_enabled: false });
+      setPreferences(updated);
+      setPushStatus(webPushService.getPermissionStatus());
+    } else {
+      setIsRequestingPush(true);
+      const res = await webPushService.requestPermissionAndSubscribe(userId);
+      setIsRequestingPush(false);
+      if (res.success) {
+        const updated = backendEngine.notifications.updateUserPreferences(userId, { push_enabled: true });
+        setPreferences(updated);
+      }
+      setPushStatus(webPushService.getPermissionStatus());
+    }
+  };
+
+  const handleTogglePref = (key: keyof NotificationPreferences) => {
+    const updated = backendEngine.notifications.updateUserPreferences(userId, {
+      [key]: !preferences[key],
+    });
+    setPreferences(updated);
+  };
+
   const unreadCount = notifications.filter((n) => !n.is_read).length;
-  const filteredNotifications = filter === 'unread' ? notifications.filter((n) => !n.is_read) : notifications;
+
+  const filteredNotifications = notifications.filter((n) => {
+    if (filter === 'unread') return !n.is_read;
+    if (filter === 'assignment') return n.category === 'assignment';
+    if (filter === 'grade') return n.category === 'grade';
+    if (filter === 'system') return n.category === 'system' || n.category === 'security';
+    return true;
+  });
 
   if (!isOpen) return null;
 
@@ -86,13 +131,43 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '1px 6px', borderRadius: '4px', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: 'var(--error, #EF4444)', textTransform: 'uppercase' }}>Urgent</span>;
+        return (
+          <span
+            style={{
+              fontSize: '0.62rem',
+              fontWeight: 800,
+              padding: '1px 6px',
+              borderRadius: '4px',
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              color: '#EF4444',
+              textTransform: 'uppercase',
+            }}
+          >
+            Urgent
+          </span>
+        );
       case 'high':
-        return <span style={{ fontSize: '0.65rem', fontWeight: 800, padding: '1px 6px', borderRadius: '4px', backgroundColor: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-amber, #F59E0B)', textTransform: 'uppercase' }}>High</span>;
+        return (
+          <span
+            style={{
+              fontSize: '0.62rem',
+              fontWeight: 800,
+              padding: '1px 6px',
+              borderRadius: '4px',
+              backgroundColor: 'rgba(245, 158, 11, 0.15)',
+              color: '#D97706',
+              textTransform: 'uppercase',
+            }}
+          >
+            High
+          </span>
+        );
       default:
         return null;
     }
   };
+
+  const telemetry = backendEngine.getTelemetry();
 
   return (
     <div
@@ -100,7 +175,7 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
         position: 'absolute',
         top: '48px',
         right: 0,
-        width: '360px',
+        width: '390px',
         maxWidth: '92vw',
         backgroundColor: 'var(--bg-surface)',
         borderRadius: '16px',
@@ -111,12 +186,12 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      {/* Header */}
+      {/* Top Header Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Bell size={18} style={{ color: 'var(--brand-primary)' }} />
           <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
-            Live Notifications
+            Notifications
           </span>
           {unreadCount > 0 && (
             <span
@@ -134,56 +209,54 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
           )}
         </div>
 
+        {/* Live Status indicator & Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <button
-            type="button"
-            onClick={handleMarkAllRead}
+          <div
+            title={`Real-Time Bus: ${telemetry.status} (${telemetry.rtt_ms}ms)`}
             style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '0.72rem',
-              color: 'var(--brand-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '0.68rem',
               fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '3px',
+              color: telemetry.status === 'connected' ? 'var(--brand-primary)' : 'var(--text-muted)',
               padding: '2px 6px',
-              borderRadius: '4px',
+              borderRadius: '100px',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              border: '1px solid var(--border-subtle)',
             }}
-            title="Mark all as read"
           >
-            <CheckCheck size={13} />
-            <span>Read All</span>
-          </button>
+            <Radio size={11} className={telemetry.status === 'connected' ? 'animate-pulse' : ''} />
+            <span>{telemetry.status === 'connected' ? 'Live' : 'Offline'}</span>
+          </div>
+
           <button
             type="button"
-            onClick={handleClearAll}
+            onClick={() => setActiveTab(activeTab === 'notifications' ? 'preferences' : 'notifications')}
             style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '0.72rem',
-              color: 'var(--text-muted)',
+              background: activeTab === 'preferences' ? 'var(--bg-surface-subdued)' : 'none',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '6px',
+              padding: '4px 6px',
+              color: activeTab === 'preferences' ? 'var(--brand-primary)' : 'var(--text-secondary)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              padding: '2px',
             }}
-            title="Clear all notifications"
+            title="Notification Preferences"
           >
-            <Trash2 size={13} />
+            <Sliders size={13} />
           </button>
+
           <button
             type="button"
             onClick={onClose}
             style={{
               background: 'none',
               border: 'none',
-              fontSize: '0.72rem',
               color: 'var(--text-muted)',
               cursor: 'pointer',
               padding: '2px',
-              marginLeft: '4px',
             }}
           >
             <X size={16} />
@@ -191,153 +264,322 @@ export const RealtimeNotificationCenter: React.FC<RealtimeNotificationCenterProp
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '6px',
-          marginBottom: '12px',
-          borderBottom: '1px solid var(--border-subtle)',
-          paddingBottom: '8px',
-        }}
-      >
-        <button
-          type="button"
-          onClick={() => setFilter('all')}
-          style={{
-            background: filter === 'all' ? 'var(--bg-surface-subdued)' : 'none',
-            border: 'none',
-            borderRadius: '6px',
-            padding: '4px 10px',
-            fontSize: '0.75rem',
-            fontWeight: filter === 'all' ? 700 : 500,
-            color: filter === 'all' ? 'var(--text-primary)' : 'var(--text-muted)',
-            cursor: 'pointer',
-          }}
-        >
-          All ({notifications.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilter('unread')}
-          style={{
-            background: filter === 'unread' ? 'var(--bg-surface-subdued)' : 'none',
-            border: 'none',
-            borderRadius: '6px',
-            padding: '4px 10px',
-            fontSize: '0.75rem',
-            fontWeight: filter === 'unread' ? 700 : 500,
-            color: filter === 'unread' ? 'var(--text-primary)' : 'var(--text-muted)',
-            cursor: 'pointer',
-          }}
-        >
-          Unread ({unreadCount})
-        </button>
-      </div>
+      {activeTab === 'preferences' ? (
+        /* Preferences Drawer */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '6px 0' }}>
+          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+            Control multi-channel delivery, operating system push subscriptions, and student quiet hours.
+          </div>
 
-      {/* List */}
-      <div
-        style={{
-          maxHeight: '340px',
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        {filteredNotifications.length === 0 ? (
+          {/* Web Push Toggle */}
           <div
             style={{
-              textAlign: 'center',
-              padding: '28px 16px',
-              color: 'var(--text-muted)',
-              fontSize: '0.8rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '10px 12px',
+              borderRadius: '10px',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              border: '1px solid var(--border-subtle)',
             }}
           >
-            No notifications in this view.
-          </div>
-        ) : (
-          filteredNotifications.map((n) => (
-            <div
-              key={n.id}
-              onClick={() => handleMarkAsRead(n.id)}
-              style={{
-                padding: '10px 12px',
-                borderRadius: '10px',
-                backgroundColor: n.is_read ? 'var(--bg-surface)' : 'var(--bg-surface-subdued)',
-                border: n.is_read ? '1px solid var(--border-subtle)' : '1px solid var(--brand-primary)',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-                position: 'relative',
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  {getCategoryIcon(n.category)}
-                  <span style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
-                    {n.title}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  {getPriorityBadge(n.priority)}
-                  {!n.is_read && (
-                    <span
-                      style={{
-                        width: '7px',
-                        height: '7px',
-                        borderRadius: '50%',
-                        backgroundColor: 'var(--brand-primary)',
-                      }}
-                    />
-                  )}
-                </div>
+            <div>
+              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Operating System Push
               </div>
-
-              <div style={{ color: 'var(--text-secondary)', fontSize: '0.76rem', marginTop: '4px', lineHeight: 1.4 }}>
-                {n.message}
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: '8px',
-                  fontSize: '0.68rem',
-                  color: 'var(--text-muted)',
-                }}
-              >
-                <span>{new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                {n.action_view && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClose();
-                      onNavigate(n.action_view!, n.action_slug);
-                    }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--brand-primary)',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '3px',
-                      fontSize: '0.7rem',
-                      padding: 0,
-                    }}
-                  >
-                    <span>{n.action_label || 'View'}</span>
-                    <ExternalLink size={10} />
-                  </button>
-                )}
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                {pushStatus === 'granted'
+                  ? 'Active browser push subscription'
+                  : pushStatus === 'denied'
+                  ? 'Permission blocked in browser settings'
+                  : 'Receive background notifications even when tab is closed'}
               </div>
             </div>
-          ))
-        )}
-      </div>
+            <button
+              type="button"
+              onClick={handleTogglePush}
+              disabled={isRequestingPush}
+              style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                border: 'none',
+                backgroundColor: preferences.push_enabled ? 'var(--brand-primary)' : 'var(--border-subtle)',
+                color: preferences.push_enabled ? '#FFFFFF' : 'var(--text-primary)',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              {isRequestingPush ? 'Requesting...' : preferences.push_enabled ? 'Enabled' : 'Enable'}
+            </button>
+          </div>
+
+          {/* In-App Alerts */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 4px' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>In-App Toast Alerts</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Floating alerts for high-priority events</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={preferences.in_app_enabled}
+              onChange={() => handleTogglePref('in_app_enabled')}
+              style={{ cursor: 'pointer', accentColor: 'var(--brand-primary)' }}
+            />
+          </div>
+
+          {/* Assignment Reminders */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 4px' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Assignment Reminders</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>24h deadline warnings and new lab posts</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={preferences.assignment_reminders}
+              onChange={() => handleTogglePref('assignment_reminders')}
+              style={{ cursor: 'pointer', accentColor: 'var(--brand-primary)' }}
+            />
+          </div>
+
+          {/* Grade Alerts */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 4px' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Grade & Feedback Alerts</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Instant alert when teacher posts evaluation</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={preferences.grade_alerts}
+              onChange={() => handleTogglePref('grade_alerts')}
+              style={{ cursor: 'pointer', accentColor: 'var(--brand-primary)' }}
+            />
+          </div>
+
+          {/* Quiet Hours */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 4px' }}>
+            <div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)' }}>Quiet Hours (8 PM - 8 AM)</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>DPDP minor compliance: suppress audible alerts at night</div>
+            </div>
+            <input
+              type="checkbox"
+              checked={preferences.quiet_hours_enabled}
+              onChange={() => handleTogglePref('quiet_hours_enabled')}
+              style={{ cursor: 'pointer', accentColor: 'var(--brand-primary)' }}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('notifications')}
+            style={{
+              marginTop: '8px',
+              padding: '6px',
+              borderRadius: '8px',
+              border: '1px solid var(--border-subtle)',
+              backgroundColor: 'var(--bg-surface)',
+              color: 'var(--text-primary)',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            ← Back to Notifications
+          </button>
+        </div>
+      ) : (
+        /* Notifications List View */
+        <>
+          {/* Quick Actions & Category Filter Pills */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '6px',
+              marginBottom: '8px',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+              {(
+                [
+                  { id: 'all', label: `All (${notifications.length})` },
+                  { id: 'unread', label: `Unread (${unreadCount})` },
+                  { id: 'assignment', label: 'Tasks' },
+                  { id: 'grade', label: 'Grades' },
+                  { id: 'system', label: 'System' },
+                ] as const
+              ).map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setFilter(tab.id)}
+                  style={{
+                    background: filter === tab.id ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                    border: 'none',
+                    borderRadius: '100px',
+                    padding: '3px 8px',
+                    fontSize: '0.7rem',
+                    fontWeight: filter === tab.id ? 800 : 600,
+                    color: filter === tab.id ? '#FFFFFF' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.1s ease',
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <button
+                type="button"
+                onClick={handleMarkAllRead}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '0.7rem',
+                  color: 'var(--brand-primary)',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  padding: '2px 4px',
+                }}
+                title="Mark all as read"
+              >
+                <CheckCheck size={12} />
+                <span>Read All</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleClearAll}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '0.7rem',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '2px',
+                }}
+                title="Clear all"
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
+          </div>
+
+          {/* List items */}
+          <div
+            style={{
+              maxHeight: '340px',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              paddingRight: '2px',
+            }}
+          >
+            {filteredNotifications.length === 0 ? (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '32px 16px',
+                  color: 'var(--text-muted)',
+                  fontSize: '0.8rem',
+                }}
+              >
+                No notifications in this view.
+              </div>
+            ) : (
+              filteredNotifications.map((n) => (
+                <div
+                  key={n.id}
+                  onClick={() => handleMarkAsRead(n.id)}
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: '10px',
+                    backgroundColor: n.is_read ? 'var(--bg-surface)' : 'var(--bg-surface-subdued)',
+                    border: n.is_read ? '1px solid var(--border-subtle)' : '1.5px solid var(--brand-primary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                    position: 'relative',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {getCategoryIcon(n.category)}
+                      <span style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
+                        {n.title}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {getPriorityBadge(n.priority)}
+                      {!n.is_read && (
+                        <span
+                          style={{
+                            width: '7px',
+                            height: '7px',
+                            borderRadius: '50%',
+                            backgroundColor: 'var(--brand-primary)',
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ color: 'var(--text-secondary)', fontSize: '0.76rem', marginTop: '4px', lineHeight: 1.4 }}>
+                    {n.message}
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginTop: '8px',
+                      fontSize: '0.68rem',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
+                    <span>{new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    {n.action_view && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onClose();
+                          onNavigate(n.action_view!, n.action_slug);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: 'var(--brand-primary)',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                          fontSize: '0.7rem',
+                          padding: 0,
+                        }}
+                      >
+                        <span>{n.action_label || 'View in Workspace'}</span>
+                        <ExternalLink size={10} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

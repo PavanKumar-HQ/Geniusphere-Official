@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   X,
   Calendar,
-  Sparkles,
 } from 'lucide-react';
 import { UserProgressState } from '../types';
 
@@ -140,8 +139,9 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
               </span>
             </div>
 
-            <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2 }}>
-              {streakDays}-Day Active Streak! 🔥
+            <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>{streakDays}-Day Active Streak!</span>
+              <Flame size={24} color="#EA580C" className="animate-flame" />
             </h2>
             <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
               Way to go, {userName}! You have practiced every day this week.
@@ -319,7 +319,7 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
             gap: '8px',
           }}
         >
-          <Sparkles size={16} />
+          <Zap size={16} />
           <span>Keep the Momentum Going</span>
         </button>
       </div>

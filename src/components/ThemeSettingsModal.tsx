@@ -6,7 +6,6 @@ import {
   Moon,
   Sun,
   Laptop,
-  Sparkles,
 } from 'lucide-react';
 import {
   ThemeId,
@@ -346,7 +345,7 @@ export const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Sparkles size={14} color="var(--brand-primary)" />
+            <Palette size={14} color="var(--brand-primary)" />
             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
               Themes are applied instantly and saved across browser sessions.
             </span>

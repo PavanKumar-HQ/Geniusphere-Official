@@ -20,6 +20,8 @@ import {
   BookOpen,
   RotateCcw,
   FlaskConical,
+  Code2,
+  Lightbulb,
 } from 'lucide-react';
 
 import { SupportedLanguage } from '../utils/codeSandboxRunner';
@@ -427,7 +429,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
       }
       backendEngine.notifications.dispatch(
         currentUserId,
-        `🎓 Certificate Unlocked: ${course.title}`,
+        `Certificate Unlocked: ${course.title}`,
         `Congratulations! You finished all 10 modules with 100% completion and unlocked your verified certificate.`,
         'urgent',
         'certificate',
@@ -956,13 +958,13 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                       {(
                         [
-                          { id: 'python', label: 'Python', icon: '🐍' },
-                          { id: 'javascript', label: 'JavaScript', icon: '⚡' },
-                          { id: 'typescript', label: 'TypeScript', icon: '🔷' },
-                          { id: 'cpp', label: 'C++', icon: '⚙️' },
-                          { id: 'java', label: 'Java', icon: '☕' },
-                          { id: 'c', label: 'C', icon: '🔧' },
-                          { id: 'sql', label: 'SQL', icon: '🗄️' },
+                          { id: 'python', label: 'Python' },
+                          { id: 'javascript', label: 'JavaScript' },
+                          { id: 'typescript', label: 'TypeScript' },
+                          { id: 'cpp', label: 'C++' },
+                          { id: 'java', label: 'Java' },
+                          { id: 'c', label: 'C' },
+                          { id: 'sql', label: 'SQL' },
                         ] as const
                       ).map((lang) => (
                         <button
@@ -984,7 +986,6 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                             transition: 'all 0.15s ease',
                           }}
                         >
-                          <span>{lang.icon}</span>
                           <span>{lang.label}</span>
                         </button>
                       ))}
@@ -1005,8 +1006,9 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                        <span style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
-                          💻 {matchedConcept.title} Implementation in{' '}
+                        <span style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--brand-primary)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <Code2 size={15} />
+                          <span>{matchedConcept.title} Implementation in</span>
                           <span style={{ textTransform: 'capitalize' }}>{electedLanguage}</span>
                         </span>
                         <div style={{ display: 'flex', gap: '8px' }}>
@@ -1083,7 +1085,10 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                               border: '1px solid var(--border-subtle)',
                             }}
                           >
-                            💡 Pro Tip: {matchedConcept.languages[electedLanguage].proTip}
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <Lightbulb size={13} color="var(--brand-primary)" />
+                              <span>Pro Tip: {matchedConcept.languages[electedLanguage].proTip}</span>
+                            </span>
                           </span>
                         )}
                       </div>
@@ -1299,13 +1304,13 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                     {(
                       [
-                        { id: 'python', label: 'Python', icon: '🐍' },
-                        { id: 'javascript', label: 'JS', icon: '⚡' },
-                        { id: 'typescript', label: 'TS', icon: '🔷' },
-                        { id: 'cpp', label: 'C++', icon: '⚙️' },
-                        { id: 'java', label: 'Java', icon: '☕' },
-                        { id: 'c', label: 'C', icon: '🔧' },
-                        { id: 'sql', label: 'SQL', icon: '🗄️' },
+                        { id: 'python', label: 'Python' },
+                        { id: 'javascript', label: 'JS' },
+                        { id: 'typescript', label: 'TS' },
+                        { id: 'cpp', label: 'C++' },
+                        { id: 'java', label: 'Java' },
+                        { id: 'c', label: 'C' },
+                        { id: 'sql', label: 'SQL' },
                       ] as const
                     ).map((lang) => (
                       <button
@@ -1326,7 +1331,6 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                           gap: '3px',
                         }}
                       >
-                        <span>{lang.icon}</span>
                         <span>{lang.label}</span>
                       </button>
                     ))}

@@ -1,91 +1,94 @@
 # Geniusphere — Project Readiness Status (`READY.md`)
 
-*Document Version:* 10.0.0  
-*Last Updated:* 2026-10-18  
-*Phase:* **GENIUSPHERE MASTER ENGINEERING SPECIFICATION — BOTANICAL LIGHT ARCHITECTURE & CIE @ PES PILOT READINESS**  
-*Operating Standard:* Production-Grade Engineering, Zero Fake Data, Evidence-Based Verification  
+*Document Version:* 11.0.0  
+*Last Updated:* 2026-10-20  
+*Phase:* **GENIUSPHERE REAL-TIME SOFTWARE, APP EXPERIENCE AND ENGAGEMENT ENGINEERING SPECIFICATION**  
+*Operating Standard:* Production-Grade Engineering, Server-Authoritative Events, Zero Fabricated Data, Evidence-Based Verification  
 *Repository Remote:* [https://github.com/PavanKumar-HQ/Geniusphere-Official](https://github.com/PavanKumar-HQ/Geniusphere-Official)  
 *Author & Committer:* `Pavan Kumar S <sumapavan1231@gmail.com>`  
-*Architectural Specification:* **Geniusphere (`geniusphere.tech`) Master Engineering Specification for CIE @ PES University**  
-*Strategy Audit Report:* [REPORTS/2026-10-17_STRATEGY_V1_AUDIT_AND_IMPLEMENTATION_PLAN.md](file:///Users/pavankumars/Downloads/geniuspheregpt/REPORTS/2026-10-17_STRATEGY_V1_AUDIT_AND_IMPLEMENTATION_PLAN.md)  
-*Authoritative Blueprint:* [docs/GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md](file:///Users/pavankumars/Downloads/geniuspheregpt/docs/GENIUSPHERE_2_0_FORENSIC_AUDIT_AND_BLUEPRINT.md)  
+*Architectural Decision Record:* [docs/ADR-007-REALTIME-SOFTWARE-AND-ENGAGEMENT-SPEC.md](file:///Users/pavankumars/Downloads/geniuspheregpt/docs/ADR-007-REALTIME-SOFTWARE-AND-ENGAGEMENT-SPEC.md)  
 *Master Phase 0 Audit:* [REPORTS/2026-10-18_PHASE_0_MASTER_AUDIT_AND_CONSTITUTIONAL_BLUEPRINT.md](file:///Users/pavankumars/Downloads/geniuspheregpt/REPORTS/2026-10-18_PHASE_0_MASTER_AUDIT_AND_CONSTITUTIONAL_BLUEPRINT.md)  
-*Master Design System Reference:* [media_1792296386206.jpg](file:///Users/pavankumars/.gemini/antigravity-ide/brain/fb22fc47-5893-45e2-adbe-cb024df559f5/.user_uploaded/media_1792296386206.jpg), [media_1792296532547.jpg](file:///Users/pavankumars/.gemini/antigravity-ide/brain/fb22fc47-5893-45e2-adbe-cb024df559f5/.user_uploaded/media_1792296532547.jpg)  
 
 ---
 
-## 1. Executive Summary & Verification Evidence
+## 1. Executive Summary & Specification Completion
 
-In strict accordance with the **Master Engineering & Architectural Prompt for Geniusphere (`geniusphere.tech`)** designed for technical presentation and pilot evaluation at **CIE (Centre for Innovation & Entrepreneurship @ PES University)**:
+In strict accordance with the **Geniusphere Real-Time Software, App Experience and Engagement Engineering Specification**:
 
-1. **Botanical Light-Theme Color Palette (Strictly Enforced):**
-   - **Main Background (Warm Ivory):** `#FAFAF4`
-   - **Secondary Surfaces (Soft Sage):** `#E5F0DF`
-   - **Primary Brand & Buttons (Fresh Green):** `#43A85B`
-   - **Highlights & Actions (Lime):** `#D9F477` (paired with `#26352A` Charcoal text for WCAG AAA contrast)
-   - **Headings, Body Copy & Hairline Borders (Charcoal):** `#26352A` (hairline borders: `rgba(38, 53, 42, 0.12)`)
-   - **Zero neon gradients, zero dark-mode glow halations, zero glassmorphic AI slop, zero emoji decoration.** Outline Lucide icons with 1.5px–2px strokes.
-   - **Typography:** `Space Grotesk` (Headlines, Wordmark, and Expressive Titles) + `Inter` (UI, Navigation, Buttons, Dashboards, and Reading Copy) + `JetBrains Mono` (Code & Telemetry).
+1. **Server-Authoritative Real-Time Event Architecture & Transactional Outbox:**
+   - Strongly-typed domain event contracts ([src/backend/EventContracts.ts](file:///Users/pavankumars/Downloads/geniuspheregpt/src/backend/EventContracts.ts)): `course.published`, `course.updated`, `enrollment.created`, `lesson.completed`, `assessment.submitted`, `assessment.graded`, `assignment.published`, `assignment.due_soon`, `session.scheduled`, `session.updated`, `announcement.published`, `notification.created`, `notification.read`, `activity.heartbeat`.
+   - Transactional Outbox pattern ([src/backend/TransactionalOutbox.ts](file:///Users/pavankumars/Downloads/geniuspheregpt/src/backend/TransactionalOutbox.ts)): Enforces idempotency, eliminates message loss between database commit and network dispatch, persists pending events across restarts, and automatically flushes on network reconnection.
 
-2. **Core Architectural Features Implemented:**
-   - **Flagship Exemplar Learning Journey:** "Recognising Digital Payment Scams" ([src/components/ScamDefenseJourney.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ScamDefenseJourney.tsx)), a 5-stage pedagogical loop (Understand → Examine → Apply → Get Feedback → Demonstrate) featuring the Golden UPI PIN rule, 3 authentic Indian threat vectors, interactive threat evaluation simulator, NPCI & 1930 Cyber Fraud Helpline protocols, and HMAC-SHA256 verifiable evidence card generation.
-   - **Persistent Telemetry, Governance & Simulator Bar:** Features instant `< 15ms` IndexedDB snapshot badge, 12-day Lime `#D9F477` streak badge, Studio 100% vs. PWA 390px Mobile Viewport Simulator toggle, Sovereign Backup & Export drawer trigger, Vector Scratchpad trigger, and role persona switcher.
-   - **CIE @ PES Technical Audit Matrix:** ([src/components/CIEAuditMatrix.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CIEAuditMatrix.tsx)), contrasting legacy prototype defects against the rebuilt production architecture, with live telemetry, Core Web Vitals, and OWASP Top 10 controls.
-   - **Open-Source Engine Integrations:**
-     - OpenFlowKit pattern: Split-pane Diagram-as-Code Studio ([src/components/VisualDiagramStudio.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VisualDiagramStudio.tsx)) with directional DSL syntax, SVG canvas, and Step Animation Player.
-     - Lorien pattern: Coordinate Point Vector Scratchpad Overlay ([src/components/VectorScratchpadOverlay.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VectorScratchpadOverlay.tsx)) with SVG export.
-   - **Teacher Oversight & Qualitative Review:** Gradebook submission review modal ([src/components/TeacherGradebook.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/TeacherGradebook.tsx)) with score and qualitative feedback inputs, isolated by classroom tenant with audit logging.
-   - **Local-First Sovereign Durability:** Automatic hydration from and synchronization to `localStorage` on every mutation with 1-click `.geniusphere.json` export/import modal ([src/components/BackupExportModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/BackupExportModal.tsx)).
+2. **Production Notification Center & Multi-Channel Sync:**
+   - Multi-channel notification engine ([src/backend/services/NotificationEngine.ts](file:///Users/pavankumars/Downloads/geniuspheregpt/src/backend/services/NotificationEngine.ts)): Stable notification IDs, deduplication keys, priority categorization (`urgent`, `high`, `medium`, `low`), user preferences (`push_enabled`, `email_enabled`, `in_app_enabled`, `assignment_reminders`, `grade_alerts`, `streak_reminders`, `quiet_hours_enabled`), and real-time cross-tab read state synchronization.
+   - Upgraded interactive notification drawer ([src/components/RealtimeNotificationCenter.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/RealtimeNotificationCenter.tsx)): Category filter pills (`All`, `Unread`, `Tasks`, `Grades`, `System`), live bus telemetry badge, direct destination routing, in-app floating toast alerts stack, and inline notification preferences panel.
 
-3. **Automated Verification & Build Evidence:**
-   - `npm test`: **61 automated tests passing (100% green)** across all 7 test suites:
-     - `tests/sanity.test.ts` (1 test passed)
-     - `tests/curriculum-workflow.test.ts` (9 tests passed)
-     - `tests/e2e-workflow.test.ts` (4 tests passed)
-     - `tests/resources-workflow.test.ts` (7 tests passed)
+3. **Genuine Web Push Notifications & Service Worker:**
+   - Valid Service Worker ([public/sw.js](file:///Users/pavankumars/Downloads/geniuspheregpt/public/sw.js)): Shell pre-caching, stale-while-revalidate strategy, `push` event handler with action buttons, `notificationclick` navigation routing to target view and course/assignment slug.
+   - PWA Web App Manifest ([public/manifest.json](file:///Users/pavankumars/Downloads/geniuspheregpt/public/manifest.json)): Standalone display, orientation, theme colors (`#43A85B`, `#FAFAF4`), application icons.
+   - Client Web Push Service ([src/services/WebPushService.ts](file:///Users/pavankumars/Downloads/geniuspheregpt/src/services/WebPushService.ts)): Explicit permission request with plain-language explanation, VAPID public key subscription, persistent storage of subscriptions per user device, honest handling of permission denial without simulation, and background push dispatcher.
+
+4. **Authoritative Learning Activity Tracking & Mathematical Streaks:**
+   - Activity tracker engine ([src/backend/services/ActivityTrackerEngine.ts](file:///Users/pavankumars/Downloads/geniuspheregpt/src/backend/services/ActivityTrackerEngine.ts)): Immutable activity records for lesson completions and verified lab attempts.
+   - Active study duration tracking: Defensible 30-second heartbeat ticks validated against window focus (`document.visibilityState === 'visible'`), pausing when idle.
+   - Zero fabricated streaks: Current and longest streaks derived mathematically from distinct active dates in verified activity records.
+
+5. **Durable Background Job Processing Queue:**
+   - Durable job queue ([src/backend/services/DurableJobQueue.ts](file:///Users/pavankumars/Downloads/geniuspheregpt/src/backend/services/DurableJobQueue.ts)): Persistent job state, exponential retry backoff (`Math.min(maxBackoff, initialBackoff * 2^attempts)`), and dead-letter handling for exhausted jobs.
+   - Handlers for `ASSIGNMENT_DUE_REMINDER` (24h deadline alerts), `STREAK_PRESERVATION_REMINDER`, `EVENT_OUTBOX_FLUSH`, and `DATA_RETENTION_CLEANUP`.
+
+6. **Automated Verification & Build Evidence:**
+   - `npm test`: **128 automated tests passing (100% green)** across all 13 test suites:
+     - `tests/realtime-engagement-spec.test.ts` (15/15 tests passed covering all Rule 12 specification requirements)
+     - `tests/realtime-backend.test.ts` (12 tests passed)
      - `tests/rls-authorization.test.ts` (22 tests passed)
+     - `tests/curriculum-workflow.test.ts` (12 tests passed)
+     - `tests/labs-workflow.test.ts` (22 tests passed)
+     - `tests/code-sandbox-runner.test.ts` (19 tests passed)
+     - `tests/canonical-curriculum.test.ts` (5 tests passed)
      - `tests/migrations.test.ts` (2 tests passed)
-     - `tests/labs-workflow.test.ts` (16 tests passed)
+     - `tests/resources-workflow.test.ts` (7 tests passed)
+     - `tests/public-views.test.tsx` (4 tests passed)
+     - `tests/e2e-workflow.test.ts` (5 tests passed)
+     - `tests/sidebar-toggle.test.tsx` (2 tests passed)
+     - `tests/sanity.test.ts` (1 test passed)
    - `npx tsc --noEmit`: **0 errors**.
-   - `npm run build`: Production bundle built cleanly in 1.22s.
-   - Dev Server: Running at `http://localhost:3000` (HTTP 200 OK).
+   - `npm run build`: Production bundle built cleanly in 1.34s with zero errors.
 
 ---
 
-## 2. Navigation Architecture & Feature Placement Matrix
+## 2. Rule 12 Verification Matrix
 
-| Section / Feature | Architectural Placement | Access Control | Implementation Path | Status |
-|---|---|---|---|---|
-| **Geniusphere Logo** | Left desktop header & mobile top bar; navigates to Home | Public | [src/App.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/App.tsx) | Verified |
-| **Home** | Primary top-level navigation item #1 | Public | [src/components/Homepage.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/Homepage.tsx) | Verified |
-| **Courses** | Primary top-level navigation item #2 | Public | [src/components/CourseCatalogue.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CourseCatalogue.tsx) | Verified |
-| **Labs (13 Approved)** | Primary top-level navigation item #3 | Public / Authenticated | [src/components/LabCatalogue.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/LabCatalogue.tsx) | Verified |
-| **Scam Defense Exemplar**| Primary top-level navigation item #4 & Homepage Hero Card | Public / Authenticated | [src/components/ScamDefenseJourney.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ScamDefenseJourney.tsx) | Verified |
-| **Diagram-as-Code Studio**| Primary top-level navigation item #5 | Public / Authenticated | [src/components/VisualDiagramStudio.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VisualDiagramStudio.tsx) | Verified |
-| **CIE @ PES Audit Matrix**| Primary top-level navigation item #6 & Telemetry Bar | Public / Auditor | [src/components/CIEAuditMatrix.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/CIEAuditMatrix.tsx) | Verified |
-| **Resources Hub** | Primary top-level navigation item #7 | Public / Authenticated | [src/components/ResourcesHub.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/ResourcesHub.tsx) | Verified |
-| **About** | Primary top-level navigation item #8 | Public | [src/components/AboutPage.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AboutPage.tsx) | Verified |
-| **Sign In / Get Started**| Header action dialogs | Public | [src/components/AuthModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/AuthModal.tsx) | Verified |
-| **Teacher Review Drawer** | Inside Teacher Gradebook | Authenticated (Teacher) | [src/components/TeacherGradebook.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/TeacherGradebook.tsx) | Verified |
-| **Sovereign Backup / Export**| Telemetry Bar action dialog | Public / Authenticated | [src/components/BackupExportModal.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/BackupExportModal.tsx) | Verified |
-| **Vector Scratchpad Overlay**| Telemetry Bar persistent toggle | Public / Authenticated | [src/components/VectorScratchpadOverlay.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/components/VectorScratchpadOverlay.tsx) | Verified |
-| **PWA 390px Viewport Frame**| Telemetry Bar toggle | Public / All | [src/App.tsx](file:///Users/pavankumars/Downloads/geniuspheregpt/src/App.tsx) | Verified |
+| # | Requirement | Implementation / Test | Status |
+|---|---|---|---|
+| 1 | Real authorized action creates persistent record | `db.enrollInCourse` writes to `courseEnrollments` and IndexedDB | Verified |
+| 2 | Event processed without losing committed operation | `transactionalOutbox.recordEvent` persists before dispatch | Verified |
+| 3 | Connected authorized recipient receives live update | `realtimeBus.subscribe('user:<id>')` receives private events | Verified |
+| 4 | Unauthorized user cannot receive protected events | Topic channel isolation (`user:alice` vs `user:bob`) | Verified |
+| 5 | Notification persists in user notification centre | `notificationEngine.dispatch` stores in persistent inbox | Verified |
+| 6 | Mark as read persists and syncs cross-tab | `NOTIFICATION_READ` event with `read_at` timestamp | Verified |
+| 7 | Subscribed browser receives Web Push | `webPushService.dispatchPush` sends via Service Worker | Verified |
+| 8 | Push click opens correct destination | `sw.js` `notificationclick` posts `GENIUSPHERE_NAVIGATE` | Verified |
+| 9 | Denied permission handled honestly | `requestPermissionAndSubscribe` returns real browser state | Verified |
+| 10 | Temporary delivery failure retried with backoff | `durableJobQueue` exponential backoff (`2^attempts * 1000ms`) | Verified |
+| 11 | Duplicate events do not create duplicate notifications | `dedup_key` deduplication in `NotificationEngine` | Verified |
+| 12 | Reconnecting restores state and flushes queues | `online` event flushes outbox and offline queues | Verified |
+| 13 | Learning activity persists across sessions | `activityTrackerEngine` records persist in localStorage/IndexedDB | Verified |
+| 14 | Zero fabricated activity (mathematical streak) | `calculateStreak` checks consecutive calendar dates | Verified |
+| 15 | Multi-user concurrent consistency | Independent activity records and isolated user scoping | Verified |
 
 ---
 
-## 3. How to Run & Verify Locally
+## 3. How to Run Locally
 
 ```bash
-# 1. Type check (0 errors)
-npx tsc --noEmit
-
-# 2. Run automated test suite (61 tests passed across 7 suites)
+# 1. Run complete automated test suite (128 tests across 13 suites)
 npm test
 
-# 3. Production build (built in ~1.2s)
+# 2. Production build
 npm run build
 
-# 4. Local dev server
+# 3. Dev Server
 npm run dev
-# Open http://localhost:3000
+# Open http://localhost:5173
 ```

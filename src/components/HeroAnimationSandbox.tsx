@@ -7,7 +7,6 @@ import {
   Play,
   RotateCcw,
   ArrowRight,
-  Sparkles,
   AlertTriangle,
   Lock,
   TrendingUp,
@@ -176,7 +175,7 @@ export const HeroAnimationSandbox: React.FC<HeroAnimationSandboxProps> = ({ onLa
               justifyContent: 'center',
             }}
           >
-            <Sparkles size={18} />
+            <Cpu size={18} />
           </div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#26352A', letterSpacing: '0.02em', fontFamily: 'var(--font-heading)' }}>

@@ -13,7 +13,7 @@ import {
   ExternalLink,
   CheckCircle2,
   Clock,
-  Sparkles,
+  Zap,
   Layers,
 } from 'lucide-react';
 
@@ -129,7 +129,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--brand-accent)', fontWeight: 800, fontSize: '0.9rem' }}>
-              <Sparkles size={16} />
+              <Zap size={16} />
               <span>{userProgress.xp} XP</span>
             </div>
             <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>

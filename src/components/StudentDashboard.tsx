@@ -34,6 +34,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const certificates = db.getUserCertificates(currentUserId);
   const [isCrackersActive, setIsCrackersActive] = React.useState(false);
   const [streakClaimed, setStreakClaimed] = React.useState(false);
+  const studyMetrics = backendEngine.tracker.getUserMetrics(currentUserId);
+  const streakDays = studyMetrics.current_streak_days > 0 ? studyMetrics.current_streak_days : (userProgress.streak_days || 0);
+  const totalStudyMinutes = studyMetrics.total_study_minutes || ((userProgress.completed_lessons?.length || 0) * 25) || 0;
 
   // Student's completed lab submissions
   const allSubmissions: Array<{
@@ -231,7 +234,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   Active Streak
                 </div>
                 <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                  {userProgress.streak_days || 3} Days{' '}
+                  {streakDays} Days{' '}
                   <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--brand-primary)' }}>
                     (Protected)
                   </span>
@@ -648,9 +651,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 { day: 'T', active: true, shielded: false },
                 { day: 'W', active: true, shielded: false },
                 { day: 'T', active: true, shielded: false },
-                { day: 'F', active: (userProgress.streak_days || 5) >= 5, shielded: false },
-                { day: 'S', active: (userProgress.streak_days || 5) >= 6, shielded: (userProgress.streak_days || 5) < 6 },
-                { day: 'S', active: (userProgress.streak_days || 5) >= 7, shielded: (userProgress.streak_days || 5) < 7 },
+                { day: 'F', active: streakDays >= 5, shielded: false },
+                { day: 'S', active: streakDays >= 6, shielded: streakDays < 6 },
+                { day: 'S', active: streakDays >= 7, shielded: streakDays < 7 },
               ].map((item, idx) => (
                 <div
                   key={idx}
@@ -700,7 +703,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div style={{ paddingTop: '8px', borderTop: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>{userProgress.streak_days || 5}-Day Current Streak</span>
+                  <span>{streakDays}-Day Current Streak</span>
                   <Flame size={18} color="#F59E0B" fill="#F59E0B" />
                 </span>
                 <span
@@ -733,7 +736,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div
                   style={{
                     height: '100%',
-                    width: `${Math.min(100, Math.round(((userProgress.streak_days || 5) / 7) * 100))}%`,
+                    width: `${Math.min(100, Math.round((streakDays / 7) * 100))}%`,
                     backgroundColor: 'var(--brand-primary)',
                     borderRadius: '3px',
                   }}
@@ -749,6 +752,13 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   onClick={() => {
                     setStreakClaimed(true);
                     db.awardXp(currentUserId, 50, 'Daily Streak Active Check-In');
+                    backendEngine.tracker.recordMilestone(
+                      currentUserId,
+                      'lesson_completed',
+                      'daily-streak-claim',
+                      'Daily Active Streak Check-In',
+                      300
+                    );
                     backendEngine.notifications.dispatch(
                       currentUserId,
                       'Daily Streak Maintained (+50 XP)!',

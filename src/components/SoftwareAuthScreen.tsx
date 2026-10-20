@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, GraduationCap, Users, School, ArrowRight, Lock, Sparkles } from 'lucide-react';
+import { ShieldCheck, GraduationCap, Users, School, ArrowRight, Lock } from 'lucide-react';
 import { MascotSphere } from './MascotSphere';
 
 interface SoftwareAuthScreenProps {
@@ -166,7 +166,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 marginBottom: '16px',
               }}
             >
-              <Sparkles size={13} color="#26352A" /> Single Sign-On Ready
+              <ShieldCheck size={13} color="#26352A" /> Single Sign-On Ready
             </div>
             <h2
               style={{

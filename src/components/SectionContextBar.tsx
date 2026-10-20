@@ -3,7 +3,7 @@ import {
   ChevronRight,
   ArrowLeft,
   BookOpen,
-  Sparkles,
+  Play,
   FileText,
   ShieldCheck,
   Layout,
@@ -53,7 +53,7 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
       case 'lesson-player':
         return {
           title: 'Interactive Lesson',
-          icon: Sparkles,
+          icon: Play,
           parent: courseTitle || 'Course',
           parentView: 'course-detail',
         };

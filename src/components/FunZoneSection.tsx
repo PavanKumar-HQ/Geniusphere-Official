@@ -3,7 +3,6 @@ import { InMemoryDatabase } from '../db/in-memory-db';
 import {
   Trophy,
   Brain,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   Pause,
@@ -242,7 +241,7 @@ export const FunZoneSection: React.FC<FunZoneSectionProps> = ({
                 marginBottom: '10px',
               }}
             >
-              <Sparkles size={14} />
+              <Zap size={14} />
               <span>INTERACTIVE FUN ZONE</span>
             </div>
             <h2

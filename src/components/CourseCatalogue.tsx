@@ -11,7 +11,6 @@ import {
   Users,
   Award,
   CheckCircle2,
-  Sparkles,
   Terminal,
   GraduationCap,
   Search,
@@ -160,7 +159,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 border: '1px solid var(--border-subtle)',
               }}
             >
-              <Sparkles size={13} color="var(--brand-primary)" /> Canonical Skills Curriculum
+              <BookOpen size={13} color="var(--brand-primary)" /> Canonical Skills Curriculum
             </span>
             <h1
               style={{

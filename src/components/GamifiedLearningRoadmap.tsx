@@ -14,7 +14,6 @@ import {
   Lock,
   Flame,
   BookOpen,
-  Sparkles,
   ExternalLink,
   Gift,
   Award,
@@ -1114,7 +1113,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
                 <span className="badge badge-brand" style={{ fontSize: '0.64rem', padding: '1px 6px' }}>RUBRIC 4.2</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Sparkles size={16} color="#D97706" />
+                <ShieldCheck size={16} color="var(--brand-primary)" />
                 <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                   Cryptographic Evidence Proof
                 </span>

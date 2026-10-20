@@ -36,6 +36,7 @@ import { ThemeSettingsModal } from './components/ThemeSettingsModal';
 import { RealtimeHeaderStatus } from './components/RealtimeHeaderStatus';
 import { RealtimeNotificationCenter, RealtimeToastStack } from './components/RealtimeNotificationCenter';
 import { backendEngine } from './backend/RealtimeOrchestrator';
+import { webPushService } from './services/WebPushService';
 import { GeniusphereLoader } from './components/GeniusphereLoader';
 import { LegalPrivacyTermsView } from './components/LegalPrivacyTermsView';
 import { ContactCommunityView } from './components/ContactCommunityView';
@@ -64,7 +65,7 @@ import {
   Folder,
   Award,
   ArrowRight,
-  Sparkles,
+  HelpCircle,
   LogOut,
   Code2,
   ShieldAlert,
@@ -270,6 +271,35 @@ export const App: React.FC = () => {
       `Viewing ${currentView}`
     );
   }, [currentView, currentUser]);
+
+  // Hook Web Push notification click navigation
+  useEffect(() => {
+    webPushService.onNavigateFromPush((view, slug) => {
+      handleNavigate(view as any, slug);
+    });
+  }, []);
+
+  // Live real-time subscription for course catalog publications
+  useEffect(() => {
+    const unsub = backendEngine.bus.subscribe('courses:catalog', () => {
+      setRefreshTrigger((prev) => prev + 1);
+    });
+    return () => unsub();
+  }, []);
+
+  // Server-authoritative learning duration tracking: records 30s heartbeats while window is active
+  useEffect(() => {
+    const ticker = setInterval(() => {
+      if (typeof document !== 'undefined' && !document.hidden && isLearner) {
+        backendEngine.tracker.recordHeartbeat(
+          currentUser.id,
+          selectedCourseSlug || selectedLabSlug || currentView,
+          30
+        );
+      }
+    }, 30000);
+    return () => clearInterval(ticker);
+  }, [currentUser.id, selectedCourseSlug, selectedLabSlug, currentView, isLearner]);
 
   // CRITICAL: Always reset scroll to the top whenever the view or active item changes
   useEffect(() => {
@@ -1348,7 +1378,7 @@ export const App: React.FC = () => {
                         gap: '8px',
                       }}
                     >
-                      <Sparkles size={16} color="var(--brand-primary)" />
+                      <HelpCircle size={16} color="var(--brand-primary)" />
                       <span>Software User Guide</span>
                     </button>
 
@@ -1597,7 +1627,7 @@ export const App: React.FC = () => {
                   className="sidebar-nav-btn"
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
-                  <Sparkles size={18} />
+                  <HelpCircle size={18} />
                   {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
@@ -1711,7 +1741,7 @@ export const App: React.FC = () => {
                   className="sidebar-nav-btn"
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
-                  <Sparkles size={18} />
+                  <HelpCircle size={18} />
                   {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
@@ -1825,7 +1855,7 @@ export const App: React.FC = () => {
                   className="sidebar-nav-btn"
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
-                  <Sparkles size={18} />
+                  <HelpCircle size={18} />
                   {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
@@ -1899,7 +1929,7 @@ export const App: React.FC = () => {
                   className="sidebar-nav-btn"
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
-                  <Sparkles size={18} />
+                  <HelpCircle size={18} />
                   {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
@@ -2007,7 +2037,7 @@ export const App: React.FC = () => {
                   className="sidebar-nav-btn"
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
-                  <Sparkles size={18} />
+                  <HelpCircle size={18} />
                   {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
 

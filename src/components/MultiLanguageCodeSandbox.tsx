@@ -8,6 +8,10 @@ import {
   FileCode,
   Layers,
   X,
+  Code2,
+  Cpu,
+  Binary,
+  Database,
 } from 'lucide-react';
 import { CodeEditor } from './CodeEditor';
 import { MascotSphere } from './MascotSphere';
@@ -180,14 +184,27 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
     }
   };
 
-  const languagesList: Array<{ id: SupportedLanguage; label: string; icon: string }> = [
-    { id: 'python', label: 'Python 3.12', icon: '🐍' },
-    { id: 'javascript', label: 'JavaScript', icon: '🟨' },
-    { id: 'typescript', label: 'TypeScript', icon: '🔷' },
-    { id: 'cpp', label: 'C++ (C++20)', icon: '⚡' },
-    { id: 'java', label: 'Java 21', icon: '☕' },
-    { id: 'c', label: 'C Language', icon: '⚙️' },
-    { id: 'sql', label: 'Relational SQL', icon: '🗄️' },
+  const getLangIcon = (id: SupportedLanguage) => {
+    switch (id) {
+      case 'python': return <Code2 size={14} />;
+      case 'javascript': return <FileCode size={14} />;
+      case 'typescript': return <FileCode size={14} />;
+      case 'cpp': return <Cpu size={14} />;
+      case 'java': return <Terminal size={14} />;
+      case 'c': return <Binary size={14} />;
+      case 'sql': return <Database size={14} />;
+      default: return <Code2 size={14} />;
+    }
+  };
+
+  const languagesList: Array<{ id: SupportedLanguage; label: string }> = [
+    { id: 'python', label: 'Python 3.12' },
+    { id: 'javascript', label: 'JavaScript' },
+    { id: 'typescript', label: 'TypeScript' },
+    { id: 'cpp', label: 'C++ (C++20)' },
+    { id: 'java', label: 'Java 21' },
+    { id: 'c', label: 'C Language' },
+    { id: 'sql', label: 'Relational SQL' },
   ];
 
   return (
@@ -303,7 +320,7 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
                   transition: 'all 0.15s ease',
                 }}
               >
-                <span>{item.icon}</span>
+                <span>{getLangIcon(item.id)}</span>
                 <span>{item.label}</span>
               </button>
             ))}

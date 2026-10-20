@@ -40,6 +40,11 @@ import { sovereignDB } from './indexed-db';
 import { realtimeBus } from '../backend/RealtimeBus';
 import { liveGradebookEngine } from '../backend/services/LiveGradebookEngine';
 import { auditStreamEngine } from '../backend/services/AuditStreamEngine';
+import { transactionalOutbox } from '../backend/TransactionalOutbox';
+import { createDomainEvent } from '../backend/EventContracts';
+import { notificationEngine } from '../backend/services/NotificationEngine';
+import { activityTrackerEngine } from '../backend/services/ActivityTrackerEngine';
+import { durableJobQueue } from '../backend/services/DurableJobQueue';
 
 export class DatabaseError extends Error {
   code: string;
@@ -613,6 +618,47 @@ export class InMemoryDatabase {
       created_at: new Date().toISOString(),
     };
     this.assignments.set(newAssign.id, newAssign);
+    const assignTitle = this.labDefinitions.get(newAssign.lab_id)?.title || newAssign.lab_id;
+
+    // Emit domain event to transactional outbox
+    transactionalOutbox.recordEvent(
+      createDomainEvent('assignment.published', newAssign.id, {
+        assignmentId: newAssign.id,
+        classroomId: newAssign.classroom_id,
+        title: assignTitle,
+        dueDate: newAssign.due_date,
+      }, { classroomId: newAssign.classroom_id })
+    );
+
+    // Notify enrolled students in this classroom
+    for (const enr of this.enrollments.values()) {
+      if (enr.classroom_id === newAssign.classroom_id) {
+        notificationEngine.dispatch(
+          enr.student_id,
+          `New Assignment: ${assignTitle}`,
+          `Your instructor published a new assignment. Due: ${newAssign.due_date || 'Ongoing'}.`,
+          'high',
+          'assignment',
+          'assignments',
+          undefined,
+          'View Assignment'
+        );
+
+        // Schedule background due reminder if due date exists
+        if (newAssign.due_date) {
+          const dueTime = new Date(newAssign.due_date).getTime();
+          const remindTime = dueTime - 24 * 3600 * 1000; // 24h before
+          const delay = Math.max(0, remindTime - Date.now());
+          durableJobQueue.enqueue('ASSIGNMENT_DUE_REMINDER', {
+            userId: enr.student_id,
+            assignmentId: newAssign.id,
+            assignmentTitle: assignTitle,
+            hoursLeft: 24,
+          }, { delayMs: delay, dedupKey: `due_reminder_${newAssign.id}_${enr.student_id}` });
+        }
+      }
+    }
+
     return newAssign;
   }
 
@@ -667,6 +713,34 @@ export class InMemoryDatabase {
 
     this.submissions.set(submission.id, submission);
     this.persistState();
+
+    // Emit assessment.submitted event
+    transactionalOutbox.recordEvent(
+      createDomainEvent('assessment.submitted', submission.id, {
+        submissionId: submission.id,
+        assignmentId,
+        studentId: callerUserId,
+        attemptNumber: submission.attempt_number,
+      }, { classroomId: assign.classroom_id })
+    );
+
+    // Notify classroom teacher of submitted assessment
+    const cls = this.classrooms.get(assign.classroom_id);
+    if (cls && cls.teacher_id) {
+      const student = this.users.get(callerUserId);
+      const assignTitle = this.labDefinitions.get(assign.lab_id)?.title || assign.lab_id;
+      notificationEngine.dispatch(
+        cls.teacher_id,
+        'Assessment Submitted for Review',
+        `${student ? student.full_name : 'Student'} submitted an attempt for "${assignTitle}".`,
+        'medium',
+        'assignment',
+        'teacher-gradebook',
+        undefined,
+        'Review Submission'
+      );
+    }
+
     return submission;
   }
 
@@ -740,6 +814,33 @@ export class InMemoryDatabase {
     };
 
     this.submissions.set(submissionId, updated);
+
+    // Emit assessment.graded event to transactional outbox
+    transactionalOutbox.recordEvent(
+      createDomainEvent('assessment.graded', sub.id, {
+        submissionId: sub.id,
+        assignmentId: assign.id,
+        studentId: sub.student_id,
+        teacherId: teacherUserId,
+        score: updated.score,
+        passed: updated.passed,
+        feedback: updated.teacher_feedback,
+      }, { recipientId: sub.student_id, classroomId: assign.classroom_id })
+    );
+
+    // Dispatch real-time notification to the student
+    const assignTitle = this.labDefinitions.get(assign.lab_id)?.title || assign.lab_id;
+    notificationEngine.dispatch(
+      sub.student_id,
+      'Assessment Graded',
+      `Your submission for "${assignTitle}" was reviewed. Score: ${updated.score}/100 (${updated.passed ? 'Passed' : 'Needs Review'}).`,
+      'high',
+      'grade',
+      'assignments',
+      undefined,
+      'View Results',
+      { submission_id: sub.id, assignment_id: assign.id }
+    );
 
     // Real-time broadcast for live gradebook and student notification
     try {
@@ -999,6 +1100,17 @@ export class InMemoryDatabase {
 
     this.courses.set(id, newCourse);
 
+    // Emit course.published domain event
+    transactionalOutbox.recordEvent(
+      createDomainEvent('course.published', id, {
+        courseId: id,
+        title: newCourse.title,
+        domain: newCourse.domain,
+        subject: newCourse.subject,
+        slug: newCourse.slug,
+      })
+    );
+
     this.logAuditEvent({
       actor_id: courseData.addedByUserId || 'user-superadmin-1',
       organization_id: null,
@@ -1074,6 +1186,16 @@ export class InMemoryDatabase {
     this.courseEnrollments.set(enrollmentKey, enrollment);
     this.persistState();
 
+    // Emit enrollment.created domain event
+    transactionalOutbox.recordEvent(
+      createDomainEvent('enrollment.created', enrollment.id, {
+        enrollmentId: enrollment.id,
+        userId,
+        courseId,
+        courseTitle: course.title,
+      }, { recipientId: userId })
+    );
+
     this.logAuditEvent({
       organization_id: null,
       actor_id: userId,
@@ -1132,6 +1254,22 @@ export class InMemoryDatabase {
       this.courseEnrollments.set(enrollmentKey, enrollment);
       this.recordLessonCompletion(userId, courseId, lessonId);
       this.persistState();
+
+      // Emit lesson.completed domain event and record verifiable learning activity
+      transactionalOutbox.recordEvent(
+        createDomainEvent('lesson.completed', lessonId, {
+          lessonId,
+          courseId,
+          userId,
+          progress: enrollment.progress_percent,
+        }, { recipientId: userId })
+      );
+      activityTrackerEngine.recordMilestone(
+        userId,
+        'lesson_completed',
+        lessonId,
+        `Lesson ${lessonId} in ${course.title}`
+      );
 
       this.logAuditEvent({
         organization_id: null,

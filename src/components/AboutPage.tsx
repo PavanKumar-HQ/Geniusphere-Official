@@ -6,9 +6,8 @@ import {
   Lock,
   Mail,
   MapPin,
-  Sparkles,
-  ArrowRight,
   Award,
+  ArrowRight,
   ExternalLink,
 } from 'lucide-react';
 
@@ -22,7 +21,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
       {/* Editorial Header */}
       <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '20px', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: '0.8rem', fontWeight: 700, marginBottom: '16px' }}>
-          <Sparkles size={14} />
+          <Target size={14} />
           <span>ABOUT GENIUSPHERE</span>
         </div>
         <h1

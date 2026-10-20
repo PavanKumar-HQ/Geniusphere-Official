@@ -14,7 +14,6 @@ import {
   BookOpen,
   Terminal,
   ChevronRight,
-  Sparkles,
   Flame,
   Search,
   ArrowLeft,
@@ -802,7 +801,7 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
                       gap: '8px',
                     }}
                   >
-                    <Sparkles size={16} />
+                    <CheckCircle2 size={16} />
                     <span>Publish Course to Catalog</span>
                   </button>
                 </div>

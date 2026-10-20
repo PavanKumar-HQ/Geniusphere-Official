@@ -8,6 +8,11 @@ import {
   Columns,
   Layers,
   Zap,
+  Code2,
+  FileCode,
+  Cpu,
+  Binary,
+  Database,
 } from 'lucide-react';
 import { CODING_CONCEPTS, LanguageConceptDetail } from '../data/codingConcepts';
 import {
@@ -273,14 +278,27 @@ export const CodingConceptsExplorer: React.FC<CodingConceptsExplorerProps> = ({
     );
   };
 
-  const languageOptions: Array<{ id: SupportedLanguage; label: string; icon: string }> = [
-    { id: 'python', label: 'Python 3.12', icon: '🐍' },
-    { id: 'javascript', label: 'JavaScript', icon: '🟨' },
-    { id: 'typescript', label: 'TypeScript', icon: '🔷' },
-    { id: 'cpp', label: 'C++ (C++20)', icon: '⚡' },
-    { id: 'java', label: 'Java 21', icon: '☕' },
-    { id: 'c', label: 'C (C11)', icon: '⚙️' },
-    { id: 'sql', label: 'SQL (ANSI)', icon: '🗄️' },
+  const getLangIcon = (id: SupportedLanguage) => {
+    switch (id) {
+      case 'python': return <Code2 size={14} />;
+      case 'javascript': return <FileCode size={14} />;
+      case 'typescript': return <FileCode size={14} />;
+      case 'cpp': return <Cpu size={14} />;
+      case 'java': return <Terminal size={14} />;
+      case 'c': return <Binary size={14} />;
+      case 'sql': return <Database size={14} />;
+      default: return <Code2 size={14} />;
+    }
+  };
+
+  const languageOptions: Array<{ id: SupportedLanguage; label: string }> = [
+    { id: 'python', label: 'Python 3.12' },
+    { id: 'javascript', label: 'JavaScript' },
+    { id: 'typescript', label: 'TypeScript' },
+    { id: 'cpp', label: 'C++ (C++20)' },
+    { id: 'java', label: 'Java 21' },
+    { id: 'c', label: 'C (C11)' },
+    { id: 'sql', label: 'SQL (ANSI)' },
   ];
 
   return (
@@ -458,7 +476,7 @@ export const CodingConceptsExplorer: React.FC<CodingConceptsExplorerProps> = ({
                 transition: 'all 0.15s ease',
               }}
             >
-              <span>{opt.icon}</span>
+              <span>{getLangIcon(opt.id)}</span>
               <span>{opt.label}</span>
               {electedLanguage === opt.id && <Check size={12} />}
             </button>
@@ -605,7 +623,7 @@ export const CodingConceptsExplorer: React.FC<CodingConceptsExplorerProps> = ({
                       .filter((o) => o.id !== electedLanguage)
                       .map((opt) => (
                         <option key={opt.id} value={opt.id}>
-                          {opt.icon} {opt.label}
+                          {opt.label}
                         </option>
                       ))}
                   </select>
@@ -696,12 +714,12 @@ export const CodingConceptsExplorer: React.FC<CodingConceptsExplorerProps> = ({
                 <thead>
                   <tr style={{ borderBottom: '2px solid var(--border-subtle)' }}>
                     <th style={{ textAlign: 'left', padding: '10px', color: 'var(--text-secondary)' }}>Dimension</th>
-                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>🐍 Python</th>
-                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>🟨 JavaScript</th>
-                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>🔷 TypeScript</th>
-                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>⚡ C++</th>
-                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>☕ Java</th>
-                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>⚙️ C</th>
+                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>Python</th>
+                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>JavaScript</th>
+                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>TypeScript</th>
+                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>C++</th>
+                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>Java</th>
+                    <th style={{ textAlign: 'left', padding: '10px', color: 'var(--brand-primary)' }}>C</th>
                   </tr>
                 </thead>
                 <tbody>
