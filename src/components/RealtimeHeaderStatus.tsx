@@ -15,12 +15,30 @@ export const RealtimeHeaderStatus: React.FC<{
   const [rtt, setRtt] = useState<number>(8);
   const [status, setStatus] = useState<'connected' | 'reconnecting' | 'offline'>('connected');
 
+  const [isServerLive, setIsServerLive] = useState<boolean>(false);
+
   useEffect(() => {
-    const interval = setInterval(() => {
+    const checkServer = () => {
+      fetch('http://localhost:3001/health')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === 'healthy') {
+            setIsServerLive(true);
+            setStatus('connected');
+          } else {
+            setIsServerLive(false);
+          }
+        })
+        .catch(() => {
+          setIsServerLive(false);
+        });
+
       const telem = backendEngine.getTelemetry();
       setRtt(telem.rtt_ms);
-      setStatus(telem.status);
-    }, 3000);
+    };
+
+    checkServer();
+    const interval = setInterval(checkServer, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -67,7 +85,7 @@ export const RealtimeHeaderStatus: React.FC<{
               width: '100%',
               height: '100%',
               borderRadius: '50%',
-              backgroundColor: status === 'connected' ? 'var(--brand-primary)' : 'var(--error, #EF4444)',
+              backgroundColor: isServerLive ? 'var(--brand-primary, #43A85B)' : 'var(--warning, #F59E0B)',
               opacity: 0.75,
               animation: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
             }}
@@ -78,11 +96,13 @@ export const RealtimeHeaderStatus: React.FC<{
               width: '8px',
               height: '8px',
               borderRadius: '50%',
-              backgroundColor: status === 'connected' ? 'var(--brand-primary)' : 'var(--error, #EF4444)',
+              backgroundColor: isServerLive ? 'var(--brand-primary, #43A85B)' : 'var(--warning, #F59E0B)',
             }}
           />
         </span>
-        <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{rtt}ms</span>
+        <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
+          {isServerLive ? 'PostgreSQL Live' : 'Local Standalone'}
+        </span>
       </button>
 
       <BackendLiveConsoleDrawer

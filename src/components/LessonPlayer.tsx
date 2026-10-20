@@ -27,6 +27,7 @@ import {
 import { SupportedLanguage } from '../utils/codeSandboxRunner';
 import { CODING_CONCEPTS } from '../data/codingConcepts';
 import { backendEngine } from '../backend/RealtimeOrchestrator';
+import { apiClient } from '../services/apiClient';
 
 interface LessonPlayerProps {
   db: InMemoryDatabase;
@@ -408,6 +409,11 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     if (!activeLesson) return;
     const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
     setEnrollment({ ...updated });
+
+    // Server-authoritative PostgreSQL database sync
+    apiClient.completeLesson(courseId, activeLesson.id, 100).catch((err) => {
+      console.warn('[LessonPlayer] Server sync notice:', err.message);
+    });
 
     // Realtime notification for lesson completion
     backendEngine.notifications.dispatch(

@@ -23,14 +23,33 @@ function loadEnv() {
 
 loadEnv();
 
+const nodeEnv = process.env.NODE_ENV || 'development';
+const databaseUrl = process.env.DATABASE_URL || (nodeEnv === 'development' || nodeEnv === 'test'
+  ? `postgresql://${process.env.PGUSER || 'pavankumars'}@localhost:5432/geniusphere_dev`
+  : '');
+
+const jwtSecret = process.env.JWT_SECRET || (nodeEnv === 'development' || nodeEnv === 'test'
+  ? 'geniusphere_jwt_secret_dev_2026_default_key'
+  : '');
+
+// Fail-fast configuration checks for production
+if (nodeEnv === 'production') {
+  if (!databaseUrl) {
+    console.error('[FATAL CONFIG ERROR] DATABASE_URL must be explicitly provided in production environment.');
+    process.exit(1);
+  }
+  if (!jwtSecret || jwtSecret.length < 32 || jwtSecret.includes('default_key')) {
+    console.error('[FATAL CONFIG ERROR] A cryptographically strong JWT_SECRET (>= 32 chars) must be configured in production.');
+    process.exit(1);
+  }
+}
+
 export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
   host: process.env.HOST || '0.0.0.0',
-  nodeEnv: process.env.NODE_ENV || 'development',
-  databaseUrl:
-    process.env.DATABASE_URL ||
-    `postgresql://${process.env.PGUSER || 'pavankumars'}@localhost:5432/geniusphere_dev`,
-  jwtSecret: process.env.JWT_SECRET || 'geniusphere_jwt_secret_dev_2026_default_key',
+  nodeEnv,
+  databaseUrl,
+  jwtSecret,
   vapid: {
     publicKey:
       process.env.VAPID_PUBLIC_KEY ||

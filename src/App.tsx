@@ -37,6 +37,7 @@ import { RealtimeHeaderStatus } from './components/RealtimeHeaderStatus';
 import { RealtimeNotificationCenter, RealtimeToastStack } from './components/RealtimeNotificationCenter';
 import { backendEngine } from './backend/RealtimeOrchestrator';
 import { webPushService } from './services/WebPushService';
+import { apiClient } from './services/apiClient';
 import { GeniusphereLoader } from './components/GeniusphereLoader';
 import { LegalPrivacyTermsView } from './components/LegalPrivacyTermsView';
 import { ContactCommunityView } from './components/ContactCommunityView';
@@ -146,6 +147,22 @@ export const App: React.FC = () => {
 
   const [currentTheme, setCurrentTheme] = useState<ThemeId>(() => getStoredTheme());
   const [themeModalOpen, setThemeModalOpen] = useState<boolean>(false);
+
+  // Authenticate current user with the authoritative backend server on user switch
+  useEffect(() => {
+    const emailMap: Record<string, string> = {
+      'user-student-1': 'learner@geniusphere.tech',
+      'user-student-2': 'aarav.student@dpts.edu',
+      'user-teacher-1': 'dr.sharma@dpts.edu',
+      'user-parent-1': 'sunita.patel@gmail.com',
+      'user-admin-1': 'principal.verma@dpts.edu',
+      'user-superadmin-1': 'admin@geniusphere.tech',
+    };
+    const targetEmail = emailMap[currentUserId] || 'learner@geniusphere.tech';
+    apiClient.login(targetEmail).catch((err) => {
+      console.warn('[App] Server authentication notice:', err.message);
+    });
+  }, [currentUserId]);
 
   const isDarkMode =
     currentTheme === 'dark' ||

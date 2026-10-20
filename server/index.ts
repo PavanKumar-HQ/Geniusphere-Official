@@ -48,17 +48,18 @@ export async function createServer() {
 
   // 4. Authentication Endpoints
   fastify.post('/api/auth/login', async (request, reply) => {
-    const { email } = (request.body as any) || {};
-    if (!email) {
-      return reply.status(400).send({ error: 'Email is required' });
+    const { email, userId } = (request.body as any) || {};
+    const identifier = email || userId;
+    if (!identifier) {
+      return reply.status(400).send({ error: 'Email or userId is required' });
     }
 
     const userRes = await query(
       `SELECT u.*, om.role, om.organization_id 
        FROM public.users u
        LEFT JOIN public.organization_memberships om ON om.user_id = u.id AND om.is_active = TRUE
-       WHERE u.email = $1 LIMIT 1`,
-      [email]
+       WHERE u.email = $1 OR u.id::text = $1 LIMIT 1`,
+      [identifier]
     );
 
     if (userRes.rowCount === 0) {
@@ -133,13 +134,22 @@ export async function createServer() {
 
   fastify.get('/api/progress/:userId', { preHandler: [authenticateRequest] }, async (request, reply) => {
     const { userId } = request.params as { userId: string };
-    // Users can only view own progress unless teacher or superadmin
-    if (
-      request.user!.userId !== userId &&
-      !request.user!.isSuperadmin &&
-      request.user!.role !== 'teacher'
-    ) {
-      return reply.status(403).send({ error: 'Unauthorized to view another user progress' });
+    
+    // Strict multi-tenant authorization
+    if (request.user!.userId !== userId && !request.user!.isSuperadmin) {
+      if (request.user!.role === 'teacher') {
+        const enrollmentCheck = await query(
+          `SELECT 1 FROM public.classroom_enrollments ce
+           JOIN public.classrooms c ON c.id = ce.classroom_id
+           WHERE c.teacher_id = $1 AND ce.student_id = $2`,
+          [request.user!.userId, userId]
+        );
+        if (enrollmentCheck.rowCount === 0) {
+          return reply.status(403).send({ error: 'Forbidden: teacher is not assigned to this student' });
+        }
+      } else {
+        return reply.status(403).send({ error: 'Forbidden: unauthorized to view another user progress' });
+      }
     }
     return domainService.getUserProgress(userId);
   });
