@@ -73,6 +73,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [completedAttempt, setCompletedAttempt] = useState<LabAttemptRecord | null>(null);
   const [workspaceMode, setWorkspaceMode] = useState<'3-column' | 'focus' | 'zen'>('3-column');
   const [showHint, setShowHint] = useState<boolean>(true);
+  const [centerLabViewMode, setCenterLabViewMode] = useState<'interactive-suite' | 'svg-parameters'>('interactive-suite');
 
   // Animated Step-by-Step state
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
@@ -1359,9 +1360,122 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             minWidth: 0,
           }}
         >
+          {/* Top Engine Header with Unified Switcher */}
+          {standaloneLabMeta && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '12px 18px',
+                borderRadius: '12px',
+                backgroundColor: 'var(--brand-surface)',
+                border: '1px solid var(--brand-border)',
+                flexWrap: 'wrap',
+                gap: '10px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Sparkles size={16} color="var(--brand-primary)" />
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
+                    {standaloneLabMeta.name}
+                  </div>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+                    {standaloneLabMeta.suiteTitle}
+                  </div>
+                </div>
+              </div>
 
-          {/* -------------------------------------------------------- */}
-          {/* LAB ENGINE 1: AI CLASSIFICATION PLAYGROUND               */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', backgroundColor: 'var(--bg-canvas)', borderRadius: '8px', padding: '3px', border: '1px solid var(--border-subtle)' }}>
+                  <button
+                    type="button"
+                    onClick={() => setCenterLabViewMode('interactive-suite')}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '6px',
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: 'none',
+                      backgroundColor: centerLabViewMode === 'interactive-suite' ? 'var(--brand-primary)' : 'transparent',
+                      color: centerLabViewMode === 'interactive-suite' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    Interactive Simulation Suite
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCenterLabViewMode('svg-parameters')}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '6px',
+                      fontSize: '0.76rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: 'none',
+                      backgroundColor: centerLabViewMode === 'svg-parameters' ? 'var(--brand-primary)' : 'transparent',
+                      color: centerLabViewMode === 'svg-parameters' ? '#FFFFFF' : 'var(--text-secondary)',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    Algorithm Parameter Model
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveFullLab(standaloneLabMeta.id)}
+                  style={{
+                    height: '32px',
+                    padding: '0 10px',
+                    borderRadius: '8px',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    border: '1px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-surface)',
+                    color: 'var(--text-primary)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                  }}
+                  title="Expand to Fullscreen Mode"
+                >
+                  <Maximize2 size={13} color="var(--brand-primary)" />
+                  <span>Fullscreen</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* REAL STANDALONE INTERACTIVE LAB EMBEDDED DIRECTLY IN THE WORKSPACE */}
+          {standaloneLabMeta && centerLabViewMode === 'interactive-suite' ? (
+            <div
+              style={{
+                borderRadius: '16px',
+                overflow: 'hidden',
+                border: '1.5px solid var(--border-subtle)',
+                minHeight: '680px',
+                height: '760px',
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: '#070B19',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
+              }}
+            >
+              {React.createElement(standaloneLabMeta.component, {
+                onClose: () => setCenterLabViewMode('svg-parameters'),
+                onExit: () => setCenterLabViewMode('svg-parameters'),
+              })}
+            </div>
+          ) : (
+            <>
+              {/* -------------------------------------------------------- */}
+              {/* LAB ENGINE 1: AI CLASSIFICATION PLAYGROUND               */}
           {/* -------------------------------------------------------- */}
           {lab.id === 'lab-t1-ai-classifier' && (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -3725,6 +3839,8 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 )}
               </div>
             )}
+            </>
+          )}
         </section>
 
         {/* ============================================================ */}
