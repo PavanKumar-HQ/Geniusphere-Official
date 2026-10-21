@@ -174,6 +174,108 @@ describe('Production Acceptance End-to-End Suite (Scenarios A - E)', () => {
 
       ws.close();
     });
+
+    it('synchronizes lesson completion in real-time across independent sessions while isolating Student B', async () => {
+      const courses = await domainService.getCourses();
+      const courseId = courses[0].id;
+      const testLessonId = `les-realtime-sync-${Date.now()}`;
+
+      // Open Session B for Student A (Learner 1)
+      const wsSessionB = new WebSocket(`ws://localhost:3001/ws?token=${token1}`);
+      const sessionBEvents: any[] = [];
+
+      await new Promise<void>((resolve) => {
+        wsSessionB.on('open', () => {
+          wsSessionB.send(JSON.stringify({ action: 'SUBSCRIBE', channel: `user:${learner1.userId}` }));
+          resolve();
+        });
+        wsSessionB.on('message', (data) => {
+          sessionBEvents.push(JSON.parse(data.toString()));
+        });
+      });
+
+      // Open Session for Student B (Learner 2)
+      const wsStudentB = new WebSocket(`ws://localhost:3001/ws?token=${token2}`);
+      const studentBEvents: any[] = [];
+
+      await new Promise<void>((resolve) => {
+        wsStudentB.on('open', () => {
+          wsStudentB.send(JSON.stringify({ action: 'SUBSCRIBE', channel: `user:${learner2.userId}` }));
+          resolve();
+        });
+        wsStudentB.on('message', (data) => {
+          studentBEvents.push(JSON.parse(data.toString()));
+        });
+      });
+
+      // Student A completes lesson in Session A via HTTP API
+      const compRes = await fetch(`http://localhost:3001/api/courses/${courseId}/lessons/${testLessonId}/complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token1}`,
+        },
+        body: JSON.stringify({ score: 100 }),
+      });
+
+      expect(compRes.status).toBe(200);
+
+      // Await event arrival over WebSocket
+      await new Promise((r) => setTimeout(r, 400));
+
+      // 1. Session B received the real-time event
+      const syncEvent = sessionBEvents.find((e) => e.eventType === 'lesson.completed');
+      expect(syncEvent).toBeDefined();
+      expect(syncEvent.payload.courseId).toBe(courseId);
+      expect(syncEvent.payload.lessonId).toBe(testLessonId);
+      expect(syncEvent.payload.userId).toBe(learner1.userId);
+
+      // 2. Student B received ZERO events from Student A's lesson completion
+      const leakedEvent = studentBEvents.find((e) => e.eventType === 'lesson.completed' && e.payload?.userId === learner1.userId);
+      expect(leakedEvent).toBeUndefined();
+
+      // Clean up sockets
+      wsSessionB.close();
+      wsStudentB.close();
+    });
+
+    it('denies unauthorized channel subscriptions and rejects unauthenticated connections', async () => {
+      // 1. Student B attempts to subscribe to Student A's private channel
+      const wsStudentB = new WebSocket(`ws://localhost:3001/ws?token=${token2}`);
+      const receivedMessages: any[] = [];
+
+      await new Promise<void>((resolve) => {
+        wsStudentB.on('open', () => {
+          wsStudentB.send(JSON.stringify({ action: 'SUBSCRIBE', channel: `user:${learner1.userId}` }));
+        });
+        wsStudentB.on('message', (data) => {
+          const parsed = JSON.parse(data.toString());
+          receivedMessages.push(parsed);
+          if (parsed.type === 'SUBSCRIPTION_DENIED') {
+            resolve();
+          }
+        });
+      });
+
+      const denial = receivedMessages.find((m) => m.type === 'SUBSCRIPTION_DENIED');
+      expect(denial).toBeDefined();
+      expect(denial.channel).toBe(`user:${learner1.userId}`);
+      wsStudentB.close();
+
+      // 2. Connection without token is closed with 4001
+      const wsNoToken = new WebSocket('ws://localhost:3001/ws');
+      const noTokenCloseCode = await new Promise<number>((resolve) => {
+        wsNoToken.on('close', (code) => resolve(code));
+      });
+      expect(noTokenCloseCode).toBe(4001);
+
+      // 3. Connection with invalid token is closed with 4002
+      const wsBadToken = new WebSocket('ws://localhost:3001/ws?token=invalid.tampered.token');
+      const badTokenCloseCode = await new Promise<number>((resolve) => {
+        wsBadToken.on('close', (code) => resolve(code));
+      });
+      expect(badTokenCloseCode).toBe(4002);
+    });
   });
 
   describe('Scenario D — Real Lab Interaction & Idempotent Attempt Recording', () => {

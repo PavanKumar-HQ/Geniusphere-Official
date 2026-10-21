@@ -181,12 +181,30 @@ export async function createServer() {
     async (request) => {
       const { id, lessonId } = request.params as { id: string; lessonId: string };
       const { score } = (request.body as any) || {};
-      return domainService.completeLesson(
+      const result = await domainService.completeLesson(
         request.user!.userId,
         id,
         lessonId,
         typeof score === 'number' ? score : 100
       );
+
+      // Direct WebSocket push to user sockets for zero-latency multi-tab sync
+      wsGateway.broadcast({
+        event_id: `evt_sock_les_${Date.now()}`,
+        event_type: 'lesson.completed',
+        payload: {
+          userId: request.user!.userId,
+          courseId: id,
+          lessonId,
+          score: typeof score === 'number' ? score : 100,
+          xpEarned: result.progress.xp,
+          streak: result.progress.streak,
+          completedAt: new Date().toISOString(),
+        },
+        target_user_id: request.user!.userId,
+      });
+
+      return result;
     }
   );
 
@@ -215,13 +233,29 @@ export async function createServer() {
   // 6. Interactive Labs
   fastify.post('/api/labs/attempt', { preHandler: [authenticateRequest] }, async (request) => {
     const { labSlug, score, status, details } = (request.body as any) || {};
-    return domainService.recordLabAttempt(
+    const result = await domainService.recordLabAttempt(
       request.user!.userId,
       labSlug,
       score || 0,
       status || 'completed',
       details
     );
+
+    // Direct WebSocket push to user sockets
+    wsGateway.broadcast({
+      event_id: `evt_sock_lab_${Date.now()}`,
+      event_type: 'lab.completed',
+      payload: {
+        userId: request.user!.userId,
+        labSlug,
+        score: score || 0,
+        status: status || 'completed',
+        completedAt: new Date().toISOString(),
+      },
+      target_user_id: request.user!.userId,
+    });
+
+    return result;
   });
 
   // 7. Classrooms & Teacher Grading

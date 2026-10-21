@@ -325,13 +325,34 @@ export const App: React.FC = () => {
         event?.type === 'PROFILE_UPDATED' ||
         event?.eventType === 'lesson.completed' ||
         event?.eventType === 'streak.updated' ||
-        event?.eventType === 'enrollment.created'
+        event?.eventType === 'enrollment.created' ||
+        event?.eventType === 'lab.completed'
       ) {
+        // Authoritative reconciliation in local db state
+        if (event.eventType === 'lesson.completed' && event.payload?.courseId && event.payload?.lessonId) {
+          db.completeLesson(event.payload.userId || currentUser.id, event.payload.courseId, event.payload.lessonId);
+        }
+        if (event.eventType === 'lab.completed' && event.payload?.labSlug) {
+          const lab = db.getLabBySlug(event.payload.labSlug);
+          if (lab) {
+            db.recordLabAttempt(event.payload.userId || currentUser.id, lab.id, {
+              passed: (event.payload.score || 100) >= 60,
+              score: event.payload.score || 100,
+              diagnostics: 'Real-time synchronization event from session',
+            });
+          }
+        }
+        if (event.eventType === 'user.profile_updated' && event.payload?.fullName) {
+          const user = db.getUserById(currentUser.id);
+          if (user) {
+            user.full_name = event.payload.fullName;
+          }
+        }
         setRefreshTrigger((prev) => prev + 1);
       }
     });
     return () => unsub();
-  }, []);
+  }, [currentUser.id, db]);
 
   // Server-authoritative learning duration tracking: records 30s heartbeats while window is active
   useEffect(() => {

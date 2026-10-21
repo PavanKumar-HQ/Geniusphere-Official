@@ -100,6 +100,23 @@ export class OutboxWorker {
                 actionView: 'course-detail',
                 actionSlug: payload.courseSlug,
               });
+            } else if (event.event_type === 'lab.completed' && payload.userId) {
+              await notificationService.createNotification(payload.userId, {
+                type: 'achievement',
+                title: 'Lab Challenge Solved',
+                message: `You successfully completed the interactive simulation for ${payload.labSlug} (+${payload.xpEarned} XP)!`,
+                dedupKey: `notif_lab_${payload.labSlug}`,
+                actionView: 'labs',
+                actionSlug: payload.labSlug,
+              });
+
+              await pushSender.sendToUser(payload.userId, {
+                title: 'Lab Challenge Mastered',
+                body: `You completed ${payload.labSlug} with score ${payload.score}/100! +${payload.xpEarned} XP earned.`,
+                icon: '/images/sphere-mascot.svg',
+                tag: `lab_${payload.labSlug}`,
+                data: { view: 'labs', slug: payload.labSlug },
+              });
             }
 
             // 4. Mark published

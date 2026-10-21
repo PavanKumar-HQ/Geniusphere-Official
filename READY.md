@@ -23,13 +23,17 @@ In accordance with Platform Directives, the following documentation and audit ar
    Authentication boundaries, HMAC-SHA256 JWT validation, IDOR denial assertions (HTTP 403), teacher grading authorization, and PostgreSQL RLS policies.
 5. **Real-Time Synchronization Audit**: [`docs/realtime-synchronization-audit.md`](docs/realtime-synchronization-audit.md)  
    Fastify WebSocket gateway (`/ws`), channel segregation (`user:<userId>`), multi-session synchronization tests, and outbox worker event lifecycle.
-6. **Canonical 170 Lab Acceptance Matrix**: [`docs/lab-acceptance-matrix.md`](docs/lab-acceptance-matrix.md)  
+6. **Real-Time Architecture Specification**: [`docs/realtime-architecture.md`](docs/realtime-architecture.md)  
+   Detailed transport protocols, channel authorization rules, event lifecycle, and disconnection/missed-event recovery.
+7. **Real-Time Test Results Register**: [`docs/realtime-test-results.md`](docs/realtime-test-results.md)  
+   Executable test output, scenario assertions, execution timings, and release gate checklist.
+8. **Canonical 170 Lab Acceptance Matrix**: [`docs/lab-acceptance-matrix.md`](docs/lab-acceptance-matrix.md)  
    Exhaustive matrix of all 170 simulation labs detailing stable IDs, topics, formulas/models, student-controlled inputs, state transitions, and completion criteria.
-7. **Canonical 170 Video Lessons Audit**: [`docs/video-source-audit.md`](docs/video-source-audit.md)  
+9. **Canonical 170 Video Lessons Audit**: [`docs/video-source-audit.md`](docs/video-source-audit.md)  
    Audit of all 170 video lessons validated live via official YouTube oEmbed API (`HTTP 200 OK`) with title, channel attribution, duration, and relevance verdicts.
-8. **YouTube Lesson Data Flow & Playback Architecture**: [`docs/youtube-lesson-data-flow.md`](docs/youtube-lesson-data-flow.md)  
+10. **YouTube Lesson Data Flow & Playback Architecture**: [`docs/youtube-lesson-data-flow.md`](docs/youtube-lesson-data-flow.md)  
    Sequence diagram from UI action through Fastify API, PostgreSQL transaction, and WebSocket broadcast, including failure rollback and retry states.
-9. **Implementation & Defect Remediation Log**: [`docs/implementation-log.md`](docs/implementation-log.md)  
+11. **Implementation & Defect Remediation Log**: [`docs/implementation-log.md`](docs/implementation-log.md)  
    Chronological record of architectural modifications, migrations, affected services, and test evidence.
 
 ---
@@ -83,9 +87,9 @@ All 20 tables exist with foreign keys, unique constraints, and PostgreSQL RLS po
 
 ```
  Test Files  23 passed | 1 skipped (24)
-      Tests  376 passed | 1 skipped (377)
-   Start at  10:54:36
-   Duration  4.18s
+      Tests  378 passed | 1 skipped (379)
+   Start at  11:01:15
+   Duration  4.47s
 ```
 
 - **Typecheck (`npx tsc --noEmit`):** 0 errors.
