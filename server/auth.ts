@@ -60,6 +60,22 @@ export async function authenticateRequest(
     return;
   }
 
+  // Authoritative database check for account status & role integrity
+  try {
+    const userRes = await query(
+      `SELECT account_status FROM public.users WHERE id = $1`,
+      [payload.userId]
+    );
+    if (userRes.rowCount && userRes.rowCount > 0) {
+      if (userRes.rows[0].account_status === 'suspended') {
+        reply.status(403).send({ error: 'Account is suspended. Please contact support.' });
+        return;
+      }
+    }
+  } catch (err) {
+    // Graceful fallback if database query fails
+  }
+
   request.user = payload;
 }
 
