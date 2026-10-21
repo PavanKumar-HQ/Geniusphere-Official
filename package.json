@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run --no-file-parallelism",
     "test:integration": "vitest run tests/production-integration.test.ts",
+    "test:python": "python3 -m pytest tests/python/ -v",
+    "test:all": "npm test && npm run test:python",
     "test:watch": "vitest"
   },
   "dependencies": {

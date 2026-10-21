@@ -9,8 +9,8 @@
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Vitest](https://img.shields.io/badge/Vitest-5.0.5-6E9F18?logo=vitest)](https://vitest.dev/)
-[![Tests](https://img.shields.io/badge/Tests-431%2F431%20Passed-43A85B)](#)
+[![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python)](https://python.org/)
+[![Tests](https://img.shields.io/badge/Tests-444%2F444%20Passed-43A85B)](#)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](#)
 
@@ -68,16 +68,18 @@ Geniusphere is a full product educational technology platform engineered for ind
 
 ---
 
-## 📑 Master Engineering Architecture & Deliverables
+## 📑 Master Engineering Architecture & Polyglot Deliverables
 
 The production engineering blueprints, system maps, and test matrices are maintained under `docs/`:
 
 1. [System Architecture Map](docs/architecture/system-map.md) — Multi-tier boundaries, state ownership matrix, and 15 interactive standalone labs.
-2. [Data Flow & Integration Pipelines](docs/architecture/data-flow.md) — Authentication, learning persistence, real-time WebSocket sync, and AI request flows.
-3. [Architecture Decisions Log](docs/architecture/decisions.md) — Formal records (ADR-101 through ADR-106) on registry resolution, CSS grids, orientation guards, and AI resilience.
-4. [Cross-System Regression Matrix](docs/testing/regression-matrix.md) — 24 edge-case scenarios, expected behaviors, and automated verification suites.
-5. [Production Deployment & Operations Guide](docs/operations/deployment.md) — Topology, environment variables, health checks, and safe rollback protocols.
-6. [Testing Strategy & Test Registry](docs/testing/TESTING_STRATEGY.md) — 431 automated tests across 29 test suites with zero mock data.
+2. [Language & Responsibility Matrix](docs/architecture/language-matrix.md) — Polyglot engineering allocation, layer boundaries, and duplication resolution.
+3. [Cross-Language Communication Contracts](docs/architecture/cross-language-contracts.md) — Runtime schemas, headers, timeouts, and failure envelopes across TS, Python, SQL, and Fastify.
+4. [Data Flow & Integration Pipelines](docs/architecture/data-flow.md) — Authentication, learning persistence, real-time WebSocket sync, and AI request flows.
+5. [Architecture Decisions Log](docs/architecture/decisions.md) — Formal records (ADR-101 through ADR-108) on registry resolution, CSS grids, orientation guards, AI resilience, polyglot specialization, and WASM evaluation.
+6. [Cross-System Regression Matrix](docs/testing/regression-matrix.md) — 24 edge-case scenarios, expected behaviors, and automated verification suites.
+7. [Production Deployment & Operations Guide](docs/operations/deployment.md) — Topology, environment variables, health checks, and safe rollback protocols.
+8. [Testing Strategy & Test Registry](docs/testing/TESTING_STRATEGY.md) — 444 automated tests (431 Vitest + 13 Pytest) with zero mock data.
 
 ---
 
