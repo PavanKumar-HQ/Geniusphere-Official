@@ -739,61 +739,61 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                     >
                       {course!.domain}
                     </span>
-                  {(() => {
-                    const totalMods = course!.modules?.length || 10;
-                    const completedMods = enrollment.completed_lessons?.length || 0;
-                    const percent = Math.min(100, Math.round((completedMods / totalMods) * 100));
-                    return (
-                      <>
-                        <span
-                          style={{
-                            backgroundColor: 'rgba(0, 245, 160, 0.12)',
-                            color: 'var(--brand-primary)',
-                            padding: '3px 10px',
-                            borderRadius: '100px',
-                            fontSize: '0.75rem',
-                            fontWeight: 800,
-                            border: '1px solid rgba(0, 245, 160, 0.25)',
-                          }}
-                        >
-                          {completedMods} of {totalMods} Modules ({percent}%)
-                        </span>
-                      </div>
+                    <span
+                      style={{
+                        backgroundColor: 'rgba(0, 245, 160, 0.12)',
+                        color: 'var(--brand-primary)',
+                        padding: '3px 10px',
+                        borderRadius: '100px',
+                        fontSize: '0.75rem',
+                        fontWeight: 800,
+                        border: '1px solid rgba(0, 245, 160, 0.25)',
+                      }}
+                    >
+                      {enrollment.completed_lessons?.length || 0} of {course!.modules?.length || 10} Modules ({Math.min(100, Math.round(((enrollment.completed_lessons?.length || 0) / (course!.modules?.length || 10)) * 100))}%)
+                    </span>
+                  </div>
 
-                      <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
-                        {course!.title}
-                      </h3>
+                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                    {course!.title}
+                  </h3>
 
-                      {/* Realtime Glowing Gradient Course Progress Bar */}
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>
-                          <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Course Progress</span>
-                          <span style={{ color: 'var(--brand-primary)' }}>{percent}% COMPLETED</span>
-                        </div>
-                        <div
-                          style={{
-                            height: '10px',
-                            borderRadius: '5px',
-                            backgroundColor: 'var(--bg-surface-subdued)',
-                            overflow: 'hidden',
-                            border: '1px solid var(--border-subtle)',
-                          }}
-                        >
+                  {/* Realtime Glowing Gradient Course Progress Bar */}
+                  <div>
+                    {(() => {
+                      const totalMods = course!.modules?.length || 10;
+                      const completedMods = enrollment.completed_lessons?.length || 0;
+                      const percent = Math.min(100, Math.round((completedMods / totalMods) * 100));
+                      return (
+                        <>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>
+                            <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Course Progress</span>
+                            <span style={{ color: 'var(--brand-primary)' }}>{percent}% COMPLETED</span>
+                          </div>
                           <div
                             style={{
-                              height: '100%',
-                              width: `${percent}%`,
-                              background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
-                              boxShadow: '0 0 10px rgba(0, 245, 160, 0.45)',
+                              height: '10px',
                               borderRadius: '5px',
-                              transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                              backgroundColor: 'var(--bg-surface-subdued)',
+                              overflow: 'hidden',
+                              border: '1px solid var(--border-subtle)',
                             }}
-                          />
-                        </div>
-                      </div>
-                      </>
-                    );
-                  })()}
+                          >
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${percent}%`,
+                                background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
+                                boxShadow: '0 0 10px rgba(0, 245, 160, 0.45)',
+                                borderRadius: '5px',
+                                transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                              }}
+                            />
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
