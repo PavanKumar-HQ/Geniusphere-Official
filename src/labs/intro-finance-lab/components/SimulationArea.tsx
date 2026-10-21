@@ -159,62 +159,247 @@ const Module2: React.FC<{ simStep: number; isSimplified: boolean }> = ({ simStep
   );
 };
 
-/* --- Module 3: Budgeting --- */
+/* --- Module 3: Budgeting (50/30/20 Rule + Allowance) --- */
 const Module3: React.FC<{ isSimplified: boolean }> = ({ isSimplified }) => {
-  const [val, setVal] = React.useState(70);
-  const isOver = val > 90;
+  const [budgetTab, setBudgetTab] = React.useState<'503020' | 'allowance'>('503020');
+  const [income, setIncome] = React.useState(20000);
+  const [needsPct, setNeedsPct] = React.useState(50);
+  const [wantsPct, setWantsPct] = React.useState(30);
+  const [savingsPct, setSavingsPct] = React.useState(20);
+
+  // Allowance mode state
+  const [allowanceVal, setAllowanceVal] = React.useState(70);
+  const isOverAllowance = allowanceVal > 90;
+
+  const totalPct = needsPct + wantsPct + savingsPct;
+  const needsAmt = Math.round((income * needsPct) / 100);
+  const wantsAmt = Math.round((income * wantsPct) / 100);
+  const savingsAmt = Math.round((income * savingsPct) / 100);
 
   return (
-    <div className="flex-1 flex flex-col gap-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className={`p-6 rounded-2xl border transition-all ${isOver ? 'bg-expense/10 border-expense/30' : 'bg-income/10 border-income/30'}`}>
-          <div className="text-xs font-mono uppercase mb-4">Allowance Allocation</div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={val}
-            onChange={(e) => setVal(parseInt(e.target.value))}
-            className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-income"
-          />
-          <div className="mt-4 flex justify-between font-mono">
-            <span className="text-white/40">Used</span>
-            <span className={isOver ? 'text-expense font-bold' : 'text-income'}>{val}%</span>
-          </div>
-        </div>
-
-        <div className="col-span-2 glass p-6 rounded-2xl border-white/10 flex items-center justify-around">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-16 h-16 rounded-full border-4 border-white/5 flex items-center justify-center text-xl">🍕</div>
-            <span className="text-[10px] uppercase text-white/40">Food</span>
-            <div className="h-1 w-12 bg-income rounded-full"></div>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-16 h-16 rounded-full border-4 border-white/5 flex items-center justify-center text-xl">🎨</div>
-            <span className="text-[10px] uppercase text-white/40">Hobbies</span>
-            <div className="h-1 w-12 bg-savings rounded-full"></div>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-16 h-16 rounded-full border-4 border-white/5 flex items-center justify-center text-xl">📚</div>
-            <span className="text-[10px] uppercase text-white/40">Books</span>
-            <div className="h-1 w-12 bg-growth rounded-full"></div>
-          </div>
-        </div>
+    <div className="flex-1 flex flex-col gap-6 overflow-y-auto">
+      {/* Mode Selector Tabs */}
+      <div className="flex items-center gap-2 p-1 bg-white/5 rounded-xl border border-white/10 w-fit">
+        <button
+          onClick={() => setBudgetTab('503020')}
+          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            budgetTab === '503020'
+              ? 'bg-[#00FFA3] text-black shadow-lg shadow-[#00FFA3]/20'
+              : 'text-white/60 hover:text-white'
+          }`}
+        >
+          50/30/20 Rule Engine
+        </button>
+        <button
+          onClick={() => setBudgetTab('allowance')}
+          className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            budgetTab === 'allowance'
+              ? 'bg-[#00FFA3] text-black shadow-lg shadow-[#00FFA3]/20'
+              : 'text-white/60 hover:text-white'
+          }`}
+        >
+          Allowance Allocation
+        </button>
       </div>
 
-      <div className="flex-1 glass bg-white/5 rounded-2xl p-6 border-white/5 flex items-center justify-center">
-        <div className="text-center max-w-sm">
-          <div className={`text-5xl mb-4 transition-transform duration-500 ${isOver ? 'rotate-12' : 'rotate-0'}`}>
-            {isOver ? '🚨' : '✅'}
+      {budgetTab === '503020' ? (
+        <div className="flex-1 flex flex-col gap-5">
+          {/* Income Slider */}
+          <div className="glass p-5 rounded-2xl border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-white/50">Monthly Income / Pocket Budget</span>
+              <div className="text-2xl font-bold font-mono text-[#00FFA3]">₹{income.toLocaleString()}</div>
+            </div>
+            <div className="w-full md:w-64">
+              <input
+                type="range"
+                min="2000"
+                max="100000"
+                step="1000"
+                value={income}
+                onChange={(e) => setIncome(parseInt(e.target.value))}
+                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#00FFA3]"
+              />
+              <div className="flex justify-between text-[10px] text-white/40 mt-1 font-mono">
+                <span>₹2k</span>
+                <span>₹50k</span>
+                <span>₹100k</span>
+              </div>
+            </div>
+            <button
+              onClick={() => { setNeedsPct(50); setWantsPct(30); setSavingsPct(20); }}
+              className="px-3 py-1.5 rounded-lg border border-[#00FFA3]/30 text-[#00FFA3] text-xs font-mono hover:bg-[#00FFA3]/10"
+            >
+              Reset 50/30/20
+            </button>
           </div>
-          <h4 className="text-xl font-bold mb-2">{isOver ? 'Budget Alert!' : 'Balanced Budget'}</h4>
-          <p className="text-sm text-white/60">
-            {isOver
-              ? "You're spending more than you receive. Try cutting down on non-essential items."
-              : "Great job! You're living within your means and have extra for savings."}
-          </p>
+
+          {/* Allocation Bar */}
+          <div className="glass p-4 rounded-2xl border-white/10 flex flex-col gap-2">
+            <div className="flex justify-between text-xs font-mono">
+              <span className="text-[#00FFA3]">Needs: {needsPct}% (₹{needsAmt.toLocaleString()})</span>
+              <span className="text-[#3BF0FF]">Wants: {wantsPct}% (₹{wantsAmt.toLocaleString()})</span>
+              <span className="text-[#7C6BFF]">Savings: {savingsPct}% (₹{savingsAmt.toLocaleString()})</span>
+            </div>
+            <div className="h-4 w-full bg-white/10 rounded-full overflow-hidden flex">
+              <div style={{ width: `${Math.min(needsPct, 100)}%` }} className="bg-[#00FFA3] h-full transition-all duration-300" />
+              <div style={{ width: `${Math.min(wantsPct, 100)}%` }} className="bg-[#3BF0FF] h-full transition-all duration-300" />
+              <div style={{ width: `${Math.min(savingsPct, 100)}%` }} className="bg-[#7C6BFF] h-full transition-all duration-300" />
+            </div>
+            {totalPct !== 100 && (
+              <div className="text-[11px] font-mono text-[#FF4D4D] text-right">
+                ⚠️ Total is {totalPct}% (must equal 100%)
+              </div>
+            )}
+          </div>
+
+          {/* 3 Pillar Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Needs Card */}
+            <div className="p-5 rounded-2xl border border-[#00FFA3]/30 bg-[#00FFA3]/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-[#00FFA3] uppercase font-mono">50% Needs</span>
+                  <span className="text-xl">🏠</span>
+                </div>
+                <div className="text-2xl font-bold font-mono text-white mb-1">₹{needsAmt.toLocaleString()}</div>
+                <p className="text-xs text-white/60 mb-4">Groceries, rent, transit, medical, electricity, school fees.</p>
+              </div>
+              <div>
+                <input
+                  type="range"
+                  min="20"
+                  max="80"
+                  value={needsPct}
+                  onChange={(e) => {
+                    const newNeeds = parseInt(e.target.value);
+                    setNeedsPct(newNeeds);
+                  }}
+                  className="w-full h-1.5 bg-white/10 rounded appearance-none cursor-pointer accent-[#00FFA3]"
+                />
+                <span className="text-[10px] text-white/40 font-mono">Allocation: {needsPct}%</span>
+              </div>
+            </div>
+
+            {/* Wants Card */}
+            <div className="p-5 rounded-2xl border border-[#3BF0FF]/30 bg-[#3BF0FF]/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-[#3BF0FF] uppercase font-mono">30% Wants</span>
+                  <span className="text-xl">🎮</span>
+                </div>
+                <div className="text-2xl font-bold font-mono text-white mb-1">₹{wantsAmt.toLocaleString()}</div>
+                <p className="text-xs text-white/60 mb-4">Dining out, OTT subscriptions, vacations, video games, shopping.</p>
+              </div>
+              <div>
+                <input
+                  type="range"
+                  min="0"
+                  max="60"
+                  value={wantsPct}
+                  onChange={(e) => {
+                    const newWants = parseInt(e.target.value);
+                    setWantsPct(newWants);
+                  }}
+                  className="w-full h-1.5 bg-white/10 rounded appearance-none cursor-pointer accent-[#3BF0FF]"
+                />
+                <span className="text-[10px] text-white/40 font-mono">Allocation: {wantsPct}%</span>
+              </div>
+            </div>
+
+            {/* Savings Card */}
+            <div className="p-5 rounded-2xl border border-[#7C6BFF]/30 bg-[#7C6BFF]/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-[#7C6BFF] uppercase font-mono">20% Savings</span>
+                  <span className="text-xl">📈</span>
+                </div>
+                <div className="text-2xl font-bold font-mono text-white mb-1">₹{savingsAmt.toLocaleString()}</div>
+                <p className="text-xs text-white/60 mb-4">Emergency reserve (3-6mo), mutual fund SIPs, debt repayment.</p>
+              </div>
+              <div>
+                <input
+                  type="range"
+                  min="0"
+                  max="60"
+                  value={savingsPct}
+                  onChange={(e) => {
+                    const newSavings = parseInt(e.target.value);
+                    setSavingsPct(newSavings);
+                  }}
+                  className="w-full h-1.5 bg-white/10 rounded appearance-none cursor-pointer accent-[#7C6BFF]"
+                />
+                <span className="text-[10px] text-white/40 font-mono">Allocation: {savingsPct}%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Coach Insight */}
+          <div className="p-4 rounded-xl border border-white/10 bg-white/5 flex items-center gap-3">
+            <span className="text-2xl">{savingsPct >= 20 ? '🌟' : '💡'}</span>
+            <div className="text-xs leading-relaxed text-white/80">
+              {savingsPct >= 20 ? (
+                <span><strong>Disciplined Saver:</strong> Allocating {savingsPct}% (₹{savingsAmt.toLocaleString()}) to savings activates compound interest and builds an emergency cushion.</span>
+              ) : (
+                <span><strong>Savings Warning:</strong> {savingsPct}% is below the 20% benchmark. Try shaving ₹{Math.round((income * (20 - savingsPct)) / 100).toLocaleString()} from Wants to protect your future.</span>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Allowance Tab */
+        <div className="flex-1 flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className={`p-6 rounded-2xl border transition-all ${isOverAllowance ? 'bg-expense/10 border-expense/30' : 'bg-income/10 border-income/30'}`}>
+              <div className="text-xs font-mono uppercase mb-4">Allowance Allocation</div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={allowanceVal}
+                onChange={(e) => setAllowanceVal(parseInt(e.target.value))}
+                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-income"
+              />
+              <div className="mt-4 flex justify-between font-mono">
+                <span className="text-white/40">Used</span>
+                <span className={isOverAllowance ? 'text-expense font-bold' : 'text-income'}>{allowanceVal}%</span>
+              </div>
+            </div>
+
+            <div className="col-span-2 glass p-6 rounded-2xl border-white/10 flex items-center justify-around">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-16 h-16 rounded-full border-4 border-white/5 flex items-center justify-center text-xl">🍕</div>
+                <span className="text-[10px] uppercase text-white/40">Food</span>
+                <div className="h-1 w-12 bg-income rounded-full"></div>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-16 h-16 rounded-full border-4 border-white/5 flex items-center justify-center text-xl">🎨</div>
+                <span className="text-[10px] uppercase text-white/40">Hobbies</span>
+                <div className="h-1 w-12 bg-savings rounded-full"></div>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-16 h-16 rounded-full border-4 border-white/5 flex items-center justify-center text-xl">📚</div>
+                <span className="text-[10px] uppercase text-white/40">Books</span>
+                <div className="h-1 w-12 bg-growth rounded-full"></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="glass bg-white/5 rounded-2xl p-6 border-white/5 flex items-center justify-center">
+            <div className="text-center max-w-sm">
+              <div className={`text-5xl mb-4 transition-transform duration-500 ${isOverAllowance ? 'rotate-12' : 'rotate-0'}`}>
+                {isOverAllowance ? '🚨' : '✅'}
+              </div>
+              <h4 className="text-xl font-bold mb-2">{isOverAllowance ? 'Budget Alert!' : 'Balanced Budget'}</h4>
+              <p className="text-sm text-white/60">
+                {isOverAllowance
+                  ? "You're spending more than you receive. Try cutting down on non-essential items."
+                  : "Great job! You're living within your means and have extra for savings."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

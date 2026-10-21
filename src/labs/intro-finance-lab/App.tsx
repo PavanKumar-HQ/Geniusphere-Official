@@ -10,7 +10,8 @@ import { MobileLayout, MobileBadge, MobileControlGroup } from '../../components/
 import { X, Menu, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose, onExit }) => {
+  const exitHandler = onClose || onExit || (() => window.history.back());
   const [state, setState] = useState<SimulationState>({
     currentModuleId: ModuleId.WHAT_IS_MONEY,
     isPaused: false,
@@ -136,7 +137,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
           }
           onMenuToggle={() => setIsSidebarOpen(true)}
-          onExit={onClose || (() => window.history.back())}
+          onExit={exitHandler}
         />
 
         {/* Sidebar Portal for Mobile */}
@@ -210,7 +211,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               <span>Tips & Insights</span>
             </button>
             <button
-              onClick={onClose || (() => window.history.back())}
+              onClick={exitHandler}
               className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-500/15 text-red-400 hover:bg-red-500/25 hover:text-red-300 border border-red-500/30 transition-all"
               title="Exit Lab"
             >

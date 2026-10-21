@@ -125,7 +125,7 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
             </div>
           }
           onMenuToggle={() => setIsSidebarOpen(true)}
-          onExit={onClose || (() => window.history.back())}
+          onExit={onClose || onExit || (() => window.history.back())}
         />
 
         {/* Sidebar Portal for Mobile */}
@@ -163,9 +163,9 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
             <div className="text-xs uppercase tracking-widest text-cyan-500/60 font-medium">
               Educational Simulation v1.0
             </div>
-            {(onClose) && (
+            {(onClose || onExit) && (
               <button
-                onClick={onClose}
+                onClick={onClose || onExit}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-500/15 text-red-400 hover:bg-red-500/25 hover:text-red-300 border border-red-500/30 transition-all"
               >
                 <X size={14} />
