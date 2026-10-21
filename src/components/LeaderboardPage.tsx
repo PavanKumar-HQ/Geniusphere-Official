@@ -236,8 +236,8 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ db, currentUse
 
       {/* Roster Table */}
       {filterDomain === 'all' ? (
-        <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <div className="card table-scroll-wrapper" style={{ padding: '0' }}>
+          <table style={{ width: '100%', minWidth: '580px', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ backgroundColor: 'var(--bg-surface-subdued)', borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-secondary)', fontSize: '0.82rem', textTransform: 'uppercase' }}>
                 <th style={{ padding: '16px 20px' }}>Rank</th>

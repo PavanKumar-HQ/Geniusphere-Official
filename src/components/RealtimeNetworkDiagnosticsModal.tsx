@@ -176,9 +176,9 @@ export const RealtimeNetworkDiagnosticsModal: React.FC<RealtimeNetworkDiagnostic
         {/* Telemetry Metric Cards */}
         <div
           style={{
-            padding: '16px 24px',
+            padding: '16px 20px',
             display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
             gap: '12px',
             borderBottom: '1px solid var(--border-subtle)',
           }}

@@ -228,7 +228,7 @@ export const BackupExportModal: React.FC<BackupExportModalProps> = ({
             borderRadius: '10px',
             padding: '16px',
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
             gap: '12px',
             textAlign: 'center',
           }}
