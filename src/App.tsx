@@ -981,107 +981,8 @@ export const App: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT: THEME PICKER, USER GUIDE, LIVE BACKEND STATUS, NOTIFICATIONS BELL & USER AVATAR PILL */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', flexShrink: 0 }}>
-            {/* Quick 1-Click Theme Toggle & Palette Picker (Sleek Compact Pill) */}
-            <div
-              style={{
-                height: '36px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '100px',
-                padding: '2px 4px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                transition: 'all 0.15s ease',
-                flexShrink: 0,
-              }}
-            >
-              {/* Direct 1-Click Toggle Button (Light ⇄ Dark) */}
-              <button
-                type="button"
-                onClick={toggleTheme}
-                style={{
-                  height: '100%',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  background: 'none',
-                  border: 'none',
-                  borderRadius: '100px',
-                  padding: '0 8px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-                title={isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-                aria-label={isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-              >
-                {isDarkMode ? (
-                  <Sun size={15} color="#F59E0B" />
-                ) : (
-                  <Moon size={15} color="var(--brand-primary)" />
-                )}
-              </button>
-
-              <div style={{ width: '1px', height: '16px', backgroundColor: 'var(--border-subtle)', margin: '0 1px' }} />
-
-              {/* Palette Picker Trigger for 10 Themes Modal */}
-              <button
-                type="button"
-                onClick={() => setThemeModalOpen(true)}
-                style={{
-                  height: '100%',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: 'none',
-                  border: 'none',
-                  borderRadius: '100px',
-                  padding: '0 6px',
-                  cursor: 'pointer',
-                  color: 'var(--text-muted)',
-                  transition: 'color 0.15s ease',
-                }}
-                title="Choose from all 10 curated themes (Sepia, OLED, Midnight Blue, Ocean, etc.)"
-                aria-label="Open 10 Themes Palette"
-              >
-                <Palette size={14} />
-              </button>
-            </div>
-
-            {/* Interactive User Guide Button with Mascot (Clean compact) */}
-            <button
-              type="button"
-              onClick={() => setUserGuideOpen(true)}
-              className="header-hide-mobile"
-              style={{
-                height: '36px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '100px',
-                padding: '0 10px',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                transition: 'all 0.15s ease',
-                flexShrink: 0,
-              }}
-              title="Launch Interactive Software User Guide"
-            >
-              <MascotSphere pose="happy" size={18} animated={false} />
-              <span>Guide</span>
-            </button>
-
-            {/* Realtime Live Engine Status Indicator with Live Database Explorer */}
-            <RealtimeHeaderStatus currentUserId={currentUser.id} db={db} />
+          {/* RIGHT: NOTIFICATIONS BELL & USER AVATAR PILL */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative', flexShrink: 0 }}>
 
 
 
@@ -1427,6 +1328,33 @@ export const App: React.FC = () => {
                     >
                       <HelpCircle size={16} color="var(--brand-primary)" />
                       <span>Software User Guide</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleTheme();
+                      }}
+                      style={{
+                        padding: '9px 12px',
+                        borderRadius: '10px',
+                        border: '1px solid var(--border-subtle)',
+                        backgroundColor: 'var(--bg-surface)',
+                        color: 'var(--text-primary)',
+                        fontWeight: 600,
+                        fontSize: '0.8rem',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {isDarkMode ? <Sun size={16} color="#F59E0B" /> : <Moon size={16} color="var(--brand-primary)" />}
+                        <span>{isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</span>
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{isDarkMode ? 'Dark' : 'Light'}</span>
                     </button>
 
                     <button
