@@ -178,6 +178,85 @@ Production assets will be output to `dist/`, optimized and tree-shaken for CDN d
 
 ---
 
+## 🤖 Production AI Endpoint Architecture
+
+Geniusphere features a versioned, secure AI endpoint architecture designed for seamless deployment across Vercel Functions and containerized Fastify backends.
+
+### 1. Endpoint Contract
+* **Route:** `POST /api/v1/ai/chat` (with backward-compatible alias at `POST /api/ai/chat`)
+* **Transport:** HTTPS JSON, max payload size `64 KB`
+* **Authentication:** Mandatory HTTP `Authorization: Bearer <jwt_token>`
+
+#### Request Payload
+```json
+{
+  "message": "Explain photosynthesis in simple terms.",
+  "conversationId": "conv-sci-89",
+  "context": {
+    "subject": "Science",
+    "gradeLevel": "8"
+  },
+  "history": [
+    { "role": "user", "content": "What is chlorophyll?" },
+    { "role": "assistant", "content": "Chlorophyll is the green pigment in plants..." }
+  ]
+}
+```
+
+#### Response Envelope (Unconfigured State — Current Phase)
+When no AI provider has been configured (`AI_PROVIDER=none`), the endpoint returns **HTTP 503 Service Unavailable** with zero fabricated answers or mock tokens:
+```json
+{
+  "requestId": "f83a45c2-8491-4e92-ba78-2d2bc27d1101",
+  "status": "provider_not_configured",
+  "message": "The AI service is not configured yet.",
+  "error": {
+    "code": "PROVIDER_NOT_CONFIGURED",
+    "message": "The AI service is not configured yet."
+  }
+}
+```
+
+#### HTTP Status Codes & Error Dictionary
+| HTTP Status | Error Code | Trigger Condition |
+|---|---|---|
+| **200 OK** | `null` | Successful completion from configured provider |
+| **400 Bad Request** | `VALIDATION_ERROR` | Empty message, length > 4000 chars, invalid conversation ID, unknown context fields |
+| **401 Unauthorized** | `UNAUTHORIZED` | Missing or invalid Bearer token |
+| **403 Forbidden** | `FORBIDDEN` | Suspended account status |
+| **413 Payload Too Large** | `PAYLOAD_TOO_LARGE` | Request body exceeds 64 KB |
+| **415 Unsupported Media** | `UNSUPPORTED_MEDIA_TYPE` | Non-JSON `Content-Type` header |
+| **429 Too Many Requests** | `RATE_LIMIT_EXCEEDED` | Exceeds 20 requests/min (returns `Retry-After` header) |
+| **500 Server Error** | `INTERNAL_SERVER_ERROR` | Sanitized server error (stack traces/secrets redacted) |
+| **503 Unavailable** | `PROVIDER_NOT_CONFIGURED` | Truthful notification that AI provider is not connected |
+| **504 Gateway Timeout** | `GATEWAY_TIMEOUT` | Provider request exceeded configured timeout |
+
+### 2. Provider Abstraction & Later Connection
+The endpoint isolates provider logic through the `AIProvider` boundary in `server/ai/provider.ts`. 
+
+To connect a provider in Phase 2:
+1. Set server environment variables:
+   ```env
+   AI_PROVIDER=gemini
+   AI_API_KEY=your_production_api_key
+   AI_MODEL=gemini-1.5-flash
+   AI_REQUEST_TIMEOUT_MS=15000
+   ```
+2. Zero code changes required in API route or frontend client.
+
+### 3. Rate Limiting & Abuse Prevention
+* **Durable PostgreSQL Store:** Sliding window counts are stored in `public.ai_rate_limits` table (`supabase/migrations/20261021000007_ai_rate_limits.sql`), ensuring strict rate enforcement across multiple Vercel Function instances.
+* **In-Memory Fallback:** Automated test suites and offline local environments automatically use in-memory sliding window buckets.
+* **Privacy & Secret Redaction:** `AILogger` strips JWTs, passwords, API keys, and student email addresses from server logs.
+
+### 4. Deployment Topology
+* **Frontend:** Vercel Static Hosting (`dist/`).
+* **API on Vercel:** Serverless function entry point at `api/v1/ai/chat.ts` with routing specified in `vercel.json`.
+* **API on Container / Local:** Fastify router at `server/index.ts` listening on port `3001`.
+* **Database:** Supabase PostgreSQL with automated idempotent migration execution.
+
+---
+
 ## ⚖️ License & Ownership
 
 Copyright © 2026 Geniusphere. All rights reserved.  

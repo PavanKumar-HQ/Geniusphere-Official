@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { apiClient } from '../../services/apiClient';
 
 type Message = {
   role: 'user' | 'model';
   text: string;
+  isSystemNotice?: boolean;
 };
-
-const CYBER_GUIDE_SYSTEM = `You are Cyber Guide, a friendly AI assistant for the CyberSphere Junior Lab. Explain cybersecurity concepts to students (ages 10–18) in a simple, clear, and encouraging way. Use analogies relevant to young people. Always be positive and helpful.`;
 
 export const CyberGuideChat: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,35 +28,56 @@ export const CyberGuideChat: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
 
-    // Build a simple context from past messages for prompt
-    const context = messages
-      .slice(-6)
-      .map(m => `${m.role === 'user' ? 'Student' : 'Guide'}: ${m.text}`)
-      .join('\n');
-
-    const prompt = `${CYBER_GUIDE_SYSTEM}\n\n${context}\nStudent: ${userText}\nGuide:`;
+    // Format conversation history for standard API contract
+    const history = messages
+      .filter(m => !m.isSystemNotice)
+      .slice(-10)
+      .map(m => ({
+        role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+        content: m.text,
+      }));
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+      const response = await apiClient.sendAIChat({
+        message: userText,
+        context: {
+          subject: 'Cybersecurity',
+          gradeLevel: 'Junior Lab',
+        },
+        history,
       });
 
-      if (!response.ok) throw new Error('API error');
-
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'model', text: data.text || 'Got it!' }]);
-    } catch {
-      // Friendly fallback responses when no API
-      const fallbacks = [
-        `Great question about "${userText}"! Cybersecurity is all about keeping your digital life safe — like putting a lock on your online door. Want me to explain more?`,
-        `Think of hackers like trespassers trying to get into your house. Cybersecurity tools are your digital locks, alarms, and guard dogs! 🛡️`,
-        `"${userText}" — that's a smart thing to think about! The key rule in cybersecurity: if something feels wrong online, trust your gut and don't click!`,
-        `Your question shows you're already thinking like a cybersecurity expert! The best defence is staying curious and asking questions just like this. 🚀`,
-      ];
-      const reply = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-      setMessages(prev => [...prev, { role: 'model', text: reply }]);
+      if (response.status === 'provider_not_configured') {
+        setMessages(prev => [
+          ...prev,
+          {
+            role: 'model',
+            text: '⚠️ The AI service is not configured yet. Live AI tutor answers will be available once the backend provider is connected.',
+            isSystemNotice: true,
+          },
+        ]);
+      } else if (response.status === 'error') {
+        const errorMsg = response.error?.message || 'AI request failed.';
+        setMessages(prev => [
+          ...prev,
+          {
+            role: 'model',
+            text: `⚠️ Service Notice: ${errorMsg}`,
+            isSystemNotice: true,
+          },
+        ]);
+      } else if (response.data?.message) {
+        setMessages(prev => [...prev, { role: 'model', text: response.data.message }]);
+      }
+    } catch (err: any) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'model',
+          text: `⚠️ Connection error: ${err?.message || 'Unable to reach the server.'}`,
+          isSystemNotice: true,
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }

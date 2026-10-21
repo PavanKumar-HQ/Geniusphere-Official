@@ -217,6 +217,69 @@ export class ApiClient {
       this.wsListeners.delete(listener);
     };
   }
+
+  public async sendAIChat(payload: {
+    message: string;
+    conversationId?: string | null;
+    context?: {
+      subject?: string;
+      gradeLevel?: string;
+      topicId?: string;
+      courseId?: string;
+      lessonId?: string;
+    };
+    history?: { role: 'user' | 'assistant'; content: string }[];
+  }): Promise<{
+    status: 'success' | 'provider_not_configured' | 'error';
+    data?: any;
+    message?: string;
+    error?: { code: string; message: string };
+  }> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/ai/chat`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+      });
+
+      const body = await res.json().catch(() => ({}));
+
+      if (res.status === 503 && body.status === 'provider_not_configured') {
+        return {
+          status: 'provider_not_configured',
+          message: body.message || 'The AI service is not configured yet.',
+          error: body.error,
+        };
+      }
+
+      if (!res.ok) {
+        return {
+          status: 'error',
+          error: body.error || {
+            code: `HTTP_${res.status}`,
+            message: body.message || `Request failed with status ${res.status}`,
+          },
+        };
+      }
+
+      return body;
+    } catch (err: any) {
+      return {
+        status: 'error',
+        error: {
+          code: 'NETWORK_ERROR',
+          message: err?.message || 'Failed to connect to AI service.',
+        },
+      };
+    }
+  }
 }
 
 export const apiClient = new ApiClient();

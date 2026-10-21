@@ -16,6 +16,7 @@ import { pushSender } from './services/pushSender';
 import { wsGateway } from './services/websocketGateway';
 import { outboxWorker } from './services/outboxWorker';
 import { aiGateway } from './services/aiGateway';
+import { handleAIChat } from './ai/chatHandler';
 
 export async function createServer() {
   const fastify = Fastify({
@@ -342,8 +343,38 @@ export async function createServer() {
     return aiGateway.getStatus();
   });
 
-  fastify.post('/api/ai/chat', { preHandler: [authenticateRequest] }, async (request, reply) => {
-    const { prompt, systemPrompt, temperature, maxTokens } = (request.body as any) || {};
+  // 9. Versioned Production AI Chat Endpoint (POST /api/v1/ai/chat)
+  const aiChatRouteHandler = async (request: any, reply: any) => {
+    const rawBody = typeof request.body === 'string' ? request.body : JSON.stringify(request.body || {});
+    const result = await handleAIChat({
+      headers: request.headers as Record<string, string | string[] | undefined>,
+      body: request.body,
+      rawBodyLength: Buffer.byteLength(rawBody, 'utf8'),
+      ip: request.ip,
+      user: request.user,
+    });
+
+    for (const [key, val] of Object.entries(result.headers)) {
+      reply.header(key, val);
+    }
+    return reply.status(result.status).send(result.body);
+  };
+
+  fastify.post('/api/v1/ai/chat', aiChatRouteHandler);
+
+  // Backward compatibility alias for /api/ai/chat
+  fastify.post('/api/ai/chat', async (request, reply) => {
+    const body = (request.body as any) || {};
+    // If request matches v1 contract ('message' field), use standard handleAIChat
+    if (typeof body.message === 'string') {
+      return aiChatRouteHandler(request, reply);
+    }
+
+    // Otherwise handle legacy prompt format
+    await authenticateRequest(request, reply);
+    if (reply.sent) return;
+
+    const { prompt, systemPrompt, temperature, maxTokens } = body;
     if (!prompt || typeof prompt !== 'string') {
       return reply.status(400).send({ error: 'Prompt is required' });
     }
