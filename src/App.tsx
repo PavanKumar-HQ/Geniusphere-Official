@@ -1094,320 +1094,362 @@ export const App: React.FC = () => {
                 </div>
               </button>
 
-              {/* Persona / User Switcher Menu */}
+              {/* Authenticated User Account Menu (Desktop Dropdown & Mobile Native Bottom Sheet) */}
               {userMenuOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '48px',
-                    right: 0,
-                    width: '310px',
-                    maxWidth: 'calc(100vw - 24px)',
-                    backgroundColor: 'var(--bg-surface)',
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-subtle)',
-                    boxShadow: '0 12px 32px rgba(0,0,0,0.18)',
-                    padding: '16px',
-                    zIndex: 200,
-                  }}
-                >
-                  <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px', marginBottom: '12px' }}>
-                    <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>{currentUser.name.split(' (')[0]}</div>
-                    <div style={{ fontSize: '0.74rem', color: 'var(--brand-primary)', fontWeight: 700, marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      {isTeacher ? (
-                        <>
-                          <School size={13} />
-                          <span>Educator & Faculty Portal</span>
-                        </>
-                      ) : isInstAdmin ? (
-                        <>
-                          <ShieldCheck size={13} />
-                          <span>Institution Governance Portal</span>
-                        </>
-                      ) : isSuperadmin ? (
-                        <>
-                          <ShieldAlert size={13} />
-                          <span>Platform Superadmin Operations</span>
-                        </>
-                      ) : currentUser.role === 'guardian' ? (
-                        <>
-                          <Users size={13} />
-                          <span>Parent & Guardian Oversight</span>
-                        </>
-                      ) : (
-                        <>
-                          <GraduationCap size={13} />
-                          <span>Student & Learner Suite</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
+                <>
+                  {/* Backdrop for click-outside dismissal on both desktop and mobile */}
+                  <div
+                    className="user-menu-backdrop"
+                    onClick={() => setUserMenuOpen(false)}
+                  />
 
-                  {/* Student Profile Action */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      setProfileModalOpen(true);
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px',
-                      marginBottom: '12px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border-subtle)',
-                      backgroundColor: 'var(--brand-surface)',
-                      color: 'var(--brand-primary)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontWeight: 800,
-                      fontSize: '0.82rem',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <User size={15} />
-                    <span>View & Edit Student Profile</span>
-                  </button>
+                  <div className="user-menu-container">
+                    {/* Mobile Native Sheet Top Drag Handle */}
+                    <div className="mobile-sheet-drag-handle" />
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-                    <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '2px 4px' }}>
-                      Switch User Role
+                    {/* Header: Avatar, Real User Info, Role & Close Button */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderBottom: '1px solid var(--border-subtle)',
+                        paddingBottom: '12px',
+                        marginBottom: '14px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <img
+                          src="/images/student_hero.jpg"
+                          alt={currentUser.name}
+                          style={{
+                            width: '42px',
+                            height: '42px',
+                            borderRadius: '50%',
+                            objectFit: 'cover',
+                            border: '2px solid var(--brand-primary)',
+                            flexShrink: 0,
+                          }}
+                        />
+                        <div>
+                          <div style={{ fontWeight: 800, fontSize: '0.94rem', color: 'var(--text-primary)' }}>
+                            {currentUser.name.split(' (')[0]}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.72rem',
+                              color: 'var(--brand-primary)',
+                              fontWeight: 700,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                            }}
+                          >
+                            <GraduationCap size={13} />
+                            <span>Student &amp; Learner Suite</span>
+                          </div>
+                          <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{currentUser.email}</div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="user-menu-close-btn"
+                        aria-label="Close menu"
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--bg-canvas)',
+                          border: '1px solid var(--border-subtle)',
+                          color: 'var(--text-muted)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
                     </div>
 
-                    {/* 1. Student Persona */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCurrentUserId('user-student-1');
-                        setUserMenuOpen(false);
-                        setCurrentView('student-dashboard');
-                      }}
+                    {/* Student Progress & Habit Snapshot */}
+                    <div
                       style={{
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        border: currentUser.id === 'user-student-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                        backgroundColor: currentUser.id === 'user-student-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
-                        color: 'var(--text-primary)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        textAlign: 'left',
-                        transition: 'all 0.15s ease',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '8px',
+                        backgroundColor: 'var(--bg-canvas)',
+                        padding: '10px 8px',
+                        borderRadius: '12px',
+                        border: '1px solid var(--border-subtle)',
+                        marginBottom: '14px',
+                        textAlign: 'center',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <GraduationCap size={16} color="var(--brand-primary)" />
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Pavan Kumar</div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Student • Learner Suite</div>
+                      <div>
+                        <div style={{ fontSize: '0.64rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                          Streak
+                        </div>
+                        <div style={{ fontSize: '0.86rem', fontWeight: 900, color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px', marginTop: '2px' }}>
+                          <Flame size={13} color="#D97706" />
+                          <span>7 Days</span>
                         </div>
                       </div>
-                      {currentUser.id === 'user-student-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
-                    </button>
+                      <div style={{ borderLeft: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '0.64rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                          Mastery
+                        </div>
+                        <div style={{ fontSize: '0.86rem', fontWeight: 900, color: 'var(--brand-primary)', marginTop: '2px' }}>
+                          1,450 XP
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.64rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                          Records
+                        </div>
+                        <div style={{ fontSize: '0.86rem', fontWeight: 900, color: '#2563EB', marginTop: '2px' }}>
+                          3 Verified
+                        </div>
+                      </div>
+                    </div>
 
-                    {/* 2. Educator Persona */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCurrentUserId('user-teacher-1');
-                        setUserMenuOpen(false);
-                        setCurrentView('gradebook');
-                      }}
-                      style={{
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        border: currentUser.id === 'user-teacher-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                        backgroundColor: currentUser.id === 'user-teacher-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
-                        color: 'var(--text-primary)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        textAlign: 'left',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <School size={16} color="var(--brand-primary)" />
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Dr. Sharma</div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Teacher • Educator Portal</div>
-                        </div>
-                      </div>
-                      {currentUser.id === 'user-teacher-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
-                    </button>
+                    {/* Primary Account & Learning Actions */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          setProfileModalOpen(true);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--brand-surface)',
+                          color: 'var(--brand-primary)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          fontWeight: 800,
+                          fontSize: '0.84rem',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <User size={16} />
+                        <span>View &amp; Edit Student Profile</span>
+                      </button>
 
-                    {/* 3. Institution Admin Persona */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCurrentUserId('user-admin-1');
-                        setUserMenuOpen(false);
-                        setCurrentView('institution-workspace');
-                      }}
-                      style={{
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        border: currentUser.id === 'user-admin-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                        backgroundColor: currentUser.id === 'user-admin-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
-                        color: 'var(--text-primary)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        textAlign: 'left',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <ShieldCheck size={16} color="var(--brand-primary)" />
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>Principal Verma</div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Admin • Institution Hub</div>
-                        </div>
-                      </div>
-                      {currentUser.id === 'user-admin-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          handleNavigate('student-dashboard');
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-surface)',
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          fontWeight: 600,
+                          fontSize: '0.82rem',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <BookOpen size={16} color="var(--brand-primary)" />
+                        <span>My Enrolled Curriculum</span>
+                      </button>
 
-                    {/* 4. Superadmin Persona */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          handleNavigate('certificates');
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-surface)',
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          fontWeight: 600,
+                          fontSize: '0.82rem',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Award size={16} color="var(--brand-primary)" />
+                        <span>Verified Certificates &amp; Transcripts</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          setStreakModalOpen(true);
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-surface)',
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          fontWeight: 600,
+                          fontSize: '0.82rem',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Flame size={16} color="#D97706" />
+                        <span>Daily Habit &amp; Streak Calendar</span>
+                      </button>
+                    </div>
+
+                    {/* Preferences & Tools */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                        paddingTop: '10px',
+                        borderTop: '1px solid var(--border-subtle)',
+                        marginBottom: '14px',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleTheme()}
+                        style={{
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-surface)',
+                          color: 'var(--text-primary)',
+                          fontWeight: 600,
+                          fontSize: '0.82rem',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {isDarkMode ? <Sun size={16} color="#F59E0B" /> : <Moon size={16} color="var(--brand-primary)" />}
+                          <span>{isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}</span>
+                        </div>
+                        <span
+                          style={{
+                            fontSize: '0.7rem',
+                            fontWeight: 800,
+                            padding: '2px 8px',
+                            borderRadius: '100px',
+                            backgroundColor: 'var(--bg-canvas)',
+                            color: 'var(--text-muted)',
+                          }}
+                        >
+                          {isDarkMode ? 'Dark' : 'Light'}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          setThemeModalOpen(true);
+                        }}
+                        style={{
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-surface)',
+                          color: 'var(--text-primary)',
+                          fontWeight: 600,
+                          fontSize: '0.82rem',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        <Palette size={16} color="var(--brand-primary)" />
+                        <span>Appearance &amp; Theme Palette</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          setUserGuideOpen(true);
+                        }}
+                        style={{
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-surface)',
+                          color: 'var(--text-primary)',
+                          fontWeight: 600,
+                          fontSize: '0.82rem',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                        }}
+                      >
+                        <HelpCircle size={16} color="var(--brand-primary)" />
+                        <span>Software User Guide</span>
+                      </button>
+                    </div>
+
+                    {/* Sign Out Action Button */}
                     <button
                       type="button"
                       onClick={() => {
-                        setCurrentUserId('user-superadmin-1');
                         setUserMenuOpen(false);
-                        setCurrentView('platform-workspace');
+                        setIsAuthenticated(false);
                       }}
                       style={{
-                        padding: '8px 10px',
-                        borderRadius: '8px',
-                        border: currentUser.id === 'user-superadmin-1' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                        backgroundColor: currentUser.id === 'user-superadmin-1' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
-                        color: 'var(--text-primary)',
+                        width: '100%',
+                        padding: '11px',
+                        borderRadius: '10px',
+                        backgroundColor: '#FEF2F2',
+                        border: '1px solid #FECACA',
+                        color: '#DC2626',
+                        fontWeight: 800,
+                        fontSize: '0.84rem',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        textAlign: 'left',
+                        justifyContent: 'center',
+                        gap: '6px',
                         transition: 'all 0.15s ease',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <ShieldAlert size={16} color="var(--brand-primary)" />
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem' }}>System Superadmin</div>
-                          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Operations • Platform Console</div>
-                        </div>
-                      </div>
-                      {currentUser.id === 'user-superadmin-1' && <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--brand-primary)' }}>Active</span>}
+                      <LogOut size={15} />
+                      <span>Sign Out / Lock Session</span>
                     </button>
                   </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        setUserGuideOpen(true);
-                      }}
-                      style={{
-                        padding: '9px 12px',
-                        borderRadius: '10px',
-                        border: '1px solid var(--border-subtle)',
-                        backgroundColor: 'var(--bg-surface)',
-                        color: 'var(--text-primary)',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      <HelpCircle size={16} color="var(--brand-primary)" />
-                      <span>Software User Guide</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        toggleTheme();
-                      }}
-                      style={{
-                        padding: '9px 12px',
-                        borderRadius: '10px',
-                        border: '1px solid var(--border-subtle)',
-                        backgroundColor: 'var(--bg-surface)',
-                        color: 'var(--text-primary)',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {isDarkMode ? <Sun size={16} color="#F59E0B" /> : <Moon size={16} color="var(--brand-primary)" />}
-                        <span>{isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</span>
-                      </div>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{isDarkMode ? 'Dark' : 'Light'}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        setThemeModalOpen(true);
-                      }}
-                      style={{
-                        padding: '9px 12px',
-                        borderRadius: '10px',
-                        border: '1px solid var(--border-subtle)',
-                        backgroundColor: 'var(--bg-surface)',
-                        color: 'var(--text-primary)',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      <Palette size={16} color="var(--brand-primary)" />
-                      <span>Appearance & Theme Palette</span>
-                    </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUserMenuOpen(false);
-                      setIsAuthenticated(false);
-                    }}
-                    style={{
-                      width: '100%',
-                      padding: '9px',
-                      borderRadius: '10px',
-                      backgroundColor: 'var(--bg-surface-subdued)',
-                      border: '1px solid var(--border-subtle)',
-                      color: '#DC2626',
-                      fontWeight: 700,
-                      fontSize: '0.82rem',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '6px',
-                    }}
-                  >
-                    <LogOut size={14} />
-                    <span>Sign Out / Lock Workstation</span>
-                  </button>
-                </div>
+                </>
               )}
             </div>
           </div>
