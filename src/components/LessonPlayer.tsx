@@ -502,7 +502,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   const userProgress = db.getUserProgress(currentUserId);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 320px) 1fr', gap: '24px', alignItems: 'start' }}>
+    <div className="lesson-player-layout-grid">
       {/* Sidebar: Course Outline & Progress */}
       <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
         <button

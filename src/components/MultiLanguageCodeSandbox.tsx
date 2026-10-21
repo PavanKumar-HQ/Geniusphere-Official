@@ -368,9 +368,8 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
 
       {/* Main Sandbox Grid (Editor Left / Terminal Output Right) */}
       <div
+        className="code-sandbox-split-grid"
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
           gap: '20px',
           alignItems: 'stretch',
         }}

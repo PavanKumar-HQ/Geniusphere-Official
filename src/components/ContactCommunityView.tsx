@@ -199,11 +199,7 @@ export const ContactCommunityView: React.FC<ContactCommunityViewProps> = ({
 
       {activeTab === 'contact' ? (
         <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(300px, 1fr) minmax(360px, 1.4fr)',
-            gap: '28px',
-          }}
+          className="contact-community-grid"
         >
           {/* Left Column: Direct Institutional Channels */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

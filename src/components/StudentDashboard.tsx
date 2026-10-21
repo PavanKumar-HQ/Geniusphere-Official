@@ -482,12 +482,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       {/* MAIN CONTENT GRID: CONTINUE LEARNING + MASCOT ENCOURAGEMENT */}
       {/* ================================================================ */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1.7fr 1fr',
-          gap: '24px',
-          alignItems: 'start',
-        }}
+        className="student-dashboard-main-grid"
       >
         {/* Left Column: Continue Learning */}
         <div
@@ -933,7 +928,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
           gap: '24px',
         }}
       >
@@ -1232,7 +1227,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
             gap: '20px',
           }}
         >

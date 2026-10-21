@@ -388,6 +388,13 @@ html[data-theme='ocean'] {
   padding: 0;
 }
 
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
 html, body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
@@ -397,6 +404,19 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+}
+
+/* Ensure images, svgs, and media never overflow their containers */
+img, svg, video, iframe, canvas {
+  max-width: 100%;
+}
+
+/* Prevent long unbroken strings/URLs from causing horizontal overflow */
+p, span, h1, h2, h3, h4, h5, h6, a, li, td, th {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -1572,6 +1592,66 @@ aside,
 /* ====================================================================
    NATIVE MOBILE APP MODE & BOTTOM NAVIGATION TAB BAR
    ==================================================================== */
+/* ====================================================================
+   PLATFORM TOP HEADER & RESPONSIVE NAVIGATION
+   ==================================================================== */
+.platform-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: calc(70px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.platform-header-inner {
+  max-width: 100%;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.header-search-container {
+  flex: 1 1 auto;
+  max-width: 340px;
+  min-width: 160px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .platform-header {
+    height: calc(60px + env(safe-area-inset-top, 0px)) !important;
+  }
+  .platform-header-inner {
+    padding: 0 12px !important;
+    gap: 8px !important;
+  }
+  .header-search-container {
+    display: none !important;
+  }
+  .header-hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .header-hide-sm {
+    display: none !important;
+  }
+}
+
+/* ====================================================================
+   NATIVE MOBILE APP MODE & BOTTOM NAVIGATION TAB BAR
+   ==================================================================== */
 .mobile-app-bottom-bar {
   display: none;
 }
@@ -1579,7 +1659,9 @@ aside,
 @media (max-width: 768px) {
   /* Main workspace padding to prevent content from hiding behind bottom bar */
   .platform-main-content {
-    padding-bottom: 78px !important;
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-left: env(safe-area-inset-left, 0px) !important;
+    padding-right: env(safe-area-inset-right, 0px) !important;
   }
 
   /* Fixed glassmorphic bottom navigation tab bar */
@@ -1609,6 +1691,7 @@ aside,
     justify-content: center;
     gap: 3px;
     height: 100%;
+    min-height: 44px;
     background: none;
     border: none;
     color: var(--text-muted);
@@ -1684,13 +1767,101 @@ aside,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
+/* ====================================================================
+   INTENTIONAL RESPONSIVE GRIDS FOR MOBILE PERFECTION
+   ==================================================================== */
+.course-catalogue-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.4fr) minmax(200px, 0.9fr) minmax(260px, 1fr);
+  gap: 28px;
+  align-items: center;
+}
+@media (max-width: 1080px) {
+  .course-catalogue-hero-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+}
 @media (max-width: 768px) {
-  .header-hide-mobile {
-    display: none !important;
+  .course-catalogue-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    padding: 20px 16px !important;
   }
 }
 
-/* Gamified Learning Roadmap & Lab Studio Responsive Layout */
+.student-dashboard-main-grid {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .student-dashboard-main-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+.lesson-player-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .lesson-player-layout-grid {
+    display: flex !important;
+    flex-direction: column-reverse !important;
+    gap: 20px !important;
+  }
+}
+
+.code-sandbox-split-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .code-sandbox-split-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+.contact-community-grid {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(360px, 1.4fr);
+  gap: 28px;
+}
+@media (max-width: 860px) {
+  .contact-community-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+.coding-concepts-grid {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .coding-concepts-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Gamified Learning Roadmap Responsive Grid */
 @media (max-width: 960px) {
   .gamified-path-grid {
     grid-template-columns: 1fr !important;

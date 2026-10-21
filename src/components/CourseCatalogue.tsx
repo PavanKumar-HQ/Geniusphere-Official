@@ -186,14 +186,11 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       {/* TOP HERO HEADER SECTION WITH STUDYING MASCOT & STAT BADGES       */}
       {/* ================================================================ */}
       <div
+        className="course-catalogue-hero-grid"
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(320px, 1.4fr) minmax(200px, 0.9fr) minmax(260px, 1fr)',
-          gap: '28px',
-          alignItems: 'center',
           backgroundColor: 'var(--bg-surface)',
           borderRadius: '24px',
-          padding: '32px 36px 28px',
+          padding: 'clamp(20px, 4vw, 36px)',
           border: '1px solid var(--border-subtle)',
           position: 'relative',
           overflow: 'hidden',
@@ -984,7 +981,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',
                     gap: '22px',
                   }}
                 >
@@ -1011,7 +1008,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',
             gap: '22px',
           }}
         >

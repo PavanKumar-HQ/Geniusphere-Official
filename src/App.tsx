@@ -532,6 +532,7 @@ export const App: React.FC = () => {
       {/* 1. TOP MASTER BAR (CANONICAL ENTERPRISE SOFTWARE SHELL)     */}
       {/* ============================================================ */}
       <header
+        className="platform-header"
         style={{
           backgroundColor: 'var(--bg-surface)',
           borderTop: '3px solid var(--brand-primary)',
@@ -539,19 +540,17 @@ export const App: React.FC = () => {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          height: '70px',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
         }}
       >
         <div
+          className="platform-header-inner"
           style={{
             maxWidth: '100%',
-            padding: '0 24px',
             height: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '20px',
           }}
         >
           {/* LEFT: MOBILE TOGGLE, DESKTOP RAIL TOGGLE & GENIUSPHERE BRAND LOGO */}
@@ -767,7 +766,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* CENTER: UNIVERSAL SEARCH BAR OR LAB BREADCRUMB */}
-          <div style={{ flex: '1 1 auto', maxWidth: currentView === 'lab-workspace' ? '300px' : '340px', minWidth: '160px', position: 'relative' }}>
+          <div className="header-search-container" style={{ position: 'relative' }}>
             {currentView === 'lab-workspace' ? (
               <div
                 style={{
@@ -1075,7 +1074,7 @@ export const App: React.FC = () => {
                 backgroundColor: 'rgba(245, 158, 11, 0.12)',
                 border: '1.5px solid rgba(245, 158, 11, 0.35)',
                 borderRadius: '100px',
-                padding: '0 12px',
+                padding: '0 10px',
                 fontSize: '0.8rem',
                 fontWeight: 800,
                 color: '#F59E0B',
@@ -1088,11 +1087,12 @@ export const App: React.FC = () => {
               aria-label="View Daily Learning Streak"
             >
               <Flame size={17} color="#F59E0B" fill="#F59E0B" />
-              <span>{userProgress.streak_days || 0}-Day Streak</span>
+              <span>{userProgress.streak_days || 0}<span className="header-hide-sm">-Day Streak</span></span>
             </button>
 
             {/* Dynamic XP Pill (Matches Prototype) */}
             <div
+              className="header-hide-mobile"
               style={{
                 height: '36px',
                 display: 'inline-flex',
@@ -1192,7 +1192,7 @@ export const App: React.FC = () => {
                   gap: '8px',
                   backgroundColor: 'var(--bg-surface)',
                   border: '1px solid var(--border-subtle)',
-                  padding: '3px 12px 3px 4px',
+                  padding: '3px 8px 3px 4px',
                   borderRadius: '100px',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -1208,9 +1208,10 @@ export const App: React.FC = () => {
                     borderRadius: '50%',
                     objectFit: 'cover',
                     border: '1.5px solid var(--brand-primary)',
+                    flexShrink: 0,
                   }}
                 />
-                <div style={{ textAlign: 'left', lineHeight: 1.15 }}>
+                <div className="header-hide-mobile" style={{ textAlign: 'left', lineHeight: 1.15 }}>
                   <div style={{ fontWeight: 800, fontSize: '0.82rem', color: 'var(--text-primary)' }}>
                     {currentUser.name.split(' (')[0]}
                   </div>
@@ -1229,6 +1230,7 @@ export const App: React.FC = () => {
                     top: '48px',
                     right: 0,
                     width: '310px',
+                    maxWidth: 'calc(100vw - 24px)',
                     backgroundColor: 'var(--bg-surface)',
                     borderRadius: '16px',
                     border: '1px solid var(--border-subtle)',

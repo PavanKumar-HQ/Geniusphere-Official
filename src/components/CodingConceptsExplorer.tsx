@@ -486,12 +486,7 @@ export const CodingConceptsExplorer: React.FC<CodingConceptsExplorerProps> = ({
 
       {/* Main Concept Exploration Grid */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '260px 1fr',
-          gap: '20px',
-          alignItems: 'start',
-        }}
+        className="coding-concepts-grid"
       >
         {/* Left Concept Navigation Sidebar */}
         <div
