@@ -15,6 +15,7 @@ import { notificationService } from './services/notificationService';
 import { pushSender } from './services/pushSender';
 import { wsGateway } from './services/websocketGateway';
 import { outboxWorker } from './services/outboxWorker';
+import { aiGateway } from './services/aiGateway';
 
 export async function createServer() {
   const fastify = Fastify({
