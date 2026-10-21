@@ -8,6 +8,7 @@ import { realtimeBus } from './RealtimeBus';
 
 const OUTBOX_STORAGE_KEY = 'geniusphere_transactional_outbox_v2';
 const MAX_OUTBOX_HISTORY = 100;
+const MAX_OUTBOX_CAPACITY = 200;
 const MAX_RETRIES = 5;
 
 export class TransactionalOutbox {
@@ -20,12 +21,22 @@ export class TransactionalOutbox {
     this.initNetworkListener();
   }
 
+  private handleOnline = (): void => {
+    this.flushPending();
+  };
+
   private initNetworkListener(): void {
     if (typeof window !== 'undefined') {
-      window.addEventListener('online', () => {
-        this.flushPending();
-      });
+      window.addEventListener('online', this.handleOnline);
     }
+  }
+
+  public destroy(): void {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('online', this.handleOnline);
+    }
+    this.events.clear();
+    this.idempotencyIndex.clear();
   }
 
   /**
@@ -36,6 +47,26 @@ export class TransactionalOutbox {
     if (this.idempotencyIndex.has(event.idempotency_key)) {
       // Event already recorded and processed
       return false;
+    }
+
+    // Capacity bound: prune oldest dispatched events first
+    if (this.events.size >= MAX_OUTBOX_CAPACITY) {
+      for (const [id, ev] of this.events.entries()) {
+        if (ev.status === 'dispatched') {
+          this.events.delete(id);
+          this.idempotencyIndex.delete(ev.idempotency_key);
+          if (this.events.size < MAX_OUTBOX_CAPACITY) break;
+        }
+      }
+      // If still full, evict oldest FIFO
+      if (this.events.size >= MAX_OUTBOX_CAPACITY) {
+        const oldestId = this.events.keys().next().value;
+        if (oldestId) {
+          const ev = this.events.get(oldestId);
+          if (ev) this.idempotencyIndex.delete(ev.idempotency_key);
+          this.events.delete(oldestId);
+        }
+      }
     }
 
     this.events.set(event.id, event);

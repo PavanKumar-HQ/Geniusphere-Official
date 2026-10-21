@@ -111,19 +111,40 @@ export class WebPushService {
           });
         }
       } catch (err: any) {
-        // Fallback for mock/test environments
-        console.warn('[WebPushService] pushManager.subscribe fallback:', err);
+        console.warn('[WebPushService] pushManager.subscribe error:', err);
+        return { success: false, reason: err?.message || 'Push subscription failed' };
+      }
+
+      if (!pushSub) {
+        return { success: false, reason: 'No active PushSubscription returned by browser PushManager' };
+      }
+
+      let p256dh = '';
+      let auth = '';
+      try {
+        const p256dhBuf = pushSub.getKey ? pushSub.getKey('p256dh') : null;
+        if (p256dhBuf) {
+          p256dh = btoa(String.fromCharCode(...new Uint8Array(p256dhBuf)));
+        }
+        const authBuf = pushSub.getKey ? pushSub.getKey('auth') : null;
+        if (authBuf) {
+          auth = btoa(String.fromCharCode(...new Uint8Array(authBuf)));
+        }
+      } catch {
+        const subJson = pushSub.toJSON ? pushSub.toJSON() : JSON.parse(JSON.stringify(pushSub));
+        p256dh = subJson?.keys?.p256dh || '';
+        auth = subJson?.keys?.auth || '';
       }
 
       const record: PushSubscriptionRecord = {
         id: `sub_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
         user_id: userId,
-        endpoint: pushSub?.endpoint || `https://push.geniusphere.tech/mock/${userId}`,
+        endpoint: pushSub.endpoint,
         keys: {
-          p256dh: pushSub ? JSON.parse(JSON.stringify(pushSub)).keys?.p256dh || 'mock_p256dh' : 'mock_p256dh',
-          auth: pushSub ? JSON.parse(JSON.stringify(pushSub)).keys?.auth || 'mock_auth' : 'mock_auth',
+          p256dh,
+          auth,
         },
-        device_name: navigator.userAgent.includes('Mobile') ? 'Mobile Device' : 'Desktop Browser',
+        device_name: typeof navigator !== 'undefined' && navigator.userAgent.includes('Mobile') ? 'Mobile Device' : 'Desktop Browser',
         created_at: new Date().toISOString(),
         last_used_at: new Date().toISOString(),
       };

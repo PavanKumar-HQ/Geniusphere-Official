@@ -442,7 +442,7 @@ export function executeCCode(sourceCode: string): ExecutionResult {
           if (floatVars[arg] !== undefined) return floatVars[arg];
           if (strVars[arg] !== undefined) return strVars[arg];
           try {
-            return eval(arg);
+            return Function(`"use strict"; return (${arg});`)();
           } catch {
             return arg;
           }
@@ -495,7 +495,7 @@ export function executeCCode(sourceCode: string): ExecutionResult {
           for (const [k, v] of Object.entries(intVars)) {
             resolved = resolved.replace(new RegExp(`\\b${k}\\b`, 'g'), String(v));
           }
-          intVars[varName] = Math.floor(eval(resolved));
+          intVars[varName] = Math.floor(Function(`"use strict"; return (${resolved});`)());
         } catch {
           intVars[varName] = 0;
         }

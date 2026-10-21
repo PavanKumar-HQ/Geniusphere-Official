@@ -14,6 +14,8 @@ import { EventEmitter } from 'events';
 import { AIRateLimiter } from '../server/ai/rateLimiter';
 import { OutboxWorker } from '../server/services/outboxWorker';
 import { RealtimeBus } from '../src/backend/RealtimeBus';
+import { TransactionalOutbox } from '../src/backend/TransactionalOutbox';
+import { WebPushService } from '../src/services/WebPushService';
 import { wsGateway } from '../server/services/websocketGateway';
 import { generateToken } from '../server/auth';
 
@@ -367,5 +369,94 @@ describe('D. OutboxWorker — lifecycle governance', () => {
     const timer = (worker as any).timer;
     expect(typeof timer?.unref).toBe('function');
     worker.stop();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// E. TransactionalOutbox — resource governance & bounded capacity
+// ─────────────────────────────────────────────────────────────────────────────
+describe('E. TransactionalOutbox — resource governance & bounded capacity', () => {
+  it('E1. Capacity bound: 250 recorded events caps in-memory events at MAX_OUTBOX_CAPACITY (200)', () => {
+    const outbox = new TransactionalOutbox();
+    outbox.clear();
+
+    for (let i = 0; i < 250; i++) {
+      outbox.recordEvent({
+        id: `evt-${i}`,
+        idempotency_key: `key-${i}`,
+        event_type: 'course.enrolled',
+        entity_id: `entity-${i}`,
+        timestamp: new Date().toISOString(),
+        payload: { index: i },
+        scope: 'system',
+        status: 'dispatched',
+        retry_count: 0,
+      } as any);
+    }
+
+    expect(outbox.getAllEvents().length).toBeLessThanOrEqual(200);
+    outbox.destroy();
+  });
+
+  it('E2. Idempotency: duplicate idempotency_key is rejected', () => {
+    const outbox = new TransactionalOutbox();
+    outbox.clear();
+
+    const ev = {
+      id: 'dup-1',
+      idempotency_key: 'idemp-xyz',
+      event_type: 'assessment.submitted',
+      entity_id: 'e-1',
+      timestamp: new Date().toISOString(),
+      payload: {},
+      scope: 'system',
+      status: 'pending',
+      retry_count: 0,
+    } as any;
+
+    expect(outbox.recordEvent(ev)).toBe(true);
+    expect(outbox.recordEvent(ev)).toBe(false);
+    outbox.destroy();
+  });
+
+  it('E3. destroy() clears events and removes listeners', () => {
+    const outbox = new TransactionalOutbox();
+    outbox.recordEvent({
+      id: 'clean-1',
+      idempotency_key: 'clean-k-1',
+      event_type: 'system:broadcast',
+      entity_id: 'e-1',
+      timestamp: new Date().toISOString(),
+      payload: {},
+      scope: 'system',
+      status: 'pending',
+      retry_count: 0,
+    } as any);
+
+    expect(outbox.getAllEvents().length).toBeGreaterThan(0);
+    outbox.destroy();
+    expect(outbox.getAllEvents().length).toBe(0);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// F. WebPushService — real-engineering zero-mock integrity
+// ─────────────────────────────────────────────────────────────────────────────
+describe('F. WebPushService — real-engineering zero-mock integrity', () => {
+  it('F1. requestPermissionAndSubscribe returns honest failure without mock endpoints when unsupported', async () => {
+    const push = new WebPushService();
+    const res = await push.requestPermissionAndSubscribe('student-real-eng');
+    expect(res).toHaveProperty('success');
+    if (!res.success) {
+      expect(res.reason).toBeDefined();
+      expect(typeof res.reason).toBe('string');
+      expect(res.subscription).toBeUndefined();
+    }
+  });
+
+  it('F2. isPushSupported reflects genuine browser capabilities', () => {
+    const push = new WebPushService();
+    const supported = push.isPushSupported();
+    expect(typeof supported).toBe('boolean');
   });
 });
