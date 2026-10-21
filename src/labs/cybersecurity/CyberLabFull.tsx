@@ -108,26 +108,29 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
           top: 0,
           zIndex: 50,
           flexShrink: 0,
+          gap: '16px',
+          overflowX: 'auto',
+          maxWidth: '100%',
         }}
       >
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style={{ flexShrink: 0 }}>
             <circle cx="14" cy="14" r="13" stroke="#06B6D4" strokeWidth="1.5" />
             <path d="M14 7 L18 11 L14 15 L10 11 Z" fill="#06B6D4" opacity="0.8" />
             <path d="M14 13 L18 17 L14 21 L10 17 Z" fill="#FF0080" opacity="0.6" />
             <circle cx="14" cy="14" r="3" fill="#06B6D4" />
           </svg>
-          <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#06B6D4', letterSpacing: '-0.02em' }}>
+          <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#06B6D4', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
             CyberSphere
           </span>
-          <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 600, letterSpacing: '0.05em' }}>
+          <span style={{ fontSize: '0.75rem', color: '#64748B', fontWeight: 600, letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
             JUNIOR LAB
           </span>
         </div>
 
         {/* Navigation */}
-        <nav style={{ display: 'flex', gap: '4px' }}>
+        <nav style={{ display: 'flex', gap: '6px', flexShrink: 0, flexWrap: 'nowrap', alignItems: 'center' }}>
           {navItems.map(item => (
             <button
               key={item.key}
@@ -136,13 +139,15 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '5px',
-                padding: '6px 12px',
+                gap: '6px',
+                padding: '6px 14px',
                 borderRadius: '8px',
                 fontSize: '0.82rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 border: 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
                 transition: 'all 0.15s ease',
                 backgroundColor: view === item.key ? 'rgba(6,182,212,0.15)' : 'transparent',
                 color: view === item.key ? '#06B6D4' : '#94A3B8',
@@ -161,13 +166,13 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
               }}
             >
               {item.icon}
-              <span>{item.label}</span>
+              <span style={{ whiteSpace: 'nowrap' }}>{item.label}</span>
             </button>
           ))}
         </nav>
 
         {/* Progress + Exit */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}>
           <div
             style={{
               fontSize: '0.78rem',
@@ -177,6 +182,8 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
               borderRadius: '100px',
               color: '#94A3B8',
               fontWeight: 600,
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
             }}
           >
             <span style={{ color: '#06B6D4' }}>{completedModules.size}</span>
@@ -195,6 +202,8 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
                 color: '#64748B',
                 cursor: 'pointer',
                 fontWeight: 600,
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={e => {

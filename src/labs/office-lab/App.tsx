@@ -99,12 +99,15 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     switch (currentApp) {
       case OfficeApp.WORD:
         return (
-          <div className={commonStyles}>
+          <div className={`${commonStyles} !pb-4 md:!pb-72`}>
             <div className="flex items-center space-x-3 mb-4 shrink-0">
               <FileText color={COLORS.WORD} size={isSimplified ? 36 : 28} />
-              <h3 className={`font-bold text-white uppercase tracking-wider ${isSimplified ? 'text-2xl' : 'text-xl'}`}>Project_Report_v1.docx</h3>
+              <h3 className={`font-bold uppercase tracking-wider ${isSimplified ? 'text-2xl' : 'text-xl'}`} style={{ color: '#FFFFFF' }}>Project_Report_v1.docx</h3>
             </div>
-            <div className="bg-white/5 rounded-2xl p-8 flex-1 border border-white/10 relative overflow-y-auto md:overflow-hidden flex flex-col min-h-[300px]">
+            <div
+              className="bg-white/5 rounded-2xl p-6 md:p-8 flex-1 border border-white/10 relative overflow-y-auto flex flex-col min-h-[360px]"
+              style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}
+            >
               <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500/50"></div>
               {currentStep === 0 && (
                 <div className="flex flex-col space-y-6">
@@ -118,34 +121,75 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                 </div>
               )}
               {currentStep >= 1 && (
-                <div className="space-y-8">
-                  <h2 className={`font-black text-blue-400 leading-tight ${isSimplified ? 'text-4xl' : 'text-3xl'}`}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', flexShrink: 0 }}>
+                  <h2
+                    style={{
+                      color: '#60A5FA',
+                      fontWeight: 900,
+                      fontSize: isSimplified ? '1.85rem' : '1.45rem',
+                      lineHeight: 1.3,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                  >
                     <TypingText text="Executive Summary: Renewable Energy" speed={25} />
                   </h2>
-                  <div className="grid grid-cols-1 gap-6">
-                    <div className="p-6 bg-blue-500/10 border border-blue-500/20 rounded-2xl">
-                      <p className={`font-black text-blue-300 uppercase mb-4 tracking-widest ${isSimplified ? 'text-lg' : 'text-sm'}`}>Key Research Data</p>
-                      <ul className="space-y-4">
-                        {[
-                          "Solar power efficiency increased by 15.4% YoY",
-                          "Wind farm distribution reaches new peaks in Asia",
-                          "Battery storage costs decreased by 40% since 2020"
-                        ].map((text, i) => (
-                          <li key={i} className="flex items-center space-x-4 text-gray-200">
-                            <CheckCircle2 size={24} className="text-blue-500 flex-shrink-0" />
-                            <span><TypingText text={text} speed={15} /></span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  <div
+                    style={{
+                      padding: '18px 22px',
+                      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                      borderRadius: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                      width: '100%',
+                    }}
+                  >
+                    <p
+                      style={{
+                        color: '#93C5FD',
+                        fontWeight: 800,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.12em',
+                        fontSize: isSimplified ? '1.05rem' : '0.85rem',
+                        margin: 0,
+                      }}
+                    >
+                      Key Research Data
+                    </p>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {[
+                        "Solar power efficiency increased by 15.4% YoY",
+                        "Wind farm distribution reaches new peaks in Asia",
+                        "Battery storage costs decreased by 40% since 2020"
+                      ].map((text, i) => (
+                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#E2E8F0', fontSize: '0.95rem' }}>
+                          <CheckCircle2 size={22} style={{ color: '#3B82F6', flexShrink: 0 }} />
+                          <span style={{ color: '#E2E8F0' }}><TypingText text={text} speed={15} /></span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               )}
               {currentStep === 2 && (
-                <div className="mt-auto flex justify-end">
-                  <div className="flex items-center space-x-3 bg-green-500/20 border border-green-500/50 p-4 rounded-2xl animate-bounce">
-                    <Cloud className="text-green-400" size={28} />
-                    <span className="font-black text-green-300 uppercase tracking-widest">Saved to Cloud</span>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: '12px', flexShrink: 0 }}>
+                  <div
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                      border: '1px solid rgba(34, 197, 94, 0.45)',
+                      padding: '10px 18px',
+                      borderRadius: '14px',
+                    }}
+                  >
+                    <Cloud style={{ color: '#4ADE80', flexShrink: 0 }} size={24} />
+                    <span style={{ fontWeight: 800, color: '#86EFAC', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.85rem' }}>
+                      Saved to Cloud
+                    </span>
                   </div>
                 </div>
               )}
@@ -154,14 +198,14 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         );
       case OfficeApp.EXCEL:
         return (
-          <div className={commonStyles}>
+          <div className={`${commonStyles} !pb-4 md:!pb-72`}>
             <div className="flex items-center space-x-3 mb-4 shrink-0">
               <BarChart3 color={COLORS.EXCEL} size={isSimplified ? 36 : 28} />
-              <h3 className={`font-bold text-white uppercase tracking-wider ${isSimplified ? 'text-2xl' : 'text-xl'}`}>Financial_Forecast.xlsx</h3>
+              <h3 className={`font-bold uppercase tracking-wider ${isSimplified ? 'text-2xl' : 'text-xl'}`} style={{ color: '#FFFFFF' }}>Financial_Forecast.xlsx</h3>
             </div>
-            <div className="bg-[#0f172a] rounded-2xl overflow-y-auto md:overflow-hidden border border-white/10 shadow-2xl flex-1 flex flex-col min-h-[300px]">
+            <div className="bg-[#0f172a] rounded-2xl overflow-y-auto border border-white/10 shadow-2xl flex-1 flex flex-col min-h-[300px]">
               <table className="w-full text-left border-collapse font-mono">
-                <thead className="bg-white/10 text-gray-400 uppercase font-black">
+                <thead className="bg-white/10 uppercase font-black" style={{ color: '#CBD5E1' }}>
                   <tr>
                     <th className="p-5 border-r border-b border-white/10 text-center w-16">#</th>
                     <th className="p-5 border-r border-b border-white/10">Category</th>

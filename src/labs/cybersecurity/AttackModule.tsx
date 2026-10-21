@@ -224,12 +224,14 @@ export const AttackModule: React.FC<AttackModuleProps> = ({ module, onComplete, 
             </ul>
           </div>
           
-          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-             <h3 className="font-bold text-lg mb-2 text-green-400">How to stop it</h3>
-             <ul className="space-y-2 list-disc list-inside">
+          <div className="bg-slate-800/70 p-5 rounded-xl border border-slate-700 shadow-md">
+             <h3 style={{ color: '#00FFA3', fontWeight: 800, fontSize: '1.15rem', marginBottom: '10px' }} className="flex items-center gap-2">
+               <span>How to stop it</span>
+             </h3>
+             <ul className="space-y-2.5 list-disc list-inside">
                 {module.defenses.map(def => (
-                  <li key={def.point} className="text-slate-300">
-                    <strong className="text-green-300">{def.point}:</strong>{' '}
+                  <li key={def.point} className="text-slate-200" style={{ color: '#E2E8F0', lineHeight: 1.5 }}>
+                    <strong style={{ color: '#6EE7B7', fontWeight: 700 }}>{def.point}:</strong>{' '}
                     <HighlightableText text={def.description} keywords={KEYWORDS} />
                   </li>
                 ))}
@@ -240,10 +242,10 @@ export const AttackModule: React.FC<AttackModuleProps> = ({ module, onComplete, 
           <QuizSection quiz={module.quiz} onComplete={() => setQuizCompleted(true)} />
           
           {quizCompleted && miniSimCompleted && (
-              <div className="mt-6 text-center p-4 bg-green-900/50 border border-green-500 rounded-lg">
-                  <h3 className="text-xl font-bold text-green-300">Module Complete!</h3>
-                  <p className="mt-2">You've earned the "{module.badge}" badge. Well done!</p>
-                  <button onClick={handleModuleFinished} className="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-6 rounded transition-colors">
+              <div className="mt-6 text-center p-5 bg-green-900/40 border-2 border-emerald-500 rounded-xl">
+                  <h3 className="text-xl font-bold" style={{ color: '#00FFA3' }}>Module Complete!</h3>
+                  <p className="mt-2 text-slate-200">You've earned the "{module.badge}" badge. Well done!</p>
+                  <button onClick={handleModuleFinished} className="mt-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 px-6 rounded-lg transition-colors shadow-lg">
                       Finish & Return
                   </button>
               </div>
@@ -269,29 +271,77 @@ const QuizSection: React.FC<{ quiz: QuizQuestion; onComplete: () => void }> = ({
     };
 
     return (
-        <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-            <h3 className="font-bold text-lg mb-2 text-cyan-400">Quick Quiz</h3>
-            <p className="mb-4">{quiz.question}</p>
-            <div className="space-y-2">
+        <div className="bg-slate-800/70 p-5 rounded-xl border border-slate-700 shadow-md">
+            <h3 style={{ color: '#38BDF8', fontWeight: 800, fontSize: '1.15rem', marginBottom: '8px' }}>Quick Quiz</h3>
+            <p className="mb-4 text-slate-200 font-medium" style={{ color: '#F1F5F9' }}>{quiz.question}</p>
+            <div className="space-y-2.5">
                 {quiz.options.map(option => {
                     const isSelected = selected === option;
                     const isTheCorrectAnswer = option === quiz.correctAnswer;
-                    let buttonClass = 'bg-slate-700 hover:bg-slate-600';
+                    
+                    let bgStyle = 'rgba(30, 41, 59, 0.9)';
+                    let borderStyle = '1px solid rgba(100, 116, 139, 0.4)';
+                    let textColor = '#F8FAFC';
+
                     if (isSelected) {
-                        buttonClass = isCorrect ? 'bg-green-600' : 'bg-red-600';
+                        if (isCorrect) {
+                            bgStyle = 'rgba(16, 185, 129, 0.25)';
+                            borderStyle = '1px solid #10B981';
+                            textColor = '#A7F3D0';
+                        } else {
+                            bgStyle = 'rgba(239, 68, 68, 0.25)';
+                            borderStyle = '1px solid #EF4444';
+                            textColor = '#FECACA';
+                        }
                     } else if (isCorrect !== null && isTheCorrectAnswer) {
-                        buttonClass = 'bg-green-600';
+                        bgStyle = 'rgba(16, 185, 129, 0.25)';
+                        borderStyle = '1px solid #10B981';
+                        textColor = '#A7F3D0';
                     }
 
-                    return <button key={option} onClick={() => handleAnswer(option)} className={`w-full text-left p-3 rounded transition-colors ${buttonClass}`}>{option}</button>
+                    return (
+                        <button
+                            key={option}
+                            type="button"
+                            onClick={() => handleAnswer(option)}
+                            style={{
+                                width: '100%',
+                                textAlign: 'left',
+                                padding: '12px 16px',
+                                borderRadius: '10px',
+                                backgroundColor: bgStyle,
+                                border: borderStyle,
+                                color: textColor,
+                                fontSize: '0.92rem',
+                                fontWeight: 500,
+                                cursor: isCorrect !== null ? 'default' : 'pointer',
+                                transition: 'all 0.15s ease',
+                                display: 'block',
+                            }}
+                            onMouseEnter={e => {
+                                if (isCorrect === null) {
+                                    (e.currentTarget as HTMLButtonElement).style.borderColor = '#06B6D4';
+                                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(51, 65, 85, 0.9)';
+                                }
+                            }}
+                            onMouseLeave={e => {
+                                if (isCorrect === null) {
+                                    (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(100, 116, 139, 0.4)';
+                                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(30, 41, 59, 0.9)';
+                                }
+                            }}
+                        >
+                            {option}
+                        </button>
+                    );
                 })}
             </div>
             {isCorrect !== null && (
-                 <div className={`mt-4 p-3 rounded-lg flex items-start gap-3 ${isCorrect ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
-                    {isCorrect ? <CheckCircleIcon className="w-6 h-6 text-green-400 mt-1 flex-shrink-0" /> : <XCircleIcon className="w-6 h-6 text-red-400 mt-1 flex-shrink-0" />}
+                 <div className={`mt-4 p-3.5 rounded-lg flex items-start gap-3 ${isCorrect ? 'bg-green-900/40 border border-emerald-500/50' : 'bg-red-900/40 border border-rose-500/50'}`}>
+                    {isCorrect ? <CheckCircleIcon className="w-6 h-6 text-emerald-400 mt-0.5 flex-shrink-0" /> : <XCircleIcon className="w-6 h-6 text-rose-400 mt-0.5 flex-shrink-0" />}
                     <div>
-                      <p className="font-bold">{isCorrect ? 'Correct!' : 'Not Quite'}</p>
-                      <p className="text-sm text-slate-300">{quiz.explanation}</p>
+                      <p className="font-bold" style={{ color: isCorrect ? '#A7F3D0' : '#FECACA' }}>{isCorrect ? 'Correct!' : 'Not Quite'}</p>
+                      <p className="text-sm text-slate-300 mt-0.5">{quiz.explanation}</p>
                     </div>
                 </div>
             )}
@@ -314,28 +364,77 @@ const MiniSimSection: React.FC<{ sim: MiniSim; onComplete: () => void }> = ({ si
     };
 
     return (
-        <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700">
-            <h3 className="font-bold text-lg mb-2 text-cyan-400">Mini-Sim</h3>
-            <p className="mb-4">{sim.description}</p>
-            <div className="space-y-2">
+        <div className="bg-slate-800/70 p-5 rounded-xl border border-slate-700 shadow-md">
+            <h3 style={{ color: '#38BDF8', fontWeight: 800, fontSize: '1.15rem', marginBottom: '8px' }}>Mini-Sim</h3>
+            <p className="mb-4 text-slate-200 font-medium" style={{ color: '#F1F5F9' }}>{sim.description}</p>
+            <div className="space-y-2.5">
                 {sim.options.map(option => {
                      const isSelected = selected === option.id;
                      const isTheCorrectAnswer = option.isCorrect;
-                     let buttonClass = 'bg-slate-700 hover:bg-slate-600';
+                     
+                     let bgStyle = 'rgba(30, 41, 59, 0.9)';
+                     let borderStyle = '1px solid rgba(100, 116, 139, 0.4)';
+                     let textColor = '#F8FAFC';
+
                      if(feedback) {
                          if(isSelected) {
-                            buttonClass = isCorrect ? 'bg-green-600' : 'bg-red-600';
+                            if (isCorrect) {
+                                bgStyle = 'rgba(16, 185, 129, 0.25)';
+                                borderStyle = '1px solid #10B981';
+                                textColor = '#A7F3D0';
+                            } else {
+                                bgStyle = 'rgba(239, 68, 68, 0.25)';
+                                borderStyle = '1px solid #EF4444';
+                                textColor = '#FECACA';
+                            }
                          } else if (isTheCorrectAnswer) {
-                            buttonClass = 'bg-green-600'
+                            bgStyle = 'rgba(16, 185, 129, 0.25)';
+                            borderStyle = '1px solid #10B981';
+                            textColor = '#A7F3D0';
                          }
                      }
-                    return <button key={option.id} onClick={() => handleSelect(option)} className={`w-full text-left p-3 rounded transition-colors ${buttonClass}`}>{option.text}</button>
+
+                    return (
+                        <button
+                            key={option.id}
+                            type="button"
+                            onClick={() => handleSelect(option)}
+                            style={{
+                                width: '100%',
+                                textAlign: 'left',
+                                padding: '12px 16px',
+                                borderRadius: '10px',
+                                backgroundColor: bgStyle,
+                                border: borderStyle,
+                                color: textColor,
+                                fontSize: '0.92rem',
+                                fontWeight: 500,
+                                cursor: feedback ? 'default' : 'pointer',
+                                transition: 'all 0.15s ease',
+                                display: 'block',
+                            }}
+                            onMouseEnter={e => {
+                                if (!feedback) {
+                                    (e.currentTarget as HTMLButtonElement).style.borderColor = '#06B6D4';
+                                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(51, 65, 85, 0.9)';
+                                }
+                            }}
+                            onMouseLeave={e => {
+                                if (!feedback) {
+                                    (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(100, 116, 139, 0.4)';
+                                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(30, 41, 59, 0.9)';
+                                }
+                            }}
+                        >
+                            {option.text}
+                        </button>
+                    );
                 })}
             </div>
             {feedback && (
-                 <div className={`mt-4 p-3 rounded-lg flex items-start gap-3 ${isCorrect ? 'bg-green-900/50' : 'bg-red-900/50'}`}>
-                    {isCorrect ? <CheckCircleIcon className="w-6 h-6 text-green-400 mt-1 flex-shrink-0" /> : <XCircleIcon className="w-6 h-6 text-red-400 mt-1 flex-shrink-0" />}
-                    <p className="text-sm text-slate-300">{feedback}</p>
+                 <div className={`mt-4 p-3.5 rounded-lg flex items-start gap-3 ${isCorrect ? 'bg-green-900/40 border border-emerald-500/50' : 'bg-red-900/40 border border-rose-500/50'}`}>
+                    {isCorrect ? <CheckCircleIcon className="w-6 h-6 text-emerald-400 mt-0.5 flex-shrink-0" /> : <XCircleIcon className="w-6 h-6 text-rose-400 mt-0.5 flex-shrink-0" />}
+                    <p className="text-sm text-slate-200" style={{ color: '#E2E8F0' }}>{feedback}</p>
                 </div>
             )}
         </div>
