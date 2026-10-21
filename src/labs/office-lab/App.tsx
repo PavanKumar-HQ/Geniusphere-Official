@@ -581,7 +581,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden md:flex relative min-h-screen md:h-screen w-full flex-col text-white overflow-y-auto md:overflow-y-auto md:overflow-hidden font-sans">
+      <div className="hidden md:flex relative h-full min-h-0 w-full flex-col text-white overflow-y-auto md:overflow-y-auto md:overflow-hidden font-sans">
         {/* Background FX */}
         <div className="absolute inset-0 -z-10 bg-[#070B1A]">
           <div className="absolute inset-0 animated-grid opacity-30"></div>

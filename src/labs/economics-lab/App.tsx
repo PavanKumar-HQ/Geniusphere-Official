@@ -146,7 +146,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:flex h-screen w-screen flex-col bg-[#070B1A] text-[#E6E9F0] overflow-y-auto md:overflow-hidden select-none">
+      <div className="hidden lg:flex h-full w-full min-w-0 min-h-0 flex-col bg-[#070B1A] text-[#E6E9F0] overflow-y-auto md:overflow-hidden select-none">
         {/* Header */}
         <header className="h-16 px-6 flex items-center justify-between border-b border-[#1E293B] bg-[#0A0F24]/80 backdrop-blur-md z-10">
           <div className="flex items-center gap-4">

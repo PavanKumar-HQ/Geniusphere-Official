@@ -33,8 +33,9 @@ import {
 } from './LabSvgVisualizers';
 import { AnimatedStepGuide } from './AnimatedStepGuide';
 import { UniversalLab } from './lab/UniversalLab';
+import { LabOrientationGuard } from './lab/LabOrientationGuard';
 import { getStandaloneLab, StandaloneLabMetadata } from '../labs/registry';
-import { Sparkles, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
+import { Cpu, Layers, FlaskConical, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
 import { apiClient } from '../services/apiClient';
 
 export interface SharedLabWorkspaceProps {
@@ -1092,7 +1093,8 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '720px', width: '100%', overflow: 'hidden', backgroundColor: 'var(--bg-canvas)' }}>
+    <LabOrientationGuard labTitle={lab.title}>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '720px', width: '100%', overflow: 'hidden', backgroundColor: 'var(--bg-canvas)' }}>
       {/* ============================================================== */}
       {/* 1. TOP NAVIGATION BAR (Section 3.1)                             */}
       {/* ============================================================== */}
@@ -1244,7 +1246,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             }}
             title={standaloneLabMeta ? `Open ${standaloneLabMeta.suiteTitle}` : 'Launch Universal Simulation Engine'}
           >
-            <Sparkles size={13} color="var(--brand-primary)" />
+            <Cpu size={13} color="var(--brand-primary)" />
             <span>{standaloneLabMeta ? standaloneLabMeta.name : 'Interactive Suite'}</span>
           </button>
 
@@ -1396,7 +1398,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Sparkles size={16} color="var(--brand-primary)" />
+                <Layers size={16} color="var(--brand-primary)" />
                 <div>
                   <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>
                     {standaloneLabMeta.name}
@@ -1408,19 +1410,20 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ display: 'flex', backgroundColor: 'var(--bg-canvas)', borderRadius: '8px', padding: '3px', border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', backgroundColor: 'var(--bg-surface-subdued, #E8EDE4)', borderRadius: '8px', padding: '3px', border: '1px solid var(--border-subtle, #D6DED2)' }}>
                   <button
                     type="button"
                     onClick={() => setCenterLabViewMode('interactive-suite')}
                     style={{
-                      padding: '5px 12px',
+                      padding: '6px 14px',
                       borderRadius: '6px',
-                      fontSize: '0.76rem',
+                      fontSize: '0.78rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       border: 'none',
-                      backgroundColor: centerLabViewMode === 'interactive-suite' ? 'var(--brand-primary)' : 'transparent',
-                      color: centerLabViewMode === 'interactive-suite' ? '#FFFFFF' : 'var(--text-secondary)',
+                      backgroundColor: centerLabViewMode === 'interactive-suite' ? 'var(--brand-primary, #244C3A)' : 'transparent',
+                      color: centerLabViewMode === 'interactive-suite' ? '#FFFFFF' : 'var(--text-primary, #1A202C)',
+                      boxShadow: centerLabViewMode === 'interactive-suite' ? '0 1px 3px rgba(0,0,0,0.15)' : 'none',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -1430,14 +1433,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     type="button"
                     onClick={() => setCenterLabViewMode('svg-parameters')}
                     style={{
-                      padding: '5px 12px',
+                      padding: '6px 14px',
                       borderRadius: '6px',
-                      fontSize: '0.76rem',
+                      fontSize: '0.78rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       border: 'none',
-                      backgroundColor: centerLabViewMode === 'svg-parameters' ? 'var(--brand-primary)' : 'transparent',
-                      color: centerLabViewMode === 'svg-parameters' ? '#FFFFFF' : 'var(--text-secondary)',
+                      backgroundColor: centerLabViewMode === 'svg-parameters' ? 'var(--brand-primary, #244C3A)' : 'transparent',
+                      color: centerLabViewMode === 'svg-parameters' ? '#FFFFFF' : 'var(--text-primary, #1A202C)',
+                      boxShadow: centerLabViewMode === 'svg-parameters' ? '0 1px 3px rgba(0,0,0,0.15)' : 'none',
                       transition: 'all 0.15s ease',
                     }}
                   >
@@ -1656,7 +1660,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     className="btn-outline"
                     style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px', color: 'var(--brand-primary)', borderColor: 'rgba(0, 245, 160, 0.4)' }}
                   >
-                    <Sparkles size={14} color="var(--brand-primary)" />
+                    <ShieldCheck size={14} color="var(--brand-primary)" />
                     <span>Open 19-Module TrustLink Suite</span>
                   </button>
                   <button
@@ -4047,5 +4051,6 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         </div>
       )}
     </div>
+    </LabOrientationGuard>
   );
 };

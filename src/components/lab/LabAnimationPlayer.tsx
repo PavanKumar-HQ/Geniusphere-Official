@@ -4,7 +4,7 @@ import { LabModule } from './LabTypes';
 import {
     Brain, Database, Server, Wifi, Smartphone, Globe, Shield, Lock,
     Cpu, Cloud, DollarSign, PieChart, TrendingUp, Hash, Layers,
-    MessageSquare, Users, User, Smile, Frown, Sparkles, GraduationCap,
+    MessageSquare, Users, User, Smile, Frown, Check, GraduationCap,
     Lightbulb, Megaphone, Heart
 } from 'lucide-react';
 
@@ -552,7 +552,7 @@ const ClassroomView: React.FC<{ currentStep: number }> = ({ currentStep }) => {
                                     initial={{ scale: 0 }} animate={{ scale: 1 }}
                                     className="absolute -top-1 -right-1 bg-white text-green-600 rounded-full p-0.5"
                                 >
-                                    <Sparkles size={10} />
+                                    <Check size={10} strokeWidth={3} />
                                 </motion.div>
                             )}
                         </motion.div>

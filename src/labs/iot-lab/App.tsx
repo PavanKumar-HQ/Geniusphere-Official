@@ -141,7 +141,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View (Only Visible on Large Screens) */}
-      <div className="hidden lg:flex relative w-screen h-screen flex-col overflow-hidden bg-[#070B1A] font-sans selection:bg-[#3BF0FF]/30">
+      <div className="hidden lg:flex relative w-full h-full min-w-0 min-h-0 flex-col overflow-hidden bg-[#070B1A] font-sans selection:bg-[#3BF0FF]/30">
         <BackgroundGrid />
 
         {/* Top Bar Header */}

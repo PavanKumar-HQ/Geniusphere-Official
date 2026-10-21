@@ -152,7 +152,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:flex relative flex-row h-screen w-full bg-[#070B1A] overflow-hidden animated-grid p-6 gap-6">
+      <div className="hidden lg:flex relative flex-row h-full min-h-0 w-full bg-[#070B1A] overflow-hidden animated-grid p-6 gap-6">
         {/* Secondary slow-moving color glow overlay */}
         <div
           className="color-glow-overlay"

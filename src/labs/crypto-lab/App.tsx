@@ -161,7 +161,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View (Only Visible on Medium+ Screens) */}
-      <div className="hidden md:flex flex-col h-screen bg-[#050816] text-[#E6E9F0] overflow-hidden select-none">
+      <div className="hidden md:flex flex-col h-full min-h-0 w-full bg-[#050816] text-[#E6E9F0] overflow-hidden select-none">
         {/* Header */}
         <header className="p-4 border-b border-cyan-500/20 flex justify-between items-center bg-[#0a0f23]">
           <div className="flex items-center space-x-3">

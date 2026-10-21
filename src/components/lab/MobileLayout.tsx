@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, Menu, RotateCcw, Play, ChevronRight, ChevronDown, Info, X } from 'lucide-react';
+import { LabOrientationGuard } from './LabOrientationGuard';
 
 interface MobileLayoutProps {
     title: string;
@@ -31,8 +32,9 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
     headerTitle
 }) => {
     return (
-        <div
-            style={{
+        <LabOrientationGuard labTitle={typeof title === 'string' ? title : 'Interactive Lab'}>
+            <div
+                style={{
                 display: 'flex',
                 flexDirection: 'column',
                 height: '100%',
@@ -212,6 +214,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                 )}
             </main>
         </div>
+        </LabOrientationGuard>
     );
 };
 

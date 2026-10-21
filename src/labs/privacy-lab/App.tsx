@@ -166,7 +166,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View (Only Visible on Large Screens) */}
-      <div className="hidden lg:flex h-screen w-screen flex-col bg-[#070B1A] overflow-hidden select-none">
+      <div className="hidden lg:flex h-full w-full min-w-0 min-h-0 flex-col bg-[#070B1A] overflow-hidden select-none">
         <div className="flex-1 flex flex-row overflow-hidden">
           {/* Left Side */}
           <Sidebar

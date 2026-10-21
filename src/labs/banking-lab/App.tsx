@@ -435,7 +435,7 @@ export default function App({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-col md:flex-row min-h-screen md:h-screen w-full bg-[#070B1A] grid-bg overflow-y-auto md:overflow-hidden text-[#E6E9F0]">
+      <div className="hidden lg:flex flex-col md:flex-row h-full min-h-0 w-full bg-[#070B1A] grid-bg overflow-y-auto md:overflow-hidden text-[#E6E9F0]">
         <aside className="w-full md:w-80 border-r border-white/10 flex flex-col p-6 glass">
           <div className="mb-10">
             <h1 className="text-xl font-bold tracking-tighter uppercase mb-1">Vault_Lab v2.5</h1>

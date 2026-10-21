@@ -4,7 +4,7 @@ import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
-  Sparkles,
+  Target,
   ListOrdered,
   Layers,
   ArrowRight,
@@ -111,7 +111,7 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
             gap: '6px',
           }}
         >
-          <Sparkles size={13} />
+          <Target size={13} strokeWidth={2.5} />
           <span>LEARNING OBJECTIVE</span>
         </div>
         <p
@@ -388,28 +388,30 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
             <div
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingTop: '8px',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                flexDirection: 'column',
                 gap: '8px',
+                paddingTop: '10px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
               }}
             >
               <button
                 type="button"
                 onClick={() => handleToggleComplete(currentIndex)}
                 style={{
+                  width: '100%',
                   display: 'inline-flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '6px',
-                  padding: '7px 12px',
+                  padding: '8px 12px',
                   borderRadius: '8px',
-                  fontSize: '0.76rem',
+                  fontSize: '0.78rem',
                   fontWeight: 700,
                   cursor: 'pointer',
+                  whiteSpace: 'nowrap',
                   border: isCurrentCompleted
-                    ? '1px solid rgba(0, 245, 160, 0.3)'
-                    : '1px solid rgba(255, 255, 255, 0.12)',
+                    ? '1px solid rgba(0, 245, 160, 0.35)'
+                    : '1px solid var(--border-subtle, rgba(255, 255, 255, 0.12))',
                   backgroundColor: isCurrentCompleted
                     ? 'rgba(0, 245, 160, 0.15)'
                     : 'rgba(255, 255, 255, 0.05)',
@@ -423,24 +425,26 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
                 <span>{isCurrentCompleted ? 'Completed ✓' : 'Mark Step Complete'}</span>
               </button>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                 <button
                   type="button"
                   disabled={currentIndex === 0}
                   onClick={() => handleStepSelect(currentIndex - 1)}
                   style={{
-                    padding: '6px 10px',
+                    padding: '7px 12px',
                     borderRadius: '8px',
-                    fontSize: '0.76rem',
+                    fontSize: '0.78rem',
                     fontWeight: 600,
                     cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
                     opacity: currentIndex === 0 ? 0.35 : 1,
-                    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     color: 'var(--text-secondary, #94A3B8)',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '4px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   <ChevronLeft size={14} />
@@ -452,9 +456,9 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
                   disabled={currentIndex >= totalSteps - 1}
                   onClick={() => handleStepSelect(currentIndex + 1)}
                   style={{
-                    padding: '6px 12px',
+                    padding: '7px 12px',
                     borderRadius: '8px',
-                    fontSize: '0.76rem',
+                    fontSize: '0.78rem',
                     fontWeight: 700,
                     cursor: currentIndex >= totalSteps - 1 ? 'not-allowed' : 'pointer',
                     opacity: currentIndex >= totalSteps - 1 ? 0.35 : 1,
@@ -463,7 +467,9 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
                     color: '#070B19',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '4px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   <span>Next</span>

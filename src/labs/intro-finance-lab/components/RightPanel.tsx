@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Lightbulb, Info } from 'lucide-react';
 
 interface RightPanelProps {
   tips: string[];
@@ -11,7 +12,7 @@ const RightPanel: React.FC<RightPanelProps> = ({ tips, didYouKnow }) => {
     <aside className="w-full md:w-80 border-l border-white/5 bg-black/20 p-6 flex flex-col gap-6 overflow-y-auto z-10">
       <div>
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-income">💡</span>
+          <Lightbulb size={16} className="text-income" />
           <h3 className="text-xs font-mono uppercase tracking-[0.2em] text-white/60">Money Smart Tips</h3>
         </div>
         <div className="space-y-3">
@@ -28,7 +29,7 @@ const RightPanel: React.FC<RightPanelProps> = ({ tips, didYouKnow }) => {
         <div className="glass bg-growth/5 border-growth/20 p-5 rounded-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-24 h-24 bg-growth/10 rounded-full blur-2xl -mr-12 -mt-12 group-hover:bg-growth/20 transition-all"></div>
           <div className="flex items-center gap-2 mb-3 relative">
-            <span className="text-growth">✨</span>
+            <Info size={14} className="text-growth" />
             <h3 className="text-[10px] font-mono uppercase tracking-widest text-growth font-bold">Did You Know?</h3>
           </div>
           <p className="text-sm italic text-white/80 leading-relaxed relative">

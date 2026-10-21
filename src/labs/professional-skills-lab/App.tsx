@@ -318,7 +318,7 @@ export default function App({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Desktop View */}
-      <div className="hidden lg:flex flex-col h-screen bg-gradient-to-br from-[#0B1220] to-[#111827] text-[#E6E9F0] overflow-y-auto md:overflow-hidden">
+      <div className="hidden lg:flex flex-col h-full min-h-0 w-full bg-gradient-to-br from-[#0B1220] to-[#111827] text-[#E6E9F0] overflow-y-auto md:overflow-hidden">
         {/* Header */}
         <header className="px-6 py-4 border-b border-slate-800 flex justify-between items-center shrink-0 z-10 bg-[#0B1220]/80 backdrop-blur-md">
           <div className="flex items-center gap-3">

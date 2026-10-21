@@ -1,5 +1,6 @@
 import React, { Suspense, useCallback } from 'react';
 import { getStandaloneLab } from '../labs/registry';
+import { LabOrientationGuard } from './lab/LabOrientationGuard';
 
 const LabLoadingSpinner: React.FC<{ labName: string }> = ({ labName }) => (
   <div style={{
@@ -63,8 +64,9 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
   }
 
   return (
-    <div style={{
-      position: 'relative', width: '100%', minHeight: '620px',
+    <LabOrientationGuard labTitle={labDisplayName}>
+      <div style={{
+        position: 'relative', width: '100%', minHeight: '620px',
       borderRadius: '14px', overflow: 'hidden',
       border: '1px solid rgba(59,240,255,0.14)',
       boxShadow: '0 0 50px rgba(59,240,255,0.07), 0 25px 70px rgba(0,0,0,0.5)',
@@ -134,6 +136,7 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
         </Suspense>
       </div>
     </div>
+    </LabOrientationGuard>
   );
 };
 

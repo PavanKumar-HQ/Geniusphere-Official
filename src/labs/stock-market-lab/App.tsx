@@ -150,7 +150,7 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
       </div>
 
         {/* Desktop View (Only Visible on Large Screens) */}
-      <div className="hidden lg:flex flex-col h-screen w-full bg-[#070B1A] grid-bg overflow-hidden text-slate-200">
+      <div className="hidden lg:flex flex-col h-full min-h-0 w-full bg-[#070B1A] grid-bg overflow-hidden text-slate-200">
         {/* Header */}
         <header className="h-16 flex items-center justify-between px-8 border-b border-cyan-900/30 glass-panel z-10">
           <div className="flex items-center gap-3">
