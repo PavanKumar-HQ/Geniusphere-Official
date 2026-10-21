@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext, createContext, useCallback } from 'react';
 import { RotateCw, Maximize2, ArrowRight, ShieldCheck, Smartphone } from 'lucide-react';
 
-interface LabOrientationContextValue {
+export interface LabOrientationContextValue {
   isGuardActive: boolean;
   isBypassed: boolean;
   setBypassed: (val: boolean) => void;
 }
 
-const LabOrientationContext = createContext<LabOrientationContextValue>({
+export const LabOrientationContext = createContext<LabOrientationContextValue>({
   isGuardActive: false,
   isBypassed: false,
   setBypassed: () => {},

@@ -1,6 +1,7 @@
 import React, { Suspense, useCallback } from 'react';
 import { getStandaloneLab } from '../labs/registry';
 import { LabOrientationGuard } from './lab/LabOrientationGuard';
+import { LabErrorBoundary } from './LabErrorBoundary';
 
 const LabLoadingSpinner: React.FC<{ labName: string }> = ({ labName }) => (
   <div style={{
@@ -131,9 +132,11 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
 
       {/* The real animated lab app rendered inline */}
       <div style={{ position: 'relative', height: '650px', minHeight: '650px', width: '100%' }}>
-        <Suspense fallback={<LabLoadingSpinner labName={labDisplayName} />}>
-          <LabApp onClose={handleClose} />
-        </Suspense>
+        <LabErrorBoundary labName={labDisplayName} onClose={handleClose}>
+          <Suspense fallback={<LabLoadingSpinner labName={labDisplayName} />}>
+            <LabApp onClose={handleClose} />
+          </Suspense>
+        </LabErrorBoundary>
       </div>
     </div>
     </LabOrientationGuard>

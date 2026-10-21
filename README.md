@@ -10,7 +10,7 @@
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Vitest](https://img.shields.io/badge/Vitest-5.0.5-6E9F18?logo=vitest)](https://vitest.dev/)
-[![Tests](https://img.shields.io/badge/Tests-67%2F67%20Passed-43A85B)](#)
+[![Tests](https://img.shields.io/badge/Tests-431%2F431%20Passed-43A85B)](#)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](#)
 
@@ -68,18 +68,16 @@ Geniusphere is a full product educational technology platform engineered for ind
 
 ---
 
-## 📑 Master Engineering Deliverables & Reports
+## 📑 Master Engineering Architecture & Deliverables
 
-All mandatory engineering audit reports and architectural specifications are maintained in the repository:
+The production engineering blueprints, system maps, and test matrices are maintained under `docs/`:
 
-1. [Initial Audit Report](REPORTS/INITIAL_AUDIT.md) — Comprehensive inspection of repository, remotes, dependencies, and risks.
-2. [Issue Register](REPORTS/ISSUE_REGISTER.md) — 7 prioritized issues (ISSUE-001 through ISSUE-007) with root causes, fixes, and verification methods.
-3. [Architecture Decision Records](REPORTS/ARCHITECTURE_DECISIONS.md) — Formal ADR-001 through ADR-006 documenting technical decisions and trade-offs.
-4. [Implementation Plan](REPORTS/IMPLEMENTATION_PLAN.md) — 7-phase roadmap (Phases A through G) from discovery to cloud cutover.
-5. [Acceptance Criteria](REPORTS/ACCEPTANCE_CRITERIA.md) — BDD acceptance criteria (AC-001 through AC-009) for all user roles.
-6. [Test Verification Report](REPORTS/TEST_RESULTS.md) — 100% passing test results across 8 test suites (67 automated tests).
-7. [Security & Privacy Review](REPORTS/SECURITY_REVIEW.md) — Threat matrix, OWASP Top 10 defenses, and DPDP Act 2023 compliance.
-8. [Release Readiness Assessment](REPORTS/RELEASE_READINESS.md) — Production readiness sign-off and operational checklist.
+1. [System Architecture Map](docs/architecture/system-map.md) — Multi-tier boundaries, state ownership matrix, and 15 interactive standalone labs.
+2. [Data Flow & Integration Pipelines](docs/architecture/data-flow.md) — Authentication, learning persistence, real-time WebSocket sync, and AI request flows.
+3. [Architecture Decisions Log](docs/architecture/decisions.md) — Formal records (ADR-101 through ADR-106) on registry resolution, CSS grids, orientation guards, and AI resilience.
+4. [Cross-System Regression Matrix](docs/testing/regression-matrix.md) — 24 edge-case scenarios, expected behaviors, and automated verification suites.
+5. [Production Deployment & Operations Guide](docs/operations/deployment.md) — Topology, environment variables, health checks, and safe rollback protocols.
+6. [Testing Strategy & Test Registry](docs/testing/TESTING_STRATEGY.md) — 431 automated tests across 29 test suites with zero mock data.
 
 ---
 

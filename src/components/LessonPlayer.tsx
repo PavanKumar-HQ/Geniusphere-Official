@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { InMemoryDatabase } from '../db/in-memory-db';
 import { Lesson, CourseEnrollment, Certificate } from '../types';
 import { EmbeddedLabRenderer } from './EmbeddedLabRenderer';
+import { LabOrientationGuard } from './lab/LabOrientationGuard';
+import { LabErrorBoundary } from './LabErrorBoundary';
 import { CourseSubmoduleLabStudio } from './CourseSubmoduleLabStudio';
 import { LessonCodingSandbox } from './LessonCodingSandbox';
 import { CertificateModal } from './CertificateModal';
@@ -1248,10 +1250,14 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       )}
                     </div>
                     <div style={{ flex: 1, minHeight: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                      {React.createElement(standaloneLab.component, {
-                        onClose: () => setActiveTab('video'),
-                        onExit: () => setActiveTab('video'),
-                      })}
+                      <LabOrientationGuard labTitle={standaloneLab.name}>
+                        <LabErrorBoundary labName={standaloneLab.name} onClose={() => setActiveTab('video')}>
+                          {React.createElement(standaloneLab.component, {
+                            onClose: () => setActiveTab('video'),
+                            onExit: () => setActiveTab('video'),
+                          })}
+                        </LabErrorBoundary>
+                      </LabOrientationGuard>
                     </div>
                   </div>
                 ) : (

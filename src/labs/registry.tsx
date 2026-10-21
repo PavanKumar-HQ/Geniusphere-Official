@@ -169,6 +169,7 @@ export const STANDALONE_LABS: StandaloneLabMetadata[] = [
 export function getStandaloneLab(identifier: string): StandaloneLabMetadata | null {
   if (!identifier) return null;
   const clean = identifier.toLowerCase().trim();
+  if (!clean) return null;
 
   // 1. Direct ID exact match
   const idMatch = STANDALONE_LABS.find((m) => m.id === clean);

@@ -34,6 +34,7 @@ import {
 import { AnimatedStepGuide } from './AnimatedStepGuide';
 import { UniversalLab } from './lab/UniversalLab';
 import { LabOrientationGuard } from './lab/LabOrientationGuard';
+import { LabErrorBoundary } from './LabErrorBoundary';
 import { getStandaloneLab, StandaloneLabMetadata } from '../labs/registry';
 import { Cpu, Layers, FlaskConical, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
 import { apiClient } from '../services/apiClient';
@@ -4037,16 +4038,19 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         >
           {(() => {
             const currentStandalone = getStandaloneLab(activeFullLab) || standaloneLabMeta;
-            if (currentStandalone) {
-              const LabComponent = currentStandalone.component;
-              return (
-                <LabComponent
-                  onClose={() => setActiveFullLab(null)}
-                  onExit={() => setActiveFullLab(null)}
-                />
-              );
-            }
-            return <UniversalLab simulationId={lab.id} onClose={() => setActiveFullLab(null)} />;
+            const labName = currentStandalone?.name || lab.title || 'Interactive Lab';
+            return (
+              <LabErrorBoundary labName={labName} onClose={() => setActiveFullLab(null)}>
+                {currentStandalone ? (
+                  React.createElement(currentStandalone.component, {
+                    onClose: () => setActiveFullLab(null),
+                    onExit: () => setActiveFullLab(null),
+                  })
+                ) : (
+                  <UniversalLab simulationId={lab.id} onClose={() => setActiveFullLab(null)} />
+                )}
+              </LabErrorBoundary>
+            );
           })()}
         </div>
       )}
