@@ -161,8 +161,8 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       {/* Desktop View (Only Visible on Large Screens) */}
       <div className="hidden lg:flex h-screen w-full flex-col bg-[#070B1A] relative overflow-hidden grid-bg">
         {/* Background Orbs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-growth/10 rounded-full blur-[120px] animate-pulse-slow"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-income/5 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', backgroundColor: 'rgba(0, 245, 160, 0.05)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', backgroundColor: 'rgba(59, 240, 255, 0.04)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
 
         {/* Header */}
         <header className="h-16 flex items-center justify-between px-8 border-b border-white/10 glass z-10">

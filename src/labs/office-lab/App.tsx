@@ -506,9 +506,8 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         {/* Background FX */}
         <div className="absolute inset-0 -z-10 bg-[#070B1A]">
           <div className="absolute inset-0 animated-grid opacity-30"></div>
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-[#070B1A]/80 to-[#070B1A]"></div>
-          <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/10 blur-[150px] rounded-full"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/10 blur-[150px] rounded-full"></div>
+          <div style={{ position: 'absolute', top: '25%', left: '25%', width: '400px', height: '400px', backgroundColor: 'rgba(37,99,235,0.06)', filter: 'blur(100px)', borderRadius: '50%', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: '25%', right: '25%', width: '400px', height: '400px', backgroundColor: 'rgba(147,51,234,0.05)', filter: 'blur(100px)', borderRadius: '50%', pointerEvents: 'none' }} />
         </div>
 
         {/* Futuristic Header */}

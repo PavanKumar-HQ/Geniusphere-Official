@@ -158,6 +158,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     if (slug.includes('cloud') || slug.includes('devops')) return 'cloud';
     if (slug.includes('fullstack') || slug.includes('web-development')) return 'fullstack';
     if (slug.includes('data') || slug.includes('analytics')) return 'data';
+    if (slug.includes('office') || slug.includes('microsoft') || slug.includes('excel') || slug.includes('word') || slug.includes('spreadsheet')) return 'productivity';
 
     if (slug.includes('stock') || slug.includes('trading') || slug.includes('market')) return 'stock';
     if (slug.includes('fintech') || slug.includes('financial-systems')) return 'banking';

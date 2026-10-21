@@ -5,6 +5,7 @@ import { EmbeddedLabRenderer } from './EmbeddedLabRenderer';
 import { CourseSubmoduleLabStudio } from './CourseSubmoduleLabStudio';
 import { LessonCodingSandbox } from './LessonCodingSandbox';
 import { CertificateModal } from './CertificateModal';
+import { getStandaloneLab } from '../labs/registry';
 import {
   ArrowLeft,
   CheckCircle2,
@@ -367,6 +368,15 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     );
   }, [db, course.slug, (course as any).linked_lab_slug]);
 
+  const standaloneLab = useMemo(() => {
+    return (
+      getStandaloneLab(course.slug) ||
+      getStandaloneLab((course as any).linked_lab_slug) ||
+      getStandaloneLab(course.title) ||
+      (matchingLab ? getStandaloneLab(matchingLab.id) || getStandaloneLab(matchingLab.slug) : null)
+    );
+  }, [course, matchingLab]);
+
   // Fallback domain-appropriate educational video mapping
   const fallbackVideoId = useMemo(() => {
     const domainVideos: Record<string, string[]> = {
@@ -528,17 +538,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
           {course.subject}
         </div>
 
-        {/* Gamification Pills */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: 'var(--brand-lime)', color: 'var(--brand-lime-text)', fontWeight: 800, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px' }}>
-            <Flame size={13} color="var(--brand-lime-text)" />
-            <span>{userProgress.streak_days}-Day Streak</span>
-          </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: 'var(--bg-surface-subdued)', color: 'var(--brand-primary)', fontWeight: 700, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <Zap size={13} color="var(--brand-primary)" />
-            <span>{userProgress.xp} XP</span>
-          </div>
-        </div>
+
 
         {/* Course Progress */}
         <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
@@ -686,7 +686,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   }}
                 >
                   <VideoIcon size={15} />
-                  <span>1. Video Lectures & Notes (10 Sub-Videos)</span>
+                  <span>Video Lectures</span>
                 </button>
 
                 <button
@@ -708,7 +708,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   }}
                 >
                   <FlaskConical size={15} />
-                  <span>2. Integrated Course Lab</span>
+                  <span>Interactive Lab</span>
                 </button>
 
                 <button
@@ -730,33 +730,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   }}
                 >
                   <TerminalIcon size={15} />
-                  <span>3. Hands-On Code Sandbox (+100 XP)</span>
+                  <span>Code Sandbox</span>
                 </button>
-
-                {onLaunchLab && matchingLab && (
-                  <button
-                    type="button"
-                    onClick={() => onLaunchLab(course.slug)}
-                    style={{
-                      height: '38px',
-                      padding: '0 14px',
-                      borderRadius: '8px',
-                      backgroundColor: 'var(--brand-surface)',
-                      color: 'var(--brand-primary)',
-                      fontWeight: 700,
-                      fontSize: '0.82rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      border: '1px solid var(--brand-border)',
-                      cursor: 'pointer',
-                    }}
-                    title={`Open dedicated lab: ${matchingLab.title}`}
-                  >
-                    <FlaskConical size={14} />
-                    <span>Open Full-Screen Lab</span>
-                  </button>
-                )}
               </div>
             </div>
 
@@ -1205,77 +1180,83 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               </div>
             )}
 
-            {/* TAB 2: INTEGRATED COURSE LAB — Real animated lab apps */}
+            {/* TAB 2: INTEGRATED COURSE LAB */}
             {activeTab === 'lab' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {/* Real-time progress hint bar */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '12px 18px',
-                    background: 'linear-gradient(135deg, rgba(0,245,160,0.05) 0%, rgba(0,210,135,0.03) 100%)',
-                    border: '1px solid rgba(0,245,160,0.15)',
-                    borderRadius: '12px',
-                    flexWrap: 'wrap',
-                    gap: '10px',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{
-                      width: '8px', height: '8px', borderRadius: '50%',
-                      background: '#00F5A0', boxShadow: '0 0 8px #00F5A0',
-                      animation: 'liveGlow 2s ease-in-out infinite',
-                    }} />
-                    <style>{`@keyframes liveGlow { 0%,100%{opacity:1;} 50%{opacity:0.4;} }`}</style>
-                    <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                      🔬 {course.title} — Interactive Lab
-                    </span>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-                      {enrollment.progress_percent}% Complete • {enrollment.completed_lessons.length} of {allLessons.length} modules done
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    onClick={() => setActiveTab('video')}
-                    style={{ height: '34px', fontSize: '0.78rem' }}
+                {standaloneLab ? (
+                  <div
+                    style={{
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      border: '1.5px solid var(--border-subtle)',
+                      backgroundColor: '#070B1A',
+                      minHeight: '720px',
+                      height: '780px',
+                      position: 'relative',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
+                    }}
                   >
-                    <ArrowLeft size={13} /> Video Lectures
-                  </button>
-                </div>
-
-                {/* Real progress bar */}
-                <div style={{ height: '5px', borderRadius: '4px', background: 'var(--bg-canvas)', overflow: 'hidden' }}>
-                  <div style={{
-                    height: '100%',
-                    width: `${enrollment.progress_percent}%`,
-                    background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
-                    boxShadow: '0 0 8px rgba(0,245,160,0.4)',
-                    transition: 'width 0.5s ease',
-                    borderRadius: '4px',
-                  }} />
-                </div>
-
-                {/* Dedicated Sub-Module Interactive Laboratory & Gamified Pathway */}
-                <CourseSubmoduleLabStudio
-                  course={course}
-                  currentLessonId={currentLessonId}
-                  onSelectLesson={(lessonId) => {
-                    setCurrentLessonId(lessonId);
-                    setQuizSubmitted(false);
-                    setSelectedAnswers({});
-                  }}
-                  db={db}
-                  currentUserId={currentUserId}
-                  enrollment={enrollment}
-                  onCompleteSubmoduleLab={(_lessonId, _xp) => {
-                    const updated = db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId);
-                    setEnrollment({ ...updated });
-                  }}
-                  onClose={() => setActiveTab('video')}
-                />
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 18px',
+                        backgroundColor: 'rgba(7, 11, 26, 0.95)',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                        zIndex: 10,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <FlaskConical size={18} color="var(--brand-primary)" />
+                        <div>
+                          <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#FFFFFF' }}>
+                            {standaloneLab.name}
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: 'rgba(255, 255, 255, 0.6)' }}>
+                            {standaloneLab.suiteTitle}
+                          </div>
+                        </div>
+                      </div>
+                      {onLaunchLab && (
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={() => onLaunchLab(course.slug)}
+                          style={{ height: '32px', fontSize: '0.76rem', padding: '0 12px' }}
+                        >
+                          Full Screen View
+                        </button>
+                      )}
+                    </div>
+                    <div style={{ flex: 1, minHeight: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                      {React.createElement(standaloneLab.component, {
+                        onClose: () => setActiveTab('video'),
+                        onExit: () => setActiveTab('video'),
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <CourseSubmoduleLabStudio
+                    course={course}
+                    currentLessonId={currentLessonId}
+                    onSelectLesson={(lessonId) => {
+                      setCurrentLessonId(lessonId);
+                      setQuizSubmitted(false);
+                      setSelectedAnswers({});
+                    }}
+                    db={db}
+                    currentUserId={currentUserId}
+                    enrollment={enrollment}
+                    onCompleteSubmoduleLab={(_lessonId, _xp) => {
+                      const updated = db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId);
+                      setEnrollment({ ...updated });
+                    }}
+                    onClose={() => setActiveTab('video')}
+                  />
+                )}
               </div>
             )}
 

@@ -1062,57 +1062,7 @@ export const App: React.FC = () => {
             {/* Realtime Live Engine Status Indicator with Live Database Explorer */}
             <RealtimeHeaderStatus currentUserId={currentUser.id} db={db} />
 
-            {/* Top Navigation Streak Widget (Matches Prototype) */}
-            <button
-              type="button"
-              onClick={() => setStreakModalOpen(true)}
-              style={{
-                height: '36px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                backgroundColor: 'rgba(245, 158, 11, 0.12)',
-                border: '1.5px solid rgba(245, 158, 11, 0.35)',
-                borderRadius: '100px',
-                padding: '0 10px',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                color: '#F59E0B',
-                cursor: 'pointer',
-                boxShadow: '0 0 12px rgba(245, 158, 11, 0.18)',
-                transition: 'all 0.15s ease',
-                flexShrink: 0,
-              }}
-              title="Daily Learning Streak & Habit Calendar"
-              aria-label="View Daily Learning Streak"
-            >
-              <Flame size={17} color="#F59E0B" fill="#F59E0B" />
-              <span>{userProgress.streak_days || 0}<span className="header-hide-sm">-Day Streak</span></span>
-            </button>
 
-            {/* Dynamic XP Pill (Matches Prototype) */}
-            <div
-              className="header-hide-mobile"
-              style={{
-                height: '36px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '100px',
-                padding: '0 12px',
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                color: 'var(--brand-primary)',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                flexShrink: 0,
-              }}
-              title="Total Earned Experience Points"
-            >
-              <Zap size={15} color="var(--brand-primary)" fill="var(--brand-primary)" />
-              <span>{userProgress.xp || 0} XP</span>
-            </div>
 
             {/* Realtime Notification Bell Button */}
             <div style={{ position: 'relative', flexShrink: 0 }}>

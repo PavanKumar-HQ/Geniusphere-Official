@@ -195,8 +195,8 @@ export default function App({ onClose }: { onClose?: () => void }) {
     return (
       <div className="relative w-full h-full flex flex-col items-center justify-center p-8">
         <div
-          className="absolute inset-0 rounded-full blur-[120px] opacity-10 animate-pulse-slow"
-          style={{ backgroundColor: color }}
+          className="absolute inset-0 rounded-full animate-pulse-slow"
+          style={{ backgroundColor: color, filter: 'blur(100px)', opacity: 0.08, pointerEvents: 'none' }}
         />
 
         <div className="z-10 flex flex-col items-center gap-6">
