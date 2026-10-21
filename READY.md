@@ -27,14 +27,26 @@ In accordance with Platform Directives, the following documentation and audit ar
    Detailed transport protocols, channel authorization rules, event lifecycle, and disconnection/missed-event recovery.
 7. **Real-Time Test Results Register**: [`docs/realtime-test-results.md`](docs/realtime-test-results.md)  
    Executable test output, scenario assertions, execution timings, and release gate checklist.
-8. **Canonical 170 Lab Acceptance Matrix**: [`docs/lab-acceptance-matrix.md`](docs/lab-acceptance-matrix.md)  
-   Exhaustive matrix of all 170 simulation labs detailing stable IDs, topics, formulas/models, student-controlled inputs, state transitions, and completion criteria.
-9. **Canonical 170 Video Lessons Audit**: [`docs/video-source-audit.md`](docs/video-source-audit.md)  
-   Audit of all 170 video lessons validated live via official YouTube oEmbed API (`HTTP 200 OK`) with title, channel attribution, duration, and relevance verdicts.
-10. **YouTube Lesson Data Flow & Playback Architecture**: [`docs/youtube-lesson-data-flow.md`](docs/youtube-lesson-data-flow.md)  
-   Sequence diagram from UI action through Fastify API, PostgreSQL transaction, and WebSocket broadcast, including failure rollback and retry states.
-11. **Implementation & Defect Remediation Log**: [`docs/implementation-log.md`](docs/implementation-log.md)  
-   Chronological record of architectural modifications, migrations, affected services, and test evidence.
+8. **Authoritative Lab Inventory**: [`docs/lab-inventory.md`](docs/lab-inventory.md)  
+   Complete topic-to-lesson-to-lab component and simulation model mapping.
+9. **Lab Integration Defect Audit**: [`docs/lab-integration-audit.md`](docs/lab-integration-audit.md)  
+   Root causes and code repairs for lab routing, server persistence, and canvas rendering.
+10. **Canonical 170 Lab Acceptance Matrix**: [`docs/lab-acceptance-matrix.md`](docs/lab-acceptance-matrix.md)  
+    Exhaustive matrix of all 170 simulation labs detailing stable IDs, topics, formulas/models, student-controlled inputs, state transitions, and completion criteria.
+11. **Practical Lab Data Flow & Lifecycle**: [`docs/lab-data-flow.md`](docs/lab-data-flow.md)  
+    UI-to-backend-to-PostgreSQL completion sequence diagram and idempotency rules.
+12. **Lab Security, Authorization & Multi-User Isolation**: [`docs/lab-security-and-isolation.md`](docs/lab-security-and-isolation.md)  
+    JWT validation on lab attempts, anti-tamper reward calculation, and cross-student data isolation.
+13. **Practical Lab Real-Time Verification**: [`docs/lab-realtime-verification.md`](docs/lab-realtime-verification.md)  
+    Multi-session event propagation and channel segregation test evidence.
+14. **Practical Lab Visual QA & Responsive Verification**: [`docs/lab-visual-qa.md`](docs/lab-visual-qa.md)  
+    Viewport inspection (375x812, 768x1024, 1440x900) and elimination of canvas blobs.
+15. **Canonical 170 Video Lessons Audit**: [`docs/video-source-audit.md`](docs/video-source-audit.md)  
+    Audit of all 170 video lessons validated live via official YouTube oEmbed API (`HTTP 200 OK`) with title, channel attribution, duration, and relevance verdicts.
+16. **YouTube Lesson Data Flow & Playback Architecture**: [`docs/youtube-lesson-data-flow.md`](docs/youtube-lesson-data-flow.md)  
+    Sequence diagram from UI action through Fastify API, PostgreSQL transaction, and WebSocket broadcast, including failure rollback and retry states.
+17. **Implementation & Defect Remediation Log**: [`docs/implementation-log.md`](docs/implementation-log.md)  
+    Chronological record of architectural modifications, migrations, affected services, and test evidence.
 
 ---
 

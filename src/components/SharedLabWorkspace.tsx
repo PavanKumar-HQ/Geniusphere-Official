@@ -35,6 +35,7 @@ import { AnimatedStepGuide } from './AnimatedStepGuide';
 import { UniversalLab } from './lab/UniversalLab';
 import { getStandaloneLab, StandaloneLabMetadata } from '../labs/registry';
 import { Sparkles, Maximize2, ExternalLink } from 'lucide-react';
+import { apiClient } from '../services/apiClient';
 
 export interface SharedLabWorkspaceProps {
   db: InMemoryDatabase;
@@ -1031,6 +1032,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           },
         });
 
+        // Persist to server PostgreSQL database
+        apiClient.recordLabAttempt(lab.slug, score, passed ? 'completed' : 'failed', {
+          passedCount,
+          totalCriteria: lab.validation_criteria.length,
+          timestamp: new Date().toISOString(),
+        }).catch((err) => {
+          console.warn('[SharedLabWorkspace] Server sync notice:', err.message);
+        });
+
         setCompletedAttempt(record);
         setLifecycleState(passed ? 'success' : 'incorrect');
         setSaveStatus('SAVED');
@@ -1047,6 +1057,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
         savedState: {
           timestamp: new Date().toISOString(),
         },
+      });
+
+      // Persist to server PostgreSQL database
+      apiClient.recordLabAttempt(lab.slug, score, passed ? 'completed' : 'failed', {
+        passedCount,
+        totalCriteria: lab.validation_criteria.length,
+        timestamp: new Date().toISOString(),
+      }).catch((err) => {
+        console.warn('[SharedLabWorkspace] Server sync notice:', err.message);
       });
 
       setCompletedAttempt(record);

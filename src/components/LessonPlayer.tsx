@@ -1266,9 +1266,17 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     db={db}
                     currentUserId={currentUserId}
                     enrollment={enrollment}
-                    onCompleteSubmoduleLab={(_lessonId, _xp) => {
+                    onCompleteSubmoduleLab={(subLessonId, xp) => {
                       const updated = db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId);
                       setEnrollment({ ...updated });
+                      // Server-authoritative PostgreSQL database sync
+                      apiClient.recordLabAttempt(`${course.slug}-sub-${subLessonId}`, 100, 'completed', {
+                        courseId,
+                        subLessonId,
+                        xpAwarded: xp,
+                      }).catch((err) => {
+                        console.warn('[LessonPlayer] Server lab sync notice:', err.message);
+                      });
                     }}
                     onClose={() => setActiveTab('video')}
                   />

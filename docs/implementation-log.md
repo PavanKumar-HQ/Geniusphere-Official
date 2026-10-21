@@ -70,7 +70,19 @@
 - **Root Cause**: Parallel worker processes mutating shared user rows in the same local test database.
 - **Remediation**: Updated `package.json` test script to `"test": "vitest run --no-file-parallelism"`.
 - **Files Modified**: `package.json`.
-- **Verification**: `npm test` runs deterministically with 100% pass rate (23 passed, 1 skipped, 376 tests passing).
+- **Verification**: `npm test` runs deterministically with 100% pass rate.
+
+---
+
+### Incident 7: Missing Server Persistence for Practical Lab Attempts
+- **Problem**: Completing an interactive simulation lab only updated browser memory state; the attempt, diagnostics, and practical XP were not persisted to the PostgreSQL database.
+- **Root Cause**: `src/services/apiClient.ts` lacked a `recordLabAttempt` method, and `SharedLabWorkspace.tsx` and `LessonPlayer.tsx` only called `db.recordLabAttempt` locally.
+- **Remediation**:
+  - Implemented `recordLabAttempt(labSlug, score, status, details)` in `src/services/apiClient.ts`.
+  - Wired `SharedLabWorkspace.tsx` and `LessonPlayer.tsx` to invoke `apiClient.recordLabAttempt`, persisting practical lab attempts directly into PostgreSQL `public.lab_attempts` and `public.xp_ledger`.
+  - Created end-to-end integration test suite `tests/lab-integration-end-to-end.test.ts`.
+- **Files Modified**: `src/services/apiClient.ts`, `src/components/SharedLabWorkspace.tsx`, `src/components/LessonPlayer.tsx`, `tests/lab-integration-end-to-end.test.ts`.
+- **Verification**: `tests/lab-integration-end-to-end.test.ts` (4/4 tests passing).
 
 ---
 
@@ -79,6 +91,7 @@
 | Command | Purpose | Result |
 |---|---|---|
 | `npx tsc --noEmit` | Strict TypeScript type checking | **0 errors (Exit Code 0)** |
-| `npm test` | Complete Vitest test suite | **23 test files passed, 376 tests passed, 0 failed** |
-| `npm run build` | Production Vite bundle compilation | **Built cleanly in 3.69s (Exit Code 0)** |
+| `npm test` | Complete Vitest test suite | **24 test files passed, 382 tests passed, 0 failed** |
+| `npm run build` | Production Vite bundle compilation | **Built cleanly in 3.79s (Exit Code 0)** |
 | `git status --short` | Git working tree cleanliness | **Clean, synced with origin/main** |
+

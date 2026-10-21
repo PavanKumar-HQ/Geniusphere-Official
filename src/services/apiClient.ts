@@ -137,6 +137,18 @@ export class ApiClient {
     });
   }
 
+  public async recordLabAttempt(
+    labSlug: string,
+    score: number = 100,
+    status: 'completed' | 'failed' | 'in_progress' = 'completed',
+    details: any = {}
+  ): Promise<any> {
+    return this.request('/api/labs/attempt', {
+      method: 'POST',
+      body: JSON.stringify({ labSlug, score, status, details }),
+    });
+  }
+
   public async getNotifications(): Promise<{ notifications: any[]; unreadCount: number }> {
     return this.request('/api/notifications');
   }
