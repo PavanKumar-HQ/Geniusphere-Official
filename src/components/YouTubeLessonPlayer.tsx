@@ -15,6 +15,9 @@ export interface YouTubeLessonPlayerProps {
   lesson: VideoLesson;
   isCompleted: boolean;
   onMarkCompleted: (lessonId: string) => void;
+  isSaving?: boolean;
+  errorMessage?: string | null;
+  onRetry?: () => void;
   className?: string;
 }
 
@@ -22,6 +25,9 @@ export const YouTubeLessonPlayer: React.FC<YouTubeLessonPlayerProps> = ({
   lesson,
   isCompleted,
   onMarkCompleted,
+  isSaving = false,
+  errorMessage = null,
+  onRetry,
   className = '',
 }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -382,45 +388,116 @@ export const YouTubeLessonPlayer: React.FC<YouTubeLessonPlayerProps> = ({
         </div>
 
         {/* Completion Control */}
-        <div style={{ minWidth: '180px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <button
-            type="button"
-            className={isCompleted ? 'btn-secondary' : 'btn-primary'}
-            onClick={() => onMarkCompleted(lesson.id)}
-            style={{
-              height: '42px',
-              padding: '0 16px',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              backgroundColor: isCompleted ? '#DCFCE7' : undefined,
-              borderColor: isCompleted ? '#86EFAC' : undefined,
-              color: isCompleted ? '#15803D' : undefined,
-              cursor: 'pointer',
-            }}
-            data-testid="mark-lesson-completed-btn"
-          >
-            {isCompleted ? (
-              <>
-                <CheckCircle2 size={16} /> Completed
-              </>
-            ) : (
-              <>
-                <CheckCircle2 size={16} /> Mark as Watched
-              </>
-            )}
-          </button>
+        <div style={{ minWidth: '180px', display: 'flex', flexDirection: 'column', gap: '6px' }} aria-live="polite">
+          {isSaving ? (
+            <button
+              type="button"
+              className="btn-primary"
+              disabled
+              style={{
+                height: '42px',
+                padding: '0 16px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                opacity: 0.8,
+                cursor: 'not-allowed',
+              }}
+              data-testid="mark-lesson-completed-btn"
+              aria-busy="true"
+              aria-label="Saving lesson completion"
+            >
+              <RefreshCw size={15} style={{ animation: 'spin 1.2s linear infinite' }} />
+              <span>Saving…</span>
+            </button>
+          ) : errorMessage ? (
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onRetry || (() => onMarkCompleted(lesson.id))}
+              style={{
+                height: '42px',
+                padding: '0 16px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                backgroundColor: '#FEE2E2',
+                borderColor: '#FCA5A5',
+                color: '#B91C1C',
+                cursor: 'pointer',
+              }}
+              data-testid="mark-lesson-completed-btn"
+              aria-label="Retry saving completion"
+            >
+              <AlertCircle size={16} /> Retry
+            </button>
+          ) : isCompleted ? (
+            <button
+              type="button"
+              className="btn-secondary"
+              disabled
+              style={{
+                height: '42px',
+                padding: '0 16px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                backgroundColor: '#DCFCE7',
+                borderColor: '#86EFAC',
+                color: '#15803D',
+                cursor: 'default',
+              }}
+              data-testid="mark-lesson-completed-btn"
+              aria-label="Lesson completed"
+            >
+              <CheckCircle2 size={16} /> Completed
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => onMarkCompleted(lesson.id)}
+              style={{
+                height: '42px',
+                padding: '0 16px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+              }}
+              data-testid="mark-lesson-completed-btn"
+              aria-label="Mark lesson as watched"
+            >
+              <CheckCircle2 size={16} /> Mark as Watched
+            </button>
+          )}
+
           <div
             style={{
               fontSize: '0.7rem',
-              color: 'var(--text-muted, #9CA3AF)',
+              color: errorMessage ? '#DC2626' : 'var(--text-muted, #9CA3AF)',
               textAlign: 'center',
             }}
           >
-            {isCompleted ? 'Progress recorded to profile' : 'Student-confirmed completion'}
+            {isSaving
+              ? 'Synchronizing with server…'
+              : errorMessage
+              ? errorMessage
+              : isCompleted
+              ? 'Progress recorded to profile'
+              : 'Student-confirmed completion'}
           </div>
         </div>
       </div>

@@ -85,4 +85,40 @@ describe('YouTubeLessonPlayer Student Experience & Component Verification', () =
       expect(html).toContain(lesson.channelTitle.replace(/&/g, '&amp;'));
     }
   });
+
+  it('renders saving state with accessible spinner and disables button', () => {
+    const lesson = getLessonById('lesson-ai-1');
+    const html = renderToString(
+      <YouTubeLessonPlayer
+        lesson={lesson}
+        isCompleted={false}
+        isSaving={true}
+        onMarkCompleted={() => {}}
+      />
+    );
+
+    expect(html).toContain('Saving…');
+    expect(html).toContain('disabled');
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toContain('Synchronizing with server…');
+  });
+
+  it('renders recoverable error state with retry action', () => {
+    const lesson = getLessonById('lesson-ai-1');
+    const onRetry = vi.fn();
+    const html = renderToString(
+      <YouTubeLessonPlayer
+        lesson={lesson}
+        isCompleted={false}
+        isSaving={false}
+        errorMessage="Network error: failed to persist progress"
+        onRetry={onRetry}
+        onMarkCompleted={() => {}}
+      />
+    );
+
+    expect(html).toContain('Retry');
+    expect(html).toContain('Network error: failed to persist progress');
+    expect(html).not.toContain('Progress recorded to profile');
+  });
 });

@@ -23,6 +23,8 @@ import {
   FlaskConical,
   Code2,
   Lightbulb,
+  RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 
 import { SupportedLanguage } from '../utils/codeSandboxRunner';
@@ -323,6 +325,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     db.getCourseEnrollment(currentUserId, courseId) || db.enrollInCourse(currentUserId, courseId)
   );
   const [earnedCertificate, setEarnedCertificate] = useState<Certificate | null>(null);
+  const [isSavingCompletion, setIsSavingCompletion] = useState(false);
+  const [completionError, setCompletionError] = useState<string | null>(null);
 
   const [overrideVideoId, setOverrideVideoId] = useState<string | null>(null);
   const videoLessons = useMemo(() => db.getVideoLessons(), [db]);
@@ -424,51 +428,63 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     return videoLessons.find((v) => v.youtube_id === activeVideoId);
   }, [videoLessons, activeVideoId]);
 
-  const handleCompleteAndNext = () => {
-    if (!activeLesson) return;
-    const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
-    setEnrollment({ ...updated });
+  const handleCompleteAndNext = async () => {
+    if (!activeLesson || isSavingCompletion) return;
+    setIsSavingCompletion(true);
+    setCompletionError(null);
 
-    // Server-authoritative PostgreSQL database sync
-    apiClient.completeLesson(courseId, activeLesson.id, 100).catch((err) => {
-      console.warn('[LessonPlayer] Server sync notice:', err.message);
-    });
+    const previousEnrollment = { ...enrollment };
 
-    // Realtime notification for lesson completion
-    backendEngine.notifications.dispatch(
-      currentUserId,
-      `Module Completed: ${activeLesson.title}`,
-      `Total progress: ${updated.progress_percent}%. You earned +50 XP and advanced your daily streak!`,
-      'medium',
-      'assignment',
-      'course-detail',
-      course.slug,
-      'View Course'
-    );
+    try {
+      const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
+      setEnrollment({ ...updated });
 
-    if (updated.progress_percent >= 100) {
-      const certs = db.getCertificates(currentUserId);
-      const match = certs.find((c) => c.course_id === courseId);
-      if (match) {
-        setEarnedCertificate(match);
-      }
+      // Server-authoritative PostgreSQL database sync
+      await apiClient.completeLesson(courseId, activeLesson.id, 100);
+
+      // Realtime notification for lesson completion
       backendEngine.notifications.dispatch(
         currentUserId,
-        `Certificate Unlocked: ${course.title}`,
-        `Congratulations! You finished all 10 modules with 100% completion and unlocked your verified certificate.`,
-        'urgent',
-        'certificate',
-        'certificates',
-        undefined,
-        'View Certificate'
+        `Module Completed: ${activeLesson.title}`,
+        `Total progress: ${updated.progress_percent}%. You earned +50 XP and advanced your daily streak!`,
+        'medium',
+        'assignment',
+        'course-detail',
+        course.slug,
+        'View Course'
       );
-    }
 
-    if (nextLesson) {
-      setCurrentLessonId(nextLesson.id);
-      setSelectedAnswers({});
-      setQuizSubmitted(false);
-      setQuizScore(null);
+      if (updated.progress_percent >= 100) {
+        const certs = db.getCertificates(currentUserId);
+        const match = certs.find((c) => c.course_id === courseId);
+        if (match) {
+          setEarnedCertificate(match);
+        }
+        backendEngine.notifications.dispatch(
+          currentUserId,
+          `Certificate Unlocked: ${course.title}`,
+          `Congratulations! You finished all 10 modules with 100% completion and unlocked your verified certificate.`,
+          'urgent',
+          'certificate',
+          'certificates',
+          undefined,
+          'View Certificate'
+        );
+      }
+
+      if (nextLesson) {
+        setCurrentLessonId(nextLesson.id);
+        setSelectedAnswers({});
+        setQuizSubmitted(false);
+        setQuizScore(null);
+      }
+    } catch (err: any) {
+      console.error('[LessonPlayer] Server completion error:', err);
+      // Rollback to honest server-derived state
+      setEnrollment(previousEnrollment);
+      setCompletionError(err?.message || 'Failed to sync completion with server. Please retry.');
+    } finally {
+      setIsSavingCompletion(false);
     }
   };
 
@@ -1369,6 +1385,16 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               </div>
 
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                {completionError && (
+                  <span
+                    style={{ fontSize: '0.8rem', color: '#B91C1C', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}
+                    role="alert"
+                    aria-live="polite"
+                  >
+                    <AlertCircle size={14} /> {completionError}
+                  </span>
+                )}
+
                 {enrollment.progress_percent >= 100 && (
                   <button
                     type="button"
@@ -1387,13 +1413,35 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
 
                 <button
                   type="button"
-                  className="btn-primary"
+                  className={completionError ? 'btn-secondary' : 'btn-primary'}
                   onClick={handleCompleteAndNext}
-                  style={{ height: '42px', padding: '0 22px' }}
+                  disabled={isSavingCompletion}
+                  aria-busy={isSavingCompletion}
+                  data-testid="complete-and-continue-btn"
+                  style={{
+                    height: '42px',
+                    padding: '0 22px',
+                    ...(completionError ? { backgroundColor: '#FEE2E2', borderColor: '#FCA5A5', color: '#B91C1C' } : {}),
+                    ...(isSavingCompletion ? { opacity: 0.8, cursor: 'not-allowed' } : {}),
+                  }}
                 >
-                  <CheckCircle2 size={16} />
-                  <span>{nextLesson ? 'Complete & Continue Next' : 'Finish Course'}</span>
-                  {nextLesson && <ChevronRight size={16} />}
+                  {isSavingCompletion ? (
+                    <>
+                      <RefreshCw size={16} className="animate-spin" style={{ animation: 'spin 1.2s linear infinite' }} />
+                      <span>Saving…</span>
+                    </>
+                  ) : completionError ? (
+                    <>
+                      <AlertCircle size={16} />
+                      <span>Retry Completion</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={16} />
+                      <span>{nextLesson ? 'Complete & Continue Next' : 'Finish Course'}</span>
+                      {nextLesson && <ChevronRight size={16} />}
+                    </>
+                  )}
                 </button>
               </div>
             </div>
