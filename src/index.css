@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Universal Modern Interactive Control Reset
+   Ensures buttons never revert to browser user-agent "buttonface" (white/gray) */
+button, [type='button'], [type='reset'], [type='submit'] {
+  background-color: transparent;
+  background-image: none;
+  color: inherit;
+  border-width: 0;
+  border-style: solid;
+  border-color: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+button:not([class*='bg-']) {
+  background-color: transparent !important;
+}
+
+button:not([class*='text-']) {
+  color: inherit;
+}
+
+button:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
 /* ====================================================================
    Modern Normalized Academic Typography
    - Plus Jakarta Sans (Headings & Display)

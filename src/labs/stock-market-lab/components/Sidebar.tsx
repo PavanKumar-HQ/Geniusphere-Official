@@ -20,8 +20,8 @@ const Sidebar: React.FC<SidebarProps> = ({ topics, currentStep, onSelectStep }) 
             onClick={() => onSelectStep(topic.id)}
             className={`flex flex-col text-left p-3 rounded-lg transition-all duration-300 group border border-transparent
               ${currentStep === topic.id 
-                ? 'bg-cyan-500/10 border-cyan-500/30' 
-                : 'hover:bg-slate-800/50 hover:border-slate-700'}`}
+                ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300' 
+                : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800 hover:border-slate-700'}`}
           >
             <div className="flex items-center gap-2 mb-1">
               <span className={`text-[10px] px-1.5 py-0.5 rounded border ${currentStep === topic.id ? 'border-cyan-400 text-cyan-400' : 'border-slate-600 text-slate-500'}`}>

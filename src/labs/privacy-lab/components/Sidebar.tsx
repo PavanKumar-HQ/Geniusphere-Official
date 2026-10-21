@@ -32,8 +32,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentStep, onTopicClick }) =
               onClick={() => onTopicClick(topic.id)}
               className={`w-full group text-left px-4 py-3 rounded-lg flex items-center justify-between transition-all border ${
                 isActive 
-                  ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-300' 
-                  : 'border-transparent text-white/50 hover:bg-white/5 hover:text-white/80'
+                  ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300 font-bold' 
+                  : 'bg-slate-900/60 border border-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
               }`}
             >
               <span className="text-xs font-medium font-mono">{topic.label}</span>
@@ -47,7 +47,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentStep, onTopicClick }) =
       </nav>
 
       <div className="mt-10 pt-6 border-t border-white/10">
-        <button className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white/40 hover:text-white rounded text-xs font-mono uppercase transition-colors">
+        <button className="w-full py-2.5 bg-slate-900/80 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg text-xs font-mono uppercase transition-colors">
           Exit Lab
         </button>
       </div>

@@ -51,8 +51,8 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               if (window.innerWidth < 768) setIsSidebarOpen(false);
             }}
             className={`w-full text-left p-3 rounded-lg text-sm transition-all flex items-center space-x-3 group ${currentStep === step.id
-              ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-              : 'text-gray-400 hover:bg-gray-800'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'bg-slate-900/60 text-slate-300 border border-slate-800/80 hover:bg-slate-800 hover:text-white'
               }`}
           >
             <span className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold ${currentStep === step.id ? 'bg-cyan-500 text-black' : 'bg-gray-800 group-hover:bg-gray-700'

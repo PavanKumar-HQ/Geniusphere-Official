@@ -19,8 +19,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({ onSelectEvent, selectedEve
             onClick={() => onSelectEvent(event.type)}
             className={`w-full text-left p-3 rounded-lg transition-all border ${
               selectedEvent === event.type 
-                ? 'bg-[#1E293B] border-[#4DA3FF] shadow-[0_0_15px_rgba(77,163,255,0.2)]' 
-                : 'bg-transparent border-[#1E293B] hover:border-[#334155]'
+                ? 'bg-[#1E293B] border-[#4DA3FF] text-white shadow-[0_0_15px_rgba(77,163,255,0.2)]' 
+                : 'bg-slate-900/60 text-slate-300 border-[#1E293B] hover:bg-slate-800 hover:text-white hover:border-[#334155]'
             }`}
           >
             <div className="flex items-center gap-3">

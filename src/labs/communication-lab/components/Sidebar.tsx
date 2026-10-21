@@ -40,8 +40,8 @@ const Sidebar: React.FC<SidebarProps> = ({ scenarios, currentIndex, history, onS
               key={s.id}
               disabled={isLocked}
               onClick={() => onSelectScenario(idx)}
-              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 text-left group
-                ${isActive ? 'bg-[#374151] ring-1 ring-[#4DA3FF]/50' : 'hover:bg-[#374151]/50'}
+              className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300 text-left group border
+                ${isActive ? 'bg-slate-800 text-white border-blue-500/50 ring-1 ring-[#4DA3FF]/50' : 'bg-slate-900/60 text-slate-300 border-slate-800/80 hover:bg-slate-800 hover:text-white'}
                 ${isLocked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
               `}
             >

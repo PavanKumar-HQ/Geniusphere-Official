@@ -404,8 +404,8 @@ export default function App({ onClose }: { onClose?: () => void }) {
                           setIsSidebarOpen(false);
                         }}
                         className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all border ${isActive
-                          ? 'glass border-white/10 bg-white/5 scale-[1.01]'
-                          : 'border-transparent hover:bg-white/5 opacity-40 hover:opacity-100'
+                          ? 'bg-cyan-950/50 border-cyan-500/40 text-cyan-300 scale-[1.01]'
+                          : 'bg-slate-900/60 border-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
                           }`}
                       >
                         <div className="p-2 rounded-lg" style={{ color: module.color }}>
@@ -451,8 +451,8 @@ export default function App({ onClose }: { onClose?: () => void }) {
                   key={module.id}
                   onClick={() => setActiveAccount(module.id)}
                   className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all border ${isActive
-                    ? 'glass border-white/10 bg-white/5 scale-[1.01]'
-                    : 'border-transparent hover:bg-white/5 opacity-40 hover:opacity-100'
+                    ? 'bg-cyan-950/50 border-cyan-500/40 text-cyan-300 scale-[1.01]'
+                    : 'bg-slate-900/60 border-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
                     }`}
                 >
                   <div className="p-2 rounded-lg" style={{ color: module.color }}>

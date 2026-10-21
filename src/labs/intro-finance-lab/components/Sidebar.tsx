@@ -18,8 +18,8 @@ const Sidebar: React.FC<SidebarProps> = ({ modules, activeId, onSelect }) => {
           onClick={() => onSelect(module.id)}
           className={`flex items-center gap-4 p-3 rounded-xl transition-all text-left group
             ${activeId === module.id 
-              ? 'bg-growth/20 border border-growth/30 text-white' 
-              : 'hover:bg-white/5 text-white/50 border border-transparent hover:border-white/10'
+              ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300' 
+              : 'bg-slate-900/60 text-slate-300 border border-slate-800/80 hover:bg-slate-800 hover:text-white'
             }`}
         >
           <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors

@@ -23,7 +23,7 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
-  const [isDesktopInfoOpen, setIsDesktopInfoOpen] = useState(true);
+  const [isDesktopInfoOpen, setIsDesktopInfoOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1380);
 
   const content = EDUCATIONAL_CONTENT[activeModule];
 
@@ -70,18 +70,18 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-lab-card">
+    <div className="flex flex-col h-full bg-[#0B1021]">
       <div className="p-4 border-b border-gray-800 flex items-center gap-3 text-lab-blue shrink-0">
         <ShieldCheck size={24} />
         <h1 className="font-black tracking-[0.2em] text-lg italic">TRUSTLINK</h1>
-        <button className="lg:hidden ml-auto p-1.5 text-gray-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
+        <button className="lg:hidden ml-auto p-1.5 bg-slate-800 rounded-lg text-gray-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
           <X size={18} />
         </button>
       </div>
 
       <div className="p-3 flex flex-col gap-1.5 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
         <div className="flex items-center justify-between px-2 mb-1.5">
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Lab Modules</p>
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Lab Modules</p>
           <span className="text-[10px] text-lab-blue font-mono font-bold">{completedModules.size}/{MODULES.length}</span>
         </div>
 
@@ -94,28 +94,28 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
               if (window.innerWidth < 1024) setIsSidebarOpen(false);
             }}
             className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs transition-all flex items-center justify-between group border shrink-0 ${activeModule === mod.id
-              ? 'bg-lab-purple/20 text-lab-purple border-lab-purple/50 shadow-[0_0_15px_rgba(124,107,255,0.15)] font-bold'
-              : 'hover:bg-gray-800/40 text-gray-400 hover:text-white border-transparent'
+              ? 'bg-[#7C6BFF]/20 text-[#C4B5FD] border-[#7C6BFF]/60 shadow-[0_0_15px_rgba(124,107,255,0.2)] font-bold'
+              : 'bg-[#0F1629]/90 hover:bg-slate-800 text-slate-300 hover:text-white border-slate-800/80 hover:border-slate-700'
               }`}
           >
             <div className="flex items-center gap-2.5 overflow-hidden">
               {completedModules.has(mod.id) ? (
                 <div className="w-2 h-2 rounded-full bg-lab-green shadow-[0_0_8px_rgba(0,255,163,0.5)] shrink-0" />
               ) : (
-                <div className="w-2 h-2 rounded-full bg-gray-700 shrink-0" />
+                <div className="w-2 h-2 rounded-full bg-gray-600 shrink-0" />
               )}
-              <span className="truncate tracking-tight">{mod.label}</span>
+              <span className="truncate tracking-tight font-medium">{mod.label}</span>
             </div>
             {activeModule === mod.id && (
-              <ChevronRight size={14} className="shrink-0" />
+              <ChevronRight size={14} className="shrink-0 text-[#C4B5FD]" />
             )}
           </button>
         ))}
       </div>
 
-      <div className="p-4 border-t border-gray-800 shrink-0 bg-black/30">
-        <div className="bg-gray-900/80 p-3 rounded-xl mb-3 border border-gray-800">
-          <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1.5 font-bold uppercase tracking-widest">
+      <div className="p-4 border-t border-gray-800 shrink-0 bg-black/40">
+        <div className="bg-gray-900/90 p-3 rounded-xl mb-3 border border-gray-800">
+          <div className="flex items-center justify-between text-[10px] text-gray-300 mb-1.5 font-bold uppercase tracking-widest">
             <div className="flex items-center gap-1.5"><BookOpen size={12} /> Mastery</div>
             <span className="text-lab-blue font-mono font-bold">{Math.round((completedModules.size / MODULES.length) * 100)}%</span>
           </div>
@@ -131,13 +131,13 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
           onClick={() => {
             setCompletedModules(new Set(MODULES.map(m => m.id)));
           }}
-          className="w-full bg-lab-purple/15 hover:bg-lab-purple/25 text-lab-purple hover:text-white py-2.5 rounded-xl text-[10px] transition-all font-black uppercase tracking-[0.15em] border border-lab-purple/30"
+          className="w-full bg-[#7C6BFF]/20 hover:bg-[#7C6BFF]/35 text-[#C4B5FD] hover:text-white py-2.5 rounded-xl text-[10px] transition-all font-black uppercase tracking-[0.15em] border border-[#7C6BFF]/40 shadow-sm"
         >
           Finalize Certification
         </button>
         <button
           onClick={handleExit}
-          className="mt-2 w-full flex items-center justify-center gap-1.5 text-red-400 hover:text-red-300 text-[10px] uppercase font-bold tracking-widest transition-colors py-1.5 hover:bg-red-500/10 rounded-lg"
+          className="mt-2 w-full flex items-center justify-center gap-1.5 text-red-400 hover:text-red-300 text-[10px] uppercase font-bold tracking-widest transition-colors py-1.5 bg-red-950/30 hover:bg-red-900/40 rounded-lg border border-red-500/30"
         >
           <X size={13} /> Exit Lab
         </button>
@@ -146,23 +146,27 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
   );
 
   const InfoPanelContent = () => (
-    <div className="flex flex-col h-full bg-lab-card">
+    <div className="flex flex-col h-full bg-[#0B1021]">
       <div className="p-4 border-b border-gray-800 flex justify-between items-center shrink-0">
         <h3 className="text-lab-blue font-black text-xs uppercase tracking-widest flex items-center gap-2">
           <BookOpen size={14} /> Knowledge Base
         </h3>
-        <button onClick={() => { setIsInfoOpen(false); setIsDesktopInfoOpen(false); }} className="text-gray-400 hover:text-white">
-          <X size={18} />
+        <button
+          onClick={() => { setIsInfoOpen(false); setIsDesktopInfoOpen(false); }}
+          className="p-1.5 bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-700 transition-colors"
+          title="Close Knowledge Base"
+        >
+          <X size={16} />
         </button>
       </div>
       <div className="p-4 flex flex-col gap-5 flex-1 overflow-y-auto custom-scrollbar min-h-0">
-        <div className="bg-gray-900/70 p-3 rounded-xl border border-gray-800 flex items-center justify-between shrink-0 shadow-lg">
-          <div className="flex items-center gap-2 text-lab-blue font-black text-[10px] tracking-widest uppercase">
+        <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-center justify-between shrink-0 shadow-lg">
+          <div className="flex items-center gap-2 text-cyan-300 font-black text-[10px] tracking-widest uppercase">
             <Zap size={14} /> Visual Fidelity
           </div>
           <button
             onClick={() => setSimplified(!simplified)}
-            className={`w-11 h-6 rounded-full p-1 transition-all ${simplified ? 'bg-lab-purple' : 'bg-gray-700'}`}
+            className={`w-11 h-6 rounded-full p-1 transition-all border ${simplified ? 'bg-purple-600 border-purple-400' : 'bg-slate-800 border-slate-700'}`}
             title="Toggle Visual Complexity"
           >
             <motion.div
@@ -175,8 +179,8 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
 
         <div className="space-y-5">
           <section>
-            <h3 className="text-lab-green font-black text-[10px] mb-3 uppercase tracking-[0.25em] flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-lab-green animate-pulse" /> Concept_Node
+            <h3 className="text-emerald-400 font-black text-[10px] mb-3 uppercase tracking-[0.25em] flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Concept_Node
             </h3>
             <ul className="space-y-4">
               {content.keyConcepts.map((concept, index) => (
@@ -185,21 +189,21 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.08 }}
                   key={index}
-                  className="relative pl-3.5 border-l-2 border-lab-green/20 hover:border-lab-green/60 transition-colors"
+                  className="relative pl-3.5 border-l-2 border-emerald-500/30 hover:border-emerald-400 transition-colors"
                 >
                   <strong className="text-white block text-xs mb-1 font-black tracking-tight uppercase italic">{concept.title}</strong>
-                  <p className="text-[11px] text-gray-400 leading-relaxed font-normal">{concept.description}</p>
+                  <p className="text-[11px] text-slate-300 leading-relaxed font-normal">{concept.description}</p>
                 </motion.li>
               ))}
             </ul>
           </section>
 
-          <section className="bg-lab-blue/5 border border-lab-blue/20 p-3.5 rounded-xl relative shadow-inner">
-            <div className="flex items-center gap-2 mb-2 text-lab-blue">
+          <section className="bg-cyan-950/40 border border-cyan-500/30 p-4 rounded-xl relative shadow-lg">
+            <div className="flex items-center gap-2 mb-2 text-cyan-300">
               <Info size={14} className="shrink-0" />
               <h4 className="font-black text-[10px] uppercase tracking-[0.25em]">Encrypted_Insight</h4>
             </div>
-            <p className="text-xs text-gray-300 italic leading-relaxed font-medium">
+            <p className="text-xs text-slate-100 italic leading-relaxed font-medium">
               "{content.didYouKnow}"
             </p>
           </section>
@@ -250,7 +254,7 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
                 isPlaying={isPlaying}
               />
               <div className="flex justify-center">
-                <button onClick={() => setSimplified(!simplified)} className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">
+                <button onClick={() => setSimplified(!simplified)} className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
                   {simplified ? 'Enable High Fidelity' : 'Switch to Performance Mode'}
                 </button>
               </div>
@@ -288,11 +292,11 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
       </div>
 
       {/* Desktop View (Only Visible on Large Screens) */}
-      <div className="hidden lg:flex flex-row h-full min-h-[680px] w-full bg-lab-bg text-lab-text font-sans overflow-hidden">
+      <div className="hidden lg:flex flex-row h-full w-full bg-lab-bg text-lab-text font-sans overflow-hidden">
 
         {/* Desktop Sidebar */}
         {isDesktopSidebarOpen && (
-          <aside className="w-72 flex-col z-20 h-full border-r border-gray-800 shadow-2xl shrink-0 flex transition-all">
+          <aside className="w-64 xl:w-72 flex-col z-20 h-full border-r border-gray-800 shadow-2xl shrink-0 flex transition-all">
             <SidebarContent />
           </aside>
         )}
@@ -300,34 +304,42 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
         {/* Main Content Area */}
         <main className="flex-1 flex flex-col relative overflow-hidden min-w-0">
 
-          {/* Header */}
-          <header className="px-6 py-4 shrink-0 border-b border-gray-800/80 bg-lab-bg/90 backdrop-blur-md">
+          {/* Unified Compact Header */}
+          <header className="px-5 py-3 shrink-0 border-b border-gray-800/80 bg-lab-bg/95 backdrop-blur-md">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-2.5">
+              {/* Module Info & Sidebar Toggle */}
+              <div className="flex items-center gap-3 min-w-0">
                 <button
                   onClick={() => setIsDesktopSidebarOpen(prev => !prev)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
                     isDesktopSidebarOpen
-                      ? 'bg-gray-800/80 text-white border-gray-700'
-                      : 'bg-lab-purple/15 text-lab-purple border-lab-purple/30 hover:bg-lab-purple/25'
+                      ? 'bg-slate-800 text-white border-slate-700'
+                      : 'bg-purple-950/60 text-purple-300 border-purple-500/30 hover:bg-purple-900/60'
                   }`}
                   title="Toggle Modules Sidebar"
                 >
                   {isDesktopSidebarOpen ? <PanelLeftClose size={14} /> : <PanelLeftOpen size={14} />}
-                  <span>Modules ({MODULES.length})</span>
+                  <span>Modules</span>
                 </button>
-                <Badge variant="purple">MOD: {activeModule}</Badge>
-                {isPlaying && <Badge variant="green" className="animate-pulse shadow-[0_0_10px_rgba(0,255,163,0.3)]">SIM_ACTIVE</Badge>}
-                {completedModules.has(activeModule) && <Badge variant="green" className="border-lab-green/50 hidden sm:inline-flex">MASTERED</Badge>}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm sm:text-base font-black text-white tracking-tight uppercase italic truncate">
+                      {content.title}
+                    </h2>
+                    <Badge variant="purple" className="shrink-0 text-[10px]">MOD: {activeModule}</Badge>
+                    {isPlaying && <Badge variant="green" className="animate-pulse shadow-[0_0_10px_rgba(0,255,163,0.3)] shrink-0 text-[10px]">LIVE</Badge>}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Action Controls */}
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => setIsDesktopInfoOpen(prev => !prev)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
                     isDesktopInfoOpen
-                      ? 'bg-gray-800/80 text-white border-gray-700'
-                      : 'bg-lab-blue/15 text-lab-blue border-lab-blue/30 hover:bg-lab-blue/25'
+                      ? 'bg-cyan-950/80 text-cyan-300 border-cyan-500/40 shadow-sm'
+                      : 'bg-slate-900 text-slate-300 border-slate-800 hover:text-white hover:bg-slate-800'
                   }`}
                   title="Toggle Knowledge Base"
                 >
@@ -336,27 +348,18 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
                 </button>
                 <button
                   onClick={handleExit}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 border border-red-500/20 transition-all"
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-950/40 text-red-300 hover:bg-red-900/60 border border-red-500/30 transition-all"
                   title="Exit Lab"
                 >
                   <X size={14} />
-                  <span>Exit Lab</span>
+                  <span>Exit</span>
                 </button>
               </div>
-            </div>
-
-            <div className="mt-3">
-              <h2 className="text-2xl lg:text-3xl font-black text-white tracking-tight italic leading-tight">
-                {content.title.toUpperCase()}
-              </h2>
-              <p className="text-gray-400 text-xs mt-1 leading-relaxed max-w-3xl">
-                Comprehensive guide through the technical foundations of decentralized systems.
-              </p>
             </div>
           </header>
 
           {/* Simulation Area */}
-          <section className="flex-1 p-6 flex flex-col gap-4 overflow-y-auto min-h-0">
+          <section className="flex-1 p-4 sm:p-5 flex flex-col gap-3 overflow-y-auto min-h-0">
 
             <div className="flex-1 min-h-[380px] flex flex-col">
               <SimulationStage activeModule={activeModule} step={step} simplified={simplified} />
