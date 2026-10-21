@@ -1,0 +1,36 @@
+# Geniusphere Caddy Reverse Proxy Configuration
+# Automatic TLS, WebSockets, SPA Static Routing & API Reverse Proxy
+
+{$APP_DOMAIN:localhost} {
+    # Security Headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    }
+
+    # API & WebSocket Proxy
+    handle /api/* {
+        reverse_proxy app:3001
+    }
+
+    handle /ws {
+        reverse_proxy app:3001
+    }
+
+    handle /health {
+        reverse_proxy app:3001
+    }
+
+    # Static SPA Frontend File Serving
+    handle {
+        root * /srv
+        file_server
+        try_files {path} /index.html
+    }
+
+    # Compression
+    encode gzip zstd
+}

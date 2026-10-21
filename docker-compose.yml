@@ -1,0 +1,154 @@
+# ====================================================================
+# GENIUSPHERE SELF-HOSTED PRODUCTION DOCKER COMPOSE
+# Capacity Target: 10,000 Registered Students (~500 - 1,000 Peak Concurrency)
+# ====================================================================
+
+version: '3.8'
+
+networks:
+  geniusphere_internal:
+    driver: bridge
+    internal: false # Reverse proxy needs external access; DB and Ollama stay unexposed
+
+volumes:
+  postgres_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+  ollama_models:
+    driver: local
+
+services:
+  # ------------------------------------------------------------------
+  # Reverse Proxy (Hardened TLS Termination, HTTP/2, WebSockets)
+  # ------------------------------------------------------------------
+  proxy:
+    image: caddy:2.8-alpine
+    container_name: geniusphere_proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./dist:/srv:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - geniusphere_internal
+
+  # ------------------------------------------------------------------
+  # Application Backend & Real-Time Gateway (Fastify + WS)
+  # ------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: geniusphere_app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://${POSTGRES_USER:-geniusphere_admin}:${POSTGRES_PASSWORD:-change_this_secure_password}@db:5432/${POSTGRES_DB:-geniusphere_prod}
+      JWT_SECRET: ${JWT_SECRET:-change_this_super_secret_jwt_key_min_32_chars}
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: ${APP_URL:-https://learn.geniusphere.tech}
+      AI_ROUTING_POLICY: ${AI_ROUTING_POLICY:-prefer_local_fallback_hosted}
+      AI_LOCAL_ENDPOINT: http://ollama:11434
+      AI_LOCAL_MODEL: ${AI_LOCAL_MODEL:-llama3:8b}
+      AI_HOSTED_PROVIDER: ${AI_HOSTED_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      AI_MAX_CONCURRENCY: 16
+      AI_TIMEOUT_MS: 15000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - geniusphere_internal
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ------------------------------------------------------------------
+  # Authoritative Relational Database (PostgreSQL 16)
+  # Note: Port 5432 is NOT exposed to the host for maximum security
+  # ------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: geniusphere_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-geniusphere_prod}
+      POSTGRES_USER: ${POSTGRES_USER:-geniusphere_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_this_secure_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: >
+      postgres
+      -c max_connections=200
+      -c shared_buffers=1024MB
+      -c effective_cache_size=3072MB
+      -c maintenance_work_mem=256MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=10MB
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - geniusphere_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-geniusphere_admin} -d ${POSTGRES_DB:-geniusphere_prod}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4096M
+        reservations:
+          cpus: '0.5'
+          memory: 1024M
+
+  # ------------------------------------------------------------------
+  # Local AI Inference Container (Ollama)
+  # Runs entirely on the private network with zero public port exposure
+  # ------------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: geniusphere_ollama
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - geniusphere_internal
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 8192M
+        reservations:
+          cpus: '1.0'
+          memory: 2048M

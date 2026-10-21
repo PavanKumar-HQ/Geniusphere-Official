@@ -337,6 +337,34 @@ export async function createServer() {
     return { ok: true };
   });
 
+  // 9. Hybrid AI Gateway Endpoints
+  fastify.get('/api/ai/status', async () => {
+    return aiGateway.getStatus();
+  });
+
+  fastify.post('/api/ai/chat', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { prompt, systemPrompt, temperature, maxTokens } = (request.body as any) || {};
+    if (!prompt || typeof prompt !== 'string') {
+      return reply.status(400).send({ error: 'Prompt is required' });
+    }
+
+    try {
+      const response = await aiGateway.generateCompletion({
+        userId: request.user!.userId,
+        userPrompt: prompt,
+        systemPrompt,
+        temperature,
+        maxTokens,
+      });
+      return response;
+    } catch (err: any) {
+      return reply.status(502).send({
+        error: 'AI inference failed',
+        details: err?.message || 'Unknown error',
+      });
+    }
+  });
+
   return fastify;
 }
 

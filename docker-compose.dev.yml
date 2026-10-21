@@ -1,0 +1,27 @@
+# ====================================================================
+# GENIUSPHERE LOCAL DEVELOPMENT DOCKER COMPOSE
+# ====================================================================
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: geniusphere_dev_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: geniusphere_dev
+      POSTGRES_USER: geniusphere_admin
+      POSTGRES_PASSWORD: dev_password_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geniusphere_admin -d geniusphere_dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pgdata_dev:
