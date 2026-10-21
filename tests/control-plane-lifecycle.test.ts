@@ -7,7 +7,7 @@ describe('Geniusphere Operational Control Plane & Lifecycle Verification', () =>
   let app: any;
 
   const superadmin: UserSessionPayload = {
-    userId: '99999999-9999-9999-9999-999999999999',
+    userId: '66666666-6666-6666-6666-666666666666',
     email: 'admin@geniusphere.tech',
     fullName: 'Platform Superadmin',
     isSuperadmin: true,

@@ -15,7 +15,7 @@ BACKUP_FILE="$1"
 CHECKSUM_FILE="${BACKUP_FILE}.sha256"
 CONTAINER_NAME="${DB_CONTAINER:-geniusphere_db}"
 DB_USER="${POSTGRES_USER:-geniusphere_admin}"
-DB_NAME="${POSTGRES_DB:-geniusphere_prod}"
+DB_NAME="${DB_NAME:-${POSTGRES_DB:-geniusphere_prod}}"
 
 if [ ! -f "${BACKUP_FILE}" ]; then
     echo "Error: Backup file not found at: ${BACKUP_FILE}"
@@ -34,6 +34,12 @@ fi
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restoring '${BACKUP_FILE}' into container '${CONTAINER_NAME}' database '${DB_NAME}'..."
 
 # Uncompress and pipe into psql
-gunzip -c "${BACKUP_FILE}" | docker exec -i "${CONTAINER_NAME}" psql -U "${DB_USER}" -d "${DB_NAME}"
+if command -v docker &>/dev/null && docker ps -q -f name="${CONTAINER_NAME}" 2>/dev/null | grep -q .; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restoring into container '${CONTAINER_NAME}' database '${DB_NAME}'..."
+  gunzip -c "${BACKUP_FILE}" | docker exec -i "${CONTAINER_NAME}" psql -U "${DB_USER}" -d "${DB_NAME}"
+else
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Restoring into local database '${DB_NAME}'..."
+  gunzip -c "${BACKUP_FILE}" | psql -d "${DB_NAME}"
+fi
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Database restoration completed successfully!"

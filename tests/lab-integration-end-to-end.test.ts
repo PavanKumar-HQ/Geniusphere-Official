@@ -168,7 +168,9 @@ describe('Lab Integration & Multi-User End-to-End Verification Suite', () => {
     await new Promise((r) => setTimeout(r, 400));
 
     // 1. Session B received lab.completed
-    const labEvent = sessionBEvents.find((e) => e.eventType === 'lab.completed');
+    const labEvent = sessionBEvents.find(
+      (e) => e.eventType === 'lab.completed' && e.payload?.labSlug === labSlug
+    );
     expect(labEvent).toBeDefined();
     expect(labEvent.payload.labSlug).toBe(labSlug);
     expect(labEvent.payload.userId).toBe(learner1.userId);

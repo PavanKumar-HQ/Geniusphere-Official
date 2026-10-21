@@ -60,20 +60,29 @@ export async function authenticateRequest(
     return;
   }
 
+  if (payload.role === 'suspended') {
+    reply.status(403).send({ error: 'Account is suspended. Please contact support.' });
+    return;
+  }
+
   // Authoritative database check for account status & role integrity
   try {
     const userRes = await query(
       `SELECT account_status FROM public.users WHERE id = $1`,
       [payload.userId]
     );
-    if (userRes.rowCount && userRes.rowCount > 0) {
-      if (userRes.rows[0].account_status === 'suspended') {
-        reply.status(403).send({ error: 'Account is suspended. Please contact support.' });
-        return;
-      }
+    if (!userRes.rowCount || userRes.rowCount === 0) {
+      reply.status(401).send({ error: 'Account not found or deactivated.' });
+      return;
     }
-  } catch (err) {
-    // Graceful fallback if database query fails
+    if (userRes.rows[0].account_status === 'suspended') {
+      reply.status(403).send({ error: 'Account is suspended. Please contact support.' });
+      return;
+    }
+  } catch (err: any) {
+    request.log?.error?.({ err }, 'Database auth check failed');
+    reply.status(503).send({ error: 'Authentication service temporarily unavailable.' });
+    return;
   }
 
   request.user = payload;

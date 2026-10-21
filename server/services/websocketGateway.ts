@@ -26,6 +26,11 @@ class WebSocketGateway {
       return;
     }
 
+    if (user.role === 'suspended') {
+      ws.close(4003, 'Account is suspended');
+      return;
+    }
+
     const socketRecord: AuthenticatedSocket = {
       ws,
       user,

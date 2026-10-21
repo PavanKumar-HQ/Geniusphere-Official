@@ -10,7 +10,7 @@ BACKUP_DIR="${BACKUP_DIR:-/backups}"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 CONTAINER_NAME="${DB_CONTAINER:-geniusphere_db}"
 DB_USER="${POSTGRES_USER:-geniusphere_admin}"
-DB_NAME="${POSTGRES_DB:-geniusphere_prod}"
+DB_NAME="${DB_NAME:-${POSTGRES_DB:-geniusphere_prod}}"
 BACKUP_FILE="${BACKUP_DIR}/${DB_NAME}_backup_${TIMESTAMP}.sql.gz"
 CHECKSUM_FILE="${BACKUP_FILE}.sha256"
 
@@ -18,8 +18,14 @@ mkdir -p "${BACKUP_DIR}"
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Starting automated PostgreSQL backup for '${DB_NAME}'..."
 
-# Execute pg_dump inside the database container and pipe through gzip
-docker exec -t "${CONTAINER_NAME}" pg_dump -U "${DB_USER}" -d "${DB_NAME}" --clean --if-exists --no-owner | gzip -9 > "${BACKUP_FILE}"
+# Execute pg_dump (via container or direct binary) and pipe through gzip
+if command -v docker &>/dev/null && docker ps -q -f name="${CONTAINER_NAME}" 2>/dev/null | grep -q .; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Dumping from container '${CONTAINER_NAME}'..."
+  docker exec -t "${CONTAINER_NAME}" pg_dump -U "${DB_USER}" -d "${DB_NAME}" --clean --if-exists --no-owner | gzip -9 > "${BACKUP_FILE}"
+else
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] Dumping from local PostgreSQL instance..."
+  pg_dump -d "${DB_NAME}" --clean --if-exists --no-owner | gzip -9 > "${BACKUP_FILE}"
+fi
 
 # Generate cryptographic checksum
 sha256sum "${BACKUP_FILE}" > "${CHECKSUM_FILE}"

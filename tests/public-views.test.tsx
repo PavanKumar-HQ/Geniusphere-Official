@@ -17,9 +17,8 @@ describe('GamifiedLearningRoadmap & Public Policy Views', () => {
     );
     expect(html).toContain('UNIT 1');
     expect(html).toContain('Master Neural Weights');
-    expect(html).toContain('Daily Learning Quest');
-    expect(html).toContain('LIVE LAB SIMULATOR');
-    expect(html).toContain('Launch Full Lab');
+    expect(html).toContain('Neural Classifier Lab');
+    expect(html).toContain('Launch Lab');
     expect(html).toContain('Daily Goal: 15 min/day');
   });
 

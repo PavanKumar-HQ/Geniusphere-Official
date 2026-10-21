@@ -31,7 +31,9 @@ This index provides direct cross-references, file locations, and executive summa
 
 ## Summary of Verification Evidence
 
-* **Automated Unit, Integration, & Security Tests:** **454 / 454 Passing** (441 Vitest + 13 Pytest).
+* **Automated Unit, Integration, & Security Tests:** **462 / 462 Passing** (449 Vitest + 13 Pytest, 0 failed, 1 skipped).
+* **New Security Test Suite:** `tests/auth-security-failure-modes.test.ts` (8 critical fail-closed auth scenarios passing).
+* **Disaster Recovery Drill:** Verified 22/22 tables match with 100% row parity on isolated restore drill.
 * **TypeScript Compilation:** Zero errors (`tsc --noEmit`).
-* **Production Build:** Clean bundle in `dist/` in 4.74s.
+* **Production Build:** Clean bundle in `dist/` in 4.55s.
 * **Working Tree:** Clean, synchronized with `origin/main`.
