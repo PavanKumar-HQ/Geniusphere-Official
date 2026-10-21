@@ -13,6 +13,7 @@ interface MemoryBucket {
   windowStart: number;
 }
 const memoryBuckets = new Map<string, MemoryBucket>();
+const MAX_MEMORY_BUCKETS = 2000;
 
 export class AIRateLimiter {
   private static readonly WINDOW_MS = 60 * 1000; // 1-minute window
@@ -72,9 +73,23 @@ export class AIRateLimiter {
       // Fallback gracefully to memory buckets if PostgreSQL table is not ready or connection is absent
     }
 
-    // In-memory sliding window fallback
+    // In-memory sliding window fallback with bounded capacity
     const bucket = memoryBuckets.get(key);
     if (!bucket || bucket.windowStart < windowStartMs) {
+      if (memoryBuckets.size >= MAX_MEMORY_BUCKETS) {
+        // Prune expired buckets first
+        for (const [bKey, bVal] of memoryBuckets.entries()) {
+          if (bVal.windowStart < windowStartMs) {
+            memoryBuckets.delete(bKey);
+          }
+        }
+        // If still full, evict oldest FIFO key
+        if (memoryBuckets.size >= MAX_MEMORY_BUCKETS) {
+          const oldestKey = memoryBuckets.keys().next().value;
+          if (oldestKey) memoryBuckets.delete(oldestKey);
+        }
+      }
+
       memoryBuckets.set(key, { count: 1, windowStart: now });
       return {
         allowed: true,

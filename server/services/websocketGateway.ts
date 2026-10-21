@@ -2,14 +2,51 @@ import { WebSocket } from 'ws';
 import { IncomingMessage } from 'http';
 import { verifyToken, UserSessionPayload } from '../auth';
 
+const MAX_CHANNELS_PER_SOCKET = 30;
+const MAX_SOCKETS_PER_USER = 5;
+
 interface AuthenticatedSocket {
   ws: WebSocket;
   user: UserSessionPayload;
   channels: Set<string>;
+  isAlive: boolean;
 }
 
 class WebSocketGateway {
   private clients: Map<string, Set<AuthenticatedSocket>> = new Map(); // userId -> sockets
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+
+  constructor() {
+    this.startHeartbeat();
+  }
+
+  private startHeartbeat(): void {
+    if (this.heartbeatInterval) return;
+    this.heartbeatInterval = setInterval(() => {
+      for (const [userId, sockets] of this.clients.entries()) {
+        for (const sock of sockets) {
+          if (!sock.isAlive) {
+            sock.ws.terminate?.();
+            sockets.delete(sock);
+          } else {
+            sock.isAlive = false;
+            sock.ws.ping?.();
+          }
+        }
+        if (sockets.size === 0) {
+          this.clients.delete(userId);
+        }
+      }
+    }, 30000);
+    this.heartbeatInterval.unref?.();
+  }
+
+  public stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+  }
 
   public handleConnection(ws: WebSocket, req: IncomingMessage): void {
     const url = new URL(req.url || '', `http://${req.headers.host || 'localhost'}`);
@@ -31,10 +68,21 @@ class WebSocketGateway {
       return;
     }
 
+    // Bounded concurrency: cap open sockets per user
+    const existingSockets = this.clients.get(user.userId);
+    if (existingSockets && existingSockets.size >= MAX_SOCKETS_PER_USER) {
+      const oldest = existingSockets.values().next().value;
+      if (oldest) {
+        oldest.ws.close(4008, 'Max concurrent socket limit exceeded for user');
+        existingSockets.delete(oldest);
+      }
+    }
+
     const socketRecord: AuthenticatedSocket = {
       ws,
       user,
       channels: new Set([`user:${user.userId}`, 'system:broadcast']),
+      isAlive: true,
     };
 
     if (user.orgId) {
@@ -56,12 +104,26 @@ class WebSocketGateway {
       })
     );
 
+    ws.on('pong', () => {
+      socketRecord.isAlive = true;
+    });
+
     ws.on('message', (data) => {
       try {
         const msg = JSON.parse(data.toString());
         if (msg.action === 'SUBSCRIBE' && typeof msg.channel === 'string') {
           // Channel authorization check
           if (this.canSubscribe(user, msg.channel)) {
+            if (socketRecord.channels.size >= MAX_CHANNELS_PER_SOCKET) {
+              ws.send(
+                JSON.stringify({
+                  type: 'SUBSCRIPTION_DENIED',
+                  channel: msg.channel,
+                  error: `Channel limit exceeded (${MAX_CHANNELS_PER_SOCKET} max)`,
+                })
+              );
+              return;
+            }
             socketRecord.channels.add(msg.channel);
             ws.send(JSON.stringify({ type: 'SUBSCRIBED', channel: msg.channel }));
           } else {
@@ -79,7 +141,7 @@ class WebSocketGateway {
       }
     });
 
-    ws.on('close', () => {
+    const cleanup = () => {
       const userSockets = this.clients.get(user.userId);
       if (userSockets) {
         userSockets.delete(socketRecord);
@@ -87,10 +149,14 @@ class WebSocketGateway {
           this.clients.delete(user.userId);
         }
       }
-    });
+    };
 
+    ws.on('close', cleanup);
     ws.on('error', () => {
-      // socket error cleanup
+      cleanup();
+      try {
+        ws.close();
+      } catch {}
     });
   }
 

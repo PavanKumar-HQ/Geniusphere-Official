@@ -14,6 +14,7 @@ export class OutboxWorker {
         console.error('[OutboxWorker Error]', err);
       });
     }, intervalMs);
+    this.timer.unref?.();
     console.log('[OutboxWorker] Started background processing loop');
   }
 

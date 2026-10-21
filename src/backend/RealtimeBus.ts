@@ -13,6 +13,7 @@ import {
 
 const BROADCAST_CHANNEL_NAME = 'geniusphere_realtime_bus_v2';
 const REPLAY_BUFFER_SIZE = 50;
+const MAX_OFFLINE_QUEUE_SIZE = 200;
 
 export class RealtimeBus {
   private listeners: Map<string, Set<RealtimeListener>> = new Map();
@@ -47,16 +48,36 @@ export class RealtimeBus {
     }
   }
 
+  private handleOnline = (): void => {
+    this.isOnline = true;
+    this.flushOfflineQueue();
+  };
+
+  private handleOffline = (): void => {
+    this.isOnline = false;
+  };
+
   private initNetworkListeners(): void {
     if (typeof window !== 'undefined') {
-      window.addEventListener('online', () => {
-        this.isOnline = true;
-        this.flushOfflineQueue();
-      });
-      window.addEventListener('offline', () => {
-        this.isOnline = false;
-      });
+      window.addEventListener('online', this.handleOnline);
+      window.addEventListener('offline', this.handleOffline);
     }
+  }
+
+  public destroy(): void {
+    if (this.broadcastChannel) {
+      try {
+        this.broadcastChannel.close();
+      } catch {}
+      this.broadcastChannel = null;
+    }
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('online', this.handleOnline);
+      window.removeEventListener('offline', this.handleOffline);
+    }
+    this.listeners.clear();
+    this.offlineQueue = [];
+    this.replayBuffer = [];
   }
 
   /**
@@ -104,6 +125,9 @@ export class RealtimeBus {
     };
 
     if (!this.isOnline) {
+      if (this.offlineQueue.length >= MAX_OFFLINE_QUEUE_SIZE) {
+        this.offlineQueue.shift(); // drop oldest when full
+      }
       this.offlineQueue.push(envelope);
       return envelope;
     }
@@ -204,17 +228,6 @@ export class RealtimeBus {
   public getRecentEvents(channelPattern?: string): RealtimeEnvelope[] {
     if (!channelPattern) return [...this.replayBuffer];
     return this.replayBuffer.filter((env) => this.matchChannel(channelPattern, env.channel));
-  }
-
-  /**
-   * Cleanly closes resources
-   */
-  public destroy(): void {
-    this.listeners.clear();
-    if (this.broadcastChannel) {
-      this.broadcastChannel.close();
-      this.broadcastChannel = null;
-    }
   }
 }
 
