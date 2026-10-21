@@ -10,7 +10,7 @@ import { MobileLayout, MobileBadge, MobileControlGroup } from '../../components/
 import { X, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose, onExit }) => {
   const [currentStep, setCurrentStep] = useState<SimulationStep>(SimulationStep.COMPANY_NEEDS_MONEY);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isSimplified, setIsSimplified] = useState<boolean>(false);
@@ -149,7 +149,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         </AnimatePresence>
       </div>
 
-      {/* Desktop View (Only Visible on Large Screens) */}
+        {/* Desktop View (Only Visible on Large Screens) */}
       <div className="hidden lg:flex flex-col h-screen w-full bg-[#070B1A] grid-bg overflow-hidden text-slate-200">
         {/* Header */}
         <header className="h-16 flex items-center justify-between px-8 border-b border-cyan-900/30 glass-panel z-10">
@@ -159,10 +159,22 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               STOCK MARKET BASICS LAB
             </h1>
           </div>
-          <div className="text-xs uppercase tracking-widest text-cyan-500/60 font-medium">
-            Educational Simulation v1.0
+          <div className="flex items-center gap-4">
+            <div className="text-xs uppercase tracking-widest text-cyan-500/60 font-medium">
+              Educational Simulation v1.0
+            </div>
+            {(onClose) && (
+              <button
+                onClick={onClose}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-500/15 text-red-400 hover:bg-red-500/25 hover:text-red-300 border border-red-500/30 transition-all"
+              >
+                <X size={14} />
+                <span>Exit Lab</span>
+              </button>
+            )}
           </div>
         </header>
+
 
         {/* Main Content Area */}
         <main className="flex-1 flex flex-row overflow-hidden p-4 gap-4">

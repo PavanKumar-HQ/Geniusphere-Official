@@ -12,7 +12,7 @@ import {
 import { Badge } from './components/ui/Badge';
 import { MobileLayout, MobileBadge, MobileControlGroup } from '../../components/lab/MobileLayout';
 
-function App({ onClose }: { onClose?: () => void }) {
+function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(ModuleType.BASICS);
   const [step, setStep] = useState(0);
   const [simplified, setSimplified] = useState(false);
@@ -55,8 +55,9 @@ function App({ onClose }: { onClose?: () => void }) {
   };
 
   const handleExit = () => {
-    if (onClose) {
-      onClose();
+    const exitFn = onClose || onExit;
+    if (exitFn) {
+      exitFn();
       return;
     }
     const referrer = document.referrer;

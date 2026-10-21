@@ -5,12 +5,13 @@ export const TOPICS: Topic[] = [
   { id: SimulationStep.COMPANY_NEEDS_MONEY, title: "What is the Stock Market", description: "The starting point of every business." },
   { id: SimulationStep.SHARES_CREATED, title: "Companies & Shares", description: "How ownership is divided." },
   { id: SimulationStep.INVESTORS_BUY, title: "Buyers & Sellers", description: "Becoming a part-owner." },
-  { id: SimulationStep.MARKET_CONNECTS, title: "Stock Price Movement", description: "The invisible marketplace." },
-  { id: SimulationStep.PRICE_MOVEMENT, title: "Long-Term Investing", description: "Why prices go up and down." },
-  { id: SimulationStep.LONG_TERM_GROWTH, title: "Market Risk", description: "The power of patience." },
-  { id: SimulationStep.MARKET_RISK, title: "Stock Market Myths", description: "Handling ups and downs." },
-  { id: SimulationStep.MYTH_VS_REALITY, title: "Responsible Participation", description: "Fact vs Fiction." },
+  { id: SimulationStep.MARKET_CONNECTS, title: "The Market Connects People", description: "The invisible marketplace." },
+  { id: SimulationStep.PRICE_MOVEMENT, title: "Stock Price Movement", description: "Why prices go up and down." },
+  { id: SimulationStep.LONG_TERM_GROWTH, title: "Long-Term Growth", description: "The power of patience." },
+  { id: SimulationStep.MARKET_RISK, title: "Understanding Market Risk", description: "Handling ups and downs." },
+  { id: SimulationStep.MYTH_VS_REALITY, title: "Myth vs Reality", description: "Fact vs Fiction in investing." },
 ];
+
 
 export const STEPS: StepData[] = [
   {

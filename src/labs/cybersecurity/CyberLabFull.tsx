@@ -12,9 +12,11 @@ import { Shield, BookOpen, Zap, Gamepad2, Home } from 'lucide-react';
 
 interface CyberLabFullProps {
   onExit?: () => void;
+  onClose?: () => void;
 }
 
-export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
+export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit, onClose }) => {
+  const handleExit = onExit || onClose;
   const [view, setView] = useState<View>('home');
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [completedModules, setCompletedModules] = useState<Set<string>>(new Set());
@@ -189,10 +191,10 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit }) => {
             <span style={{ color: '#06B6D4' }}>{completedModules.size}</span>
             <span> / {ATTACK_MODULES.length} badges</span>
           </div>
-          {onExit && (
+          {handleExit && (
             <button
               type="button"
-              onClick={onExit}
+              onClick={handleExit}
               style={{
                 fontSize: '0.78rem',
                 padding: '5px 12px',
