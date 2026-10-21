@@ -359,5 +359,26 @@ describe('Production Acceptance End-to-End Suite (Scenarios A - E)', () => {
       const data = await res.json();
       expect(data.error).toContain('Full name must be between 2 and 100 characters');
     });
+
+    it('rejects requests with HTTP 403 when user account is suspended in PostgreSQL database', async () => {
+      // Temporarily mark learner2 as suspended in the database
+      await query(`UPDATE public.users SET account_status = 'suspended' WHERE id = $1`, [learner2.userId]);
+
+      try {
+        const res = await fetch('http://localhost:3001/api/profile', {
+          headers: {
+            Authorization: `Bearer ${token2}`, // Valid JWT, but suspended in database
+          },
+        });
+
+        expect(res.status).toBe(403);
+        const data = await res.json();
+        expect(data.error).toContain('Account is suspended');
+      } finally {
+        // Revert status to active
+        await query(`UPDATE public.users SET account_status = 'active' WHERE id = $1`, [learner2.userId]);
+      }
+    });
   });
 });
+

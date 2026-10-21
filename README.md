@@ -10,7 +10,7 @@
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python)](https://python.org/)
-[![Tests](https://img.shields.io/badge/Tests-444%2F444%20Passed-43A85B)](#)
+[![Tests](https://img.shields.io/badge/Tests-445%2F445%20Passed-43A85B)](#)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](#)
 
