@@ -533,13 +533,15 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             </button>
           </div>
 
-          <SharedLabWorkspace
-            db={db}
-            labSlug={matchingLab.slug}
-            currentUserId={currentUserId}
-            onNavigateBack={() => setActiveCourseTab('syllabus')}
-            onSelectCourse={undefined}
-          />
+          <div style={{ width: '100%', height: 'calc(100vh - 200px)', minHeight: '780px', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+            <SharedLabWorkspace
+              db={db}
+              labSlug={matchingLab.slug}
+              currentUserId={currentUserId}
+              onNavigateBack={() => setActiveCourseTab('syllabus')}
+              onSelectCourse={undefined}
+            />
+          </div>
         </div>
       )}
 

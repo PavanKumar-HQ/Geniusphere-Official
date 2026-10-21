@@ -4,20 +4,41 @@ import { Shield, Info } from './Icons';
 
 interface DefensePanelProps {
   module: AIModule;
+  onClose?: () => void;
 }
 
-export const DefensePanel: React.FC<DefensePanelProps> = ({ module }) => {
+export const DefensePanel: React.FC<DefensePanelProps> = ({ module, onClose }) => {
   return (
     <div
       className="w-full md:w-80 bg-slate-900 border-t md:border-t-0 md:border-l border-slate-800 p-6 flex flex-col gap-8 shrink-0 overflow-y-auto h-auto md:h-full custom-scrollbar"
-      style={{ width: '300px', minWidth: '260px', height: '100%', backgroundColor: '#0B132B', borderLeft: '1px solid #1E293B', padding: '20px 16px', boxSizing: 'border-box' }}
+      style={{ width: '280px', minWidth: '240px', height: '100%', backgroundColor: '#0B132B', borderLeft: '1px solid #1E293B', padding: '16px 14px', boxSizing: 'border-box' }}
     >
       <div>
-        <div className="flex items-center gap-2 mb-6" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-          <Shield className="w-5 h-5 text-emerald-500" />
-          <h3 className="text-sm font-bold text-slate-100 uppercase tracking-widest" style={{ fontSize: '0.78rem', fontWeight: 800, color: '#F1F5F9', margin: 0, letterSpacing: '0.08em' }}>
-            Defense Protocols
-          </h3>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Shield className="w-5 h-5 text-emerald-500" />
+            <h3 className="text-sm font-bold text-slate-100 uppercase tracking-widest" style={{ fontSize: '0.78rem', fontWeight: 800, color: '#F1F5F9', margin: 0, letterSpacing: '0.08em' }}>
+              Defense Protocols
+            </h3>
+          </div>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#94A3B8',
+                cursor: 'pointer',
+                padding: '2px 8px',
+                fontSize: '0.72rem',
+                borderRadius: '4px',
+              }}
+              title="Collapse Defense Protocols"
+            >
+              Hide
+            </button>
+          )}
         </div>
 
         <div className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

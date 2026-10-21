@@ -1587,6 +1587,9 @@ aside,
   .workspace-panel-criteria:not(.active) {
     display: none !important;
   }
+  .course-submodule-workbench-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 /* ====================================================================

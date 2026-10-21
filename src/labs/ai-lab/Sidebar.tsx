@@ -7,6 +7,7 @@ import { ModuleCategory } from './types';
 interface SidebarProps {
   activeModuleId: string;
   onSelectModule: (id: string) => void;
+  onClose?: () => void;
 }
 
 const CategoryIcon = ({ category }: { category: ModuleCategory }) => {
@@ -22,22 +23,42 @@ const CategoryIcon = ({ category }: { category: ModuleCategory }) => {
   );
 };
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeModuleId, onSelectModule }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeModuleId, onSelectModule, onClose }) => {
   return (
     <div className="w-full bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0" style={{ height: '100%', minHeight: 0 }}>
-      <div className="p-6 border-b border-slate-800" style={{ padding: '20px 16px' }}>
-        <div className="flex items-center gap-2 mb-1" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div
-            className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center"
-            style={{ width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#06B6D4', borderRadius: '8px', flexShrink: 0 }}
-          >
-            <Shield className="w-5 h-5 text-white" />
+      <div className="p-6 border-b border-slate-800" style={{ padding: '16px 14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center"
+              style={{ width: '28px', height: '28px', minWidth: '28px', minHeight: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#06B6D4', borderRadius: '6px', flexShrink: 0 }}
+            >
+              <Shield className="w-4 h-4 text-white" />
+            </div>
+            <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent" style={{ fontSize: '1rem', margin: 0, color: '#FFFFFF' }}>
+              Geniusphere
+            </h1>
           </div>
-          <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent" style={{ fontSize: '1.15rem', margin: 0, color: '#FFFFFF' }}>
-            Geniusphere
-          </h1>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: '#94A3B8',
+                cursor: 'pointer',
+                padding: '2px 8px',
+                fontSize: '0.72rem',
+                borderRadius: '4px',
+              }}
+              title="Collapse Modules Sidebar"
+            >
+              Hide
+            </button>
+          )}
         </div>
-        <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold" style={{ fontSize: '0.68rem', color: '#64748B', margin: '4px 0 0', letterSpacing: '0.08em' }}>
+        <p className="text-xs text-slate-500 uppercase tracking-widest font-semibold" style={{ fontSize: '0.65rem', color: '#64748B', margin: '2px 0 0', letterSpacing: '0.08em' }}>
           AI Security Lab v2.0
         </p>
       </div>

@@ -34,7 +34,7 @@ import {
 import { AnimatedStepGuide } from './AnimatedStepGuide';
 import { UniversalLab } from './lab/UniversalLab';
 import { getStandaloneLab, StandaloneLabMetadata } from '../labs/registry';
-import { Sparkles, Maximize2, ExternalLink } from 'lucide-react';
+import { Sparkles, Maximize2, Minimize2, ExternalLink } from 'lucide-react';
 import { apiClient } from '../services/apiClient';
 
 export interface SharedLabWorkspaceProps {
@@ -1092,7 +1092,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden', backgroundColor: 'var(--bg-canvas)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '720px', width: '100%', overflow: 'hidden', backgroundColor: 'var(--bg-canvas)' }}>
       {/* ============================================================== */}
       {/* 1. TOP NAVIGATION BAR (Section 3.1)                             */}
       {/* ============================================================== */}
@@ -1466,6 +1466,29 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                 >
                   <Maximize2 size={13} color="var(--brand-primary)" />
                   <span>Fullscreen</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setWorkspaceMode(workspaceMode === 'zen' ? '3-column' : 'zen')}
+                  style={{
+                    height: '32px',
+                    padding: '0 10px',
+                    borderRadius: '8px',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    border: '1px solid var(--border-subtle)',
+                    backgroundColor: workspaceMode === 'zen' ? 'var(--brand-surface)' : 'var(--bg-surface)',
+                    color: workspaceMode === 'zen' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                  }}
+                  title={workspaceMode === 'zen' ? 'Switch to 3-column view' : 'Expand lab to maximum workspace width'}
+                >
+                  <Minimize2 size={13} />
+                  <span>{workspaceMode === 'zen' ? 'Split View' : 'Wide Lab'}</span>
                 </button>
               </div>
             </div>

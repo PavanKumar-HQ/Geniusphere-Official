@@ -120,6 +120,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     return enrollment.completed_lessons || [];
   });
   const [isCrackersActive, setIsCrackersActive] = useState(false);
+  const [isRoadmapOpen, setIsRoadmapOpen] = useState(true);
 
   // -------------------------------------------------------------
   // SIMULATION STATE VARIABLES FOR ALL 18 DOMAINS
@@ -420,23 +421,37 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
           </div>
         </div>
 
-        {onClose && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <button
             type="button"
+            onClick={() => setIsRoadmapOpen(!isRoadmapOpen)}
             className="btn-secondary"
-            onClick={onClose}
-            style={{ height: '36px', fontSize: '0.8rem' }}
+            style={{ height: '36px', fontSize: '0.8rem', gap: '6px' }}
+            title={isRoadmapOpen ? 'Hide Sub-Module Roadmap' : 'Show Sub-Module Roadmap'}
           >
-            Exit Lab Studio
+            <Layers size={14} />
+            <span>{isRoadmapOpen ? 'Hide Roadmap' : 'Show Roadmap (10 Labs)'}</span>
           </button>
-        )}
+
+          {onClose && (
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onClose}
+              style={{ height: '36px', fontSize: '0.8rem' }}
+            >
+              Exit Lab Studio
+            </button>
+          )}
+        </div>
       </div>
 
       {/* MAIN TWO-COLUMN WORKBENCH: GAMIFIED SNAKE PATH ON LEFT, INTERACTIVE LAB ON RIGHT */}
       <div
+        className="course-submodule-workbench-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(270px, 300px) 1fr',
+          gridTemplateColumns: isRoadmapOpen ? 'minmax(270px, 300px) 1fr' : '1fr',
           gap: '24px',
           alignItems: 'start',
         }}
@@ -444,10 +459,11 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
         {/* ============================================================== */}
         {/* LEFT COLUMN: MATHEMATICALLY ALIGNED GAMIFIED ROADMAP           */}
         {/* ============================================================== */}
-        <div
-          style={{
-            backgroundColor: 'var(--bg-surface, #FFFFFF)',
-            borderRadius: '16px',
+        {isRoadmapOpen && (
+          <div
+            style={{
+              backgroundColor: 'var(--bg-surface, #FFFFFF)',
+              borderRadius: '16px',
             border: '1.5px solid var(--border-subtle, #D6DED2)',
             padding: '18px 12px',
             display: 'flex',
@@ -731,6 +747,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             })}
           </div>
         </div>
+        )}
 
         {/* ============================================================== */}
         {/* RIGHT COLUMN: DEDICATED INTERACTIVE SIMULATOR WORKBENCH        */}

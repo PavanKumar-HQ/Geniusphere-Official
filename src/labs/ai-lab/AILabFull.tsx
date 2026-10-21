@@ -3,16 +3,18 @@ import { Sidebar } from './Sidebar';
 import { SimulationEngine } from './SimulationEngine';
 import { DefensePanel } from './DefensePanel';
 import { AI_MODULES } from './constants';
-import { X } from 'lucide-react';
+import { X, Layers, Shield } from 'lucide-react';
 
 interface AILabFullProps {
   onExit?: () => void;
+  onClose?: () => void;
 }
 
-const AILabFull: React.FC<AILabFullProps> = ({ onExit }) => {
+const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
   const [activeModuleId, setActiveModuleId] = useState<string>(AI_MODULES[0].id);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isDefenseOpen, setIsDefenseOpen] = useState(true);
 
   const activeModule = AI_MODULES.find(m => m.id === activeModuleId) || AI_MODULES[0];
 
@@ -21,12 +23,17 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit }) => {
     setIsSimulating(false);
   };
 
+  const handleExit = onExit || onClose;
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100%',
+        height: '100%',
+        minHeight: '680px',
+        width: '100%',
+        flex: 1,
         backgroundColor: '#020617',
         color: '#E2E8F0',
         fontFamily: 'var(--font-body, Inter, sans-serif)',
@@ -52,17 +59,19 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '12px 24px',
+          padding: '10px 20px',
           borderBottom: '1px solid rgba(34,211,238,0.15)',
           background: 'rgba(2,6,23,0.95)',
           backdropFilter: 'blur(12px)',
           position: 'relative',
           zIndex: 10,
           flexShrink: 0,
+          gap: '12px',
+          flexWrap: 'wrap',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <svg width="28" height="28" viewBox="0 0 30 30" fill="none">
             <circle cx="15" cy="15" r="14" stroke="#22D3EE" strokeWidth="1" opacity="0.5" />
             <circle cx="15" cy="15" r="9" stroke="#22D3EE" strokeWidth="1" opacity="0.8" />
             <circle cx="15" cy="15" r="4" fill="#22D3EE" />
@@ -71,133 +80,154 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit }) => {
             </circle>
           </svg>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1rem', color: '#22D3EE', letterSpacing: '-0.02em' }}>
+            <div style={{ fontWeight: 800, fontSize: '0.96rem', color: '#22D3EE', letterSpacing: '-0.02em' }}>
               Geniusphere AI Lab
             </div>
-            <div style={{ fontSize: '0.68rem', color: '#475569', fontWeight: 600, letterSpacing: '0.05em' }}>
+            <div style={{ fontSize: '0.68rem', color: '#94A3B8', fontWeight: 600, letterSpacing: '0.04em' }}>
               {activeModule.category.toUpperCase()} • {activeModule.title}
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <span
             style={{
-              fontSize: '0.75rem',
-              padding: '4px 10px',
+              fontSize: '0.72rem',
+              padding: '3px 8px',
               borderRadius: '100px',
               backgroundColor: isSimulating ? 'rgba(34,197,94,0.15)' : 'rgba(100,116,139,0.1)',
               border: isSimulating ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(100,116,139,0.2)',
-              color: isSimulating ? '#22C55E' : '#64748B',
+              color: isSimulating ? '#22C55E' : '#94A3B8',
               fontWeight: 700,
               letterSpacing: '0.04em',
             }}
           >
             {isSimulating ? '● LIVE' : '○ READY'}
           </span>
+
+          {/* Toggle Modules Sidebar */}
           <button
             type="button"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             style={{
-              padding: '6px 12px',
-              borderRadius: '8px',
-              border: '1px solid rgba(34,211,238,0.2)',
-              backgroundColor: 'transparent',
-              color: '#94A3B8',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 10px',
+              borderRadius: '6px',
+              border: isSidebarOpen ? '1px solid rgba(34,211,238,0.4)' : '1px solid rgba(148,163,184,0.2)',
+              backgroundColor: isSidebarOpen ? 'rgba(34,211,238,0.12)' : 'rgba(15,23,42,0.6)',
+              color: isSidebarOpen ? '#22D3EE' : '#94A3B8',
               cursor: 'pointer',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              display: 'none', // shown only on mobile via CSS
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              transition: 'all 0.15s ease',
             }}
-            className="ai-lab-menu-toggle"
+            title={isSidebarOpen ? 'Hide Modules Sidebar' : 'Show Modules Sidebar'}
           >
-            Modules
+            <Layers size={13} />
+            <span>Modules ({AI_MODULES.length})</span>
           </button>
-          {onExit && (
+
+          {/* Toggle Defense Protocols Panel */}
+          <button
+            type="button"
+            onClick={() => setIsDefenseOpen(!isDefenseOpen)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 10px',
+              borderRadius: '6px',
+              border: isDefenseOpen ? '1px solid rgba(16,185,129,0.4)' : '1px solid rgba(148,163,184,0.2)',
+              backgroundColor: isDefenseOpen ? 'rgba(16,185,129,0.12)' : 'rgba(15,23,42,0.6)',
+              color: isDefenseOpen ? '#34D399' : '#94A3B8',
+              cursor: 'pointer',
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              transition: 'all 0.15s ease',
+            }}
+            title={isDefenseOpen ? 'Hide Defense Protocols Panel' : 'Show Defense Protocols Panel'}
+          >
+            <Shield size={13} />
+            <span>Defense Protocols</span>
+          </button>
+
+          {handleExit && (
             <button
               type="button"
-              onClick={onExit}
+              onClick={handleExit}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                padding: '6px 12px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.08)',
-                backgroundColor: 'transparent',
-                color: '#64748B',
+                padding: '5px 10px',
+                borderRadius: '6px',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                color: '#CBD5E1',
                 cursor: 'pointer',
-                fontSize: '0.78rem',
+                fontSize: '0.75rem',
                 fontWeight: 600,
                 transition: 'all 0.15s ease',
               }}
             >
-              Exit Lab
+              <X size={13} />
+              <span>Exit Lab</span>
             </button>
           )}
         </div>
       </header>
 
-      {/* Mobile sidebar overlay */}
-      {isSidebarOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 80,
-            backgroundColor: 'rgba(0,0,0,0.92)',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(false)}
+      {/* Main layout: sidebar + simulation workspace + defense panel */}
+      <div
+        style={{
+          display: 'flex',
+          flex: 1,
+          position: 'relative',
+          zIndex: 1,
+          overflow: 'hidden',
+          minHeight: '560px',
+          height: '100%',
+          width: '100%',
+        }}
+      >
+        {/* Left Modules Sidebar (Collapsible) */}
+        {isSidebarOpen && (
+          <div
             style={{
-              alignSelf: 'flex-end',
-              padding: '8px',
-              background: 'none',
-              border: 'none',
-              color: '#E2E8F0',
-              cursor: 'pointer',
-              marginBottom: '16px',
+              width: '260px',
+              minWidth: '240px',
+              maxWidth: '300px',
+              flexShrink: 0,
+              borderRight: '1px solid rgba(34,211,238,0.1)',
+              overflowY: 'auto',
+              backgroundColor: 'rgba(2,6,23,0.7)',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            <X size={24} />
-          </button>
-          <div style={{ flex: 1, overflowY: 'auto' }}>
             <Sidebar
               activeModuleId={activeModuleId}
-              onSelectModule={(id) => {
-                handleSelectModule(id);
-                setIsSidebarOpen(false);
-              }}
+              onSelectModule={handleSelectModule}
+              onClose={() => setIsSidebarOpen(false)}
             />
           </div>
-        </div>
-      )}
-
-      {/* Desktop layout: sidebar + main + defense panel */}
-      <div style={{ display: 'flex', flex: 1, position: 'relative', zIndex: 1, overflow: 'hidden', minHeight: 0 }}>
-        {/* Sidebar */}
-        <div
-          style={{
-            width: '260px',
-            flexShrink: 0,
-            borderRight: '1px solid rgba(34,211,238,0.1)',
-            overflowY: 'auto',
-            backgroundColor: 'rgba(2,6,23,0.6)',
-          }}
-        >
-          <Sidebar
-            activeModuleId={activeModuleId}
-            onSelectModule={handleSelectModule}
-          />
-        </div>
+        )}
 
         {/* Main simulation workspace */}
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <main
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            overflowY: 'auto',
+            minWidth: 0,
+            height: '100%',
+            backgroundColor: '#020617',
+          }}
+        >
           <SimulationEngine
             module={activeModule}
             isSimulating={isSimulating}
@@ -206,8 +236,13 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit }) => {
           />
         </main>
 
-        {/* Right defense info panel */}
-        <DefensePanel module={activeModule} />
+        {/* Right defense info panel (Collapsible) */}
+        {isDefenseOpen && (
+          <DefensePanel
+            module={activeModule}
+            onClose={() => setIsDefenseOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

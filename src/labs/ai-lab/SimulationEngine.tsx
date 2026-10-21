@@ -52,26 +52,29 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
   }, [logs]);
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-slate-950 relative overflow-hidden min-h-[60vh] md:min-h-0">
+    <div
+      className="flex-1 flex flex-col min-w-0 bg-slate-950 relative overflow-y-auto custom-scrollbar"
+      style={{ minHeight: '520px', height: '100%', width: '100%' }}
+    >
       {!minimal && <div className="scanline"></div>}
 
       {/* Header Area */}
       {!minimal && (
-        <div className="p-8 pb-4">
+        <div className="p-6 pb-2" style={{ padding: '20px 24px 10px' }}>
           <div className="flex items-center justify-between mb-2">
             <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-[10px] font-bold tracking-widest uppercase border border-cyan-500/20">
               Active Laboratory
             </span>
             <span className="text-slate-500 font-mono text-xs">LOC: {module.id.toUpperCase()} // ENV_v4</span>
           </div>
-          <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">{module.title}</h2>
+          <h2 className="text-3xl font-bold text-white mb-3 tracking-tight" style={{ fontSize: '1.75rem', margin: '4px 0 10px' }}>{module.title}</h2>
           <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 backdrop-blur-sm">
             <div className="flex gap-4">
               <div className="mt-1">
                 <Info className="w-5 h-5 text-cyan-500" />
               </div>
               <div>
-                <p className="text-slate-300 text-sm leading-relaxed">{module.scenario}</p>
+                <p className="text-slate-300 text-sm leading-relaxed" style={{ margin: 0, fontSize: '0.85rem' }}>{module.scenario}</p>
               </div>
             </div>
           </div>
@@ -79,32 +82,39 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
       )}
 
       {/* Main Lab Console */}
-      <div className="flex-1 p-8 pt-4 flex flex-col gap-6 overflow-hidden">
+      <div className="flex-1 p-6 pt-2 flex flex-col gap-6" style={{ minHeight: '400px' }}>
 
         {/* Visual Lab Space */}
-        <div className="flex-1 rounded-2xl bg-black border border-slate-800 overflow-hidden relative group">
+        <div
+          className="flex-1 rounded-2xl bg-black border border-slate-800 overflow-hidden relative group"
+          style={{ minHeight: '360px', display: 'flex', flexDirection: 'column' }}
+        >
           {!isSimulating ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center z-10 p-6"
+              style={{ minHeight: '320px' }}
+            >
               <div
-                style={{ width: '80px', height: '80px', minWidth: '80px', minHeight: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backgroundColor: 'rgba(6,182,212,0.2)', border: '1px solid rgba(6,182,212,0.3)', marginBottom: '24px' }}
+                style={{ width: '64px', height: '64px', minWidth: '64px', minHeight: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backgroundColor: 'rgba(6,182,212,0.2)', border: '1px solid rgba(6,182,212,0.3)', marginBottom: '18px' }}
                 className="rounded-full flex items-center justify-center animate-pulse"
               >
-                <Shield className="w-10 h-10 text-cyan-400" />
+                <Shield className="w-8 h-8 text-cyan-400" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Initialize Simulation</h3>
-              <p className="text-slate-500 text-sm mb-8 text-center max-w-md px-6">
+              <h3 className="text-xl font-bold text-white mb-2" style={{ fontSize: '1.2rem', margin: '0 0 6px' }}>Initialize Simulation</h3>
+              <p className="text-slate-400 text-sm mb-6 text-center max-w-md px-6" style={{ fontSize: '0.84rem', margin: '0 0 20px' }}>
                 Ready to execute the {module.title} practical. Click play to begin the step-by-step analysis.
               </p>
               <button
                 onClick={onStartSim}
                 className="group relative px-8 py-3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center gap-2"
+                style={{ cursor: 'pointer' }}
               >
                 <Play className="w-5 h-5" />
                 EXECUTE SIMULATION
               </button>
             </div>
           ) : (
-            <div className="h-full flex flex-col">
+            <div className="h-full flex flex-col flex-1" style={{ minHeight: '340px' }}>
               {/* Animated Background Grids */}
               <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="w-full h-full bg-[radial-gradient(#22d3ee_1px,transparent_1px)] [background-size:20px_20px]"></div>
