@@ -19,8 +19,10 @@ import {
   Layers,
   Video,
   Check,
+  Calendar,
 } from 'lucide-react';
 import { CelebrationCrackers } from './CelebrationCrackers';
+import { StreakHabitModal } from './StreakHabitModal';
 import { backendEngine } from '../backend/RealtimeOrchestrator';
 import {
   ALL_CANONICAL_17_TOPICS,
@@ -50,17 +52,165 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const userProgress = db.getUserProgress(currentUserId);
   const certificates = db.getUserCertificates(currentUserId);
   const [isCrackersActive, setIsCrackersActive] = React.useState(false);
-  const [streakClaimed, setStreakClaimed] = React.useState(false);
+  const [isStreakModalOpen, setIsStreakModalOpen] = useState(false);
   const [activeCurriculumLab, setActiveCurriculumLab] = useState<{ lab: SimulationLab; topicTitle: string } | null>(null);
   const [selectedCurriculumCategory, setSelectedCurriculumCategory] = useState<'all' | 'technology' | 'finance' | 'professional'>('all');
   const [selectedTopicDrawer, setSelectedTopicDrawer] = useState<TopicSpecification | null>(null);
   const [activeTopicDrawerTab, setActiveTopicDrawerTab] = useState<'labs' | 'lessons'>('labs');
   const [activeVideoLesson, setActiveVideoLesson] = useState<{ lesson: VideoLesson; topicTitle: string; topicId: string } | null>(null);
   const [refreshSeed, setRefreshSeed] = useState(0);
+
+  // Authoritative Date & Time Engine for Real Streak Tracking
+  const now = React.useMemo(() => new Date(), [refreshSeed]);
+  const todayDateStr = React.useMemo(() => {
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  }, [now]);
+
+  const yesterdayDateStr = React.useMemo(() => {
+    const y = new Date(now);
+    y.setDate(now.getDate() - 1);
+    return `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`;
+  }, [now]);
+
+  const streakStorageKey = `geniusphere_streak_claim_${currentUserId}`;
+
+  // Read persisted check-in records from storage
+  const persistedClaim = React.useMemo(() => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const raw = window.localStorage.getItem(streakStorageKey);
+        if (raw) return JSON.parse(raw);
+      }
+    } catch (e) {
+      // ignore
+    }
+    return null;
+  }, [streakStorageKey, refreshSeed]);
+
+  const lastActiveDate = userProgress.last_active_date || persistedClaim?.lastClaimedDate || '';
+  const isClaimedToday = lastActiveDate === todayDateStr || persistedClaim?.lastClaimedDate === todayDateStr;
+
   const realProgress = getLearnerProgress(currentUserId);
   const studyMetrics = backendEngine.tracker.getUserMetrics(currentUserId);
-  const streakDays = studyMetrics.current_streak_days > 0 ? studyMetrics.current_streak_days : (userProgress.streak_days || 0);
+
+  // Authoritative streak days calculation based on date continuity:
+  const effectiveStreakDays = React.useMemo(() => {
+    const rawStreak = userProgress.streak_days || persistedClaim?.streakCount || studyMetrics.current_streak_days || 0;
+    if (!lastActiveDate) return rawStreak > 0 ? rawStreak : 0;
+    if (lastActiveDate === todayDateStr) {
+      return Math.max(1, rawStreak);
+    }
+    if (lastActiveDate === yesterdayDateStr) {
+      return Math.max(1, rawStreak);
+    }
+    // Decayed / missed days
+    return 0;
+  }, [lastActiveDate, todayDateStr, yesterdayDateStr, userProgress.streak_days, persistedClaim, studyMetrics.current_streak_days]);
+
+  const streakDays = effectiveStreakDays;
+  const streakClaimed = isClaimedToday;
   const totalStudyMinutes = studyMetrics.total_study_minutes || ((userProgress.completed_lessons?.length || 0) * 25) || 0;
+
+  // 7-Day current week calendar (Monday to Sunday) based on real Date & Time
+  const currentDayOfWeek = (now.getDay() + 6) % 7; // 0 = Mon, 1 = Tue, ..., 6 = Sun
+  const mondayOfWeek = React.useMemo(() => {
+    const m = new Date(now);
+    m.setDate(now.getDate() - currentDayOfWeek);
+    m.setHours(0, 0, 0, 0);
+    return m;
+  }, [now, currentDayOfWeek]);
+
+  const currentWeekDays = React.useMemo(() => {
+    const weekDayLabels = [
+      { label: 'M', full: 'Monday' },
+      { label: 'T', full: 'Tuesday' },
+      { label: 'W', full: 'Wednesday' },
+      { label: 'T', full: 'Thursday' },
+      { label: 'F', full: 'Friday' },
+      { label: 'S', full: 'Saturday' },
+      { label: 'S', full: 'Sunday' },
+    ];
+
+    return weekDayLabels.map((dayItem, idx) => {
+      const dayDate = new Date(mondayOfWeek);
+      dayDate.setDate(mondayOfWeek.getDate() + idx);
+      const dayDateStr = `${dayDate.getFullYear()}-${String(dayDate.getMonth() + 1).padStart(2, '0')}-${String(dayDate.getDate()).padStart(2, '0')}`;
+      const isToday = idx === currentDayOfWeek;
+      const isPast = idx < currentDayOfWeek;
+      const isFuture = idx > currentDayOfWeek;
+
+      let isActive = false;
+      if (isToday) {
+        isActive = isClaimedToday;
+      } else if (isPast) {
+        const daysAgo = currentDayOfWeek - idx;
+        const streakRange = isClaimedToday ? effectiveStreakDays : (lastActiveDate === yesterdayDateStr ? effectiveStreakDays : 0);
+        isActive = daysAgo <= streakRange && (isClaimedToday ? daysAgo < effectiveStreakDays : daysAgo <= effectiveStreakDays);
+      }
+
+      return {
+        label: dayItem.label,
+        full: dayItem.full,
+        dateNum: dayDate.getDate(),
+        dayDateStr,
+        isToday,
+        isPast,
+        isFuture,
+        isActive,
+      };
+    });
+  }, [mondayOfWeek, currentDayOfWeek, isClaimedToday, effectiveStreakDays, lastActiveDate, yesterdayDateStr]);
+
+  const handleClaimDailyStreak = () => {
+    if (isClaimedToday) return;
+
+    let nextStreak = 1;
+    if (lastActiveDate === yesterdayDateStr) {
+      nextStreak = (effectiveStreakDays || 0) + 1;
+    } else if (lastActiveDate === todayDateStr) {
+      nextStreak = effectiveStreakDays || 1;
+    } else {
+      nextStreak = 1;
+    }
+
+    userProgress.streak_days = nextStreak;
+    userProgress.last_active_date = todayDateStr;
+    db.awardXp(currentUserId, 50, 'Daily Streak Active Check-In');
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(
+          streakStorageKey,
+          JSON.stringify({
+            lastClaimedDate: todayDateStr,
+            streakCount: nextStreak,
+            claimedAt: new Date().toISOString(),
+          })
+        );
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    backendEngine.tracker.recordMilestone(
+      currentUserId,
+      'lesson_completed',
+      'daily-streak-claim',
+      'Daily Active Streak Check-In',
+      300
+    );
+
+    backendEngine.notifications.dispatch(
+      currentUserId,
+      `Daily Streak Maintained (${nextStreak} Days, +50 XP)!`,
+      `Great consistency! You maintained your daily study streak on ${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} and unlocked bonus XP.`,
+      'high',
+      'grade'
+    );
+
+    setIsCrackersActive(true);
+    setRefreshSeed((prev) => prev + 1);
+  };
 
   // Student's completed lab submissions
   const allSubmissions: Array<{
@@ -100,14 +250,15 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     })
     .filter((item) => item.course !== null);
 
-  // Calculate overall completion percent
+  // Calculate overall completion percent from genuine completed modules
   const avgProgress =
     enrolledCoursesWithDetails.length > 0
       ? Math.round(
-          enrolledCoursesWithDetails.reduce(
-            (acc, curr) => acc + curr.enrollment.progress_percent,
-            0
-          ) / enrolledCoursesWithDetails.length
+          enrolledCoursesWithDetails.reduce((acc, curr) => {
+            const total = curr.course?.modules?.length || 10;
+            const completed = curr.enrollment.completed_lessons?.length || 0;
+            return acc + Math.min(100, Math.round((completed / total) * 100));
+          }, 0) / enrolledCoursesWithDetails.length
         )
       : 0;
 
@@ -588,52 +739,61 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                     >
                       {course!.domain}
                     </span>
-                    <span
-                      style={{
-                        backgroundColor: 'rgba(0, 245, 160, 0.12)',
-                        color: 'var(--brand-primary)',
-                        padding: '3px 10px',
-                        borderRadius: '100px',
-                        fontSize: '0.75rem',
-                        fontWeight: 800,
-                        border: '1px solid rgba(0, 245, 160, 0.25)',
-                      }}
-                    >
-                      {enrollment.completed_lessons.length} of {course!.modules.length || 10} Modules ({enrollment.progress_percent}%)
-                    </span>
-                  </div>
+                  {(() => {
+                    const totalMods = course!.modules?.length || 10;
+                    const completedMods = enrollment.completed_lessons?.length || 0;
+                    const percent = Math.min(100, Math.round((completedMods / totalMods) * 100));
+                    return (
+                      <>
+                        <span
+                          style={{
+                            backgroundColor: 'rgba(0, 245, 160, 0.12)',
+                            color: 'var(--brand-primary)',
+                            padding: '3px 10px',
+                            borderRadius: '100px',
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
+                            border: '1px solid rgba(0, 245, 160, 0.25)',
+                          }}
+                        >
+                          {completedMods} of {totalMods} Modules ({percent}%)
+                        </span>
+                      </div>
 
-                  <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
-                    {course!.title}
-                  </h3>
+                      <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                        {course!.title}
+                      </h3>
 
-                  {/* Realtime Glowing Gradient Course Progress Bar */}
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>
-                      <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Course Progress</span>
-                      <span style={{ color: 'var(--brand-primary)' }}>{enrollment.progress_percent}% COMPLETED</span>
-                    </div>
-                    <div
-                      style={{
-                        height: '10px',
-                        borderRadius: '5px',
-                        backgroundColor: 'var(--bg-surface-subdued)',
-                        overflow: 'hidden',
-                        border: '1px solid var(--border-subtle)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          height: '100%',
-                          width: `${enrollment.progress_percent}%`,
-                          background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
-                          boxShadow: '0 0 10px rgba(0, 245, 160, 0.45)',
-                          borderRadius: '5px',
-                          transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                        }}
-                      />
-                    </div>
-                  </div>
+                      {/* Realtime Glowing Gradient Course Progress Bar */}
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '6px' }}>
+                          <span style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>Course Progress</span>
+                          <span style={{ color: 'var(--brand-primary)' }}>{percent}% COMPLETED</span>
+                        </div>
+                        <div
+                          style={{
+                            height: '10px',
+                            borderRadius: '5px',
+                            backgroundColor: 'var(--bg-surface-subdued)',
+                            overflow: 'hidden',
+                            border: '1px solid var(--border-subtle)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              height: '100%',
+                              width: `${percent}%`,
+                              background: 'linear-gradient(90deg, #00F5A0 0%, #00D287 100%)',
+                              boxShadow: '0 0 10px rgba(0, 245, 160, 0.45)',
+                              borderRadius: '5px',
+                              transition: 'width 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                            }}
+                          />
+                        </div>
+                      </div>
+                      </>
+                    );
+                  })()}
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2px' }}>
                     <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
@@ -678,13 +838,23 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => setIsStreakModalOpen(true)}
+              title="Click to view full habit breakdown"
+            >
               <div>
                 <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   DAILY LEARNING HABIT
                 </span>
-                <h3 style={{ margin: '2px 0 0', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  & Streak Tracker
+                <h3 style={{ margin: '2px 0 0', fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>& Streak Tracker</span>
+                  <Calendar size={15} color="var(--brand-primary)" />
                 </h3>
               </div>
               <div
@@ -696,81 +866,114 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  transition: 'transform 0.2s ease',
                 }}
               >
-                <Flame size={20} color="#F59E0B" fill="#F59E0B" />
+                <Flame size={20} color="#F59E0B" fill="#F59E0B" className={effectiveStreakDays > 0 ? 'animate-flame' : undefined} />
               </div>
             </div>
 
-            {/* 7-Day Mon-Sun Grid (Matches Prototype Image) */}
-            {/* 7-Day Mon-Sun Grid (Reflecting genuine active streak) */}
+            {/* 7-Day Mon-Sun Grid (Reflecting genuine active streak & current Date/Time) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
-              {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => {
-                const now = new Date();
-                const currentDayIndex = (now.getDay() + 6) % 7; // 0 = Mon, ..., 6 = Sun
-                const isActive = streakDays > 0 && idx <= currentDayIndex && idx >= currentDayIndex - streakDays + 1;
-                return (
+              {currentWeekDays.map((day, idx) => (
+                <div
+                  key={idx}
+                  title={`${day.full}, ${day.dayDateStr}${day.isToday ? ' (Today)' : ''}${day.isActive ? ' - Study Session Completed' : ''}`}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '8px 2px 10px',
+                    borderRadius: '12px',
+                    backgroundColor: day.isActive
+                      ? 'rgba(0, 245, 160, 0.09)'
+                      : day.isToday
+                      ? 'rgba(0, 245, 160, 0.04)'
+                      : 'var(--bg-canvas)',
+                    border: day.isActive
+                      ? '1.5px solid var(--brand-primary)'
+                      : day.isToday
+                      ? '1.5px dashed var(--brand-primary)'
+                      : '1px solid var(--border-subtle)',
+                    position: 'relative',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
+                    <span style={{ fontSize: '0.68rem', fontWeight: 800, color: day.isActive || day.isToday ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
+                      {day.label}
+                    </span>
+                    <span style={{ fontSize: '0.58rem', fontWeight: 600, color: day.isToday ? 'var(--brand-primary)' : 'var(--text-muted)', marginTop: '2px' }}>
+                      {day.dateNum}
+                    </span>
+                  </div>
                   <div
-                    key={idx}
                     style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      backgroundColor: day.isActive
+                        ? 'var(--brand-primary)'
+                        : day.isToday
+                        ? 'rgba(0, 245, 160, 0.15)'
+                        : 'var(--bg-surface-subdued)',
+                      color: day.isActive ? '#03170E' : day.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
                       display: 'flex',
-                      flexDirection: 'column',
                       alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 2px',
-                      borderRadius: '10px',
-                      backgroundColor: isActive
-                        ? 'rgba(0, 245, 160, 0.08)'
-                        : 'var(--bg-canvas)',
-                      border: isActive
-                        ? '1.5px solid var(--brand-primary)'
-                        : '1px solid var(--border-subtle)',
+                      justifyContent: 'center',
+                      marginTop: '2px',
+                      boxShadow: day.isActive ? '0 0 10px rgba(0, 245, 160, 0.35)' : 'none',
                     }}
                   >
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)' }}>
-                      {day}
-                    </span>
-                    <div
+                    {day.isActive ? (
+                      <CheckCircle2 size={13} strokeWidth={2.8} />
+                    ) : day.isToday ? (
+                      <Flame size={12} className="animate-flame" />
+                    ) : (
+                      <span style={{ fontSize: '0.65rem' }}>•</span>
+                    )}
+                  </div>
+                  {day.isToday && (
+                    <span
                       style={{
-                        width: '22px',
-                        height: '22px',
-                        borderRadius: '50%',
-                        backgroundColor: isActive ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
-                        color: isActive ? '#03170E' : 'var(--text-muted)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        position: 'absolute',
+                        bottom: '-5px',
+                        fontSize: '0.5rem',
+                        fontWeight: 800,
+                        backgroundColor: 'var(--brand-primary)',
+                        color: '#03170E',
+                        padding: '1px 3px',
+                        borderRadius: '3px',
+                        letterSpacing: '0.02em',
+                        lineHeight: 1,
                       }}
                     >
-                      {isActive ? (
-                        <CheckCircle2 size={13} strokeWidth={2.5} />
-                      ) : (
-                        <span style={{ fontSize: '0.65rem' }}>•</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                      TODAY
+                    </span>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Current Streak & Milestone */}
             <div style={{ paddingTop: '8px', borderTop: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>{streakDays}-Day Current Streak</span>
-                  <Flame size={18} color="#F59E0B" fill="#F59E0B" />
+                  <span>{effectiveStreakDays}-Day Current Streak</span>
+                  <Flame size={18} color="#F59E0B" fill="#F59E0B" className={effectiveStreakDays > 0 ? 'animate-flame' : undefined} />
                 </span>
                 <span
                   style={{
                     fontSize: '0.72rem',
                     fontWeight: 700,
-                    color: '#F59E0B',
-                    backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                    color: effectiveStreakDays > 0 ? '#F59E0B' : 'var(--text-muted)',
+                    backgroundColor: effectiveStreakDays > 0 ? 'rgba(245, 158, 11, 0.12)' : 'var(--bg-surface-subdued)',
                     padding: '2px 8px',
                     borderRadius: '100px',
                   }}
                 >
-                  Shield Active
+                  {effectiveStreakDays > 0 ? 'Shield Active' : 'Start Today'}
                 </span>
               </div>
 
@@ -790,9 +993,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 <div
                   style={{
                     height: '100%',
-                    width: `${Math.min(100, Math.round((streakDays / 7) * 100))}%`,
+                    width: `${Math.min(100, Math.round((effectiveStreakDays / 7) * 100))}%`,
                     backgroundColor: 'var(--brand-primary)',
                     borderRadius: '3px',
+                    transition: 'width 0.4s ease',
                   }}
                 />
               </div>
@@ -801,37 +1005,19 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               <div style={{ marginTop: '12px' }}>
                 <button
                   type="button"
-                  className="btn-shimmer"
-                  disabled={streakClaimed}
-                  onClick={() => {
-                    setStreakClaimed(true);
-                    db.awardXp(currentUserId, 50, 'Daily Streak Active Check-In');
-                    backendEngine.tracker.recordMilestone(
-                      currentUserId,
-                      'lesson_completed',
-                      'daily-streak-claim',
-                      'Daily Active Streak Check-In',
-                      300
-                    );
-                    backendEngine.notifications.dispatch(
-                      currentUserId,
-                      'Daily Streak Maintained (+50 XP)!',
-                      'Great consistency! You maintained your daily study streak and unlocked bonus XP.',
-                      'high',
-                      'grade'
-                    );
-                    setIsCrackersActive(true);
-                  }}
+                  className={isClaimedToday ? '' : 'btn-shimmer'}
+                  disabled={isClaimedToday}
+                  onClick={handleClaimDailyStreak}
                   style={{
                     width: '100%',
                     padding: '8px 14px',
                     borderRadius: '10px',
-                    backgroundColor: streakClaimed ? '#E5F0DF' : 'var(--brand-primary)',
-                    color: streakClaimed ? '#26352A' : '#FFFFFF',
-                    border: streakClaimed ? '1px solid #C8E3BF' : 'none',
+                    backgroundColor: isClaimedToday ? '#E5F0DF' : 'var(--brand-primary)',
+                    color: isClaimedToday ? '#26352A' : '#FFFFFF',
+                    border: isClaimedToday ? '1px solid #C8E3BF' : 'none',
                     fontSize: '0.8rem',
                     fontWeight: 800,
-                    cursor: streakClaimed ? 'default' : 'pointer',
+                    cursor: isClaimedToday ? 'default' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -839,8 +1025,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                     transition: 'all 0.2s ease',
                   }}
                 >
-                  <Flame size={14} color={streakClaimed ? '#43A85B' : '#F59E0B'} className={streakClaimed ? undefined : 'animate-flame'} />
-                  <span>{streakClaimed ? 'Streak Claimed Today (+50 XP)' : 'Claim Daily Streak (+50 XP)'}</span>
+                  <Flame size={14} color={isClaimedToday ? '#43A85B' : '#F59E0B'} className={isClaimedToday ? undefined : 'animate-flame'} />
+                  <span>{isClaimedToday ? 'Streak Claimed Today (+50 XP)' : 'Claim Daily Streak (+50 XP)'}</span>
                 </button>
               </div>
             </div>
@@ -848,9 +1034,15 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
           <CelebrationCrackers
             active={isCrackersActive}
+            onComplete={() => setIsCrackersActive(false)}
             message="Daily Streak Maintained & +50 XP Collected!"
             xpAmount={50}
-            onComplete={() => setIsCrackersActive(false)}
+          />
+
+          <StreakHabitModal
+            isOpen={isStreakModalOpen}
+            onClose={() => setIsStreakModalOpen(false)}
+            userProgress={userProgress}
           />
 
           {/* Overall Progress Widget */}

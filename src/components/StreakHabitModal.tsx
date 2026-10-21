@@ -28,9 +28,13 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
   const streakDays = userProgress.streak_days || 0;
   const currentXp = userProgress.xp || 0;
 
-  // Calculate real active days of the week based on streak and current day
+  // Calculate real active days of the week based on streak and current date & time
   const now = new Date();
   const currentDayIndex = (now.getDay() + 6) % 7; // 0 = Mon, 1 = Tue, ..., 6 = Sun
+  const mondayOfWeek = new Date(now);
+  mondayOfWeek.setDate(now.getDate() - currentDayIndex);
+  mondayOfWeek.setHours(0, 0, 0, 0);
+
   const dayNames = [
     { day: 'Mon', full: 'Monday' },
     { day: 'Tue', full: 'Tuesday' },
@@ -42,6 +46,9 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
   ];
 
   const daysOfWeek = dayNames.map((d, idx) => {
+    const dayDate = new Date(mondayOfWeek);
+    dayDate.setDate(mondayOfWeek.getDate() + idx);
+    const isToday = idx === currentDayIndex;
     const isActive =
       streakDays > 0 &&
       idx <= currentDayIndex &&
@@ -49,6 +56,8 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
     return {
       day: d.day,
       full: d.full,
+      dateNum: dayDate.getDate(),
+      isToday,
       active: isActive,
       shielded: false,
     };
@@ -206,15 +215,27 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                   boxShadow: d.active ? '0 0 10px rgba(0, 245, 160, 0.15)' : 'none',
                 }}
               >
-                <span
-                  style={{
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    color: d.active ? 'var(--brand-primary)' : 'var(--text-muted)',
-                  }}
-                >
-                  {d.day}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
+                  <span
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      color: d.active || d.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
+                    }}
+                  >
+                    {d.day}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.62rem',
+                      fontWeight: 600,
+                      color: d.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
+                      marginTop: '3px',
+                    }}
+                  >
+                    {d.dateNum}
+                  </span>
+                </div>
 
                 <div
                   style={{
@@ -238,6 +259,22 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                     <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>•</span>
                   )}
                 </div>
+
+                {d.isToday && (
+                  <span
+                    style={{
+                      fontSize: '0.52rem',
+                      fontWeight: 800,
+                      backgroundColor: 'var(--brand-primary)',
+                      color: '#03170E',
+                      padding: '1px 4px',
+                      borderRadius: '3px',
+                      lineHeight: 1,
+                    }}
+                  >
+                    TODAY
+                  </span>
+                )}
               </div>
             ))}
           </div>

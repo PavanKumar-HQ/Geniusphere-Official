@@ -337,7 +337,7 @@ export class InMemoryDatabase {
       course_id: 'course-web-sec',
       enrolled_at: new Date(Date.now() - 3 * 86400 * 1000).toISOString(),
       completed_lessons: ['les-sec-101'],
-      progress_percent: 50,
+      progress_percent: 10,
     });
 
     // 10. Seed Student Resume & Portfolio
