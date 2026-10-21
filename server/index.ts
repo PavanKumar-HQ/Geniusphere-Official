@@ -17,11 +17,15 @@ import { wsGateway } from './services/websocketGateway';
 import { outboxWorker } from './services/outboxWorker';
 import { aiGateway } from './services/aiGateway';
 import { handleAIChat } from './ai/chatHandler';
+import { lifecycleManager } from './controlPlane';
 
 export async function createServer() {
   const fastify = Fastify({
     logger: false,
   });
+
+  // Register app with operational control plane
+  lifecycleManager.registerApp(fastify);
 
   // 1. Plugins
   await fastify.register(cors, {
@@ -31,15 +35,35 @@ export async function createServer() {
 
   await fastify.register(websocket);
 
-  // 2. Health Endpoint
+  // 2. Health & Operational Control Plane Probes
   fastify.get('/health', async () => {
     const dbRes = await query('SELECT NOW() as now');
     return {
       status: 'healthy',
       server: 'geniusphere-backend-production',
+      state: lifecycleManager.getState(),
       timestamp: dbRes.rows[0].now,
       connectedWebSocketUsers: wsGateway.getConnectedUserCount(),
     };
+  });
+
+  fastify.get('/health/liveness', async () => {
+    return lifecycleManager.getLiveness();
+  });
+
+  fastify.get('/health/readiness', async (request, reply) => {
+    const probe = await lifecycleManager.getReadiness();
+    if (!probe.ready) {
+      return reply.status(503).send(probe);
+    }
+    return probe;
+  });
+
+  fastify.get('/api/control-plane/telemetry', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user?.isSuperadmin && request.user?.role !== 'teacher') {
+      return reply.status(403).send({ error: 'Forbidden: requires administrative authority' });
+    }
+    return lifecycleManager.getControlPlaneTelemetry();
   });
 
   // 3. Real-Time WebSocket Gateway
@@ -412,8 +436,21 @@ export async function startServer() {
     // Start background outbox worker
     outboxWorker.start(2000);
 
+    // Transition lifecycle to ready
+    lifecycleManager.setState('ready');
+
+    // Register process signal listeners for coordinated graceful shutdown
+    const handleShutdown = (signal: string) => {
+      lifecycleManager.gracefulShutdown(signal).finally(() => {
+        process.exit(0);
+      });
+    };
+    process.once('SIGTERM', () => handleShutdown('SIGTERM'));
+    process.once('SIGINT', () => handleShutdown('SIGINT'));
+
     return app;
   } catch (err) {
+    lifecycleManager.setState('failed');
     console.error('[Geniusphere Server Boot Error]', err);
     process.exit(1);
   }

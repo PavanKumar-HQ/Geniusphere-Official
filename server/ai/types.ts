@@ -78,6 +78,7 @@ export interface AIProvider {
   readonly id: string;
   readonly isConfigured: boolean;
   generateChat(request: AIProviderRequest): Promise<AIProviderResponse>;
+  checkAvailability?(): Promise<{ available: boolean; error?: string }>;
 }
 
 export interface RateLimitResult {

@@ -62,6 +62,9 @@ export const config = {
   nodeEnv,
   databaseUrl,
   jwtSecret,
+  aiProvider: (process.env.AI_PROVIDER || 'none').trim().toLowerCase(),
+  aiModel: process.env.AI_MODEL || 'llama3.2',
+  aiRequestTimeoutMs: parseInt(process.env.AI_REQUEST_TIMEOUT_MS || '15000', 10),
   vapid: {
     publicKey:
       process.env.VAPID_PUBLIC_KEY ||

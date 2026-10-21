@@ -146,6 +146,25 @@ export class OutboxWorker {
       this.isProcessing = false;
     }
   }
+
+  public isRunning(): boolean {
+    return this.timer !== null;
+  }
+
+  public async getQueueStats(): Promise<{ pending: number; published: number; failed: number }> {
+    try {
+      const res = await query(`
+        SELECT 
+          COALESCE(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END), 0)::int as pending,
+          COALESCE(SUM(CASE WHEN status = 'published' THEN 1 ELSE 0 END), 0)::int as published,
+          COALESCE(SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END), 0)::int as failed
+        FROM public.transactional_outbox
+      `);
+      return res.rows[0] || { pending: 0, published: 0, failed: 0 };
+    } catch {
+      return { pending: 0, published: 0, failed: 0 };
+    }
+  }
 }
 
 export const outboxWorker = new OutboxWorker();

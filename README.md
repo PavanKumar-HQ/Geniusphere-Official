@@ -10,7 +10,7 @@
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python)](https://python.org/)
-[![Tests](https://img.shields.io/badge/Tests-450%2F450%20Passed-43A85B)](#)
+[![Tests](https://img.shields.io/badge/Tests-454%2F454%20Passed-43A85B)](#)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](#)
 
@@ -73,15 +73,16 @@ Geniusphere is a full product educational technology platform engineered for ind
 The production engineering blueprints, system maps, and test matrices are maintained under `docs/`:
 
 1. [System Architecture Map](docs/architecture/system-map.md) — Multi-tier boundaries, state ownership matrix, and 15 interactive standalone labs.
-2. [Scale Architecture (1k-10k MAU)](docs/architecture/scale-architecture.md) — Concurrency envelopes, resource budgets, failure-domain isolation, and capacity benchmarks.
-3. [Domain Ownership & State Authority](docs/architecture/domain-ownership.md) — Authoritative state and business-rule ownership across all 7 domains.
-4. [Language & Responsibility Matrix](docs/architecture/language-matrix.md) — Polyglot engineering allocation, layer boundaries, and duplication resolution.
-5. [Cross-Language Communication Contracts](docs/architecture/cross-language-contracts.md) — Runtime schemas, headers, timeouts, and failure envelopes across TS, Python, SQL, and Fastify.
-6. [Data Flow & Integration Pipelines](docs/architecture/data-flow.md) — Authentication, learning persistence, real-time WebSocket sync, and AI request flows.
-7. [Architecture Decisions Log](docs/architecture/decisions.md) — Formal records (ADR-101 through ADR-108) on registry resolution, CSS grids, orientation guards, AI resilience, polyglot specialization, and WASM evaluation.
-8. [Cross-System Regression Matrix](docs/testing/regression-matrix.md) — 24 edge-case scenarios, expected behaviors, and automated verification suites.
-9. [Production Deployment & Operations Guide](docs/operations/deployment.md) — Topology, environment variables, health checks, and safe rollback protocols.
-10. [Testing Strategy & Test Registry](docs/testing/TESTING_STRATEGY.md) — 450 automated tests (437 Vitest + 13 Pytest) with zero mock data.
+2. [Operational Control Plane & Governance](docs/operations/operational-control-plane.md) — Six coordinated management systems, lifecycle states, liveness/readiness probes, and incident runbooks.
+3. [Scale Architecture (1k-10k MAU)](docs/architecture/scale-architecture.md) — Concurrency envelopes, resource budgets, failure-domain isolation, and capacity benchmarks.
+4. [Domain Ownership & State Authority](docs/architecture/domain-ownership.md) — Authoritative state and business-rule ownership across all 7 domains.
+5. [Language & Responsibility Matrix](docs/architecture/language-matrix.md) — Polyglot engineering allocation, layer boundaries, and duplication resolution.
+6. [Cross-Language Communication Contracts](docs/architecture/cross-language-contracts.md) — Runtime schemas, headers, timeouts, and failure envelopes across TS, Python, SQL, and Fastify.
+7. [Data Flow & Integration Pipelines](docs/architecture/data-flow.md) — Authentication, learning persistence, real-time WebSocket sync, and AI request flows.
+8. [Architecture Decisions Log](docs/architecture/decisions.md) — Formal records (ADR-101 through ADR-108) on registry resolution, CSS grids, orientation guards, AI resilience, polyglot specialization, and WASM evaluation.
+9. [Cross-System Regression Matrix](docs/testing/regression-matrix.md) — 24 edge-case scenarios, expected behaviors, and automated verification suites.
+10. [Production Deployment & Operations Guide](docs/operations/deployment.md) — Topology, environment variables, health checks, and safe rollback protocols.
+11. [Testing Strategy & Test Registry](docs/testing/TESTING_STRATEGY.md) — 454 automated tests (441 Vitest + 13 Pytest) with zero mock data.
 
 ---
 
