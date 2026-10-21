@@ -7,7 +7,7 @@ import SimulationArea from './components/SimulationArea';
 import RightPanel from './components/RightPanel';
 import Controls from './components/Controls';
 import { MobileLayout, MobileBadge, MobileControlGroup } from '../../components/lab/MobileLayout';
-import { X, Menu } from 'lucide-react';
+import { X, Menu, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
@@ -19,6 +19,8 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   });
   const [simStep, setSimStep] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
+  const [isDesktopTipsOpen, setIsDesktopTipsOpen] = useState(true);
 
   useEffect(() => {
     let interval: any;
@@ -159,22 +161,34 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
       </div>
 
       {/* Desktop View (Only Visible on Large Screens) */}
-      <div className="hidden lg:flex h-screen w-full flex-col bg-[#070B1A] relative overflow-hidden grid-bg">
+      <div className="hidden lg:flex h-full min-h-[680px] w-full flex-col bg-[#070B1A] relative overflow-hidden grid-bg">
         {/* Background Orbs */}
         <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', backgroundColor: 'rgba(0, 245, 160, 0.05)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', backgroundColor: 'rgba(59, 240, 255, 0.04)', borderRadius: '50%', filter: 'blur(80px)', pointerEvents: 'none' }} />
 
         {/* Header */}
-        <header className="h-16 flex items-center justify-between px-8 border-b border-white/10 glass z-10">
+        <header className="h-16 flex items-center justify-between px-6 border-b border-white/10 glass z-10 shrink-0">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsDesktopSidebarOpen(prev => !prev)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
+                isDesktopSidebarOpen
+                  ? 'bg-white/10 text-white border-white/20'
+                  : 'bg-[#00FFA3]/15 text-[#00FFA3] border-[#00FFA3]/30 hover:bg-[#00FFA3]/25'
+              }`}
+              title="Toggle Curriculum Modules"
+            >
+              {isDesktopSidebarOpen ? <PanelLeftClose size={14} /> : <PanelLeftOpen size={14} />}
+              <span>Modules</span>
+            </button>
             <div className="w-8 h-8 bg-growth rounded-lg flex items-center justify-center text-white font-bold">F</div>
-            <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+            <h1 className="text-lg font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
               FINANCE LAB: <span className="font-light">MONEY & DECISIONS</span>
             </h1>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono opacity-50 uppercase">Simplified Mode</span>
+              <span className="text-xs font-mono opacity-50 uppercase">Simplified</span>
               <button
                 onClick={handleToggleSimplified}
                 className={`w-10 h-5 rounded-full relative transition-colors ${state.isSimplified ? 'bg-income' : 'bg-white/20'}`}
@@ -183,21 +197,44 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               </button>
             </div>
             <div className="h-4 w-[1px] bg-white/10"></div>
-            <div className="text-xs font-mono opacity-70">STUDENT_SESSION: 2024_Q4</div>
+            <button
+              onClick={() => setIsDesktopTipsOpen(prev => !prev)}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 border transition-all ${
+                isDesktopTipsOpen
+                  ? 'bg-white/10 text-white border-white/20'
+                  : 'bg-[#3BF0FF]/15 text-[#3BF0FF] border-[#3BF0FF]/30 hover:bg-[#3BF0FF]/25'
+              }`}
+              title="Toggle Smart Tips"
+            >
+              {isDesktopTipsOpen ? <PanelRightClose size={14} /> : <PanelRightOpen size={14} />}
+              <span>Tips & Insights</span>
+            </button>
+            <button
+              onClick={onClose || (() => window.history.back())}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-500/15 text-red-400 hover:bg-red-500/25 hover:text-red-300 border border-red-500/30 transition-all"
+              title="Exit Lab"
+            >
+              <X size={14} />
+              <span>Exit Lab</span>
+            </button>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 flex flex-row overflow-hidden">
+        <main className="flex-1 flex flex-row overflow-hidden min-h-0">
           {/* Left Sidebar */}
-          <Sidebar
-            modules={MODULES}
-            activeId={state.currentModuleId}
-            onSelect={handleModuleChange}
-          />
+          {isDesktopSidebarOpen && (
+            <div className="shrink-0 h-full border-r border-white/10">
+              <Sidebar
+                modules={MODULES}
+                activeId={state.currentModuleId}
+                onSelect={handleModuleChange}
+              />
+            </div>
+          )}
 
           {/* Center Simulation Area */}
-          <div className="flex-1 flex flex-col p-6 overflow-y-auto relative">
+          <div className="flex-1 flex flex-col p-6 overflow-y-auto relative min-h-0 min-w-0">
             <SimulationArea
               moduleId={state.currentModuleId}
               simStep={simStep}
@@ -218,10 +255,14 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
           </div>
 
           {/* Right Info Panel */}
-          <RightPanel
-            tips={SMART_TIPS}
-            didYouKnow={DID_YOU_KNOW[state.currentModuleId % DID_YOU_KNOW.length]}
-          />
+          {isDesktopTipsOpen && (
+            <div className="shrink-0 h-full border-l border-white/10">
+              <RightPanel
+                tips={SMART_TIPS}
+                didYouKnow={DID_YOU_KNOW[state.currentModuleId % DID_YOU_KNOW.length]}
+              />
+            </div>
+          )}
         </main>
       </div>
     </>

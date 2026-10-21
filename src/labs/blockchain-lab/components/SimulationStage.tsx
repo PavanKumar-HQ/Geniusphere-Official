@@ -29,7 +29,7 @@ interface SimulationStageProps {
 
 export const SimulationStage: React.FC<SimulationStageProps> = ({ activeModule, step, simplified }) => {
   return (
-    <div className="relative w-full min-h-[350px] lg:h-[500px] bg-[#070B1A] rounded-2xl border border-[#1E293B] overflow-hidden shadow-2xl shadow-black/50">
+    <div className="relative w-full h-full min-h-[350px] lg:min-h-[400px] bg-[#070B1A] rounded-2xl border border-[#1E293B] overflow-hidden shadow-2xl shadow-black/50">
 
       {/* Grid Overlay for Aesthetic */}
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none mix-blend-overlay"></div>

@@ -163,7 +163,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
     if (slug.includes('stock') || slug.includes('trading') || slug.includes('market')) return 'stock';
     if (slug.includes('fintech') || slug.includes('financial-systems')) return 'banking';
-    if (slug.includes('compound') || slug.includes('wealth') || slug.includes('finance-fundamentals')) return 'compound';
+    if (slug.includes('introduction-to-finance') || slug.includes('intro-to-finance') || slug.includes('personal-finance') || slug.includes('compound') || slug.includes('wealth') || slug.includes('finance-fundamentals')) return 'compound';
     if (slug.includes('banking') || slug.includes('accounts')) return 'banking';
     if (slug.includes('crypto') || slug.includes('tokenomics')) return 'crypto';
     if (slug.includes('valuation') || slug.includes('corporate-finance')) return 'valuation';
@@ -176,7 +176,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     if (slug.includes('brand') || slug.includes('executive')) return 'brand';
 
     if (domain === 'technology') return 'ai';
-    if (domain === 'finance') return 'stock';
+    if (domain === 'finance') return 'compound';
     return 'leadership';
   }, [course]);
 

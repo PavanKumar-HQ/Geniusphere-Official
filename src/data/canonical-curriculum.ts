@@ -766,8 +766,8 @@ export const CANONICAL_COURSES: CanonicalCourseItem[] = [
       'Build a structured personal financial roadmap and emergency liquidity buffer',
     ],
     is_published: true,
-    linked_lab_id: 'lab-f1-market-explorer',
-    linked_lab_slug: 'financial-market-explorer',
+    linked_lab_id: 'lab-f2-compound-interest',
+    linked_lab_slug: 'compound-interest-calculator',
     video_modules: [
       {
         order_index: 1,
@@ -843,11 +843,11 @@ export const CANONICAL_COURSES: CanonicalCourseItem[] = [
       },
       {
         order_index: 10,
-        title: 'Video 10: Financial Goal Setting & Market Explorer Lab',
+        title: 'Video 10: Financial Goal Setting & Compound Interest Lab',
         video_id: 'VmWb8Y3_9eT',
         duration_minutes: 26,
-        summary: 'Synthesizing your financial strategy and completing the Financial Market Explorer simulation lab.',
-        key_takeaways: ['Short-term, medium-term, and long-term goal time horizons', 'Asset allocation based on age and risk capacity', 'Completing the Financial Market Explorer scenario lab'],
+        summary: 'Synthesizing your financial strategy and completing the Compound Interest Calculator & 50/30/20 Budgeting simulation lab.',
+        key_takeaways: ['Short-term, medium-term, and long-term goal time horizons', 'Asset allocation based on age and risk capacity', 'Completing the Compound Interest & Personal Budgeting scenario lab'],
       },
     ],
   },
