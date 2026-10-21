@@ -21,6 +21,29 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        corePlugins: {
+          preflight: false,
+        },
+        theme: {
+          extend: {
+            colors: {
+              lab: {
+                bg: '#070B1A',
+                card: '#0F1629',
+                blue: '#3BF0FF',
+                purple: '#7C6BFF',
+                green: '#00FFA3',
+                red: '#FF4D4D',
+                text: '#E6E9F0'
+              }
+            }
+          }
+        }
+      };
+    </script>
   </head>
   <body>
     <div id="root"></div>

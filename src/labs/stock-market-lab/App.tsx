@@ -82,9 +82,9 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
           }
           headerStyle="brand-center"
           headerTitle={
-            <div className="flex items-center gap-2 text-cyan-400 font-bold">
-              <div className="w-6 h-6 rounded bg-cyan-500 flex items-center justify-center text-black text-xs font-bold">S</div>
-              <span className="text-sm tracking-tight">STOCK MARKET</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#22D3EE', fontWeight: 700 }} className="flex items-center gap-2 text-cyan-400 font-bold">
+              <div style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: '#06B6D4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', fontSize: '12px', fontWeight: 800 }} className="w-6 h-6 rounded bg-cyan-500 flex items-center justify-center text-black text-xs font-bold">S</div>
+              <span style={{ fontSize: '14px', letterSpacing: '-0.025em' }} className="text-sm tracking-tight">STOCK MARKET</span>
             </div>
           }
           badges={[

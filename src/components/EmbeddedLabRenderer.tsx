@@ -128,7 +128,7 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
       </div>
 
       {/* The real animated lab app rendered inline */}
-      <div style={{ position: 'relative', minHeight: '570px' }}>
+      <div style={{ position: 'relative', height: '650px', minHeight: '650px', width: '100%' }}>
         <Suspense fallback={<LabLoadingSpinner labName={labDisplayName} />}>
           <LabApp onClose={handleClose} />
         </Suspense>
