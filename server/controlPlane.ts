@@ -273,6 +273,13 @@ export class SystemLifecycleManager {
       console.error('[Lifecycle] Error stopping outbox worker:', err);
     }
 
+    try {
+      wsGateway.stopHeartbeat();
+      console.log('[Lifecycle] WebSocket heartbeat loop stopped successfully.');
+    } catch (err) {
+      console.error('[Lifecycle] Error stopping WebSocket heartbeat:', err);
+    }
+
     // 2. Close Fastify Server (stops accepting new connections, allows in-flight requests to complete)
     if (this.fastifyApp) {
       try {
