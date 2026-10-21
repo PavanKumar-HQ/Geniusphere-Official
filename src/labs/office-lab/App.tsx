@@ -99,96 +99,131 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     switch (currentApp) {
       case OfficeApp.WORD:
         return (
-          <div className={`${commonStyles} !pb-4 md:!pb-72`}>
-            <div className="flex items-center space-x-3 mb-4 shrink-0">
-              <FileText color={COLORS.WORD} size={isSimplified ? 36 : 28} />
-              <h3 className={`font-bold uppercase tracking-wider ${isSimplified ? 'text-2xl' : 'text-xl'}`} style={{ color: '#FFFFFF' }}>Project_Report_v1.docx</h3>
-            </div>
-            <div
-              className="bg-white/5 rounded-2xl p-6 md:p-8 flex-1 border border-white/10 relative overflow-y-auto flex flex-col min-h-[360px]"
-              style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}
-            >
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500/50"></div>
-              {currentStep === 0 && (
-                <div className="flex flex-col space-y-6">
-                  <div className="h-8 bg-white/10 rounded w-1/2 animate-pulse"></div>
-                  <div className="space-y-4">
-                    <div className="h-4 bg-white/5 rounded w-full"></div>
-                    <div className="h-4 bg-white/5 rounded w-full"></div>
-                    <div className="h-4 bg-white/5 rounded w-5/6"></div>
+          <div className={`${commonStyles} !pb-32`}>
+            {/* Word Window Bar & Ribbon */}
+            <div className="bg-[#1E293B] rounded-t-2xl p-3 border border-white/15 border-b-0 flex flex-wrap items-center justify-between gap-3 shrink-0 shadow-lg">
+              <div className="flex items-center space-x-3">
+                <FileText color={COLORS.WORD} size={24} />
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-white text-sm tracking-wide">Project_Report_v1.docx</span>
+                    <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-mono font-bold">Word Online</span>
                   </div>
-                  <div className="w-[3px] h-10 bg-blue-500 animate-[bounce_1s_infinite] mt-4"></div>
+                  <span className="text-[11px] text-slate-300">AutoSave: On • OneDrive</span>
                 </div>
-              )}
+              </div>
+
+              {/* Formatting Toolbar */}
+              <div className="flex items-center gap-1.5 bg-[#0F172A] px-3 py-1.5 rounded-lg border border-white/10 text-xs text-slate-200">
+                <span className="font-mono text-slate-300 font-semibold px-2 border-r border-white/10">Aptos 14</span>
+                <button className="px-2 py-1 font-bold rounded bg-white/10 text-white hover:bg-white/20">B</button>
+                <button className="px-2 py-1 italic rounded text-slate-300 hover:bg-white/10">I</button>
+                <button className="px-2 py-1 underline rounded text-slate-300 hover:bg-white/10">U</button>
+                <span className="w-px h-4 bg-white/10 mx-1"></span>
+                <span className="px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded font-bold text-[11px]">Heading 1</span>
+              </div>
+            </div>
+
+            {/* Document Page Canvas */}
+            <div
+              className="bg-[#0B132B] rounded-b-2xl p-6 md:p-8 flex-1 border border-white/15 relative overflow-y-auto flex flex-col min-h-[420px] shadow-2xl"
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            >
+              <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+
+              {/* Document Header */}
+              <div className="border-b border-white/10 pb-4">
+                <h2
+                  style={{
+                    color: '#60A5FA',
+                    fontWeight: 900,
+                    fontSize: isSimplified ? '1.75rem' : '1.4rem',
+                    lineHeight: 1.3,
+                    margin: 0,
+                  }}
+                >
+                  <TypingText text="Executive Summary: Renewable Energy Innovation" speed={20} />
+                </h2>
+                <p className="text-xs text-slate-300 mt-2 font-medium">
+                  Prepared by: Global Sustainability Institute • Document Version 1.4
+                </p>
+              </div>
+
+              {/* Document Body - Always visible and illuminated */}
+              <div className="text-slate-200 text-sm md:text-base leading-relaxed space-y-3 font-normal">
+                <p>
+                  Global transition toward clean energy accelerates as next-generation photovoltaic cells and advanced wind turbine designs yield unprecedented efficiency. This briefing documents quarterly production yields, grid integration metrics, and energy storage economic forecasts.
+                </p>
+              </div>
+
+              {/* Step 1 & 2: Structured Research Callout */}
               {currentStep >= 1 && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%', flexShrink: 0 }}>
-                  <h2
-                    style={{
-                      color: '#60A5FA',
-                      fontWeight: 900,
-                      fontSize: isSimplified ? '1.85rem' : '1.45rem',
-                      lineHeight: 1.3,
-                      margin: 0,
-                      padding: 0,
-                    }}
-                  >
-                    <TypingText text="Executive Summary: Renewable Energy" speed={25} />
-                  </h2>
-                  <div
-                    style={{
-                      padding: '18px 22px',
-                      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                      border: '1px solid rgba(59, 130, 246, 0.25)',
-                      borderRadius: '16px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px',
-                      width: '100%',
-                    }}
-                  >
+                <div
+                  style={{
+                    padding: '16px 20px',
+                    backgroundColor: 'rgba(59, 130, 246, 0.12)',
+                    border: '1px solid rgba(59, 130, 246, 0.35)',
+                    borderRadius: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    width: '100%',
+                  }}
+                >
+                  <div className="flex items-center justify-between">
                     <p
                       style={{
                         color: '#93C5FD',
                         fontWeight: 800,
                         textTransform: 'uppercase',
-                        letterSpacing: '0.12em',
-                        fontSize: isSimplified ? '1.05rem' : '0.85rem',
+                        letterSpacing: '0.1em',
+                        fontSize: isSimplified ? '1rem' : '0.85rem',
                         margin: 0,
                       }}
                     >
-                      Key Research Data
+                      Validated Research Findings
                     </p>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {[
-                        "Solar power efficiency increased by 15.4% YoY",
-                        "Wind farm distribution reaches new peaks in Asia",
-                        "Battery storage costs decreased by 40% since 2020"
-                      ].map((text, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#E2E8F0', fontSize: '0.95rem' }}>
-                          <CheckCircle2 size={22} style={{ color: '#3B82F6', flexShrink: 0 }} />
-                          <span style={{ color: '#E2E8F0' }}><TypingText text={text} speed={15} /></span>
-                        </li>
-                      ))}
-                    </ul>
+                    <span className="text-[10px] font-mono text-blue-300 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-400/30">CONFIRMED</span>
                   </div>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {[
+                      "Solar power panel conversion efficiency increased by 15.4% YoY",
+                      "Distributed wind farm installations reach record coverage in developing regions",
+                      "Utility-scale battery storage costs decreased by 40% since 2020"
+                    ].map((text, i) => (
+                      <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#F1F5F9', fontSize: '0.92rem' }}>
+                        <CheckCircle2 size={20} style={{ color: '#38BDF8', flexShrink: 0 }} />
+                        <span style={{ color: '#F1F5F9' }}><TypingText text={text} speed={12} /></span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
-              {currentStep === 2 && (
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'auto', paddingTop: '12px', flexShrink: 0 }}>
+
+              {/* Step 2: Real-time Cloud Sync & Document Footer */}
+              {currentStep >= 2 && (
+                <div className="flex flex-wrap items-center justify-between pt-4 mt-auto border-t border-white/10 gap-3">
+                  <div className="flex items-center gap-2 text-xs text-slate-300 font-mono">
+                    <span>Page 1 of 1</span>
+                    <span>•</span>
+                    <span>184 words</span>
+                    <span>•</span>
+                    <span className="text-emerald-400 font-bold">Document Integrity 100%</span>
+                  </div>
                   <div
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: '10px',
-                      backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                      border: '1px solid rgba(34, 197, 94, 0.45)',
-                      padding: '10px 18px',
-                      borderRadius: '14px',
+                      gap: '8px',
+                      backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                      border: '1px solid rgba(34, 197, 94, 0.5)',
+                      padding: '8px 16px',
+                      borderRadius: '12px',
                     }}
                   >
-                    <Cloud style={{ color: '#4ADE80', flexShrink: 0 }} size={24} />
-                    <span style={{ fontWeight: 800, color: '#86EFAC', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.85rem' }}>
-                      Saved to Cloud
+                    <Cloud style={{ color: '#4ADE80', flexShrink: 0 }} size={20} />
+                    <span style={{ fontWeight: 800, color: '#A7F3D0', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.8rem' }}>
+                      All changes saved to cloud
                     </span>
                   </div>
                 </div>
@@ -198,7 +233,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         );
       case OfficeApp.EXCEL:
         return (
-          <div className={`${commonStyles} !pb-4 md:!pb-72`}>
+          <div className={`${commonStyles} !pb-32`}>
             <div className="flex items-center space-x-3 mb-4 shrink-0">
               <BarChart3 color={COLORS.EXCEL} size={isSimplified ? 36 : 28} />
               <h3 className={`font-bold uppercase tracking-wider ${isSimplified ? 'text-2xl' : 'text-xl'}`} style={{ color: '#FFFFFF' }}>Financial_Forecast.xlsx</h3>
@@ -251,7 +286,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         );
       case OfficeApp.POWERPOINT:
         return (
-          <div className={`${commonStyles} items-center justify-center !pb-4 md:!pb-72`}>
+          <div className={`${commonStyles} items-center justify-center !pb-32`}>
             <div className={`w-full max-w-3xl aspect-video bg-[#1e293b] rounded-3xl border-4 border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] overflow-y-auto md:overflow-hidden transition-all duration-1000 flex flex-col ${currentStep === 2 ? 'scale-110 shadow-orange-500/10' : 'scale-100'}`}>
               <div className="h-3 w-full bg-orange-500"></div>
               <div className="flex-1 flex flex-col p-16 text-center relative justify-center">
@@ -282,7 +317,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         );
       case OfficeApp.OUTLOOK:
         return (
-          <div className={`${commonStyles} items-center justify-center !pb-4 md:!pb-72`}>
+          <div className={`${commonStyles} items-center justify-center !pb-32`}>
             <div className="w-full max-w-xl bg-[#1e293b] rounded-3xl border border-purple-500/30 shadow-2xl overflow-y-auto md:overflow-hidden flex flex-col">
               <div className="p-6 bg-purple-900/30 border-b border-purple-500/20 flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -335,7 +370,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         );
       case OfficeApp.REAL_LIFE:
         return (
-          <div className={`${commonStyles} items-center justify-center !pb-4 md:!pb-72`}>
+          <div className={`${commonStyles} items-center justify-center !pb-32`}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-12 w-full max-w-5xl mb-12">
               {[
                 { icon: FileText, color: COLORS.WORD, label: 'DRAFT', sub: 'The Idea' },
@@ -705,8 +740,8 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               </div>
 
               {/* Instruction Panel (Explanation) */}
-              <div className="absolute bottom-6 left-6 right-6 z-30 pointer-events-none">
-                <div className="glass-panel p-8 rounded-[2rem] border border-white/20 shadow-[0_50px_100px_rgba(0,0,0,0.7)] animate-in slide-in-from-bottom-12 duration-1000 backdrop-blur-3xl pointer-events-auto hover:border-white/40 transition-colors">
+              <div className="absolute bottom-4 left-4 right-4 z-30 pointer-events-none">
+                <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-6 duration-500 backdrop-blur-3xl pointer-events-auto hover:border-white/40 transition-colors">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.6em] flex items-center">
                       <span className="w-10 h-0.5 bg-blue-500/40 mr-4"></span>

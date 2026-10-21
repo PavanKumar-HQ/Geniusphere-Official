@@ -31,8 +31,8 @@ export const SimulationStage: React.FC<SimulationStageProps> = ({ activeModule, 
   return (
     <div className="relative w-full h-full min-h-[350px] lg:min-h-[400px] bg-[#070B1A] rounded-2xl border border-[#1E293B] overflow-hidden shadow-2xl shadow-black/50">
 
-      {/* Grid Overlay for Aesthetic */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none mix-blend-overlay"></div>
+      {/* Subtle radial glow overlay for depth */}
+      <div className="absolute inset-0 bg-radial-gradient pointer-events-none opacity-20" style={{ background: 'radial-gradient(circle at 50% 30%, rgba(59,240,255,0.08), transparent 70%)' }}></div>
 
       <div className="relative z-10 w-full h-full overflow-x-auto lg:overflow-visible scrollbar-hide">
         <AnimatePresence mode="wait">

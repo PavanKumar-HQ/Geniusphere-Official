@@ -55,7 +55,7 @@ const NavCard: React.FC<{title: string, description: string, onClick: () => void
             className="bg-slate-800/50 border-2 border-slate-700 rounded-lg p-6 cursor-pointer transition-all duration-300 hover:border-cyan-400 hover:scale-105 hover:bg-slate-800"
         >
             <h3 className="text-2xl font-bold text-cyan-400 mb-2">{title}</h3>
-            <p className="text-slate-400">{description}</p>
+            <p className="text-slate-200 text-sm leading-relaxed">{description}</p>
         </div>
     );
 }

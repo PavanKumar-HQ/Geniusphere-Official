@@ -60,7 +60,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, onSelect, isCompleted }
         </div>
       )}
       <h3 className="text-xl font-bold text-cyan-400 mb-2">{module.title}</h3>
-      <p className="text-slate-400 text-sm">{module.simpleDefinition}</p>
+      <p className="text-slate-200 text-sm leading-relaxed">{module.simpleDefinition}</p>
     </div>
   );
 };

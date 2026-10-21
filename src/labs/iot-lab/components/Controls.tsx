@@ -39,18 +39,18 @@ const Controls: React.FC<ControlsProps> = ({
           </button>
           <button 
             onClick={onReset}
-            className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all"
+            className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/10 border border-white/20 text-slate-300 hover:text-white hover:bg-white/20 transition-all"
             title="Reset Simulation"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
         </div>
         <div className="hidden lg:flex flex-col gap-1">
-           <div className="text-[10px] font-mono text-white/40 uppercase tracking-widest flex items-center gap-2">
+           <div className="text-[10px] font-mono text-slate-300 uppercase tracking-widest flex items-center gap-2 font-bold">
               <Activity className="w-3 h-3 text-[#3BF0FF]" />
               Simulation_Engine
            </div>
-           <div className="text-xs font-bold text-white/80">{isPaused ? 'HALTED_FOR_REVIEW' : 'PROCESSING_REALTIME'}</div>
+           <div className="text-xs font-bold text-slate-100">{isPaused ? 'HALTED_FOR_REVIEW' : 'PROCESSING_REALTIME'}</div>
         </div>
       </div>
 
@@ -59,7 +59,8 @@ const Controls: React.FC<ControlsProps> = ({
         <button 
           onClick={onPrev}
           disabled={currentStep === LabStep.ACTIVATION}
-          className="p-3 text-white/20 hover:text-[#3BF0FF] hover:bg-[#3BF0FF]/5 rounded-xl disabled:opacity-5 transition-all"
+          className="p-3 text-slate-400 hover:text-[#3BF0FF] hover:bg-[#3BF0FF]/10 rounded-xl disabled:opacity-20 transition-all"
+          title="Previous Step"
         >
           <ChevronLeft className="w-8 h-8" />
         </button>
@@ -74,10 +75,10 @@ const Controls: React.FC<ControlsProps> = ({
                   ? 'bg-[#3BF0FF] shadow-[0_0_15px_#3BF0FF] scale-y-150' 
                   : s < currentStep 
                     ? 'bg-[#3BF0FF]/40' 
-                    : 'bg-white/10 hover:bg-white/20'}
+                    : 'bg-white/20 hover:bg-white/40'}
               `}
             >
-              <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all bg-white/10 border border-white/10 px-2 py-1 rounded text-[10px] pointer-events-none font-mono whitespace-nowrap backdrop-blur-md">
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all bg-slate-900 border border-white/20 px-2 py-1 rounded text-[10px] pointer-events-none font-mono whitespace-nowrap backdrop-blur-md text-white">
                 MODULE_0{s}
               </div>
             </button>
@@ -87,7 +88,8 @@ const Controls: React.FC<ControlsProps> = ({
         <button 
           onClick={onNext}
           disabled={currentStep === LabStep.SECURITY_DEFENSE}
-          className="p-3 text-white/20 hover:text-[#3BF0FF] hover:bg-[#3BF0FF]/5 rounded-xl disabled:opacity-5 transition-all"
+          className="p-3 text-slate-400 hover:text-[#3BF0FF] hover:bg-[#3BF0FF]/10 rounded-xl disabled:opacity-20 transition-all"
+          title="Next Step"
         >
           <ChevronRight className="w-8 h-8" />
         </button>

@@ -34,7 +34,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ simplifiedMode, setSimplifiedMode
         <label className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10 cursor-pointer group hover:bg-white/10 transition-all">
           <div className="flex flex-col">
             <span className="text-sm font-bold text-white group-hover:text-[#3BF0FF] transition-colors">Simplified Mode</span>
-            <span className="text-[10px] text-white/40 font-mono">Slow speed & plain terms</span>
+            <span className="text-[11px] text-slate-300 font-mono">Slow speed & plain terms</span>
           </div>
           <div 
             className={`w-10 h-5 rounded-full p-1 transition-colors ${simplifiedMode ? 'bg-[#00FFA3]' : 'bg-white/20'}`}
@@ -48,8 +48,8 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ simplifiedMode, setSimplifiedMode
       {/* Security Context */}
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-4">
-          <AlertTriangle className="w-4 h-4 text-[#FF4D4D]" />
-          <h3 className="text-xs font-mono text-white uppercase tracking-wider">Cybersecurity Checklist</h3>
+          <AlertTriangle className="w-4 h-4 text-[#FF6B6B]" />
+          <h3 className="text-xs font-mono text-white uppercase tracking-wider font-bold">Cybersecurity Checklist</h3>
         </div>
         <div className="space-y-2">
           {[
@@ -59,8 +59,8 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ simplifiedMode, setSimplifiedMode
             'Encryption enabled (WPA3)',
             'Disabled unused protocols'
           ].map((item, idx) => (
-            <div key={idx} className="flex gap-3 text-xs text-white/60 p-2 rounded-lg bg-white/5 border border-transparent hover:border-white/10 transition-all">
-              <span className="text-[#FF4D4D] font-mono leading-none">•</span>
+            <div key={idx} className="flex gap-3 text-xs text-slate-200 p-2 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 transition-all font-medium">
+              <span className="text-[#FF6B6B] font-mono leading-none font-bold">•</span>
               <span>{item}</span>
             </div>
           ))}
@@ -69,12 +69,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ simplifiedMode, setSimplifiedMode
 
       {/* Did You Know */}
       <div className="mt-auto">
-        <div className="bg-[#3BF0FF]/5 border border-[#3BF0FF]/20 rounded-2xl p-5 relative overflow-hidden">
+        <div className="bg-[#3BF0FF]/10 border border-[#3BF0FF]/30 rounded-2xl p-5 relative overflow-hidden">
           <div className="flex items-center gap-2 mb-3">
             <HelpCircle className="w-4 h-4 text-[#3BF0FF]" />
             <h4 className="text-xs font-bold text-white uppercase">Real-World Fact</h4>
           </div>
-          <p className="text-xs text-white/70 leading-relaxed italic">
+          <p className="text-xs text-slate-200 leading-relaxed italic">
             "By 2030, there will be over 30 billion IoT devices globally—that's more than 3 devices for every person on Earth!"
           </p>
         </div>

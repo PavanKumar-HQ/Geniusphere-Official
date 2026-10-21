@@ -302,7 +302,7 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
 
           {/* Header */}
           <header className="px-6 py-4 shrink-0 border-b border-gray-800/80 bg-lab-bg/90 backdrop-blur-md">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2.5">
                 <button
                   onClick={() => setIsDesktopSidebarOpen(prev => !prev)}

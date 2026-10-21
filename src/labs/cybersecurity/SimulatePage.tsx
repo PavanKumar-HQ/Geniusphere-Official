@@ -103,7 +103,7 @@ const SCENARIOS: Scenario[] = [
 ];
 
 const typeColors: Record<LogLine['type'], { bg: string; text: string; dot: string }> = {
-  NORMAL:     { bg: 'rgba(100,116,139,0.15)', text: '#94A3B8', dot: '#64748B' },
+  NORMAL:     { bg: 'rgba(100,116,139,0.25)', text: '#CBD5E1', dot: '#94A3B8' },
   SUSPICIOUS: { bg: 'rgba(234,179,8,0.12)',  text: '#FCD34D', dot: '#EAB308' },
   ATTACK:     { bg: 'rgba(239,68,68,0.12)',  text: '#FCA5A5', dot: '#EF4444' },
   BLOCKED:    { bg: 'rgba(16,185,129,0.12)', text: '#6EE7B7', dot: '#10B981' },
@@ -190,7 +190,7 @@ export const SimulatePage: React.FC<SimulatePageProps> = ({ onBack }) => {
         <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#06B6D4', margin: 0, letterSpacing: '-0.02em' }}>
           Live Attack Simulator
         </h2>
-        <p style={{ color: '#64748B', fontSize: '0.9rem', marginTop: '6px' }}>
+        <p style={{ color: '#CBD5E1', fontSize: '0.9rem', marginTop: '6px' }}>
           Watch real cyber attacks unfold — packet by packet
         </p>
       </div>
@@ -311,7 +311,7 @@ export const SimulatePage: React.FC<SimulatePageProps> = ({ onBack }) => {
                 borderRadius: '7px',
                 border: '1px solid rgba(100,116,139,0.3)',
                 backgroundColor: 'transparent',
-                color: '#64748B',
+                color: '#CBD5E1',
                 fontSize: '0.78rem',
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -419,7 +419,7 @@ export const SimulatePage: React.FC<SimulatePageProps> = ({ onBack }) => {
         {Object.entries(typeColors).map(([type, col]) => (
           <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: col.dot }} />
-            <span style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>{type}</span>
+            <span style={{ fontSize: '0.75rem', color: '#CBD5E1', fontWeight: 600 }}>{type}</span>
           </div>
         ))}
       </div>

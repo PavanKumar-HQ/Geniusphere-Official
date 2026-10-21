@@ -63,28 +63,27 @@ const CyberBackground = () => (
 
 const Microcopy: React.FC<{ text?: string }> = ({ text }) => {
     if (!text) return null;
+    const boxWidth = Math.min(360, Math.max(160, text.length * 6.8 + 24));
     return (
         <g className="opacity-0">
-            {/* Fix: Use numbers for SVG attributes */}
-            <rect x={95} y={175} width={text.length * 5 + 10} height={20} rx={5} fill="rgba(11, 12, 16, 0.8)" stroke="#00FFFF" />
-            <text x={100} y={189} fill="#00FFFF" fontSize={10} className="font-sans">
+            <rect x={200 - boxWidth / 2} y={168} width={boxWidth} height={24} rx={12} fill="rgba(11, 16, 32, 0.95)" stroke="#22D3EE" strokeWidth={1.5} />
+            <text x={200} y={184} textAnchor="middle" fill="#E2E8F0" fontSize={10.5} fontWeight={600} className="font-sans">
                 {text}
             </text>
-            <animate attributeName="opacity" from="0" to="1" dur="0.5s" fill="freeze" />
+            <animate attributeName="opacity" from="0" to="1" dur="0.35s" fill="freeze" />
         </g>
-    )
-}
+    );
+};
 
 const FocusHighlight: React.FC<{ point?: { x: number, y: number }, isPaused: boolean }> = ({ point, isPaused }) => {
     if (!point || !isPaused) return null;
     return (
-        // Fix: Use numbers for SVG attributes
-        <circle cx={point.x} cy={point.y} r={20} fill="none" stroke="yellow" strokeWidth={2} strokeDasharray="4 4" className="opacity-75">
+        <circle cx={point.x} cy={point.y} r={20} fill="none" stroke="#FBBF24" strokeWidth={2} strokeDasharray="4 4" className="opacity-90">
             <animate attributeName="stroke-dashoffset" from="0" to="16" dur="1s" repeatCount="indefinite" />
             <animateTransform attributeName="transform" type="scale" from="1" to="1.2" additive="sum" begin="0s" dur="1s" repeatCount="indefinite" />
         </circle>
-    )
-}
+    );
+};
 
 type AnimationComponentProps = {
     module: AttackModuleData;
@@ -93,7 +92,7 @@ type AnimationComponentProps = {
     reducedMotion: boolean;
     isFocusPaused: boolean;
     focusPoint?: { x: number, y: number };
-}
+};
 
 const PhishingAnimation: React.FC<AnimationComponentProps> = ({ module, currentStep, showDefense, reducedMotion, isFocusPaused, focusPoint }) => {
     const isAfter = (step: number) => currentStep >= step;
@@ -101,53 +100,86 @@ const PhishingAnimation: React.FC<AnimationComponentProps> = ({ module, currentS
 
     const infectionHappens = isAfter(3) && !showDefense;
     const defenseIsShown = showDefense && isAfter(4);
-    
     const computerColor = infectionHappens ? 'text-red-500' : 'text-cyan-400';
 
     return (
         <svg viewBox="0 0 400 200" className="w-full h-full">
-            <UserIcon x={20} y={80} className="text-cyan-400" />
-            <g className={infectionHappens && !reducedMotion ? 'glitch' : ''}>
-              <ComputerIcon x={300} y={75} className={`transition-colors duration-500 ${computerColor}`} />
+            {/* Attacker node on far left */}
+            <g transform="translate(15, 60)">
+                <circle cx={18} cy={18} r={18} fill="rgba(239, 68, 68, 0.15)" stroke="#EF4444" strokeWidth={1.5} />
+                <text x={18} y={23} textAnchor="middle" fontSize={16}>🦹</text>
+                <text x={18} y={48} textAnchor="middle" fontSize={8} fill="#FCA5A5" fontWeight={700}>ATTACKER</text>
             </g>
-            
-            {isAfter(0) && (
-                 <g className={reducedMotion ? '' : `transition-transform duration-1000 ${isAfter(1) ? 'translate-x-[150px]' : ''}`}>
-                      <EnvelopeIcon x={100} y={90} />
-                 </g>
+
+            {/* Target Student Computer on right */}
+            <g transform="translate(320, 50)" className={infectionHappens && !reducedMotion ? 'glitch' : ''}>
+                <ComputerIcon x={0} y={0} className={`transition-colors duration-500 ${computerColor}`} />
+                <text x={24} y={65} textAnchor="middle" fontSize={8} fill={infectionHappens ? '#F87171' : '#67E8F9'} fontWeight={700}>
+                    {infectionHappens ? 'INFECTED!' : 'STUDENT PC'}
+                </text>
+            </g>
+
+            {/* In-transit Phishing Email Icon */}
+            {isAfter(0) && !isAfter(2) && (
+                <g className={reducedMotion ? '' : 'transition-transform duration-700'} style={{ transform: isAfter(1) ? 'translate(30px, 0)' : 'translate(0, 0)' }}>
+                    <EnvelopeIcon x={55} y={66} />
+                </g>
             )}
 
+            {/* Phishing Email Preview Card - Center positioned without overlapping targets */}
             {isAfter(1) && !infectionHappens && (
-                <g className={`transition-opacity duration-500 ${defenseIsShown ? 'opacity-0' : 'opacity-100'}`}>
-                    {/* Fix: Use numbers for SVG attributes */}
-                    <rect x={110} y={40} width={160} height={70} rx={5} fill="#1E293B" />
-                    <text x={120} y={60} fontSize={8} fill="#E2E8F0">From:</text>
-                    <text x={120} y={70} fontSize={8} fill="#FBBF24" className="font-bold">YourBnak@hax0r.net</text>
-                    <text x={120} y={85} fontSize={10} fill="#67E8F9" textDecoration="underline" className="cursor-pointer">
-                        Click Here To Claim!
+                <g className={`transition-opacity duration-500 ${defenseIsShown ? 'opacity-30' : 'opacity-100'}`}>
+                    {/* Outer Card Box */}
+                    <rect x={100} y={20} width={180} height={95} rx={8} fill="#0F172A" stroke="#334155" strokeWidth={1.5} />
+                    {/* Header Banner */}
+                    <rect x={100} y={20} width={180} height={24} rx={8} fill="#1E293B" />
+                    <circle cx={112} cy={32} r={3.5} fill="#EF4444" />
+                    <text x={122} y={35} fontSize={9} fill="#F8FAFC" fontWeight={700}>URGENT SECURITY ALERT</text>
+
+                    {/* From Line */}
+                    <text x={112} y={56} fontSize={8} fill="#94A3B8">From:</text>
+                    <text x={140} y={56} fontSize={8} fill="#FBBF24" fontWeight={700}>YourBnak@hax0r.net</text>
+
+                    {/* Action Button */}
+                    <g transform="translate(112, 66)">
+                        <rect x={0} y={0} width={156} height={22} rx={5} fill={isAfter(2) ? '#DC2626' : '#0284C7'} />
+                        <text x={78} y={15} textAnchor="middle" fontSize={9} fill="#FFFFFF" fontWeight={700} className="cursor-pointer">
+                            {isAfter(2) ? '⚠️ MALICIOUS LINK CLICKED' : 'CLAIM $1,000 REWARD NOW'}
+                        </text>
+                    </g>
+                    <text x={190} y={105} textAnchor="middle" fontSize={7} fill="#CBD5E1">
+                        Notice spelling: "Bnak" instead of "Bank"
                     </text>
                 </g>
             )}
 
-            {infectionHappens && !reducedMotion && [...Array(20)].map((_, i) => (
-                // Fix: Use number for r attribute
-                <circle key={i} r={1.5} fill="#FF0080" >
-                   <animateMotion path={`M 270 100 Q ${280 + Math.random()*10} ${80 + Math.random()*20}, 300 95`} dur={`${1 + Math.random()}s`} begin={`${i*0.05}s`} fill="freeze" />
+            {/* Malware Infection Wave (Step 3) */}
+            {infectionHappens && !reducedMotion && [...Array(15)].map((_, i) => (
+                <circle key={i} r={2} fill="#EF4444">
+                    <animateMotion
+                        path={`M 220 70 Q ${260 + Math.random() * 20} ${50 + Math.random() * 40}, 325 75`}
+                        dur={`${0.8 + Math.random() * 0.4}s`}
+                        begin={`${i * 0.08}s`}
+                        repeatCount="indefinite"
+                    />
                 </circle>
             ))}
 
+            {/* Defense Barrier (Step 4 & Defense Mode) */}
             {defenseIsShown && (
-                <>
-                    <g transform="translate(220, 70)" className="opacity-0">
-                         <ShieldIcon className="text-green-500 scale-150" />
-                         {/* Fix: Use numbers for SVG attributes */}
-                         {!reducedMotion && <circle cx={30} cy={45} r={10} fill="none" stroke="#32D74B" strokeWidth={3} className="shockwave" />}
-                         <animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0.2s" fill="freeze" />
-                    </g>
-                </>
+                <g transform="translate(265, 35)">
+                    {/* Shield Icon */}
+                    <ShieldIcon className="text-emerald-400 scale-125" />
+                    {/* Glowing Defense Barrier Wall */}
+                    <line x1={40} y1={5} x2={40} y2={95} stroke="#10B981" strokeWidth={3} strokeDasharray="4 2" />
+                    {!reducedMotion && (
+                        <circle cx={40} cy={50} r={18} fill="none" stroke="#34D399" strokeWidth={2} className="shockwave" />
+                    )}
+                    <text x={40} y={110} textAnchor="middle" fontSize={8} fill="#34D399" fontWeight={700}>EMAIL FILTER ACTIVE</text>
+                </g>
             )}
 
-            <Microcopy text={!defenseIsShown ? microcopy : module.animationSteps[4].microcopy} />
+            <Microcopy text={!defenseIsShown ? microcopy : module.animationSteps[4]?.microcopy} />
             <FocusHighlight point={focusPoint} isPaused={isFocusPaused} />
         </svg>
     );

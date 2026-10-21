@@ -202,7 +202,7 @@ export const DefendPage: React.FC<DefendPageProps> = ({ onBack }) => {
         <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#10B981', margin: 0, letterSpacing: '-0.02em' }}>
           Protection Zone
         </h2>
-        <p style={{ color: '#64748B', fontSize: '0.9rem', marginTop: '6px' }}>
+        <p style={{ color: '#CBD5E1', fontSize: '0.9rem', marginTop: '6px' }}>
           Choose your defenses, then launch the attack to see if you survive
         </p>
       </div>
@@ -225,7 +225,7 @@ export const DefendPage: React.FC<DefendPageProps> = ({ onBack }) => {
                 fontWeight: 700,
                 border: `1px solid ${isCurrent ? w.color : done ? (done.blocked ? '#10B981' : '#EF4444') : 'rgba(100,116,139,0.25)'}`,
                 backgroundColor: isCurrent ? `${w.color}15` : done ? (done.blocked ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)') : 'transparent',
-                color: isCurrent ? w.color : done ? (done.blocked ? '#10B981' : '#EF4444') : '#475569',
+                color: isCurrent ? w.color : done ? (done.blocked ? '#10B981' : '#EF4444') : '#94A3B8',
               }}
             >
               {w.icon} {w.name.split(' ')[0]}
@@ -254,11 +254,11 @@ export const DefendPage: React.FC<DefendPageProps> = ({ onBack }) => {
               <span style={{ fontSize: '2rem' }}>{wave.icon}</span>
               <div>
                 <div style={{ fontWeight: 800, color: wave.color, fontSize: '1.05rem' }}>{wave.name}</div>
-                <div style={{ color: '#94A3B8', fontSize: '0.82rem' }}>{wave.description}</div>
+                <div style={{ color: '#E2E8F0', fontSize: '0.82rem' }}>{wave.description}</div>
               </div>
             </div>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.72rem', color: '#64748B', fontWeight: 600 }}>Needs defense against:</span>
+              <span style={{ fontSize: '0.75rem', color: '#CBD5E1', fontWeight: 700 }}>Needs defense against:</span>
               {!launched && wave.requiredTools.map(t => (
                 <span
                   key={t}
@@ -397,7 +397,7 @@ export const DefendPage: React.FC<DefendPageProps> = ({ onBack }) => {
 
         {/* Right: Tool picker */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ fontWeight: 700, color: '#94A3B8', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <div style={{ fontWeight: 700, color: '#E2E8F0', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Your Defense Arsenal — select tools to activate
           </div>
           {TOOLS.map(tool => {
@@ -412,8 +412,8 @@ export const DefendPage: React.FC<DefendPageProps> = ({ onBack }) => {
                   gap: '12px',
                   padding: '12px 14px',
                   borderRadius: '11px',
-                  border: `1px solid ${isActive ? tool.color : 'rgba(100,116,139,0.2)'}`,
-                  backgroundColor: isActive ? `${tool.color}15` : 'rgba(15,23,42,0.5)',
+                  border: `1px solid ${isActive ? tool.color : 'rgba(100,116,139,0.3)'}`,
+                  backgroundColor: isActive ? `${tool.color}15` : 'rgba(15,23,42,0.6)',
                   color: '#E2E8F0',
                   cursor: launched ? 'not-allowed' : 'pointer',
                   transition: 'all 0.15s ease',
@@ -421,12 +421,12 @@ export const DefendPage: React.FC<DefendPageProps> = ({ onBack }) => {
                   opacity: launched ? 0.85 : 1,
                 }}
               >
-                <div style={{ color: isActive ? tool.color : '#64748B', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+                <div style={{ color: isActive ? tool.color : '#94A3B8', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
                   {tool.icon}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontWeight: 700, fontSize: '0.88rem', color: isActive ? tool.color : '#CBD5E1' }}>{tool.name}</div>
-                  <div style={{ fontSize: '0.73rem', color: '#64748B', marginTop: '2px', lineHeight: 1.4 }}>{tool.description}</div>
+                  <div style={{ fontWeight: 700, fontSize: '0.88rem', color: isActive ? tool.color : '#F8FAFC' }}>{tool.name}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#CBD5E1', marginTop: '2px', lineHeight: 1.4 }}>{tool.description}</div>
                 </div>
                 <div style={{ flexShrink: 0, display: 'flex', gap: '3px' }}>
                   {Array.from({ length: 5 }).map((_, i) => (

@@ -196,7 +196,7 @@ const GameMenu: React.FC<{ onSelect: (m: GameMode) => void }> = ({ onSelect }) =
       <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#A855F7', margin: 0, letterSpacing: '-0.02em' }}>
         Cyber Games
       </h2>
-      <p style={{ color: '#64748B', fontSize: '0.9rem', marginTop: '6px' }}>
+      <p style={{ color: '#CBD5E1', fontSize: '0.9rem', marginTop: '6px' }}>
         Test your cybersecurity knowledge through interactive challenges
       </p>
     </div>
@@ -276,7 +276,7 @@ const QuizGame: React.FC = () => {
           <div style={{ fontSize: '3rem', fontWeight: 900, color: pct >= 75 ? '#10B981' : pct >= 50 ? '#F59E0B' : '#EF4444', marginTop: '8px' }}>
             {score}/{QUIZ_QUESTIONS.length}
           </div>
-          <div style={{ color: '#64748B', fontSize: '0.9rem' }}>{pct}% — {score >= 6 ? 'Excellent!' : score >= 4 ? 'Good effort!' : 'Review the cybersecurity modules and try again.'}</div>
+          <div style={{ color: '#CBD5E1', fontSize: '0.9rem' }}>{pct}% — {score >= 6 ? 'Excellent!' : score >= 4 ? 'Good effort!' : 'Review the cybersecurity modules and try again.'}</div>
         </div>
         <button
           onClick={restart}
@@ -301,7 +301,7 @@ const QuizGame: React.FC = () => {
               <div key={i} style={{ width: '20px', height: '4px', borderRadius: '2px', backgroundColor: i < index ? '#10B981' : i === index ? '#A855F7' : 'rgba(100,116,139,0.3)' }} />
             ))}
           </div>
-          <span style={{ color: '#64748B', fontSize: '0.8rem', fontWeight: 600 }}>{index + 1}/{QUIZ_QUESTIONS.length}</span>
+          <span style={{ color: '#CBD5E1', fontSize: '0.8rem', fontWeight: 600 }}>{index + 1}/{QUIZ_QUESTIONS.length}</span>
         </div>
       </div>
 
@@ -404,7 +404,7 @@ const PasswordGame: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
       <div style={{ textAlign: 'center' }}>
         <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#06B6D4', margin: 0 }}>🔐 Password Strength Lab</h3>
-        <p style={{ color: '#64748B', fontSize: '0.85rem', marginTop: '4px' }}>Type any password to analyze its strength in real time</p>
+        <p style={{ color: '#CBD5E1', fontSize: '0.85rem', marginTop: '4px' }}>Type any password to analyze its strength in real time</p>
       </div>
 
       {/* Input */}
@@ -430,7 +430,7 @@ const PasswordGame: React.FC = () => {
         />
         <button
           onClick={() => setShow(s => !s)}
-          style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: '1.1rem' }}
+          style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#CBD5E1', cursor: 'pointer', fontSize: '1.1rem' }}
         >
           {show ? '🙈' : '👁'}
         </button>
@@ -441,7 +441,7 @@ const PasswordGame: React.FC = () => {
         <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Strength</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#CBD5E1', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Strength</span>
               <span style={{ fontWeight: 800, color: analysis.color, fontSize: '0.9rem' }}>{analysis.label}</span>
             </div>
             <div style={{ height: '8px', borderRadius: '4px', backgroundColor: 'rgba(100,116,139,0.2)', overflow: 'hidden' }}>
@@ -479,7 +479,7 @@ const PasswordGame: React.FC = () => {
 
       {/* Example passwords */}
       <div>
-        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
+        <div style={{ fontWeight: 700, fontSize: '0.78rem', color: '#CBD5E1', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
           Try these examples:
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -549,7 +549,7 @@ const ScamSpotter: React.FC = () => {
           <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#F59E0B', marginTop: '6px' }}>
             {score}/{SCAM_CARDS.length}
           </div>
-          <div style={{ color: '#64748B', fontSize: '0.88rem', marginTop: '6px' }}>messages correctly identified</div>
+          <div style={{ color: '#CBD5E1', fontSize: '0.88rem', marginTop: '6px' }}>messages correctly identified</div>
         </div>
         <button
           onClick={restart}
@@ -571,7 +571,7 @@ const ScamSpotter: React.FC = () => {
       </div>
 
       <div style={{ padding: '4px 0' }}>
-        <div style={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600, marginBottom: '10px' }}>Is this message SAFE or a SCAM?</div>
+        <div style={{ fontSize: '0.78rem', color: '#CBD5E1', fontWeight: 600, marginBottom: '10px' }}>Is this message SAFE or a SCAM?</div>
         <div style={{
           padding: '18px',
           borderRadius: '14px',
