@@ -130,11 +130,43 @@ export class ApiClient {
     });
   }
 
-  public async completeLesson(courseId: string, lessonId: string, score: number = 100): Promise<any> {
+  public async completeLesson(
+    courseId: string,
+    lessonId: string,
+    payload: number | { score?: number; answers?: Record<string, number>; watchTimeSeconds?: number; activityType?: string } = 100
+  ): Promise<any> {
+    const body = typeof payload === 'number' ? { score: payload } : payload;
     return this.request(`/api/courses/${courseId}/lessons/${lessonId}/complete`, {
       method: 'POST',
-      body: JSON.stringify({ score }),
+      body: JSON.stringify(body),
     });
+  }
+
+  public async recordPlayback(
+    courseId: string,
+    lessonId: string,
+    watchTimeSeconds: number,
+    videoCompleted: boolean = false
+  ): Promise<any> {
+    return this.request(`/api/courses/${courseId}/lessons/${lessonId}/playback`, {
+      method: 'POST',
+      body: JSON.stringify({ watchTimeSeconds, videoCompleted }),
+    });
+  }
+
+  public async getLeaderboard(
+    timeframe: 'all_time' | 'weekly' | 'daily' = 'all_time',
+    limit: number = 50
+  ): Promise<{ timeframe: string; entries: any[]; totalParticipants: number }> {
+    return this.request(`/api/leaderboard?timeframe=${timeframe}&limit=${limit}`);
+  }
+
+  public async getCertificates(): Promise<any[]> {
+    return this.request('/api/certificates');
+  }
+
+  public async verifyCertificate(code: string): Promise<any> {
+    return this.request(`/api/certificates/verify/${encodeURIComponent(code)}`);
   }
 
   public async recordLabAttempt(

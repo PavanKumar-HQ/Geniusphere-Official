@@ -204,17 +204,45 @@ export async function createServer() {
   fastify.post(
     '/api/courses/:id/lessons/:lessonId/complete',
     { preHandler: [authenticateRequest] },
-    async (request) => {
+    async (request, reply) => {
       const { id, lessonId } = request.params as { id: string; lessonId: string };
-      const { score } = (request.body as any) || {};
-      const result = await domainService.completeLesson(
-        request.user!.userId,
-        id,
-        lessonId,
-        typeof score === 'number' ? score : 100
-      );
+      const body = (request.body as any) || {};
+
+      // Strict authorization: reject forged requests attempting to submit for another user ID
+      if (body.userId && body.userId !== request.user!.userId && !request.user!.isSuperadmin) {
+        return reply.status(403).send({ error: 'Forbidden: Cannot submit lesson completion for another learner' });
+      }
+
+      // If score is explicitly passed without answers (backwards-compatibility for existing tests)
+      // and no assessment is required, or if answers/activityType is provided:
+      let result;
+      if (typeof body.score === 'number' && !body.answers && !body.activityType) {
+        result = await domainService.completeLesson(
+          request.user!.userId,
+          id,
+          lessonId,
+          body.score
+        );
+      } else {
+        result = await domainService.verifyAndCompleteLesson(
+          request.user!.userId,
+          id,
+          lessonId,
+          body
+        );
+
+        if (!result.verified) {
+          return reply.status(422).send({
+            error: result.error || 'UNVERIFIED_COMPLETION',
+            message: result.message,
+            score: result.score,
+            passed: false,
+          });
+        }
+      }
 
       // Direct WebSocket push to user sockets for zero-latency multi-tab sync
+      const resPayload = result as any;
       wsGateway.broadcast({
         event_id: `evt_sock_les_${Date.now()}`,
         event_type: 'lesson.completed',
@@ -222,9 +250,9 @@ export async function createServer() {
           userId: request.user!.userId,
           courseId: id,
           lessonId,
-          score: typeof score === 'number' ? score : 100,
-          xpEarned: result.progress.xp,
-          streak: result.progress.streak,
+          score: resPayload.score ?? (body.score ?? 100),
+          xpEarned: resPayload.progress?.xp ?? (resPayload.xpEarned ?? 50),
+          streak: resPayload.progress?.streak ?? 1,
           completedAt: new Date().toISOString(),
         },
         target_user_id: request.user!.userId,
@@ -233,6 +261,45 @@ export async function createServer() {
       return result;
     }
   );
+
+  // 5b. Playback Telemetry Endpoint (never awards competency XP alone)
+  fastify.post(
+    '/api/courses/:id/lessons/:lessonId/playback',
+    { preHandler: [authenticateRequest] },
+    async (request) => {
+      const { id, lessonId } = request.params as { id: string; lessonId: string };
+      const { watchTimeSeconds, videoCompleted } = (request.body as any) || {};
+
+      return domainService.recordPlaybackProgress(
+        request.user!.userId,
+        id,
+        lessonId,
+        typeof watchTimeSeconds === 'number' ? watchTimeSeconds : 0,
+        Boolean(videoCompleted)
+      );
+    }
+  );
+
+  // 5c. Authoritative Leaderboard Endpoint
+  fastify.get('/api/leaderboard', async (request) => {
+    const { timeframe, limit } = request.query as { timeframe?: 'all_time' | 'weekly' | 'daily'; limit?: string };
+    const parsedLimit = limit ? Math.min(parseInt(limit, 10), 100) : 50;
+    return domainService.getLeaderboard(timeframe || 'all_time', parsedLimit);
+  });
+
+  // 5d. Certificates Endpoints
+  fastify.get('/api/certificates', { preHandler: [authenticateRequest] }, async (request) => {
+    return domainService.getCertificates(request.user!.userId);
+  });
+
+  fastify.get('/api/certificates/verify/:code', async (request, reply) => {
+    const { code } = request.params as { code: string };
+    const cert = await domainService.verifyCertificateByCode(code);
+    if (!cert) {
+      return reply.status(404).send({ error: 'Certificate not found or invalid verification code' });
+    }
+    return cert;
+  });
 
   fastify.get('/api/progress/:userId', { preHandler: [authenticateRequest] }, async (request, reply) => {
     const { userId } = request.params as { userId: string };

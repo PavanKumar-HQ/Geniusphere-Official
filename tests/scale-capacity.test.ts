@@ -5,9 +5,9 @@ import { domainService } from '../server/services/domainService';
 
 describe('Geniusphere Scale & Capacity Verification Suite (1k - 10k MAU Target)', () => {
   const testStudent: UserSessionPayload = {
-    userId: '11111111-1111-1111-1111-111111111111',
-    email: 'learner@geniusphere.tech',
-    fullName: 'Pavan Kumar',
+    userId: '99999999-9999-9999-9999-999999999999',
+    email: 'scale.test@geniusphere.tech',
+    fullName: 'Scale Test Student',
     isSuperadmin: false,
     role: 'learner',
   };
@@ -16,6 +16,13 @@ describe('Geniusphere Scale & Capacity Verification Suite (1k - 10k MAU Target)'
   let courseId: string;
 
   beforeAll(async () => {
+    await query(
+      `INSERT INTO public.users (id, email, full_name, date_of_birth, is_minor, is_superadmin, account_status)
+       VALUES ($1, $2, $3, '2005-01-01', false, false, 'active')
+       ON CONFLICT (id) DO NOTHING`,
+      [testStudent.userId, testStudent.email, testStudent.fullName]
+    );
+
     const courses = await domainService.getCourses();
     expect(courses.length).toBeGreaterThan(0);
     courseId = courses[0].id;

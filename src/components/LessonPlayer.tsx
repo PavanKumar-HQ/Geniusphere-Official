@@ -432,6 +432,13 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
 
   const handleCompleteAndNext = async () => {
     if (!activeLesson || isSavingCompletion) return;
+
+    // Enforce verified learning: If lesson has a quiz, it must be passed first
+    if (activeLesson.quiz && (!quizSubmitted || (quizScore !== null && quizScore < 60))) {
+      setCompletionError('Knowledge check quiz must be passed (minimum 60% score) to verify module completion.');
+      return;
+    }
+
     setIsSavingCompletion(true);
     setCompletionError(null);
 
@@ -442,7 +449,11 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
       setEnrollment({ ...updated });
 
       // Server-authoritative PostgreSQL database sync
-      await apiClient.completeLesson(courseId, activeLesson.id, 100);
+      const res = await apiClient.completeLesson(courseId, activeLesson.id, {
+        answers: selectedAnswers,
+        score: quizScore ?? 100,
+        activityType: activeLesson.quiz ? 'assessment' : 'interactive',
+      });
 
       // Realtime notification for lesson completion
       backendEngine.notifications.dispatch(
@@ -456,11 +467,11 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
         'View Course'
       );
 
-      if (updated.progress_percent >= 100) {
+      if (res.certificate || updated.progress_percent >= 100) {
         const certs = db.getCertificates(currentUserId);
         const match = certs.find((c) => c.course_id === courseId);
-        if (match) {
-          setEarnedCertificate(match);
+        if (res.certificate || match) {
+          setEarnedCertificate(res.certificate || match);
         }
         backendEngine.notifications.dispatch(
           currentUserId,
@@ -482,7 +493,6 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
       }
     } catch (err: any) {
       console.error('[LessonPlayer] Server completion error:', err);
-      // Rollback to honest server-derived state
       setEnrollment(previousEnrollment);
       setCompletionError(err?.message || 'Failed to sync completion with server. Please retry.');
     } finally {
@@ -490,7 +500,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     }
   };
 
-  const handleQuizSubmit = (e: React.FormEvent) => {
+  const handleQuizSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeLesson?.quiz) return;
 
@@ -505,25 +515,38 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
     setQuizScore(pct);
     setQuizSubmitted(true);
 
-    if (pct >= 50) {
-      backendEngine.notifications.dispatch(
-        currentUserId,
-        `Quiz Passed (${pct}%)!`,
-        `Knowledge check passed for ${activeLesson.title}. +50 XP awarded!`,
-        'high',
-        'grade',
-        'course-detail',
-        course.slug,
-        'Next Module'
-      );
+    if (pct >= 60) {
+      try {
+        const res = await apiClient.completeLesson(courseId, activeLesson.id, {
+          answers: selectedAnswers,
+          score: pct,
+          activityType: 'assessment',
+        });
 
-      const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
-      setEnrollment({ ...updated });
-      if (updated.progress_percent >= 100) {
-        const certs = db.getCertificates(currentUserId);
-        const match = certs.find((c) => c.course_id === courseId);
-        if (match) setEarnedCertificate(match);
+        backendEngine.notifications.dispatch(
+          currentUserId,
+          `Quiz Passed (${pct}%)!`,
+          `Knowledge check passed for ${activeLesson.title}. +50 XP awarded!`,
+          'high',
+          'grade',
+          'course-detail',
+          course.slug,
+          'Next Module'
+        );
+
+        const updated = db.completeLesson(currentUserId, courseId, activeLesson.id);
+        setEnrollment({ ...updated });
+        if (res.certificate || updated.progress_percent >= 100) {
+          const certs = db.getCertificates(currentUserId);
+          const match = certs.find((c) => c.course_id === courseId);
+          if (res.certificate || match) setEarnedCertificate(res.certificate || match);
+        }
+      } catch (err: any) {
+        console.error('[LessonPlayer] Server verification error:', err);
+        setCompletionError(err?.message || 'Assessment verification failed.');
       }
+    } else {
+      setCompletionError(`Quiz score ${pct}% is below the 60% passing threshold. Review the material and try again.`);
     }
   };
 

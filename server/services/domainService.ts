@@ -1,5 +1,9 @@
+import crypto from 'crypto';
+import { PoolClient } from 'pg';
 import { query, withTransaction } from '../db';
 import { UserSessionPayload } from '../auth';
+import { config } from '../config';
+import { ALL_COURSES } from '../../src/data/curriculum';
 
 export class DomainService {
   /**
@@ -83,7 +87,140 @@ export class DomainService {
    * Complete a lesson, update XP, update streak, and create outbox event in ONE transaction
    */
   /**
-   * Complete a lesson, atomically award XP via xp_ledger, update streak, and create outbox event in ONE transaction
+   * Record video playback telemetry without awarding competency XP.
+   * Playback progress alone must NEVER award XP or mark a lesson completed.
+   */
+  public async recordPlaybackProgress(
+    userId: string,
+    courseId: string,
+    lessonId: string,
+    watchTimeSeconds: number,
+    videoCompleted: boolean = false
+  ) {
+    const courseRes = await query(
+      `SELECT id FROM public.courses WHERE id::text = $1 OR slug = $1 LIMIT 1`,
+      [courseId]
+    );
+    if (courseRes.rowCount === 0) {
+      throw new Error('Course not found');
+    }
+    const resolvedCourseId = courseRes.rows[0].id;
+
+    await query(
+      `INSERT INTO public.lesson_playback_telemetry (user_id, course_id, lesson_id, watch_time_seconds, video_completed, updated_at)
+       VALUES ($1, $2, $3, $4, $5, NOW())
+       ON CONFLICT (user_id, course_id, lesson_id)
+       DO UPDATE SET watch_time_seconds = EXCLUDED.watch_time_seconds,
+                     video_completed = EXCLUDED.video_completed,
+                     updated_at = NOW()`,
+      [userId, resolvedCourseId, lessonId, watchTimeSeconds, videoCompleted]
+    );
+
+    await query(
+      `UPDATE public.user_progress
+       SET total_time_spent_seconds = total_time_spent_seconds + $1,
+           last_active_at = NOW()
+       WHERE user_id = $2`,
+      [watchTimeSeconds, userId]
+    );
+
+    return { recorded: true, watchTimeSeconds, videoCompleted, xpEarned: 0 };
+  }
+
+  /**
+   * Verified lesson completion engine:
+   * Validates assessment answers server-side against canonical answer keys.
+   * Rejects unverified requests, failed scores, and playback-only submissions.
+   */
+  public async verifyAndCompleteLesson(
+    userId: string,
+    courseId: string,
+    lessonId: string,
+    payload: {
+      activityType?: 'video' | 'interactive' | 'assessment';
+      answers?: Record<string, number>;
+      watchTimeSeconds?: number;
+      passingScore?: number;
+    } = {}
+  ) {
+    // 1. Playback progress alone check
+    if (payload.activityType === 'video' && !payload.answers) {
+      if (typeof payload.watchTimeSeconds === 'number') {
+        await this.recordPlaybackProgress(userId, courseId, lessonId, payload.watchTimeSeconds, false);
+      }
+      return {
+        verified: false,
+        status: 'in_progress',
+        passed: false,
+        message: 'Video playback telemetry recorded. Competency XP requires completing the required lesson activity or assessment.',
+      };
+    }
+
+    // 2. Lookup lesson in canonical curriculum
+    const courseInCurriculum = ALL_COURSES.find(
+      (c) => c.id === courseId || c.slug === courseId
+    );
+    let quiz: any = null;
+    let passingThreshold = payload.passingScore || 60;
+
+    if (courseInCurriculum) {
+      for (const mod of courseInCurriculum.modules) {
+        const found = mod.lessons.find((l) => l.id === lessonId);
+        if (found) {
+          quiz = found.quiz;
+          break;
+        }
+      }
+    }
+
+    // 3. If quiz is present, validate answers server-side against answer key
+    let score = 100;
+    if (quiz && quiz.questions && quiz.questions.length > 0) {
+      if (!payload.answers || Object.keys(payload.answers).length === 0) {
+        return {
+          verified: false,
+          status: 'assessment_required',
+          passed: false,
+          error: 'ASSESSMENT_REQUIRED',
+          message: 'This lesson requires passing the knowledge check assessment.',
+        };
+      }
+
+      let correctCount = 0;
+      for (const q of quiz.questions) {
+        if (payload.answers[q.id] === q.correct_option_index) {
+          correctCount++;
+        }
+      }
+      score = Math.round((correctCount / quiz.questions.length) * 100);
+
+      if (score < passingThreshold) {
+        return {
+          verified: false,
+          status: 'failed',
+          passed: false,
+          score,
+          passingThreshold,
+          error: 'ASSESSMENT_NOT_PASSED',
+          message: `Assessment score ${score}% did not meet the required threshold of ${passingThreshold}%.`,
+        };
+      }
+    }
+
+    // 4. Record verified completion & award XP transactionally
+    const completionResult = await this.completeLesson(userId, courseId, lessonId, score);
+    return {
+      verified: true,
+      status: 'completed',
+      passed: true,
+      score,
+      ...completionResult,
+    };
+  }
+
+  /**
+   * Complete a lesson, atomically award XP via xp_ledger, update streak,
+   * check certificate eligibility, and emit outbox event in ONE transaction.
    */
   public async completeLesson(
     userId: string,
@@ -92,14 +229,24 @@ export class DomainService {
     score: number = 100
   ) {
     return withTransaction(async (client) => {
-      // 1. Verify course
+      // 1. Verify course (by UUID or slug)
       const courseRes = await client.query(
-        `SELECT id, title, slug FROM public.courses WHERE id = $1`,
+        `SELECT id, title, slug FROM public.courses WHERE id::text = $1 OR slug = $1 LIMIT 1`,
         [courseId]
       );
       if (courseRes.rowCount === 0) {
         throw new Error('Course not found');
       }
+      const courseRecord = courseRes.rows[0];
+      const resolvedCourseId = courseRecord.id;
+
+      // Ensure active enrollment exists
+      await client.query(
+        `INSERT INTO public.course_enrollments (course_id, user_id, status)
+         VALUES ($1, $2, 'active')
+         ON CONFLICT (course_id, user_id) DO NOTHING`,
+        [resolvedCourseId, userId]
+      );
 
       // 2. Insert or update lesson completion idempotently
       const compRes = await client.query(
@@ -108,12 +255,11 @@ export class DomainService {
          ON CONFLICT (user_id, course_id, lesson_id) 
          DO UPDATE SET score = GREATEST(lesson_completions.score, EXCLUDED.score), completed_at = NOW()
          RETURNING *`,
-        [userId, courseId, lessonId, score]
+        [userId, resolvedCourseId, lessonId, score]
       );
 
       // 3. Atomically attempt to insert reward into xp_ledger using unique constraint
-      // This is atomic and immune to double-clicks, concurrent requests, or network retries
-      const rewardKey = `lesson_complete:${userId}:${courseId}:${lessonId}`;
+      const rewardKey = `lesson_complete:${userId}:${resolvedCourseId}:${lessonId}`;
       const baseRewardAmount = 50;
 
       const ledgerRes = await client.query(
@@ -125,19 +271,17 @@ export class DomainService {
           userId,
           rewardKey,
           baseRewardAmount,
-          JSON.stringify({ courseId, lessonId, score }),
+          JSON.stringify({ courseId: resolvedCourseId, lessonId, score }),
         ]
       );
 
-      // Exactly ONE transaction will receive rowCount === 1, even under simultaneous execution
-      const isFirstEligibleCompletion = (ledgerRes.rowCount === 1);
+      const isFirstEligibleCompletion = ledgerRes.rowCount === 1;
       const xpReward = isFirstEligibleCompletion ? baseRewardAmount : 0;
 
       // 4. Mathematical streak calculation & authoritative XP reconciliation
       const now = new Date();
       const todayStr = now.toISOString().split('T')[0];
 
-      // Authoritative XP computed strictly from the sum of ledger records
       const sumRes = await client.query(
         `SELECT COALESCE(SUM(amount), 0)::int as total_xp FROM public.xp_ledger WHERE user_id = $1`,
         [userId]
@@ -175,7 +319,26 @@ export class DomainService {
         );
       }
 
-      // 5. Insert transactional outbox event (only for genuinely new completion or if outbox needs broadcast)
+      // 5. Check if all course lessons are completed for certificate issuance
+      let certificate = null;
+      const countRes = await client.query(
+        `SELECT COUNT(*)::int as count FROM public.lesson_completions WHERE user_id = $1 AND course_id = $2`,
+        [userId, resolvedCourseId]
+      );
+      const completedCount = countRes.rows[0]?.count || 0;
+      if (completedCount >= 10) {
+        const userRes = await client.query(`SELECT full_name FROM public.users WHERE id = $1`, [userId]);
+        const studentName = userRes.rows[0]?.full_name || 'Geniusphere Learner';
+        certificate = await this.issueCertificateInternal(
+          client,
+          userId,
+          resolvedCourseId,
+          courseRecord.title,
+          studentName
+        );
+      }
+
+      // 6. Insert transactional outbox event
       if (isFirstEligibleCompletion) {
         const eventId = `evt_les_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
         await client.query(
@@ -186,9 +349,9 @@ export class DomainService {
             'lesson.completed',
             JSON.stringify({
               userId,
-              courseId,
-              courseTitle: courseRes.rows[0].title,
-              courseSlug: courseRes.rows[0].slug,
+              courseId: resolvedCourseId,
+              courseTitle: courseRecord.title,
+              courseSlug: courseRecord.slug,
               lessonId,
               score,
               xpEarned: xpReward,
@@ -202,8 +365,83 @@ export class DomainService {
       return {
         completion: compRes.rows[0],
         progress: { xp: authoritativeXp, streak: currentStreak },
+        certificate,
+        alreadyCompleted: !isFirstEligibleCompletion,
+        xpEarned: xpReward,
       };
     }, userId);
+  }
+
+  private async issueCertificateInternal(
+    client: PoolClient,
+    userId: string,
+    courseId: string,
+    courseTitle: string,
+    studentName: string
+  ) {
+    const code = `CERT-${courseId.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+    const hash = crypto
+      .createHmac('sha256', config.jwtSecret || 'geniusphere_jwt_secret_dev_2026_default_key')
+      .update(`${userId}:${courseId}:${code}`)
+      .digest('hex');
+
+    const certRes = await client.query(
+      `INSERT INTO public.certificates 
+       (user_id, course_id, course_title, student_name, verification_code, verification_hash, grade, skills_acquired, issued_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 100, $7, NOW())
+       ON CONFLICT (user_id, course_id) DO UPDATE SET issued_at = NOW()
+       RETURNING *`,
+      [
+        userId,
+        courseId,
+        courseTitle,
+        studentName,
+        code,
+        hash,
+        JSON.stringify(['Domain Competency', 'Practical Laboratory Mastery', 'Verified Assessments']),
+      ]
+    );
+
+    const cert = certRes.rows[0];
+
+    const eventId = `evt_cert_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    await client.query(
+      `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
+       VALUES ($1, $2, $3)`,
+      [
+        eventId,
+        'certificate.issued',
+        JSON.stringify({
+          certificateId: cert.id,
+          userId,
+          courseId,
+          courseTitle,
+          verificationCode: cert.verification_code,
+          issuedAt: cert.issued_at,
+        }),
+      ]
+    );
+
+    return cert;
+  }
+
+  public async getCertificates(userId: string) {
+    const res = await query(
+      `SELECT * FROM public.certificates WHERE user_id = $1 ORDER BY issued_at DESC`,
+      [userId]
+    );
+    return res.rows;
+  }
+
+  public async verifyCertificateByCode(code: string) {
+    const res = await query(
+      `SELECT c.*, u.email as student_email
+       FROM public.certificates c
+       JOIN public.users u ON u.id = c.user_id
+       WHERE c.verification_code = $1 LIMIT 1`,
+      [code]
+    );
+    return res.rows[0] || null;
   }
 
   /**
@@ -395,18 +633,69 @@ export class DomainService {
     }, actor.userId);
   }
 
+  /**
+   * Authoritative Leaderboard Aggregator:
+   * Aggregates strictly from persisted public.xp_ledger rows.
+   * Privacy-preserving: Masks minors' full names (e.g. "A***") for child safety compliance.
+   * Deterministic window ranking with tie-breaking.
+   */
+  public async getLeaderboard(
+    timeframe: 'all_time' | 'weekly' | 'daily' = 'all_time',
+    limit: number = 50
+  ) {
+    let dateFilter = '';
+    if (timeframe === 'weekly') {
+      dateFilter = `AND l.created_at >= NOW() - INTERVAL '7 days'`;
+    } else if (timeframe === 'daily') {
+      dateFilter = `AND l.created_at >= NOW() - INTERVAL '24 hours'`;
+    }
+
+    const res = await query(
+      `SELECT 
+         u.id as user_id,
+         CASE 
+           WHEN u.is_minor THEN SUBSTRING(u.full_name FROM 1 FOR 1) || '***'
+           ELSE u.full_name 
+         END as display_name,
+         u.is_minor,
+         COALESCE(SUM(l.amount), 0)::int as total_xp,
+         DENSE_RANK() OVER (ORDER BY COALESCE(SUM(l.amount), 0) DESC, u.id ASC)::int as rank
+       FROM public.users u
+       JOIN public.xp_ledger l ON l.user_id = u.id
+       WHERE u.account_status = 'active' ${dateFilter}
+       GROUP BY u.id, u.full_name, u.is_minor
+       ORDER BY total_xp DESC, rank ASC
+       LIMIT $1`,
+      [limit]
+    );
+
+    return {
+      timeframe,
+      entries: res.rows,
+      totalParticipants: res.rowCount,
+    };
+  }
+
   public calculateStreak(
-    lastExtendedDateStr: string | null,
-    todayDateStr: string,
+    lastExtendedDateStr: string | Date | null,
+    todayDateStr: string | Date,
     currentStreak: number
   ): number {
     if (!lastExtendedDateStr) return 1;
-    const lastDate = new Date(lastExtendedDateStr);
-    const today = new Date(todayDateStr);
-    const diffDays = Math.floor(
-      (today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    if (diffDays === 0) return currentStreak;
+    const str1 = lastExtendedDateStr instanceof Date 
+      ? lastExtendedDateStr.toISOString() 
+      : String(lastExtendedDateStr);
+    const str2 = todayDateStr instanceof Date 
+      ? todayDateStr.toISOString() 
+      : String(todayDateStr);
+
+    const [y1, m1, d1] = str1.split('T')[0].split('-').map(Number);
+    const [y2, m2, d2] = str2.split('T')[0].split('-').map(Number);
+    const utc1 = Date.UTC(y1, m1 - 1, d1);
+    const utc2 = Date.UTC(y2, m2 - 1, d2);
+    const diffDays = Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return currentStreak;
     if (diffDays === 1) return currentStreak + 1;
     return 1;
   }
