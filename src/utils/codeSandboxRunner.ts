@@ -16,6 +16,145 @@ export interface ExecutionResult {
   hasErrors: boolean;
 }
 
+/**
+ * Privileged capabilities strictly blocked from untrusted learner execution
+ */
+export const FORBIDDEN_SANDBOX_CAPABILITIES = [
+  'window', 'document', 'globalThis', 'top', 'parent', 'frames',
+  'fetch', 'XMLHttpRequest', 'WebSocket', 'EventSource',
+  'Worker', 'SharedWorker', 'ServiceWorker',
+  'localStorage', 'sessionStorage', 'indexedDB', 'cookieStore',
+  'importScripts', 'process', 'require', '__proto__', 'constructor',
+];
+
+/**
+ * Strictly evaluated safe arithmetic expression parser.
+ * Supports integers, floating-point numbers, parentheses, and operators: +, -, *, /, %
+ * Enforces zero access to JavaScript runtime, globals, functions, or arbitrary code.
+ */
+export function safeEvaluateArithmeticExpression(
+  expr: string,
+  vars: Record<string, number> = {}
+): number {
+  const trimmed = expr.trim();
+  if (!trimmed) return 0;
+
+  // 1. Strict lexical validation: allow ONLY numbers, identifiers (vars), operators +, -, *, /, %, parentheses, and spaces.
+  if (/[^0-9a-zA-Z_\s+\-*\/%().]/.test(trimmed)) {
+    throw new Error(`Security / Syntax Violation: Unauthorized characters in arithmetic expression: "${expr}"`);
+  }
+
+  // 2. Tokenize
+  const tokenRegex = /\s*([0-9]+(?:\.[0-9]+)?|[a-zA-Z_]\w*|[+\-*\/%()])\s*/g;
+  let match: RegExpExecArray | null;
+  const tokens: string[] = [];
+  let lastIndex = 0;
+
+  while ((match = tokenRegex.exec(trimmed)) !== null) {
+    if (match.index !== lastIndex) {
+      throw new Error(`Syntax Error: Unexpected token near "${trimmed.slice(lastIndex, match.index)}"`);
+    }
+    tokens.push(match[1]);
+    lastIndex = tokenRegex.lastIndex;
+  }
+
+  if (lastIndex !== trimmed.length) {
+    throw new Error(`Syntax Error: Trailing unparsed tokens in "${trimmed.slice(lastIndex)}"`);
+  }
+
+  // 3. Shunting-Yard Algorithm to convert Infix to RPN
+  const outputQueue: (number | string)[] = [];
+  const operatorStack: string[] = [];
+  const precedence: Record<string, number> = { '+': 1, '-': 1, '*': 2, '/': 2, '%': 2 };
+
+  let expectingOperand = true;
+
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+
+    if (/^[0-9]+(?:\.[0-9]+)?$/.test(token)) {
+      outputQueue.push(parseFloat(token));
+      expectingOperand = false;
+    } else if (/^[a-zA-Z_]\w*$/.test(token)) {
+      if (vars[token] !== undefined) {
+        outputQueue.push(vars[token]);
+        expectingOperand = false;
+      } else {
+        throw new Error(`ReferenceError: Variable '${token}' is not defined.`);
+      }
+    } else if (token === '(') {
+      operatorStack.push(token);
+      expectingOperand = true;
+    } else if (token === ')') {
+      while (operatorStack.length > 0 && operatorStack[operatorStack.length - 1] !== '(') {
+        outputQueue.push(operatorStack.pop()!);
+      }
+      if (operatorStack.length === 0 || operatorStack.pop() !== '(') {
+        throw new Error('Syntax Error: Mismatched parentheses.');
+      }
+      expectingOperand = false;
+    } else if (token in precedence) {
+      if (token === '-' && expectingOperand) {
+        outputQueue.push(0); // Unary minus: 0 - x
+      }
+      while (
+        operatorStack.length > 0 &&
+        operatorStack[operatorStack.length - 1] !== '(' &&
+        precedence[operatorStack[operatorStack.length - 1]] >= precedence[token]
+      ) {
+        outputQueue.push(operatorStack.pop()!);
+      }
+      operatorStack.push(token);
+      expectingOperand = true;
+    } else {
+      throw new Error(`Syntax Error: Unrecognized operator '${token}'`);
+    }
+  }
+
+  while (operatorStack.length > 0) {
+    const op = operatorStack.pop()!;
+    if (op === '(' || op === ')') {
+      throw new Error('Syntax Error: Mismatched parentheses.');
+    }
+    outputQueue.push(op);
+  }
+
+  // 4. Evaluate RPN
+  const evalStack: number[] = [];
+  for (const item of outputQueue) {
+    if (typeof item === 'number') {
+      evalStack.push(item);
+    } else {
+      const b = evalStack.pop();
+      const a = evalStack.pop();
+      if (a === undefined || b === undefined) {
+        throw new Error('Syntax Error: Insufficient operands for operator ' + item);
+      }
+      switch (item) {
+        case '+': evalStack.push(a + b); break;
+        case '-': evalStack.push(a - b); break;
+        case '*': evalStack.push(a * b); break;
+        case '/':
+          if (b === 0) throw new Error('DivisionByZero: Division by zero is undefined.');
+          evalStack.push(a / b);
+          break;
+        case '%':
+          if (b === 0) throw new Error('DivisionByZero: Modulo by zero is undefined.');
+          evalStack.push(a % b);
+          break;
+        default:
+          throw new Error('Unsupported operator: ' + item);
+      }
+    }
+  }
+
+  if (evalStack.length !== 1) {
+    throw new Error('Syntax Error: Malformed arithmetic expression.');
+  }
+
+  return evalStack[0];
+}
+
 // ====================================================================
 // 1. PYTHON CLIENT-SIDE INTERPRETER
 // ====================================================================
@@ -34,6 +173,22 @@ export function executePythonCode(sourceCode: string): ExecutionResult {
       executionTimeMs: 0,
       hasErrors: true,
     };
+  }
+
+  // Static security check: block attempts to access privileged environment capabilities
+  for (const cap of FORBIDDEN_SANDBOX_CAPABILITIES) {
+    const capRegex = new RegExp(`\\b${cap}\\b`);
+    if (capRegex.test(sourceCode)) {
+      return {
+        stdout: [],
+        stderr: [
+          `SecurityViolationError: Access to privileged environment capability '${cap}' is prohibited in the educational sandbox.`
+        ],
+        exitCode: 126,
+        executionTimeMs: 0,
+        hasErrors: true,
+      };
+    }
   }
 
   try {
@@ -442,7 +597,7 @@ export function executeCCode(sourceCode: string): ExecutionResult {
           if (floatVars[arg] !== undefined) return floatVars[arg];
           if (strVars[arg] !== undefined) return strVars[arg];
           try {
-            return Function(`"use strict"; return (${arg});`)();
+            return safeEvaluateArithmeticExpression(arg, intVars);
           } catch {
             return arg;
           }
@@ -490,12 +645,7 @@ export function executeCCode(sourceCode: string): ExecutionResult {
         const varName = intMatch[1];
         const expr = intMatch[2];
         try {
-          // Replace references with resolved values
-          let resolved = expr;
-          for (const [k, v] of Object.entries(intVars)) {
-            resolved = resolved.replace(new RegExp(`\\b${k}\\b`, 'g'), String(v));
-          }
-          intVars[varName] = Math.floor(Function(`"use strict"; return (${resolved});`)());
+          intVars[varName] = Math.floor(safeEvaluateArithmeticExpression(expr, intVars));
         } catch {
           intVars[varName] = 0;
         }
@@ -546,6 +696,23 @@ export function executeJavaScriptCode(sourceCode: string): ExecutionResult {
     };
   }
 
+  // 1. Static security check: block access to privileged browser / environment APIs
+  for (const cap of FORBIDDEN_SANDBOX_CAPABILITIES) {
+    const capRegex = new RegExp(`\\b${cap}\\b`);
+    if (capRegex.test(sourceCode)) {
+      return {
+        stdout: [],
+        stderr: [
+          `SecurityViolationError: Access to privileged environment capability '${cap}' is prohibited in the educational sandbox.`,
+          `The browser sandbox restricts DOM, networking, and storage APIs for security and learner isolation.`
+        ],
+        exitCode: 126,
+        executionTimeMs: 0,
+        hasErrors: true,
+      };
+    }
+  }
+
   try {
     const customConsole = {
       log: (...args: any[]) => {
@@ -573,8 +740,31 @@ export function executeJavaScriptCode(sourceCode: string): ExecutionResult {
       },
     };
 
-    const runner = new Function('console', 'Math', 'JSON', 'Date', 'Array', 'Object', sourceCode);
-    const result = runner(customConsole, Math, JSON, Date, Array, Object);
+    // 2. Loop guard injection: prevent infinite while and for loops from freezing the UI thread
+    let guardedCode = sourceCode;
+    const maxOps = 50000;
+    guardedCode = guardedCode.replace(
+      /\bwhile\s*\((.*?)\)\s*\{/g,
+      `while ($1) { if (++_guard > ${maxOps}) throw new Error('TimeLimitExceeded: Infinite loop guard tripped (>50,000 operations).');`
+    );
+    guardedCode = guardedCode.replace(
+      /\bfor\s*\((.*?)\)\s*\{/g,
+      `for ($1) { if (++_guard > ${maxOps}) throw new Error('TimeLimitExceeded: Loop instruction limit exceeded (>50,000 operations).');`
+    );
+
+    // 3. Shadow privileged globals with undefined to prevent scope leakage
+    const runner = new Function(
+      '_guard',
+      'console', 'Math', 'JSON', 'Date', 'Array', 'Object', 'String', 'Number', 'Boolean', 'RegExp',
+      'window', 'document', 'globalThis', 'fetch', 'localStorage', 'sessionStorage', 'indexedDB',
+      `"use strict";\n${guardedCode}`
+    );
+    let loopGuard = 0;
+    const result = runner(
+      loopGuard,
+      customConsole, Math, JSON, Date, Array, Object, String, Number, Boolean, RegExp,
+      undefined, undefined, undefined, undefined, undefined, undefined, undefined
+    );
     if (result !== undefined && stdout.length === 0) {
       stdout.push(typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result));
     }

@@ -31,17 +31,20 @@ export class TransactionalOutbox {
     }
   }
 
+  /**
+   * Cleans up browser event listeners without erasing queued durable work.
+   */
   public destroy(): void {
     if (typeof window !== 'undefined') {
       window.removeEventListener('online', this.handleOnline);
     }
-    this.events.clear();
-    this.idempotencyIndex.clear();
+    // Preserves in-memory & localStorage queued events. To purge intentionally, call clear().
   }
 
   /**
    * Atomically records a domain event into the outbox.
    * Enforces idempotency to prevent duplicate event creation.
+   * Never silently discards undispatched business work (XP, assessments, enrollments).
    */
   public recordEvent<T = any>(event: DomainEvent<T>): boolean {
     if (this.idempotencyIndex.has(event.idempotency_key)) {
@@ -49,7 +52,7 @@ export class TransactionalOutbox {
       return false;
     }
 
-    // Capacity bound: prune oldest dispatched events first
+    // Capacity bound: prune oldest dispatched (acknowledged) events only
     if (this.events.size >= MAX_OUTBOX_CAPACITY) {
       for (const [id, ev] of this.events.entries()) {
         if (ev.status === 'dispatched') {
@@ -58,14 +61,14 @@ export class TransactionalOutbox {
           if (this.events.size < MAX_OUTBOX_CAPACITY) break;
         }
       }
-      // If still full, evict oldest FIFO
+
+      // If capacity is still full because ALL 200 events are pending/failed,
+      // reject enqueue rather than silently dropping unacknowledged business data!
       if (this.events.size >= MAX_OUTBOX_CAPACITY) {
-        const oldestId = this.events.keys().next().value;
-        if (oldestId) {
-          const ev = this.events.get(oldestId);
-          if (ev) this.idempotencyIndex.delete(ev.idempotency_key);
-          this.events.delete(oldestId);
-        }
+        console.warn(
+          `[TransactionalOutbox] Backpressure: queue capacity reached (${MAX_OUTBOX_CAPACITY} undispatched events). Enqueue rejected to preserve uncommitted work.`
+        );
+        return false;
       }
     }
 

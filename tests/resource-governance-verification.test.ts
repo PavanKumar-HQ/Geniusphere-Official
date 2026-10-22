@@ -16,6 +16,12 @@ import { OutboxWorker } from '../server/services/outboxWorker';
 import { RealtimeBus } from '../src/backend/RealtimeBus';
 import { TransactionalOutbox } from '../src/backend/TransactionalOutbox';
 import { WebPushService } from '../src/services/WebPushService';
+import {
+  executeCCode,
+  executeJavaScriptCode,
+  executePythonCode,
+  safeEvaluateArithmeticExpression,
+} from '../src/utils/codeSandboxRunner';
 import { wsGateway } from '../server/services/websocketGateway';
 import { generateToken } from '../server/auth';
 
@@ -419,8 +425,9 @@ describe('E. TransactionalOutbox — resource governance & bounded capacity', ()
     outbox.destroy();
   });
 
-  it('E3. destroy() clears events and removes listeners', () => {
+  it('E3. destroy() preserves queued durable work, clear() purges events explicitly', () => {
     const outbox = new TransactionalOutbox();
+    outbox.clear();
     outbox.recordEvent({
       id: 'clean-1',
       idempotency_key: 'clean-k-1',
@@ -435,6 +442,9 @@ describe('E. TransactionalOutbox — resource governance & bounded capacity', ()
 
     expect(outbox.getAllEvents().length).toBeGreaterThan(0);
     outbox.destroy();
+    // Preserves uncommitted work across destroy
+    expect(outbox.getAllEvents().length).toBeGreaterThan(0);
+    outbox.clear();
     expect(outbox.getAllEvents().length).toBe(0);
   });
 });
@@ -458,5 +468,86 @@ describe('F. WebPushService — real-engineering zero-mock integrity', () => {
     const push = new WebPushService();
     const supported = push.isPushSupported();
     expect(typeof supported).toBe('boolean');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// G. Code Sandbox Security & Adversarial Isolation
+// ─────────────────────────────────────────────────────────────────────────────
+describe('G. Code Sandbox Security & Adversarial Isolation', () => {
+  it('G1. Safe arithmetic evaluator computes valid math without eval or Function', () => {
+    expect(safeEvaluateArithmeticExpression('10 + 20 * 3')).toBe(70);
+    expect(safeEvaluateArithmeticExpression('(10 + 20) * 3')).toBe(90);
+    expect(safeEvaluateArithmeticExpression('100 / 4 - 5')).toBe(20);
+    expect(safeEvaluateArithmeticExpression('x * 2 + y', { x: 5, y: 15 })).toBe(25);
+    expect(safeEvaluateArithmeticExpression('-5 + 10')).toBe(5);
+  });
+
+  it('G2. Safe arithmetic evaluator rejects unauthorized code injection and syntax escape attempts', () => {
+    expect(() => safeEvaluateArithmeticExpression('window.location')).toThrow();
+    expect(() => safeEvaluateArithmeticExpression('fetch("http://evil.com")')).toThrow();
+    expect(() => safeEvaluateArithmeticExpression('10; document.cookie')).toThrow();
+    expect(() => safeEvaluateArithmeticExpression('(function() { return 1; })()')).toThrow();
+    expect(() => safeEvaluateArithmeticExpression('10 / 0')).toThrow(/DivisionByZero/);
+  });
+
+  it('G3. C interpreter evaluates arithmetic with safe parser and does not execute JavaScript code', () => {
+    const code = `
+      #include <stdio.h>
+      int main() {
+        int a = 15;
+        int b = a * 2 + 10;
+        printf("Result: %d\\n", b);
+        return 0;
+      }
+    `;
+    const res = executeCCode(code);
+    expect(res.hasErrors).toBe(false);
+    expect(res.stdout).toContain('Result: 40');
+  });
+
+  it('G4. JavaScript execution blocks privileged window, document, and globalThis access', () => {
+    const code1 = 'console.log(window.location.href);';
+    const res1 = executeJavaScriptCode(code1);
+    expect(res1.hasErrors).toBe(true);
+    expect(res1.exitCode).toBe(126);
+    expect(res1.stderr[0]).toContain('SecurityViolationError');
+
+    const code2 = 'document.body.innerHTML = "hacked";';
+    const res2 = executeJavaScriptCode(code2);
+    expect(res2.hasErrors).toBe(true);
+    expect(res2.exitCode).toBe(126);
+  });
+
+  it('G5. JavaScript execution blocks fetch and storage capabilities', () => {
+    const codeFetch = 'fetch("https://api.geniusphere.tech/secret");';
+    const resFetch = executeJavaScriptCode(codeFetch);
+    expect(resFetch.hasErrors).toBe(true);
+    expect(resFetch.exitCode).toBe(126);
+
+    const codeStorage = 'localStorage.clear();';
+    const resStorage = executeJavaScriptCode(codeStorage);
+    expect(resStorage.hasErrors).toBe(true);
+    expect(resStorage.exitCode).toBe(126);
+  });
+
+  it('G6. JavaScript loop guard prevents infinite loops from hanging execution', () => {
+    const infiniteWhile = `
+      let i = 0;
+      while (true) {
+        i++;
+      }
+    `;
+    const res = executeJavaScriptCode(infiniteWhile);
+    expect(res.hasErrors).toBe(true);
+    expect(res.stderr.some((s) => s.includes('TimeLimitExceeded'))).toBe(true);
+  });
+
+  it('G7. Python execution blocks privileged capability access', () => {
+    const pythonPrivileged = 'print(window.document)';
+    const res = executePythonCode(pythonPrivileged);
+    expect(res.hasErrors).toBe(true);
+    expect(res.exitCode).toBe(126);
+    expect(res.stderr[0]).toContain('SecurityViolationError');
   });
 });
