@@ -16,6 +16,8 @@
 
 Geniusphere is a full product educational technology platform engineered for independent learners, educational institutions (schools, PU colleges, universities), educators, and parents. The platform combines interactive simulation engines, code sandboxes, 40 canonical courses across 3 career streams, teacher cohort gradebooks, DPDP Act 2023 minor safeguarding, and cryptographically verifiable HMAC-SHA256 credentials.
 
+> 📜 **Authoritative Source of Truth:** [Geniusphere Product Purpose, Learning Experience & Polyglot Engineering Constitution](docs/PRODUCT_CONSTITUTION.md)
+
 ---
 
 ## 🏛️ Platform Architecture
