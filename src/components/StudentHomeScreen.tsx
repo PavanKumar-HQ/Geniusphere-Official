@@ -196,8 +196,8 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
       {/* ================================================================ */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #1E3A2F 0%, #153225 100%)',
-          borderRadius: '28px',
+          background: 'linear-gradient(135deg, #0F172A 0%, #064E3B 55%, #047857 100%)',
+          borderRadius: '24px',
           padding: '28px 32px',
           color: '#FFFFFF',
           display: 'flex',
@@ -205,53 +205,53 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: '24px',
-          boxShadow: '0 12px 36px rgba(21, 50, 37, 0.25)',
+          boxShadow: '0 16px 36px -6px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(16, 185, 129, 0.2)',
           position: 'relative',
           overflow: 'hidden',
-          border: '1.5px solid rgba(169, 200, 106, 0.3)',
         }}
       >
         {/* Glow Accent */}
         <div
           style={{
             position: 'absolute',
-            top: '-50px',
-            right: '-50px',
-            width: '240px',
-            height: '240px',
-            background: 'radial-gradient(circle, rgba(169, 200, 106, 0.2) 0%, transparent 70%)',
+            top: '-60px',
+            right: '-40px',
+            width: '280px',
+            height: '280px',
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
 
         <div style={{ flex: 1, minWidth: '280px', zIndex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
             <span
               style={{
-                backgroundColor: 'rgba(169, 200, 106, 0.2)',
-                color: '#D1FAE5',
+                backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                color: '#34D399',
                 padding: '4px 10px',
-                borderRadius: '6px',
+                borderRadius: '100px',
                 fontSize: '0.72rem',
                 fontWeight: 800,
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
+                border: '1px solid rgba(52, 211, 153, 0.25)',
               }}
             >
               CONTINUE YOUR LESSON
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#A7F3D0', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.75rem', color: '#6EE7B7', fontWeight: 600 }}>
               {primaryCourse?.domain?.toUpperCase()}
             </span>
           </div>
 
-          <h2 style={{ fontSize: 'clamp(1.35rem, 2.5vw, 1.85rem)', fontWeight: 900, margin: '0 0 6px', color: '#FFFFFF', lineHeight: 1.25 }}>
+          <h2 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 1.95rem)', fontWeight: 800, margin: '0 0 8px', color: '#FFFFFF', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
             {primaryCourse?.title}
           </h2>
 
-          <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: '#D1FAE5', opacity: 0.95, maxWidth: '580px', lineHeight: 1.4 }}>
+          <p style={{ margin: '0 0 18px', fontSize: '0.9rem', color: '#CBD5E1', maxWidth: '580px', lineHeight: 1.5 }}>
             {nextLesson?.lesson ? (
-              <span>Next up: <strong>{nextLesson.lesson.title}</strong></span>
+              <span>Next up: <strong style={{ color: '#F8FAFC' }}>{nextLesson.lesson.title}</strong></span>
             ) : (
               primaryCourse?.summary
             )}
@@ -259,19 +259,19 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Genuine Persisted Progress Bar */}
           <div style={{ maxWidth: '420px', marginBottom: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', fontWeight: 700, marginBottom: '6px', color: '#EAF4D3' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', fontWeight: 700, marginBottom: '6px', color: '#94A3B8' }}>
               <span>{completedCount} of {totalLessonsCount} lessons mastered</span>
-              <span style={{ fontWeight: 800 }}>{progressPercent}% Complete</span>
+              <span style={{ fontWeight: 800, color: '#34D399' }}>{progressPercent}% Complete</span>
             </div>
-            <div style={{ height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.12)', borderRadius: '100px', overflow: 'hidden' }}>
               <div
                 style={{
                   width: `${Math.max(5, progressPercent)}%`,
                   height: '100%',
-                  backgroundColor: '#A9C86A',
-                  borderRadius: '4px',
+                  background: 'linear-gradient(90deg, #10B981, #34D399)',
+                  borderRadius: '100px',
                   transition: 'width 0.4s ease',
-                  boxShadow: '0 0 8px rgba(169, 200, 106, 0.6)',
+                  boxShadow: '0 0 10px rgba(52, 211, 153, 0.6)',
                 }}
               />
             </div>
@@ -284,24 +284,30 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             type="button"
             onClick={handleResumePrimaryLesson}
             style={{
-              backgroundColor: '#A9C86A',
-              color: '#153225',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              color: '#FFFFFF',
               border: 'none',
               borderRadius: '100px',
-              padding: '16px 32px',
-              fontWeight: 900,
-              fontSize: '1rem',
+              padding: '14px 28px',
+              fontWeight: 800,
+              fontSize: '0.96rem',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '10px',
-              boxShadow: '0 6px 18px rgba(0, 0, 0, 0.25)',
+              boxShadow: '0 8px 24px -4px rgba(16, 185, 129, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2)',
               transition: 'transform 0.15s ease, box-shadow 0.15s ease',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 12px 28px -4px rgba(16, 185, 129, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 24px -4px rgba(16, 185, 129, 0.5)';
+            }}
           >
-            <Play size={20} fill="#153225" />
+            <Play size={18} fill="#FFFFFF" />
             <span>Resume Lesson</span>
             <ArrowRight size={18} />
           </button>

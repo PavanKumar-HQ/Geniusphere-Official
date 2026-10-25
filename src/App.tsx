@@ -582,12 +582,13 @@ export const App: React.FC = () => {
         className="platform-header"
         style={{
           backgroundColor: 'var(--bg-surface)',
-          borderTop: '3px solid var(--brand-primary)',
           borderBottom: '1px solid var(--border-subtle)',
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+          boxShadow: '0 1px 4px rgba(15, 23, 42, 0.04)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
         }}
       >
         <div
@@ -652,7 +653,7 @@ export const App: React.FC = () => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
+                gap: '10px',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
@@ -662,25 +663,25 @@ export const App: React.FC = () => {
             >
               <div
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--brand-primary)',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  background: 'var(--grad-brand)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#FFFFFF',
-                  boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
                 }}
               >
-                <ShieldCheck size={22} />
+                <ShieldCheck size={20} />
               </div>
               <span
                 style={{
-                  fontFamily: 'Space Grotesk, sans-serif',
-                  fontSize: '1.4rem',
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '1.35rem',
                   fontWeight: 800,
-                  letterSpacing: '-0.02em',
+                  letterSpacing: '-0.03em',
                   color: 'var(--text-primary)',
                   lineHeight: 1.1,
                 }}

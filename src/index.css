@@ -36,36 +36,36 @@ button:focus-visible {
    ==================================================================== */
 
 :root {
-  /* Clean, Expressive Normalized Typography: Space Grotesk + Inter */
-  --font-display-brand: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Ultra-Clean Modern Typography: Plus Jakarta Sans (Headings/Brand) + Inter (UI/Body) */
+  --font-display-brand: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
 
-  /* Master Editorial Palette: Warm Ivory + Soft Sage + Forest Green + Muted Lime + Mist Green + Charcoal + Pure White */
-  --bg-canvas: #F7F6F0;                  /* Main Background: Warm Ivory */
-  --bg-surface: #FFFFFF;                 /* Pure White Surface / Canvas Cards */
-  --bg-surface-subdued: #E8EDE4;         /* Secondary Surfaces: Soft Sage */
+  /* Master Modern App Palette: Clean Slate + Luminous Emerald + Ice Gray */
+  --bg-canvas: #F8FAFC;                  /* Crisp Clean Slate 50 Canvas */
+  --bg-surface: #FFFFFF;                 /* Pure White Surface Cards */
+  --bg-surface-subdued: #F1F5F9;         /* Modern Slate 100 Secondary Surface */
   --bg-surface-elevated: #FFFFFF;
 
-  --brand-primary: #244C3A;              /* Primary actions and active states: Forest Green */
-  --brand-primary-bright: #2d5e48;
-  --brand-primary-hover: #1b382b;
-  --brand-primary-active: #142920;
-  --brand-forest: #244C3A;
+  --brand-primary: #059669;              /* Vibrant Emerald Primary */
+  --brand-primary-bright: #10B981;       /* Radiant Mint Accent */
+  --brand-primary-hover: #047857;
+  --brand-primary-active: #064E3B;
+  --brand-forest: #059669;
 
-  --brand-surface: #E8EDE4;              /* Secondary Surfaces: Soft Sage */
-  --brand-border: #D6DED2;               /* Borders & Separators: Mist Green */
-  --border-subtle: #D6DED2;              /* Mist Green */
-  --border-strong: #BAC4B5;
+  --brand-surface: #ECFDF5;              /* Fresh Mint Surface Glow */
+  --brand-border: #A7F3D0;               /* Crisp Emerald Border */
+  --border-subtle: #E2E8F0;              /* Clean Slate Border */
+  --border-strong: #CBD5E1;
 
-  --brand-lime: #A9C86A;                 /* Restrained highlights and progress: Muted Lime */
-  --brand-lime-text: #252C27;            /* Charcoal text on lime for WCAG AAA */
+  --brand-lime: #10B981;                 /* Luminous Progress */
+  --brand-lime-text: #064E3B;
 
-  --brand-blue: #244C3A;
-  --brand-blue-hover: #1b382b;
-  --brand-blue-surface: #E8EDE4;
-  --brand-blue-border: #D6DED2;
+  --brand-blue: #0284C7;
+  --brand-blue-hover: #0369A1;
+  --brand-blue-surface: #E0F2FE;
+  --brand-blue-border: #BAE6FD;
 
   --brand-quest: #D97706;                /* Warm Amber */
   --brand-quest-hover: #B45309;
@@ -74,53 +74,50 @@ button:focus-visible {
   --brand-quest-text: #92400E;
   --brand-joy-of-quest: #D97706;
 
-  --brand-accent: #244C3A;
-  --brand-accent-hover: #1b382b;
-  --brand-accent-surface: #E8EDE4;
-  --brand-accent-border: #D6DED2;
-  --brand-always-questioning: #244C3A;
+  --brand-accent: #059669;
+  --brand-accent-hover: #047857;
+  --brand-accent-surface: #ECFDF5;
+  --brand-accent-border: #A7F3D0;
+  --brand-always-questioning: #059669;
 
   /* Typography Sizing Tokens */
-  --text-display: clamp(1.875rem, 3.5vw, 2.75rem); /* 30-36px mobile, 40-48px desktop */
-  --text-page-title: clamp(1.5rem, 2.5vw, 2rem);    /* 24-28px mobile, 28-32px desktop */
-  --text-section-title: 1.375rem;                   /* 20-24px */
-  --text-card-title: 1.0625rem;                     /* 16-18px */
-  --text-body: 0.9375rem;                           /* 14-16px */
-  --text-meta: 0.8125rem;                           /* 12-13px */
+  --text-display: clamp(1.875rem, 3.5vw, 2.75rem);
+  --text-page-title: clamp(1.5rem, 2.5vw, 2rem);
+  --text-section-title: 1.375rem;
+  --text-card-title: 1.0625rem;
+  --text-body: 0.9375rem;
+  --text-meta: 0.8125rem;
 
-  /* Text & Ink Typography (Charcoal) */
-  --text-primary: #252C27;               /* Text: Charcoal */
-  --text-secondary: #4A564D;             /* Muted Charcoal Body Copy */
-  --text-muted: #6B786E;                 /* Gentle Charcoal for Metadata */
-  --text-inverse: #F7F6F0;
+  /* High-Contrast Sharp Typography (Slate 900) */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
 
   /* Selected State */
-  --selected-bg: #E5F0DF;
+  --selected-bg: #ECFDF5;
 
   /* Semantic State Colors */
-  --success: #43A85B;
-  --success-bg: #E5F0DF;
-  --success-border: #C8E3BF;
-  --success-text: #26352A;
+  --success: #10B981;
+  --success-bg: #ECFDF5;
+  --success-border: #A7F3D0;
+  --success-text: #064E3B;
 
-  --warning: #D97706;                    /* Warm Amber */
+  --warning: #F59E0B;
   --warning-bg: #FEF3C7;
   --warning-border: #FDE68A;
   --warning-text: #92400E;
 
-  --error: #DC2626;                      /* Crisp Crimson */
-  --danger: #DC2626;
-  --danger-bg: #FEE2E2;
-  --danger-border: #FECACA;
-  --danger-text: #991B1B;
+  --error: #EF4444;
+  --danger: #EF4444;
   --danger-bg: #FEF2F2;
   --danger-border: #FECACA;
   --danger-text: #B91C1C;
 
   /* Code & Editor Surfaces */
-  --editor-bg: #F8F6F0;
+  --editor-bg: #F8FAFC;
 
-  /* Spacing Rhythm (8px base) */
+  /* Spacing Rhythm */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -133,31 +130,31 @@ button:focus-visible {
   --space-16: 64px;
 
   /* Component Radii */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* Solid Flat Tokens (Zero Gradients, Zero Blue, Zero Dark Forest Green) */
-  --grad-brand: #43A85B;
-  --grad-sky: #43A85B;
-  --grad-quest: #D9F477;
-  --grad-questioning: #43A85B;
-  --grad-tech: #43A85B;
-  --grad-finance: #43A85B;
-  --grad-pro: #43A85B;
-  --grad-coding: #43A85B;
-  --grad-fun: #43A85B;
-  --grad-rainbow: #43A85B;
+  /* Modern Rich Gradients */
+  --grad-brand: linear-gradient(135deg, #059669 0%, #10B981 100%);
+  --grad-sky: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%);
+  --grad-quest: linear-gradient(135deg, #EA580C 0%, #F59E0B 100%);
+  --grad-questioning: linear-gradient(135deg, #059669 0%, #10B981 100%);
+  --grad-tech: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%);
+  --grad-finance: linear-gradient(135deg, #D97706 0%, #FBBF24 100%);
+  --grad-pro: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+  --grad-coding: linear-gradient(135deg, #059669 0%, #34D399 100%);
+  --grad-fun: linear-gradient(135deg, #EC4899 0%, #F43F5E 100%);
+  --grad-rainbow: linear-gradient(135deg, #059669 0%, #0284C7 50%, #7C3AED 100%);
 
-  /* Natural Tactile Paper Shadows (Zero Neon Glows) */
-  --shadow-xs: 0 1px 2px rgba(20, 38, 28, 0.04);
-  --shadow-sm: 0 1px 3px rgba(20, 38, 28, 0.06), 0 1px 2px rgba(20, 38, 28, 0.04);
-  --shadow-md: 0 4px 10px -2px rgba(20, 38, 28, 0.07), 0 2px 4px -2px rgba(20, 38, 28, 0.04);
-  --shadow-lg: 0 10px 20px -4px rgba(20, 38, 28, 0.08), 0 4px 8px -4px rgba(20, 38, 28, 0.04);
-  --shadow-xl: 0 16px 28px -6px rgba(20, 38, 28, 0.1), 0 8px 12px -5px rgba(20, 38, 28, 0.05);
+  /* Rich App Elevation Shadows */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 2px 6px -1px rgba(15, 23, 42, 0.06), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 16px 32px -4px rgba(15, 23, 42, 0.1), 0 6px 12px -3px rgba(15, 23, 42, 0.05);
+  --shadow-xl: 0 24px 48px -8px rgba(15, 23, 42, 0.12), 0 10px 16px -4px rgba(15, 23, 42, 0.06);
 
   /* Touch Targets */
   --min-touch-target: 44px;
@@ -167,59 +164,59 @@ button:focus-visible {
    Geniusphere 10-Theme Palette Token Engine
    ==================================================================== */
 
-/* 1. Light (Default) — Warm Ivory + Sage + Forest Green */
+/* 1. Light (Default) — Crisp Slate + Vivid Emerald */
 :root,
 html[data-theme='light'] {
-  --bg-canvas: #FAFAF4;
+  --bg-canvas: #F8FAFC;
   --bg-surface: #FFFFFF;
-  --bg-surface-subdued: #E5F0DF;
+  --bg-surface-subdued: #F1F5F9;
   --bg-surface-elevated: #FFFFFF;
-  --brand-primary: #43A85B;
-  --brand-primary-bright: #43A85B;
-  --brand-primary-hover: #388E4C;
-  --brand-primary-active: #2E763F;
-  --brand-forest: #43A85B;
-  --brand-surface: #E5F0DF;
-  --brand-border: rgba(38, 53, 42, 0.12);
-  --border-subtle: rgba(38, 53, 42, 0.12);
-  --border-strong: rgba(38, 53, 42, 0.22);
-  --brand-lime: #D9F477;
-  --brand-lime-text: #26352A;
-  --text-primary: #26352A;
-  --text-secondary: #4A5B4F;
-  --text-muted: #6B7C70;
-  --text-inverse: #FAFAF4;
-  --selected-bg: #E5F0DF;
-  --editor-bg: #F8F6F0;
-  --sidebar-bg: #FAFAF4;
-  --sidebar-border: #E5F0DF;
+  --brand-primary: #059669;
+  --brand-primary-bright: #10B981;
+  --brand-primary-hover: #047857;
+  --brand-primary-active: #064E3B;
+  --brand-forest: #059669;
+  --brand-surface: #ECFDF5;
+  --brand-border: #A7F3D0;
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --brand-lime: #10B981;
+  --brand-lime-text: #064E3B;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
+  --selected-bg: #ECFDF5;
+  --editor-bg: #F8FAFC;
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #E2E8F0;
 }
 
-/* 2. Dark — Charcoal + Deep Forest Green + Muted Lime */
+/* 2. Dark — Deep Obsidian Void + Neon Mint + Slate Cards */
 html[data-theme='dark'] {
-  --bg-canvas: #121914;
-  --bg-surface: #1B241E;
-  --bg-surface-subdued: #243228;
-  --bg-surface-elevated: #26362B;
-  --brand-primary: #43A85B;
-  --brand-primary-bright: #52C76E;
-  --brand-primary-hover: #4FC46B;
-  --brand-primary-active: #388E4C;
-  --brand-forest: #43A85B;
-  --brand-surface: #1F2E23;
-  --brand-border: rgba(240, 253, 244, 0.14);
-  --border-subtle: rgba(240, 253, 244, 0.14);
-  --border-strong: rgba(240, 253, 244, 0.26);
-  --brand-lime: #D9F477;
-  --brand-lime-text: #121914;
-  --text-primary: #F0FDF4;
-  --text-secondary: #C5D9C9;
-  --text-muted: #8EA895;
-  --text-inverse: #121914;
-  --selected-bg: #243228;
-  --editor-bg: #141C16;
-  --sidebar-bg: #162019;
-  --sidebar-border: rgba(240, 253, 244, 0.12);
+  --bg-canvas: #090D16;
+  --bg-surface: #0F172A;
+  --bg-surface-subdued: #1E293B;
+  --bg-surface-elevated: #1E293B;
+  --brand-primary: #10B981;
+  --brand-primary-bright: #34D399;
+  --brand-primary-hover: #059669;
+  --brand-primary-active: #047857;
+  --brand-forest: #10B981;
+  --brand-surface: rgba(16, 185, 129, 0.12);
+  --brand-border: rgba(16, 185, 129, 0.28);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --brand-lime: #34D399;
+  --brand-lime-text: #064E3B;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-inverse: #090D16;
+  --selected-bg: rgba(16, 185, 129, 0.15);
+  --editor-bg: #090D16;
+  --sidebar-bg: #0C1220;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
 }
 
 /* 3. Sepia — Warm cream + parchment + olive */
@@ -699,13 +696,14 @@ button {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: var(--shadow-xs);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, transform 0.2s ease;
 }
 
 .card:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-sm);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .card-elevated {
@@ -713,7 +711,7 @@ button {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: 24px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 /* Course Cards: Cohesive White Card Design */
@@ -1775,16 +1773,16 @@ aside,
     bottom: 0;
     left: 0;
     right: 0;
-    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    height: calc(64px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background-color: var(--bg-surface);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border-subtle);
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid rgba(226, 232, 240, 0.85);
     z-index: 1000;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.06);
   }
 
   /* When bottom tab bar is active on mobile, hide redundant top hamburger drawer button */
@@ -1805,15 +1803,15 @@ aside,
     justify-content: center;
     gap: 3px;
     height: 100%;
-    min-height: 44px;
+    min-height: 48px;
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;
-    padding: 4px 2px;
-    transition: all 0.15s ease;
+    padding: 6px 2px 8px;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     position: relative;
@@ -1824,7 +1822,7 @@ aside,
   }
 
   .mobile-tab-btn:active {
-    transform: scale(0.92);
+    transform: scale(0.90);
   }
 
   .mobile-tab-btn.active {
@@ -1834,19 +1832,20 @@ aside,
 
   .mobile-tab-btn.active svg {
     color: var(--brand-primary) !important;
-    transform: translateY(-1px);
-    filter: drop-shadow(0 2px 6px rgba(67, 168, 91, 0.35));
+    transform: translateY(-2px);
+    filter: drop-shadow(0 4px 10px rgba(16, 185, 129, 0.45));
   }
 
-  /* Active indicator dot under tab */
+  /* Active indicator pill under tab */
   .mobile-tab-btn.active::after {
     content: '';
     position: absolute;
-    bottom: 4px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background-color: var(--brand-primary);
+    bottom: 5px;
+    width: 16px;
+    height: 3px;
+    border-radius: 100px;
+    background: var(--grad-brand);
+    box-shadow: 0 1px 6px rgba(16, 185, 129, 0.5);
   }
 
   /* NATIVE APP HORIZONTAL SNAP CAROUSEL (Eliminates excessive vertical scrolling) */
