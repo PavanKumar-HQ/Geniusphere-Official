@@ -44,14 +44,33 @@ const TypingText = ({ text, speed = 40, className = "" }: { text: string, speed?
   return <span className={className}>{displayedText}</span>;
 };
 
-const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
-  const [currentApp, setCurrentApp] = useState<OfficeApp>(OfficeApp.WORD);
+interface OfficeLabProps {
+  onClose?: () => void;
+  onExit?: () => void;
+  initialApp?: OfficeApp;
+}
+
+const App: React.FC<OfficeLabProps> = ({ onClose, onExit, initialApp }) => {
+  const [currentApp, setCurrentApp] = useState<OfficeApp>(initialApp || OfficeApp.EXCEL);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isSimplified, setIsSimplified] = useState(false);
   const [didYouKnowIndex, setDidYouKnowIndex] = useState(0);
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isInstructionOpen, setIsInstructionOpen] = useState(true);
+
+  const handleExit = () => {
+    if (onClose) {
+      onClose();
+      return;
+    }
+    if (onExit) {
+      onExit();
+      return;
+    }
+    window.history.back();
+  };
 
   const moduleData = useMemo(() => MODULE_CONTENT[currentApp] || MODULE_CONTENT[OfficeApp.WORD], [currentApp]);
   const activeStep = useMemo(() => moduleData.steps[currentStep] || moduleData.steps[0], [moduleData, currentStep]);
@@ -539,13 +558,7 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
           }
           onMenuToggle={() => setIsSidebarOpen(true)}
-          onExit={() => {
-            if (onClose) {
-              onClose();
-              return;
-            }
-            window.history.back();
-          }}
+          onExit={handleExit}
         />
         {isSidebarOpen && (
           <div className="fixed inset-0 z-[80] bg-black/95 p-6 animate-in fade-in duration-200 overflow-y-auto">
@@ -590,41 +603,41 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
         </div>
 
         {/* Futuristic Header */}
-        <header className="flex-none flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-6 glass-panel border-b border-white/5 gap-4 md:gap-0">
-          <div className="flex items-center space-x-6">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-400 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.4)] transform -rotate-6 hover:rotate-0 transition-all duration-500 cursor-pointer active:scale-90 relative z-50" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-              {isSidebarOpen ? <X className="md:hidden text-white" size={32} /> : <Zap className="md:hidden text-white" size={32} fill="white" />}
-              <Zap className="hidden md:block text-white" size={32} fill="white" />
+        <header className="flex-none flex flex-col md:flex-row items-center justify-between px-4 lg:px-8 py-3.5 glass-panel border-b border-white/10 gap-3 md:gap-0">
+          <div className="flex items-center space-x-4 lg:space-x-6">
+            <div className="w-11 h-11 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-2xl flex items-center justify-center shadow-[0_0_24px_rgba(37,99,235,0.4)] transform -rotate-6 hover:rotate-0 transition-all duration-300 cursor-pointer active:scale-90 relative z-50 shrink-0" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+              {isSidebarOpen ? <X className="md:hidden text-white" size={24} /> : <Zap className="md:hidden text-white" size={24} fill="white" />}
+              <Zap className="hidden md:block text-white" size={24} fill="white" />
             </div>
             <div>
-              <h1 className="text-2xl font-black tracking-tighter text-white uppercase italic leading-none">OFFICE_LAB_X</h1>
-              <p className="text-[11px] text-blue-500 font-mono tracking-[0.4em] uppercase mt-2 font-bold opacity-70">Unified Productivity Simulation</p>
+              <h1 className="text-xl lg:text-2xl font-black tracking-tight text-white uppercase italic leading-none">OFFICE_LAB_X</h1>
+              <p className="text-[10px] text-blue-400 font-mono tracking-[0.3em] uppercase mt-1.5 font-bold opacity-80">Unified Productivity Simulation</p>
             </div>
           </div>
-          <div className="flex items-center space-x-12">
+          <div className="flex items-center space-x-6 lg:space-x-10">
             <div className="flex flex-col items-end">
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest mb-1 font-black">CURRICULUM_V.4</span>
-              <span className="text-sm font-black text-blue-200 tracking-wider">CAREER PREP TRACK</span>
+              <span className="text-[9px] text-gray-400 uppercase tracking-widest mb-0.5 font-black">CURRICULUM_V.4</span>
+              <span className="text-xs lg:text-sm font-black text-blue-200 tracking-wider">CAREER PREP TRACK</span>
             </div>
-            <div className="h-12 w-px bg-white/10"></div>
-            <div className="flex items-center space-x-4 bg-white/5 rounded-2xl px-6 py-2.5 border border-white/10 group cursor-default hover:bg-white/10 transition-colors">
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_15px_#22c55e]"></div>
-              <span className="text-[11px] font-black text-green-400 uppercase tracking-widest">ENGINE_ONLINE</span>
+            <div className="h-8 w-px bg-white/10"></div>
+            <div className="flex items-center space-x-3 bg-white/5 rounded-xl px-4 py-2 border border-white/10 group cursor-default hover:bg-white/10 transition-colors">
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_12px_#22c55e]"></div>
+              <span className="text-[10px] font-black text-green-400 uppercase tracking-widest">ENGINE_ONLINE</span>
             </div>
           </div>
         </header>
 
         {/* Main Core Layout */}
-        <main className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-y-auto md:overflow-hidden p-4 md:p-6 gap-6">
+        <main className="flex-1 min-h-0 min-w-0 flex flex-col md:flex-row overflow-hidden p-3 md:p-4 lg:p-6 gap-4 lg:gap-6 w-full">
 
           {/* Left Side: Topic Navigation */}
-          <aside className={`${isSidebarOpen ? 'flex fixed inset-0 z-40 pt-32 pb-8 px-6 bg-[#070B1A]/95 backdrop-blur-xl' : 'hidden'} md:flex w-[320px] shrink-0 glass-panel rounded-[2.5rem] flex-col overflow-y-auto md:overflow-hidden border border-white/10 transition-all duration-300`}>
-            <div className="p-8 border-b border-white/5">
-              <h2 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.5em] mb-8 opacity-60">System Modules</h2>
-              <nav className="space-y-3">
+          <aside className={`${isSidebarOpen ? 'flex fixed inset-0 z-40 pt-24 pb-6 px-4 bg-[#070B1A]/95 backdrop-blur-xl' : 'hidden'} md:flex w-[230px] lg:w-[250px] shrink-0 glass-panel rounded-3xl flex-col overflow-hidden border border-white/10 transition-all duration-300 min-h-0`}>
+            <div className="p-4 lg:p-5 border-b border-white/5 shrink-0">
+              <h2 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4 opacity-75">System Modules</h2>
+              <nav className="space-y-1.5">
                 {[
-                  { id: OfficeApp.WORD, icon: FileText, color: COLORS.WORD },
                   { id: OfficeApp.EXCEL, icon: BarChart3, color: COLORS.EXCEL },
+                  { id: OfficeApp.WORD, icon: FileText, color: COLORS.WORD },
                   { id: OfficeApp.POWERPOINT, icon: Presentation, color: COLORS.POWERPOINT },
                   { id: OfficeApp.OUTLOOK, icon: Mail, color: COLORS.OUTLOOK },
                   { id: OfficeApp.REAL_LIFE, icon: Globe, color: '#FFFFFF' },
@@ -637,92 +650,129 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
                       setCurrentApp(item.id);
                       setCurrentStep(0);
                       setIsPlaying(true);
+                      if (isSidebarOpen) setIsSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-5 px-6 py-4 rounded-2xl transition-all duration-500 group relative overflow-y-auto md:overflow-hidden ${currentApp === item.id
-                      ? 'bg-white/15 border border-white/20 translate-x-2'
+                    className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition-all duration-300 group relative overflow-hidden text-left ${currentApp === item.id
+                      ? 'bg-white/15 border border-white/20 translate-x-1'
                       : 'hover:bg-white/5 border border-transparent'
                       }`}
                   >
                     {currentApp === item.id && (
-                      <div className="absolute left-0 top-0 w-1.5 h-full" style={{ backgroundColor: item.color }}></div>
+                      <div className="absolute left-0 top-0 w-1 h-full" style={{ backgroundColor: item.color }}></div>
                     )}
                     <item.icon
-                      size={22}
-                      style={{ color: currentApp === item.id ? item.color : 'rgba(255,255,255,0.3)' }}
-                      className="group-hover:scale-125 transition-transform duration-300"
+                      size={18}
+                      style={{ color: currentApp === item.id ? item.color : 'rgba(255,255,255,0.4)' }}
+                      className="group-hover:scale-115 transition-transform duration-300 shrink-0"
                     />
-                    <span className={`text-sm font-black tracking-widest transition-colors ${currentApp === item.id ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>
+                    <span className={`text-xs font-bold tracking-wider truncate transition-colors ${currentApp === item.id ? 'text-white' : 'text-gray-400 group-hover:text-gray-200'}`}>
                       {item.id.toUpperCase()}
                     </span>
                   </button>
                 ))}
               </nav>
             </div>
-            <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
-              <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-3xl p-6 border border-white/10 relative overflow-y-auto md:overflow-hidden group">
-                <div className="flex items-center space-x-3 mb-4">
-                  <Info size={18} className="text-blue-400" />
-                  <span className="text-[10px] font-black text-blue-300 uppercase tracking-[0.3em]">Module_Log</span>
+            <div className="flex-1 p-4 overflow-y-auto custom-scrollbar min-h-0">
+              <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-2xl p-3.5 border border-white/10 relative overflow-hidden group">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Info size={14} className="text-blue-400 shrink-0" />
+                  <span className="text-[9px] font-black text-blue-300 uppercase tracking-[0.2em]">Module_Log</span>
                 </div>
-                <p className="text-[11px] text-gray-500 leading-relaxed italic font-bold group-hover:text-gray-300 transition-colors">
+                <p className="text-[10px] text-gray-400 leading-relaxed italic font-medium group-hover:text-gray-300 transition-colors">
                   "Efficiency is doing things right; Effectiveness is doing the right things."
                 </p>
               </div>
             </div>
-            <div className="p-8 pt-0 mt-auto">
+            <div className="p-4 pt-2 mt-auto shrink-0">
               <button
-                onClick={onClose}
-                className="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-2xl transition-all uppercase text-[10px] font-black tracking-[0.2em] flex items-center justify-center gap-2"
+                onClick={handleExit}
+                className="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl transition-all uppercase text-[10px] font-black tracking-[0.2em] flex items-center justify-center gap-1.5"
               >
-                <X size={14} /> EXIT SIMULATION
+                <X size={13} /> EXIT SIMULATION
               </button>
             </div>
           </aside>
 
           {/* Center Side: THE SIMULATOR (SLIDING) */}
-          <section className="flex-1 flex flex-col overflow-y-auto md:overflow-hidden relative min-h-[500px]">
-            <div className="flex-1 glass-panel rounded-[3rem] relative overflow-y-auto md:overflow-hidden flex flex-col border border-white/10 shadow-2xl">
+          <section className="flex-1 min-w-0 min-h-0 flex flex-col overflow-hidden relative">
+            <div className="flex-1 min-h-0 glass-panel rounded-3xl relative overflow-hidden flex flex-col border border-white/10 shadow-2xl">
               {/* Simulation Header */}
-              <div className="h-20 border-b border-white/5 flex items-center justify-between px-10 bg-white/5 backdrop-blur-xl relative z-20 shrink-0">
-                <div className="flex items-center space-x-4">
-                  <div className="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_15px_#3b82f6] animate-pulse"></div>
+              <div className="h-14 lg:h-16 border-b border-white/10 flex items-center justify-between px-4 lg:px-6 bg-white/5 backdrop-blur-xl relative z-20 shrink-0">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_12px_#3b82f6] animate-pulse"></div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.4em] font-black">Live_Environment_S0{activeStep.id}</span>
-                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Active App: {currentApp}</span>
+                    <span className="text-[9px] font-mono text-gray-400 uppercase tracking-[0.3em] font-black">Live_Environment_S0{activeStep.id}</span>
+                    <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Active: {currentApp}</span>
                   </div>
                 </div>
 
                 {/* Step Pips */}
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2 sm:space-x-4">
                   <button
                     onClick={() => currentStep > 0 && goToStep(currentStep - 1)}
                     disabled={currentStep === 0}
-                    className="p-2.5 hover:bg-white/10 rounded-full text-gray-400 disabled:opacity-10 transition-all border border-transparent hover:border-white/10 active:scale-90"
+                    className="p-1.5 hover:bg-white/10 rounded-full text-gray-400 disabled:opacity-20 transition-all border border-transparent hover:border-white/10 active:scale-90"
+                    title="Previous Step"
                   >
-                    <ChevronLeft size={24} />
+                    <ChevronLeft size={18} />
                   </button>
-                  <div className="flex space-x-3">
+                  <div className="flex space-x-2">
                     {moduleData.steps.map((_, idx) => (
                       <button
                         key={idx}
                         onClick={() => goToStep(idx)}
-                        className={`h-2 rounded-full transition-all duration-700 ${idx === currentStep ? 'w-12 bg-blue-500 shadow-[0_0_15px_#3b82f6]' : 'w-3 bg-white/10 hover:bg-white/20'}`}
+                        className={`h-2 rounded-full transition-all duration-500 ${idx === currentStep ? 'w-8 bg-blue-500 shadow-[0_0_10px_#3b82f6]' : 'w-2.5 bg-white/10 hover:bg-white/20'}`}
+                        title={`Step ${idx + 1}`}
                       ></button>
                     ))}
                   </div>
                   <button
                     onClick={() => currentStep < moduleData.steps.length - 1 && goToStep(currentStep + 1)}
                     disabled={currentStep === moduleData.steps.length - 1}
-                    className="p-2.5 hover:bg-white/10 rounded-full text-gray-400 disabled:opacity-10 transition-all border border-transparent hover:border-white/10 active:scale-90"
+                    className="p-1.5 hover:bg-white/10 rounded-full text-gray-400 disabled:opacity-20 transition-all border border-transparent hover:border-white/10 active:scale-90"
+                    title="Next Step"
                   >
-                    <ChevronRight size={24} />
+                    <ChevronRight size={18} />
                   </button>
                 </div>
 
-                <div className="flex items-center space-x-4">
-                  <div className="text-right flex flex-col">
-                    <span className="text-[9px] font-black text-gray-600 uppercase mb-1">Telemetry</span>
-                    <span className="text-[10px] font-black text-green-400 font-mono tracking-widest bg-green-500/10 px-4 py-1.5 rounded-xl border border-green-500/20">
+                <div className="flex items-center space-x-2 lg:space-x-3">
+                  <button
+                    onClick={() => setIsPlaying(!isPlaying)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+                      isPlaying
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30'
+                        : 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                    }`}
+                    title={isPlaying ? 'Pause Auto-Play' : 'Resume Auto-Play'}
+                  >
+                    {isPlaying ? <Pause size={13} /> : <Play size={13} fill="currentColor" />}
+                    <span className="hidden sm:inline uppercase text-[9px] tracking-wider">{isPlaying ? 'Pause' : 'Play'}</span>
+                  </button>
+
+                  <button
+                    onClick={handleReset}
+                    className="p-1.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg border border-white/10 transition-all active:scale-90"
+                    title="Reset Simulation"
+                  >
+                    <RotateCcw size={13} />
+                  </button>
+
+                  <button
+                    onClick={() => setIsSimplified(!isSimplified)}
+                    className={`p-1.5 rounded-lg border transition-all text-[9px] font-bold uppercase tracking-wider hidden sm:flex items-center gap-1 ${
+                      isSimplified
+                        ? 'bg-blue-500/20 text-blue-300 border-blue-400/40'
+                        : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10'
+                    }`}
+                    title="Toggle Simplified / Large Text Mode"
+                  >
+                    <span>Large Text</span>
+                  </button>
+
+                  <div className="text-right flex-col hidden md:flex">
+                    <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest">Telemetry</span>
+                    <span className="text-[9px] font-black text-green-400 font-mono tracking-wider bg-green-500/10 px-2.5 py-0.5 rounded border border-green-500/20">
                       {activeStep.statusText}
                     </span>
                   </div>
@@ -730,77 +780,88 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
               </div>
 
               {/* SLIDING CONTENT CORE */}
-              <div className="flex-1 relative overflow-y-auto md:overflow-hidden bg-gradient-to-b from-transparent to-[#0f172a]/20">
+              <div className="flex-1 min-h-0 relative overflow-y-auto custom-scrollbar bg-gradient-to-b from-transparent to-[#0f172a]/20">
                 <div
                   key={`${currentApp}-${currentStep}`}
-                  className={`w-full h-full animate-in ${direction === 'right' ? 'slide-in-from-right-12' : 'slide-in-from-left-12'} fade-in duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] overflow-y-auto md:overflow-hidden`}
+                  className={`w-full h-full animate-in ${direction === 'right' ? 'slide-in-from-right-8' : 'slide-in-from-left-8'} fade-in duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]`}
                 >
                   {renderSimulation()}
                 </div>
               </div>
 
               {/* Instruction Panel (Explanation) */}
-              <div className="absolute bottom-4 left-4 right-4 z-30 pointer-events-none">
-                <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-6 duration-500 backdrop-blur-3xl pointer-events-auto hover:border-white/40 transition-colors">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-[10px] font-black text-blue-500 uppercase tracking-[0.6em] flex items-center">
-                      <span className="w-10 h-0.5 bg-blue-500/40 mr-4"></span>
+              <div className="absolute bottom-3 left-3 right-3 z-30 pointer-events-none">
+                <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-4 duration-500 backdrop-blur-3xl pointer-events-auto hover:border-white/40 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em] flex items-center">
+                      <span className="w-6 h-0.5 bg-blue-500/60 mr-2"></span>
                       Module Task 0{activeStep.id}
                     </span>
-                    <div className="flex items-center bg-white/5 px-3 py-1 rounded-full border border-white/10">
-                      <h3 className="text-[10px] font-black text-white tracking-widest uppercase flex items-center">
-                        {activeStep.title}
-                      </h3>
-                      <Info size={14} className="ml-2 text-blue-400" />
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center bg-white/5 px-2.5 py-0.5 rounded-full border border-white/10">
+                        <h3 className="text-[10px] font-black text-white tracking-wider uppercase flex items-center">
+                          {activeStep.title}
+                        </h3>
+                        <Info size={12} className="ml-1.5 text-blue-400" />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setIsInstructionOpen(!isInstructionOpen)}
+                        className="text-[10px] text-gray-400 hover:text-white px-2 py-0.5 rounded bg-white/5 border border-white/10"
+                      >
+                        {isInstructionOpen ? 'Minimize' : 'Expand'}
+                      </button>
                     </div>
                   </div>
-                  <p className={`font-bold text-gray-100 leading-snug tracking-tight ${isSimplified ? 'text-2xl' : 'text-xl'}`}>
-                    <TypingText text={activeStep.description} speed={15} />
-                  </p>
+                  {isInstructionOpen && (
+                    <p className={`font-semibold text-gray-100 leading-snug tracking-tight ${isSimplified ? 'text-lg md:text-xl' : 'text-sm md:text-base'}`}>
+                      <TypingText text={activeStep.description} speed={15} />
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           </section>
 
           {/* Right Side: Knowledge & Control Center */}
-          <aside className="w-full md:w-full md:w-96 flex flex-col gap-6 shrink-0">
+          <aside className="hidden xl:flex xl:w-72 2xl:w-80 flex-col gap-4 shrink-0 overflow-y-auto custom-scrollbar min-h-0">
 
             {/* Quick Settings Card */}
-            <div className="glass-panel p-8 rounded-[2.5rem] border border-white/10 flex flex-col space-y-6 shadow-xl">
+            <div className="glass-panel p-5 rounded-3xl border border-white/10 flex flex-col space-y-4 shadow-xl shrink-0">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-[11px] font-black text-white uppercase tracking-[0.3em]">Adaptive UI</h3>
-                  <p className="text-[10px] text-gray-600 mt-2 uppercase font-black tracking-tighter opacity-70">Accessibility Toggle</p>
+                  <h3 className="text-[11px] font-black text-white uppercase tracking-[0.2em]">Adaptive UI</h3>
+                  <p className="text-[9px] text-gray-400 uppercase font-bold tracking-tight">Accessibility Mode</p>
                 </div>
                 <button
                   onClick={() => setIsSimplified(!isSimplified)}
-                  className={`w-16 h-8 rounded-full p-1.5 transition-all duration-700 flex items-center ${isSimplified ? 'bg-green-500 shadow-[0_0_20px_rgba(34,197,94,0.5)]' : 'bg-white/10'}`}
+                  className={`w-12 h-6 rounded-full p-1 transition-all duration-500 flex items-center ${isSimplified ? 'bg-green-500 shadow-[0_0_12px_rgba(34,197,94,0.5)]' : 'bg-white/10'}`}
                 >
-                  <div className={`w-5 h-5 bg-white rounded-full shadow-2xl transform transition-transform duration-500 ${isSimplified ? 'translate-x-8' : 'translate-x-0'}`}></div>
+                  <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 ${isSimplified ? 'translate-x-6' : 'translate-x-0'}`}></div>
                 </button>
               </div>
               <div className="h-px bg-white/10"></div>
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-black text-gray-500 uppercase tracking-widest">Automation</span>
-                <div className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${isPlaying ? 'bg-blue-500/20 text-blue-400 border-blue-500/20' : 'bg-red-500/20 text-red-400 border-red-500/20'}`}>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Automation</span>
+                <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border ${isPlaying ? 'bg-blue-500/20 text-blue-400 border-blue-500/20' : 'bg-red-500/20 text-red-400 border-red-500/20'}`}>
                   {isPlaying ? 'ACTIVE' : 'HALTED'}
                 </div>
               </div>
             </div>
 
             {/* Guidelines Knowledge Base */}
-            <div className="glass-panel p-8 rounded-[2.5rem] border border-white/10 flex-1 flex flex-col shadow-xl overflow-y-auto md:overflow-hidden">
-              <div className="flex items-center space-x-4 mb-6 shrink-0">
-                <div className="w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
-                  <CheckCircle2 size={22} className="text-green-400" />
+            <div className="glass-panel p-5 rounded-3xl border border-white/10 flex-1 flex flex-col shadow-xl overflow-hidden min-h-[160px]">
+              <div className="flex items-center space-x-3 mb-3 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                  <CheckCircle2 size={16} className="text-green-400" />
                 </div>
-                <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">Guidelines</h3>
+                <h3 className="text-[11px] font-black text-white uppercase tracking-[0.3em]">Guidelines</h3>
               </div>
-              <ul className="space-y-6 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              <ul className="space-y-3 flex-1 overflow-y-auto pr-1 custom-scrollbar">
                 {BEST_PRACTICES.map((practice, idx) => (
-                  <li key={idx} className="flex items-start space-x-5 group animate-in slide-in-from-right-12" style={{ animationDelay: `${idx * 100}ms` }}>
-                    <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 shrink-0 group-hover:scale-150 transition-all duration-300 shadow-[0_0_8px_#3b82f6]"></div>
-                    <span className="text-[13px] font-bold text-gray-500 group-hover:text-gray-100 transition-colors leading-relaxed cursor-default uppercase tracking-tight">
+                  <li key={idx} className="flex items-start space-x-3 group">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0 group-hover:scale-150 transition-all duration-300 shadow-[0_0_6px_#3b82f6]"></div>
+                    <span className="text-[11px] font-semibold text-gray-400 group-hover:text-gray-200 transition-colors leading-relaxed uppercase tracking-tight">
                       {practice}
                     </span>
                   </li>
@@ -809,50 +870,52 @@ const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             </div>
 
             {/* Facts Card */}
-            <div className="glass-panel p-8 rounded-[2.5rem] border border-white/10 relative overflow-y-auto md:overflow-hidden h-44 flex flex-col justify-center shadow-xl group shrink-0">
-              <div className="flex items-center space-x-4 mb-4 relative z-10">
-                <div className="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 group-hover:scale-110 transition-transform">
-                  <Lightbulb size={22} className="text-yellow-400" />
+            <div className="glass-panel p-5 rounded-3xl border border-white/10 relative overflow-hidden h-32 flex flex-col justify-center shadow-xl group shrink-0">
+              <div className="flex items-center space-x-3 mb-2 relative z-10">
+                <div className="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 group-hover:scale-110 transition-transform">
+                  <Lightbulb size={16} className="text-yellow-400" />
                 </div>
-                <h3 className="text-xs font-black text-white uppercase tracking-[0.3em]">Quick Fact</h3>
+                <h3 className="text-[10px] font-black text-white uppercase tracking-[0.2em]">Quick Fact</h3>
               </div>
-              <div className="relative z-10 h-16 flex items-center">
-                <p className="text-xs text-blue-200 font-bold leading-relaxed italic animate-in fade-in slide-in-from-right-12 duration-1000" key={didYouKnowIndex}>
+              <div className="relative z-10 h-14 flex items-center">
+                <p className="text-[11px] text-blue-200 font-medium leading-relaxed italic animate-in fade-in duration-500" key={didYouKnowIndex}>
                   "{DID_YOU_KNOW[didYouKnowIndex]}"
                 </p>
               </div>
-              <div className="absolute -bottom-16 -right-16 opacity-5 rotate-12 scale-[2] pointer-events-none group-hover:opacity-10 transition-opacity">
-                <Globe size={150} />
+              <div className="absolute -bottom-10 -right-10 opacity-5 rotate-12 scale-150 pointer-events-none group-hover:opacity-10 transition-opacity">
+                <Globe size={100} />
               </div>
             </div>
 
             {/* Simulation Controller Plate */}
-            <div className="glass-panel p-5 rounded-[3.5rem] border border-white/10 flex items-center justify-between px-10 bg-blue-600/10 shadow-2xl shrink-0">
+            <div className="glass-panel p-4 rounded-3xl border border-white/10 flex items-center justify-between px-6 bg-blue-600/10 shadow-2xl shrink-0">
               <button
                 onClick={handleReset}
-                className="p-5 bg-white/5 hover:bg-white/10 rounded-3xl transition-all border border-white/10 group active:scale-90"
+                className="p-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group active:scale-90 text-gray-400 hover:text-white"
+                title="Reset Simulation"
               >
-                <RotateCcw size={24} className="text-gray-500 group-hover:rotate-[-180deg] transition-transform duration-1000" />
+                <RotateCcw size={18} className="group-hover:rotate-[-180deg] transition-transform duration-1000" />
               </button>
 
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className={`p-6 rounded-[2rem] transition-all transform hover:scale-110 active:scale-90 shadow-[0_20px_40px_rgba(0,0,0,0.4)] group ${isPlaying ? 'bg-orange-600 shadow-orange-900/40' : 'bg-green-600 shadow-green-900/40'}`}
+                className={`p-4 rounded-2xl transition-all transform hover:scale-105 active:scale-95 shadow-lg group ${isPlaying ? 'bg-amber-600 shadow-amber-900/40 text-white' : 'bg-green-600 shadow-green-900/40 text-white'}`}
+                title={isPlaying ? 'Pause' : 'Play'}
               >
                 {isPlaying ? (
-                  <Pause size={32} fill="currentColor" className="text-white" />
+                  <Pause size={22} fill="currentColor" />
                 ) : (
-                  <Play size={32} fill="currentColor" className="ml-1 text-white" />
+                  <Play size={22} fill="currentColor" className="ml-0.5" />
                 )}
               </button>
 
               <div className="flex flex-col items-center">
-                <span className="text-[10px] font-black text-gray-600 uppercase mb-2 tracking-widest">Progress</span>
-                <div className="flex space-x-2">
+                <span className="text-[9px] font-black text-gray-500 uppercase mb-1 tracking-wider">Progress</span>
+                <div className="flex space-x-1.5">
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${activeStep.id >= i ? 'bg-blue-400 scale-125 shadow-[0_0_10px_#60a5fa]' : 'bg-white/10'}`}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${activeStep.id >= i ? 'bg-blue-400 scale-110 shadow-[0_0_8px_#60a5fa]' : 'bg-white/10'}`}
                     ></div>
                   ))}
                 </div>

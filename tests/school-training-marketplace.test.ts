@@ -20,7 +20,7 @@ describe('School Training Marketplace & Trainer Lifecycle Suite', () => {
       // 1. School Admin submits a new training request
       const req = db.createTrainingRequest(schoolAdminId, dptsOrgId, {
         title: 'High School Cyber Defense & Ethical Hacking Workshop',
-        domain: 'cybersecurity',
+        domain: 'technology',
         target_grade_range: 'Grade 10-12',
         approx_cohort_size: 45,
         learning_objectives: 'Network perimeter defense, phishing detection, and Wireshark traffic analysis.',
@@ -103,7 +103,7 @@ describe('School Training Marketplace & Trainer Lifecycle Suite', () => {
       // School A admin requests training
       const reqA = db.createTrainingRequest(schoolAdminId, dptsOrgId, {
         title: 'School A Proprietary STEM Boot Camp',
-        domain: 'applied-sciences',
+        domain: 'technology',
         target_grade_range: 'Grade 8',
         approx_cohort_size: 30,
         learning_objectives: 'Robotics and sensors',
@@ -130,14 +130,19 @@ describe('School Training Marketplace & Trainer Lifecycle Suite', () => {
         id: otherAdminUser,
         email: 'principal@bta.edu',
         full_name: 'Principal Bengaluru',
-        role: 'institution_admin',
+        date_of_birth: '1980-01-01',
+        is_minor: false,
+        is_superadmin: false,
+        account_status: 'active',
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
       db.memberships.set('mem-other-admin', {
         id: 'mem-other-admin',
         organization_id: otherOrgId,
         user_id: otherAdminUser,
         role: 'institution_admin',
+        is_active: true,
         created_at: new Date().toISOString(),
       });
 
@@ -160,8 +165,12 @@ describe('School Training Marketplace & Trainer Lifecycle Suite', () => {
         id: pendingUserId,
         email: 'applicant@gmail.com',
         full_name: 'Rohit Sharma (Applicant)',
-        role: 'trainer',
+        date_of_birth: '1995-01-01',
+        is_minor: false,
+        is_superadmin: false,
+        account_status: 'active',
         created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
 
       const pendingTrainer = db.registerTrainer({
