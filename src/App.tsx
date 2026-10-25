@@ -152,6 +152,17 @@ export const App: React.FC = () => {
 
   const [currentTheme, setCurrentTheme] = useState<ThemeId>(() => getStoredTheme());
   const [themeModalOpen, setThemeModalOpen] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Authenticate current user with the authoritative backend server on user switch
   useEffect(() => {
@@ -1033,8 +1044,34 @@ export const App: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT: NOTIFICATIONS BELL & USER AVATAR PILL */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative', flexShrink: 0 }}>
+          {/* RIGHT: NOTIFICATIONS BELL, STREAK CHIP & USER AVATAR PILL */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', flexShrink: 0 }}>
+
+            {/* Gamified Habit Streak Chip (Tap to view streak & habit calendar) */}
+            <button
+              type="button"
+              onClick={() => setStreakModalOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                height: '34px',
+                padding: '0 10px',
+                borderRadius: '100px',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1px solid var(--border-subtle)',
+                color: '#D97706',
+                cursor: 'pointer',
+                fontWeight: 800,
+                fontSize: '0.8rem',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                transition: 'all 0.15s ease',
+              }}
+              title="Daily Habit Streak — Click to open Streak Calendar"
+            >
+              <Flame size={15} color="#D97706" />
+              <span>{userProgress.streak_days || 7}</span>
+            </button>
 
 
 
@@ -2742,8 +2779,9 @@ export const App: React.FC = () => {
       {/* ============================================================ */}
       {/* 5. SINGLE CANONICAL GLOBAL FOOTER                            */}
       {/* ============================================================ */}
-      {currentView !== 'lab-workspace' && currentView !== 'lesson-player' && (
+      {currentView !== 'lab-workspace' && currentView !== 'lesson-player' && !isMobile && (
         <footer
+          className="platform-footer"
           style={{
             borderTop: '1px solid var(--border-subtle)',
             backgroundColor: 'var(--bg-surface)',
@@ -2842,17 +2880,17 @@ export const App: React.FC = () => {
             <div>
               © {new Date().getFullYear()} Geniusphere. Evidence-Backed Education Platform. All rights reserved.
             </div>
-            <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-              <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '2px 8px' }}>Active Pilot Deployment</span>
-              <span>•</span>
-              <button type="button" onClick={() => handleNavigate('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Privacy Policy</button>
-              <span>•</span>
-              <button type="button" onClick={() => handleNavigate('terms')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Terms of Service</button>
-              <span>•</span>
-              <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}>Contact</button>
-              <span>•</span>
-              <span>40 Canonical Courses • 3 Learning Streams • 10 Interactive Labs</span>
-              <span>•</span>
+            <div style={{ display: 'flex', gap: '8px 12px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '2px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>Active Pilot Deployment</span>
+              <span style={{ flexShrink: 0 }}>•</span>
+              <button type="button" onClick={() => handleNavigate('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>Privacy Policy</button>
+              <span style={{ flexShrink: 0 }}>•</span>
+              <button type="button" onClick={() => handleNavigate('terms')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>Terms of Service</button>
+              <span style={{ flexShrink: 0 }}>•</span>
+              <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>Contact</button>
+              <span style={{ flexShrink: 0 }}>•</span>
+              <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>40 Canonical Courses • 3 Learning Streams • 10 Interactive Labs</span>
+              <span style={{ flexShrink: 0 }}>•</span>
               <button
                 type="button"
                 onClick={() => setPilotModalOpen(true)}
@@ -2865,11 +2903,13 @@ export const App: React.FC = () => {
                   fontSize: '0.72rem',
                   cursor: 'pointer',
                   fontWeight: 700,
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
                 <span>Institutional Pilot</span>
               </button>
-              <span>•</span>
+              <span style={{ flexShrink: 0 }}>•</span>
               <button
                 type="button"
                 onClick={() => setBackupModalOpen(true)}
@@ -2882,6 +2922,8 @@ export const App: React.FC = () => {
                   fontSize: '0.72rem',
                   cursor: 'pointer',
                   fontWeight: 700,
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
                 <span>Sovereign Data Backup</span>
@@ -2968,11 +3010,11 @@ export const App: React.FC = () => {
             </button>
             <button
               type="button"
-              className="mobile-tab-btn"
-              onClick={() => setSidebarOpen(true)}
+              className={`mobile-tab-btn ${userMenuOpen ? 'active' : ''}`}
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
-              <span>Menu</span>
+              <User size={20} />
+              <span>Profile</span>
             </button>
           </>
         ) : isInstAdmin ? (
@@ -3011,11 +3053,11 @@ export const App: React.FC = () => {
             </button>
             <button
               type="button"
-              className="mobile-tab-btn"
-              onClick={() => setSidebarOpen(true)}
+              className={`mobile-tab-btn ${userMenuOpen ? 'active' : ''}`}
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
-              <span>Menu</span>
+              <User size={20} />
+              <span>Profile</span>
             </button>
           </>
         ) : isSuperadmin ? (
@@ -3054,11 +3096,11 @@ export const App: React.FC = () => {
             </button>
             <button
               type="button"
-              className="mobile-tab-btn"
-              onClick={() => setSidebarOpen(true)}
+              className={`mobile-tab-btn ${userMenuOpen ? 'active' : ''}`}
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
-              <span>Menu</span>
+              <User size={20} />
+              <span>Profile</span>
             </button>
           </>
         ) : isGuardian ? (
@@ -3089,11 +3131,11 @@ export const App: React.FC = () => {
             </button>
             <button
               type="button"
-              className="mobile-tab-btn"
-              onClick={() => setSidebarOpen(true)}
+              className={`mobile-tab-btn ${userMenuOpen ? 'active' : ''}`}
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
-              <span>Menu</span>
+              <User size={20} />
+              <span>Profile</span>
             </button>
           </>
         ) : isTrainer ? (
@@ -3124,11 +3166,11 @@ export const App: React.FC = () => {
             </button>
             <button
               type="button"
-              className="mobile-tab-btn"
-              onClick={() => setSidebarOpen(true)}
+              className={`mobile-tab-btn ${userMenuOpen ? 'active' : ''}`}
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
-              <span>Menu</span>
+              <User size={20} />
+              <span>Profile</span>
             </button>
           </>
         ) : isLearner ? (
@@ -3167,11 +3209,11 @@ export const App: React.FC = () => {
             </button>
             <button
               type="button"
-              className="mobile-tab-btn"
-              onClick={() => setSidebarOpen(true)}
+              className={`mobile-tab-btn ${userMenuOpen ? 'active' : ''}`}
+              onClick={() => setUserMenuOpen((prev) => !prev)}
             >
-              <Menu size={20} />
-              <span>Menu</span>
+              <User size={20} />
+              <span>Profile</span>
             </button>
           </>
         ) : null}

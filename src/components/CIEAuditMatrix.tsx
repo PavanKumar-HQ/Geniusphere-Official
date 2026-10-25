@@ -118,7 +118,7 @@ export const CIEAuditMatrix: React.FC<CIEAuditMatrixProps> = ({
         </div>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', gap: '8px', borderBottom: '2px solid var(--border-subtle)', marginBottom: '24px' }}>
+        <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', borderBottom: '2px solid var(--border-subtle)', marginBottom: '24px', overflowX: 'auto', paddingBottom: '4px' }}>
           {[
             { id: 'architecture', label: '1. Architectural Contrast (Legacy vs Rebuilt)' },
             { id: 'telemetry', label: '2. Performance & Health Budgets' },
@@ -139,6 +139,8 @@ export const CIEAuditMatrix: React.FC<CIEAuditMatrixProps> = ({
                 fontSize: '0.88rem',
                 cursor: 'pointer',
                 marginBottom: '-2px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
                 transition: 'all 0.15s ease',
               }}
             >

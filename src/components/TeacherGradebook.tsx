@@ -151,7 +151,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
             </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <label htmlFor="class-select" style={{ fontSize: '0.85rem', fontWeight: 600 }}>
             Active Classroom:
           </label>

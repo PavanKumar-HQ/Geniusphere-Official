@@ -17,6 +17,7 @@ import {
   Award,
   Video,
   Code2,
+  ChevronDown,
 } from 'lucide-react';
 
 interface CourseDetailViewProps {
@@ -42,6 +43,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
   );
   const [activeCertificate, setActiveCertificate] = useState<Certificate | null>(null);
   const [activeCourseTab, setActiveCourseTab] = useState<'syllabus' | 'lab' | 'sandbox'>('syllabus');
+  const [expandedModuleId, setExpandedModuleId] = useState<string | null>(course?.modules?.[0]?.id || null);
   const matchingLab = course
     ? db.getLabDefinitions().find(
         (l) =>
@@ -139,32 +141,59 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
           {course.description}
         </p>
 
-        {/* Enrollment / Progress Action Banner */}
-        <div style={{ padding: '20px', backgroundColor: 'var(--brand-surface)', borderRadius: '12px', border: '1px solid var(--brand-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        {/* Course Progress & Primary CTA Banner */}
+        <div
+          style={{
+            padding: '16px 20px',
+            backgroundColor: 'var(--brand-surface)',
+            borderRadius: '16px',
+            border: '1.5px solid var(--brand-border)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px',
+          }}
+        >
           {enrollment ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'var(--brand-accent-surface)', border: '2px solid var(--brand-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--brand-accent)', fontSize: '1.1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--brand-accent-surface)',
+                  border: '2px solid var(--brand-accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  color: 'var(--brand-accent)',
+                  fontSize: '0.95rem',
+                  flexShrink: 0,
+                }}
+              >
                 {enrollment.progress_percent}%
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
-                  {enrollment.progress_percent >= 100 ? 'Course 100% Completed' : 'Course In Progress'}
+                <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                  {enrollment.progress_percent >= 100 ? 'Course Completed! 🎉' : 'Course In Progress'}
                 </div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                  Completed {enrollment.completed_lessons.length} of {course.modules.flatMap(m => m.lessons).length} modules
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  {enrollment.completed_lessons.length} of {course.modules.flatMap((m) => m.lessons).length} modules completed
                 </div>
               </div>
             </div>
           ) : (
             <div>
-              <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--text-primary)' }}>Ready to begin?</div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                10 Comprehensive Modules • 10 Videos • 10 Interactive Labs • 10 Code Sandboxes • Certificate
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>Ready to begin?</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                {course.modules.length} Modules • Video Lectures • Interactive Labs • Code Sandbox
               </div>
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {enrollment && enrollment.progress_percent >= 100 && (
               <button
                 type="button"
@@ -174,50 +203,12 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                   const match = certs.find((c) => c.course_id === course.id);
                   if (match) setActiveCertificate(match);
                 }}
-                style={{ height: '44px', padding: '0 20px', fontSize: '0.9rem' }}
+                style={{ height: '40px', padding: '0 16px', fontSize: '0.84rem' }}
               >
-                <Award size={18} />
-                <span>View Verified Certificate</span>
+                <Award size={16} />
+                <span>Certificate</span>
               </button>
             )}
-
-            {matchingLab && (
-              <button
-                type="button"
-                className={activeCourseTab === 'lab' ? 'btn-primary' : 'btn-secondary'}
-                onClick={() => setActiveCourseTab('lab')}
-                style={{
-                  height: '44px',
-                  padding: '0 18px',
-                  fontSize: '0.9rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                }}
-                title={`Open associated interactive concept lab: ${matchingLab.title}`}
-              >
-                <Terminal size={18} />
-                <span>Interactive Lab ({matchingLab.title})</span>
-              </button>
-            )}
-
-            <button
-              type="button"
-              className={activeCourseTab === 'sandbox' ? 'btn-primary' : 'btn-secondary'}
-              onClick={() => setActiveCourseTab('sandbox')}
-              style={{
-                height: '44px',
-                padding: '0 18px',
-                fontSize: '0.9rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-              title="Open coding sandbox for this course"
-            >
-              <Code2 size={18} />
-              <span>Coding Sandbox</span>
-            </button>
 
             {course.is_published ? (
               <button
@@ -230,64 +221,65 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                     onStartLesson(course.id, firstLessonId);
                   }
                 }}
-                style={{ height: '44px', padding: '0 22px', fontSize: '0.95rem' }}
+                style={{
+                  height: '42px',
+                  padding: '0 20px',
+                  fontSize: '0.88rem',
+                  fontWeight: 800,
+                  borderRadius: '100px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 12px rgba(67, 168, 91, 0.3)',
+                }}
               >
-                <Play size={18} />
-                <span>{enrollment ? 'Continue Course Player' : 'Enroll & Start Learning'}</span>
+                <Play size={16} fill="currentColor" />
+                <span>{enrollment ? 'Continue Learning' : 'Start Course'}</span>
               </button>
             ) : (
-              <div className="badge badge-warning" style={{ padding: '8px 12px' }}>
-                Course Syllabus Planned for Pilot Expansion
+              <div className="badge badge-warning" style={{ padding: '6px 12px', fontSize: '0.75rem' }}>
+                Pilot Course
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Reduced Friction Unified Hub Tabs: Syllabus, Concept Lab & Sandbox in One Place */}
+      {/* App-Native Segmented Control: Syllabus, Concept Lab & Sandbox */}
       <div
         style={{
           display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          borderBottom: '2px solid var(--border-subtle)',
-          paddingBottom: '2px',
-          overflowX: 'auto',
+          backgroundColor: 'var(--bg-surface-subdued)',
+          borderRadius: '12px',
+          padding: '4px',
+          gap: '4px',
+          width: '100%',
         }}
       >
         <button
           type="button"
           onClick={() => setActiveCourseTab('syllabus')}
           style={{
-            padding: '12px 20px',
-            borderRadius: '10px 10px 0 0',
+            flex: 1,
+            padding: '10px 8px',
+            borderRadius: '8px',
             border: 'none',
-            borderBottom: activeCourseTab === 'syllabus' ? '3px solid var(--brand-primary)' : '3px solid transparent',
             backgroundColor: activeCourseTab === 'syllabus' ? 'var(--bg-surface)' : 'transparent',
-            color: activeCourseTab === 'syllabus' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+            color: activeCourseTab === 'syllabus' ? 'var(--text-primary)' : 'var(--text-muted)',
             fontWeight: activeCourseTab === 'syllabus' ? 800 : 600,
-            fontSize: '0.92rem',
+            fontSize: '0.82rem',
             cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
+            gap: '6px',
+            whiteSpace: 'nowrap',
+            boxShadow: activeCourseTab === 'syllabus' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >
-          <BookOpen size={18} />
-          <span>Syllabus & Modules</span>
-          <span
-            style={{
-              fontSize: '0.72rem',
-              padding: '2px 8px',
-              borderRadius: '100px',
-              backgroundColor: 'var(--bg-surface-subdued)',
-              color: 'var(--text-primary)',
-              fontWeight: 700,
-            }}
-          >
-            {course.modules.flatMap((m) => m.lessons).length}
-          </span>
+          <BookOpen size={16} />
+          <span>Syllabus ({course.modules.flatMap((m) => m.lessons).length})</span>
         </button>
 
         {matchingLab && (
@@ -295,35 +287,26 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             type="button"
             onClick={() => setActiveCourseTab('lab')}
             style={{
-              padding: '12px 20px',
-              borderRadius: '10px 10px 0 0',
+              flex: 1,
+              padding: '10px 8px',
+              borderRadius: '8px',
               border: 'none',
-              borderBottom: activeCourseTab === 'lab' ? '3px solid var(--brand-primary)' : '3px solid transparent',
               backgroundColor: activeCourseTab === 'lab' ? 'var(--bg-surface)' : 'transparent',
-              color: activeCourseTab === 'lab' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+              color: activeCourseTab === 'lab' ? 'var(--text-primary)' : 'var(--text-muted)',
               fontWeight: activeCourseTab === 'lab' ? 800 : 600,
-              fontSize: '0.92rem',
+              fontSize: '0.82rem',
               cursor: 'pointer',
-              display: 'inline-flex',
+              display: 'flex',
               alignItems: 'center',
-              gap: '8px',
+              justifyContent: 'center',
+              gap: '6px',
+              whiteSpace: 'nowrap',
+              boxShadow: activeCourseTab === 'lab' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
               transition: 'all 0.15s ease',
             }}
           >
-            <Terminal size={18} />
-            <span>Interactive Concept Lab</span>
-            <span
-              style={{
-                fontSize: '0.7rem',
-                padding: '2px 7px',
-                borderRadius: '100px',
-                backgroundColor: 'var(--brand-lime)',
-                color: 'var(--brand-lime-text)',
-                fontWeight: 800,
-              }}
-            >
-              Sim Available
-            </span>
+            <Terminal size={16} />
+            <span>Interactive Lab</span>
           </button>
         )}
 
@@ -331,35 +314,26 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
           type="button"
           onClick={() => setActiveCourseTab('sandbox')}
           style={{
-            padding: '12px 20px',
-            borderRadius: '10px 10px 0 0',
+            flex: 1,
+            padding: '10px 8px',
+            borderRadius: '8px',
             border: 'none',
-            borderBottom: activeCourseTab === 'sandbox' ? '3px solid var(--brand-primary)' : '3px solid transparent',
             backgroundColor: activeCourseTab === 'sandbox' ? 'var(--bg-surface)' : 'transparent',
-            color: activeCourseTab === 'sandbox' ? 'var(--brand-primary)' : 'var(--text-secondary)',
+            color: activeCourseTab === 'sandbox' ? 'var(--text-primary)' : 'var(--text-muted)',
             fontWeight: activeCourseTab === 'sandbox' ? 800 : 600,
-            fontSize: '0.92rem',
+            fontSize: '0.82rem',
             cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
+            gap: '6px',
+            whiteSpace: 'nowrap',
+            boxShadow: activeCourseTab === 'sandbox' ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
             transition: 'all 0.15s ease',
           }}
         >
-          <Code2 size={18} />
-          <span>Course Code Sandbox</span>
-          <span
-            style={{
-              fontSize: '0.72rem',
-              padding: '2px 8px',
-              borderRadius: '100px',
-              backgroundColor: 'var(--bg-surface-subdued)',
-              color: 'var(--text-primary)',
-              fontWeight: 700,
-            }}
-          >
-            {getInitialSandboxLanguage(course.domain, course.slug).toUpperCase()}
-          </span>
+          <Code2 size={16} />
+          <span>Code Sandbox</span>
         </button>
       </div>
 
@@ -408,42 +382,90 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {course.modules.map((mod, mIdx) => {
                   const cleanModuleTitle = mod.title.replace(/^Module\s+\d+:\s*/i, '').replace(/^Video\s+\d+:\s*/i, '');
+                  const isExpanded = expandedModuleId === mod.id;
+                  const completedInMod = mod.lessons.filter((l) => enrollment?.completed_lessons.includes(l.id)).length;
+                  const isModCompleted = completedInMod === mod.lessons.length && mod.lessons.length > 0;
+
                   return (
-                    <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'var(--bg-surface)' }}>
-                      <div
+                    <div
+                      key={mod.id}
+                      style={{
+                        border: isExpanded ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                        borderRadius: '14px',
+                        overflow: 'hidden',
+                        backgroundColor: 'var(--bg-surface)',
+                        transition: 'border-color 0.15s ease',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setExpandedModuleId(isExpanded ? null : mod.id)}
                         style={{
-                          backgroundColor: 'var(--bg-surface-subdued)',
-                          padding: '10px 14px',
-                          fontWeight: 700,
-                          fontSize: '0.9rem',
-                          borderBottom: '1px solid var(--border-subtle)',
+                          width: '100%',
+                          backgroundColor: isExpanded ? 'var(--brand-surface)' : 'var(--bg-surface-subdued)',
+                          padding: '12px 16px',
+                          border: 'none',
+                          borderBottom: isExpanded ? '1px solid var(--border-subtle)' : 'none',
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
                           gap: '12px',
-                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          transition: 'background-color 0.15s ease',
                         }}
                       >
-                        <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          Module {mIdx + 1}: {cleanModuleTitle}
-                        </span>
-                        <span
-                          style={{
-                            fontSize: '0.74rem',
-                            fontWeight: 700,
-                            color: 'var(--text-muted)',
-                            whiteSpace: 'nowrap',
-                            flexShrink: 0,
-                            backgroundColor: 'var(--bg-surface)',
-                            border: '1px solid var(--border-subtle)',
-                            padding: '2px 8px',
-                            borderRadius: '100px',
-                          }}
-                        >
-                          {mod.lessons.length} {mod.lessons.length === 1 ? 'Lesson' : 'Lessons'}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+                          <div
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              backgroundColor: isModCompleted ? 'var(--brand-primary)' : isExpanded ? 'var(--brand-primary)' : 'var(--bg-surface)',
+                              color: isModCompleted || isExpanded ? '#FFFFFF' : 'var(--text-muted)',
+                              border: isModCompleted || isExpanded ? 'none' : '1px solid var(--border-subtle)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '0.74rem',
+                              fontWeight: 800,
+                              flexShrink: 0,
+                            }}
+                          >
+                            {isModCompleted ? '✓' : mIdx + 1}
+                          </div>
+                          <span style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            Module {mIdx + 1}: {cleanModuleTitle}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              color: isModCompleted ? 'var(--brand-primary)' : 'var(--text-muted)',
+                              backgroundColor: 'var(--bg-surface)',
+                              border: '1px solid var(--border-subtle)',
+                              padding: '2px 8px',
+                              borderRadius: '100px',
+                            }}
+                          >
+                            {completedInMod > 0 ? `${completedInMod}/${mod.lessons.length} done` : `${mod.lessons.length} lessons`}
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            style={{
+                              color: 'var(--text-muted)',
+                              transform: isExpanded ? 'rotate(180deg)' : 'none',
+                              transition: 'transform 0.2s ease',
+                            }}
+                          />
+                        </div>
+                      </button>
+
+                      {isExpanded && (
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {mod.lessons.map((les, lIdx) => {
                           const isCompleted = enrollment?.completed_lessons.includes(les.id);
                           const cleanLessonTitle = les.title.replace(/^Video\s+\d+:\s*/i, '');
@@ -513,8 +535,9 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                           );
                         })}
                       </div>
-                    </div>
-                  );
+                    )}
+                  </div>
+                );
                 })}
               </div>
             )}

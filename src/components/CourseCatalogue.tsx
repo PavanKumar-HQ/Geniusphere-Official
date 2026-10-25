@@ -268,7 +268,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             paddingBottom: '16px',
           }}
         >
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
             {/* All Courses Tab */}
             <button
               type="button"
@@ -285,6 +285,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
                 transition: 'all 0.15s ease',
                 boxShadow: selectedStream === 'all' ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
               }}
@@ -324,6 +326,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '8px',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
                     transition: 'all 0.15s ease',
                     boxShadow: isSelected ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
                   }}
@@ -484,8 +488,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           </div>
 
           {/* Difficulty Level Pills */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div className="mobile-pill-strip" style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap', flexShrink: 0 }}>
               <Filter size={13} /> Level:
             </span>
             {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((lvl) => {
@@ -506,6 +510,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     fontSize: '0.8rem',
                     cursor: 'pointer',
                     textTransform: 'capitalize',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
                     transition: 'all 0.15s ease',
                   }}
                 >
@@ -531,6 +537,8 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   alignItems: 'center',
                   gap: '4px',
                   marginLeft: '4px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
                 <X size={12} /> Clear

@@ -181,7 +181,7 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
           </div>
 
           {/* Domain Filter Pills (Identical to Home Page) */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {domainTabs.map((tab) => (
               <button
                 key={tab.id}

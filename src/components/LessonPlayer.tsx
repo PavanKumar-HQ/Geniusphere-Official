@@ -707,7 +707,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               </p>
 
               {/* 5-STEP INTEGRATED LEARNING FLOW TABS */}
-              <div style={{ display: 'flex', gap: '6px', padding: '4px', backgroundColor: 'var(--bg-canvas)', borderRadius: '12px', border: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}>
+              <div className="mobile-pill-strip" style={{ display: 'flex', gap: '6px', padding: '4px', backgroundColor: 'var(--bg-canvas)', borderRadius: '12px', border: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   onClick={() => setActiveTab('video')}

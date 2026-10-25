@@ -123,7 +123,7 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
+      <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px', overflowX: 'auto' }}>
         <button
           type="button"
           onClick={() => setActiveTab('health')}
@@ -136,6 +136,8 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
             borderBottom: activeTab === 'health' ? '2px solid #DC2626' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Infrastructure & Health
@@ -152,6 +154,8 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
             borderBottom: activeTab === 'users' ? '2px solid #DC2626' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Users & Roles ({allUsers.length})
@@ -168,6 +172,8 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
             borderBottom: activeTab === 'content' ? '2px solid #DC2626' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Content Publication ({allCourses.length} Subjects)
@@ -184,6 +190,8 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
             borderBottom: activeTab === 'videos' ? '2px solid #DC2626' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Video Lessons ({videoLessons.length})
@@ -200,6 +208,8 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
             borderBottom: activeTab === 'institutions' ? '2px solid #DC2626' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Institutions ({allOrgs.length})
@@ -216,6 +226,8 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
             borderBottom: activeTab === 'marketplace' ? '2px solid #DC2626' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Marketplace & Operations ({allTrainingRequests.length} Req / {allTrainers.length} Trainers)

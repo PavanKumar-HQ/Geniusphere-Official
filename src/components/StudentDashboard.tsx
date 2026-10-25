@@ -649,6 +649,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         </div>
 
         <div
+          className="app-carousel"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -687,6 +688,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           ].map((s, idx) => (
             <div
               key={idx}
+              className="app-carousel-item-compact"
               style={{
                 backgroundColor: s.done ? 'var(--selected-bg, #E5F0DF)' : 'var(--bg-surface-subdued)',
                 borderRadius: '14px',
@@ -763,6 +765,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         </div>
 
         <div
+          className="app-carousel"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
@@ -770,12 +773,13 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           }}
         >
           {highlightedCourses.map(({ course, enrollment }) => (
-            <CourseCardIllustrated
-              key={course!.id}
-              course={course!}
-              progressPercent={enrollment?.progress_percent || 0}
-              onSelectCourse={onSelectCourse}
-            />
+            <div key={course!.id} className="app-carousel-item">
+              <CourseCardIllustrated
+                course={course!}
+                progressPercent={enrollment?.progress_percent || 0}
+                onSelectCourse={onSelectCourse}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -906,7 +910,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           </div>
 
           {/* Stream Filter Pills */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {[
               { id: 'all', label: 'All 17 Topics' },
               { id: 'technology', label: 'Technology' },

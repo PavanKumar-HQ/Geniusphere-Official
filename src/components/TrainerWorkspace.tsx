@@ -169,7 +169,7 @@ export const TrainerWorkspace: React.FC<TrainerWorkspaceProps> = ({ db, currentU
       )}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px', overflowX: 'auto' }}>
+      <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px', overflowX: 'auto' }}>
         <button
           type="button"
           onClick={() => setActiveTab('assignments')}
@@ -185,6 +185,8 @@ export const TrainerWorkspace: React.FC<TrainerWorkspaceProps> = ({ db, currentU
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           <Award size={16} />
@@ -206,6 +208,8 @@ export const TrainerWorkspace: React.FC<TrainerWorkspaceProps> = ({ db, currentU
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           <Calendar size={16} />
@@ -227,6 +231,8 @@ export const TrainerWorkspace: React.FC<TrainerWorkspaceProps> = ({ db, currentU
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           <DollarSign size={16} />
@@ -248,6 +254,8 @@ export const TrainerWorkspace: React.FC<TrainerWorkspaceProps> = ({ db, currentU
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           <ShieldCheck size={16} />

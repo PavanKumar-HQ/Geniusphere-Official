@@ -211,7 +211,7 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
       )}
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '10px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px', overflowX: 'auto' }}>
+      <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px', overflowX: 'auto' }}>
         <button
           type="button"
           onClick={() => setActiveTab('marketplace')}
@@ -227,6 +227,8 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           <Award size={16} />
@@ -244,6 +246,8 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
             borderBottom: activeTab === 'overview' ? '2px solid var(--brand-primary)' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Overview & Metrics
@@ -260,6 +264,8 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
             borderBottom: activeTab === 'educators' ? '2px solid var(--brand-primary)' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Educators ({educators.length})
@@ -276,6 +282,8 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
             borderBottom: activeTab === 'classrooms' ? '2px solid var(--brand-primary)' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Classrooms ({classrooms.length})
@@ -292,6 +300,8 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
             borderBottom: activeTab === 'privacy' ? '2px solid var(--brand-primary)' : '2px solid transparent',
             cursor: 'pointer',
             fontSize: '0.9rem',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
           }}
         >
           Safeguarding & Data Scope

@@ -309,6 +309,97 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
       </div>
 
       {/* ================================================================ */}
+      {/* 2.5 QUICK APP CATEGORY PILL STRIP                                */}
+      {/* ================================================================ */}
+      <div className="mobile-pill-strip" style={{ margin: '-8px 0 0' }}>
+        <button
+          type="button"
+          onClick={() => onNavigate('catalogue')}
+          style={{
+            padding: '7px 14px',
+            borderRadius: '100px',
+            backgroundColor: 'var(--brand-primary)',
+            color: '#FFFFFF',
+            border: 'none',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+          }}
+        >
+          <Sparkles size={14} />
+          <span>All Tracks</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('catalogue', 'technology')}
+          style={{
+            padding: '7px 14px',
+            borderRadius: '100px',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-primary)',
+            fontSize: '0.78rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          🛡️ Cybersecurity
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('catalogue', 'technology')}
+          style={{
+            padding: '7px 14px',
+            borderRadius: '100px',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-primary)',
+            fontSize: '0.78rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          🤖 AI & Neural Nets
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('catalogue', 'finance')}
+          style={{
+            padding: '7px 14px',
+            borderRadius: '100px',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-primary)',
+            fontSize: '0.78rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          📈 FinTech & Trading
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('labs')}
+          style={{
+            padding: '7px 14px',
+            borderRadius: '100px',
+            backgroundColor: 'var(--bg-surface)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-primary)',
+            fontSize: '0.78rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+          }}
+        >
+          🧪 15 Interactive Labs
+        </button>
+      </div>
+
+      {/* ================================================================ */}
       {/* 3. DAILY QUESTS & GAMIFIED HABIT MATRIX                          */}
       {/* ================================================================ */}
       <div>
@@ -324,9 +415,10 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
+        <div className="app-carousel" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
           {/* Quest 1: Watch Lesson */}
           <div
+            className="app-carousel-item-compact"
             style={{
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
@@ -370,6 +462,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Quest 2: Run a Simulation Lab */}
           <div
+            className="app-carousel-item-compact"
             style={{
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
@@ -418,6 +511,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Quest 3: Maintain Streak */}
           <div
+            className="app-carousel-item-compact"
             style={{
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '16px',
@@ -568,6 +662,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
         </div>
 
         <div
+          className="app-carousel"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
@@ -575,11 +670,12 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           }}
         >
           {visualRecommendedCourses.map((c) => (
-            <CourseCardIllustrated
-              key={c.id}
-              course={c}
-              onSelectCourse={onSelectCourse}
-            />
+            <div key={c.id} className="app-carousel-item">
+              <CourseCardIllustrated
+                course={c}
+                onSelectCourse={onSelectCourse}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -621,9 +717,10 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+        <div className="app-carousel" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
           {/* Tile 1: Office Lab X */}
           <div
+            className="app-carousel-item-compact"
             onClick={() => onLaunchLab('office-lab')}
             style={{
               padding: '16px',
@@ -659,6 +756,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Tile 2: Cyber Defense Lab */}
           <div
+            className="app-carousel-item-compact"
             onClick={() => onLaunchLab('cybersecurity-lab')}
             style={{
               padding: '16px',
@@ -694,6 +792,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Tile 3: AI Neural Lab */}
           <div
+            className="app-carousel-item-compact"
             onClick={() => onLaunchLab('ai-lab')}
             style={{
               padding: '16px',
@@ -729,6 +828,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Tile 4: Multi-Language Sandbox */}
           <div
+            className="app-carousel-item-compact"
             onClick={() => onNavigate('code-sandbox')}
             style={{
               padding: '16px',
