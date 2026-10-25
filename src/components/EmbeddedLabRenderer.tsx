@@ -1,4 +1,5 @@
 import React, { Suspense, useCallback } from 'react';
+import { FlaskConical, X } from 'lucide-react';
 import { getStandaloneLab } from '../labs/registry';
 import { LabOrientationGuard } from './lab/LabOrientationGuard';
 import { LabErrorBoundary } from './LabErrorBoundary';
@@ -34,7 +35,9 @@ const UnknownLab: React.FC<{ slug: string; onClose: () => void }> = ({ slug, onC
     background: 'linear-gradient(135deg, #0a0f1e 0%, #1a0a2e 100%)',
     borderRadius: '16px', border: '1px solid rgba(124,107,255,0.2)', textAlign: 'center',
   }}>
-    <div style={{ fontSize: '3rem' }}>🔬</div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '16px', backgroundColor: 'rgba(124,107,255,0.12)', border: '1px solid rgba(124,107,255,0.25)' }}>
+      <FlaskConical size={32} color="#A78BFA" />
+    </div>
     <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>Lab Not Found</h3>
     <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.875rem', maxWidth: '400px', lineHeight: 1.6, margin: 0 }}>
       No lab is registered for slug: <code style={{ color: '#7c6bff' }}>{slug}</code>
@@ -82,13 +85,14 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: '5px',
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
             padding: '3px 9px', background: 'rgba(59,240,255,0.08)',
             border: '1px solid rgba(59,240,255,0.22)', borderRadius: '5px',
             fontSize: '0.62rem', fontFamily: 'monospace', color: '#3BF0FF',
             fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
           }}>
-            🔬 INTERACTIVE LAB
+            <FlaskConical size={12} color="#3BF0FF" />
+            <span>INTERACTIVE LAB</span>
           </span>
           <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'rgba(255,255,255,0.88)', letterSpacing: '0.02em' }}>
             {labDisplayName}
@@ -113,6 +117,7 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
               borderRadius: '6px', color: 'rgba(255,255,255,0.55)',
               fontSize: '0.7rem', fontWeight: 700, cursor: 'pointer',
               letterSpacing: '0.06em', transition: 'all 0.18s',
+              display: 'inline-flex', alignItems: 'center', gap: '4px',
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.background = 'rgba(239,68,68,0.14)';
@@ -125,7 +130,8 @@ export const EmbeddedLabRenderer: React.FC<EmbeddedLabRendererProps> = ({ labSlu
               e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
             }}
           >
-            ✕ Exit Lab
+            <X size={12} />
+            <span>Exit Lab</span>
           </button>
         </div>
       </div>

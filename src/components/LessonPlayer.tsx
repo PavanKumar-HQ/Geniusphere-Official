@@ -27,6 +27,8 @@ import {
   Lightbulb,
   RefreshCw,
   AlertCircle,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 import { SupportedLanguage } from '../utils/codeSandboxRunner';

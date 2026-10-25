@@ -12,13 +12,15 @@ import {
   CheckCircle2,
   ArrowRight,
   Clock,
-  Sparkles,
+  Layers,
   School,
   Calendar,
   ChevronRight,
   Target,
   ShieldCheck,
   Cpu,
+  TrendingUp,
+  FlaskConical,
   BarChart3,
   Code2,
 } from 'lucide-react';
@@ -336,7 +338,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
           }}
         >
-          <Sparkles size={14} />
+          <Layers size={14} />
           <span>All Tracks</span>
         </button>
         <button
@@ -351,9 +353,13 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             fontSize: '0.78rem',
             fontWeight: 700,
             cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          🛡️ Cybersecurity
+          <ShieldCheck size={14} color="var(--brand-primary)" />
+          <span>Cybersecurity</span>
         </button>
         <button
           type="button"
@@ -367,9 +373,13 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             fontSize: '0.78rem',
             fontWeight: 700,
             cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          🤖 AI & Neural Nets
+          <Cpu size={14} color="var(--brand-primary)" />
+          <span>AI &amp; Neural Nets</span>
         </button>
         <button
           type="button"
@@ -383,9 +393,13 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             fontSize: '0.78rem',
             fontWeight: 700,
             cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          📈 FinTech & Trading
+          <TrendingUp size={14} color="var(--brand-primary)" />
+          <span>FinTech &amp; Trading</span>
         </button>
         <button
           type="button"
@@ -399,9 +413,13 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             fontSize: '0.78rem',
             fontWeight: 700,
             cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
           }}
         >
-          🧪 15 Interactive Labs
+          <FlaskConical size={14} color="var(--brand-primary)" />
+          <span>15 Interactive Labs</span>
         </button>
       </div>
 

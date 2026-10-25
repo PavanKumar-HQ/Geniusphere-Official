@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Cpu, Activity, Zap, Radio, Layers, RotateCcw, 
   Eye, CheckCircle2, AlertTriangle, ShieldCheck, 
-  HelpCircle, Sparkles, Battery, Clock, Wifi, Compass
+  HelpCircle, Battery, Clock, Wifi, Compass
 } from 'lucide-react';
 import { apiClient } from '../../../services/apiClient';
 

@@ -17,7 +17,6 @@ import {
   Video,
   Check,
   Calendar,
-  Sparkles,
   ArrowRight,
   GraduationCap,
   Layers,

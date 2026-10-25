@@ -23,7 +23,7 @@ function App({ onClose, onExit }: { onClose?: () => void; onExit?: () => void })
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [isDesktopSidebarOpen, setIsDesktopSidebarOpen] = useState(true);
-  const [isDesktopInfoOpen, setIsDesktopInfoOpen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1380);
+  const [isDesktopInfoOpen, setIsDesktopInfoOpen] = useState(false);
 
   const content = EDUCATIONAL_CONTENT[activeModule];
 

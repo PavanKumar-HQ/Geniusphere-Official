@@ -9,7 +9,6 @@ import {
   Users,
   ShieldCheck,
   CheckCircle2,
-  Sparkles,
 } from 'lucide-react';
 
 export interface CourseCardIllustratedProps {
