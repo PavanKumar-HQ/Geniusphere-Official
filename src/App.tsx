@@ -578,19 +578,7 @@ export const App: React.FC = () => {
       {/* ============================================================ */}
       {/* 1. TOP MASTER BAR (CANONICAL ENTERPRISE SOFTWARE SHELL)     */}
       {/* ============================================================ */}
-      <header
-        className="platform-header"
-        style={{
-          backgroundColor: 'var(--bg-surface)',
-          borderBottom: '1px solid var(--border-subtle)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          boxShadow: '0 1px 4px rgba(15, 23, 42, 0.04)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-        }}
-      >
+      <header className="platform-header">
         <div
           className="platform-header-inner"
           style={{

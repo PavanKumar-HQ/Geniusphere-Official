@@ -339,6 +339,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [isSyllabusCollapsed, setIsSyllabusCollapsed] = useState(false);
 
   if (!course) {
     return <div>Course not found.</div>;
@@ -555,132 +556,171 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
   const userProgress = db.getUserProgress(currentUserId);
 
   return (
-    <div className="lesson-player-layout-grid">
+    <div className={`lesson-player-layout-grid ${isSyllabusCollapsed ? 'syllabus-collapsed' : ''}`}>
       {/* Sidebar: Course Outline & Progress */}
-      <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px' }}>
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={onBackToCourse}
-          style={{ width: '100%', height: '38px', fontSize: '0.82rem', marginBottom: '14px' }}
-        >
-          <ArrowLeft size={14} /> Back to Course Syllabus
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-          <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>
-            {course.domain.toUpperCase()}
-          </span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>10 Modules</span>
-        </div>
-
-        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '4px', lineHeight: 1.3 }}>
-          {course.title}
-        </h3>
-        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
-          {course.subject}
-        </div>
-
-
-
-        {/* Course Progress */}
-        <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '6px', fontWeight: 700 }}>
-            <span>Course Progress</span>
-            <span style={{ color: 'var(--brand-primary)' }}>{enrollment.progress_percent}%</span>
+      {!isSyllabusCollapsed && (
+        <div className="card" style={{ padding: '20px', position: 'sticky', top: '80px', zIndex: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={onBackToCourse}
+              style={{ flex: 1, height: '38px', fontSize: '0.82rem' }}
+            >
+              <ArrowLeft size={14} /> Back to Syllabus
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => setIsSyllabusCollapsed(true)}
+              style={{ width: '38px', height: '38px', minWidth: '38px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Collapse syllabus (Maximize Studio space)"
+              aria-label="Collapse syllabus"
+            >
+              <PanelLeftClose size={15} />
+            </button>
           </div>
-          <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-canvas)', borderRadius: '3px', overflow: 'hidden' }}>
-            <div
-              style={{
-                width: `${enrollment.progress_percent}%`,
-                height: '100%',
-                backgroundColor: 'var(--brand-primary)',
-                transition: 'width 0.3s ease',
-              }}
-            />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+            <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>
+              {course.domain.toUpperCase()}
+            </span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>10 Modules</span>
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-            {enrollment.completed_lessons.length} of {allLessons.length} modules completed
+
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '4px', lineHeight: 1.3 }}>
+            {course.title}
+          </h3>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
+            {course.subject}
           </div>
-        </div>
 
-        {/* Claim Certificate Button if Completed */}
-        {enrollment.progress_percent >= 100 && (
-          <button
-            type="button"
-            className="btn-accent"
-            onClick={() => {
-              const certs = db.getCertificates(currentUserId);
-              const match = certs.find((c) => c.course_id === courseId);
-              if (match) setEarnedCertificate(match);
-            }}
-            style={{ width: '100%', height: '40px', fontSize: '0.82rem', marginBottom: '16px', fontWeight: 700 }}
-          >
-            <Award size={16} /> View Verified Certificate
-          </button>
-        )}
-
-        {/* Modules & Lessons List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '480px', overflowY: 'auto', paddingRight: '4px' }}>
-          {course.modules.map((mod, mIdx) => (
-            <div key={mod.id}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.05em' }}>
-                Module {mIdx + 1}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {mod.lessons.map((l, lIdx) => {
-                  const isActive = l.id === activeLesson?.id;
-                  const isDone = enrollment.completed_lessons.includes(l.id);
-
-                  return (
-                    <button
-                      key={l.id}
-                      type="button"
-                      onClick={() => {
-                        setCurrentLessonId(l.id);
-                        setSelectedAnswers({});
-                        setQuizSubmitted(false);
-                        setQuizScore(null);
-                      }}
-                      style={{
-                        padding: '8px 10px',
-                        borderRadius: '6px',
-                        backgroundColor: isActive ? 'var(--brand-surface)' : 'transparent',
-                        color: isActive ? 'var(--brand-primary)' : 'var(--text-primary)',
-                        border: isActive ? '1px solid var(--brand-border)' : '1px solid transparent',
-                        textAlign: 'left',
-                        fontSize: '0.8rem',
-                        fontWeight: isActive ? 700 : 500,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '8px',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', minWidth: '16px' }}>
-                          {lIdx + 1}.
-                        </span>
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {l.title}
-                        </span>
-                      </div>
-                      {isDone ? (
-                        <CheckCircle2 size={14} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
-                      ) : (
-                        <Clock size={12} color="var(--text-muted)" style={{ flexShrink: 0 }} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Course Progress */}
+          <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '6px', fontWeight: 700 }}>
+              <span>Course Progress</span>
+              <span style={{ color: 'var(--brand-primary)' }}>{enrollment.progress_percent}%</span>
             </div>
-          ))}
+            <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-canvas)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div
+                style={{
+                  width: `${enrollment.progress_percent}%`,
+                  height: '100%',
+                  backgroundColor: 'var(--brand-primary)',
+                  transition: 'width 0.3s ease',
+                }}
+              />
+            </div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+              {enrollment.completed_lessons.length} of {allLessons.length} modules completed
+            </div>
+          </div>
+
+          {/* Claim Certificate Button if Completed */}
+          {enrollment.progress_percent >= 100 && (
+            <button
+              type="button"
+              className="btn-accent"
+              onClick={() => {
+                const certs = db.getCertificates(currentUserId);
+                const match = certs.find((c) => c.course_id === courseId);
+                if (match) setEarnedCertificate(match);
+              }}
+              style={{ width: '100%', height: '40px', fontSize: '0.82rem', marginBottom: '16px', fontWeight: 700 }}
+            >
+              <Award size={16} /> View Verified Certificate
+            </button>
+          )}
+
+          {/* Modules & Lessons List */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '480px', overflowY: 'auto', paddingRight: '4px' }}>
+            {course.modules.map((mod, mIdx) => (
+              <div key={mod.id}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.05em' }}>
+                  Module {mIdx + 1}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {mod.lessons.map((l, lIdx) => {
+                    const isActive = l.id === activeLesson?.id;
+                    const isDone = enrollment.completed_lessons.includes(l.id);
+
+                    return (
+                      <button
+                        key={l.id}
+                        type="button"
+                        onClick={() => {
+                          setCurrentLessonId(l.id);
+                          setSelectedAnswers({});
+                          setQuizSubmitted(false);
+                          setQuizScore(null);
+                        }}
+                        style={{
+                          padding: '8px 10px',
+                          borderRadius: '6px',
+                          backgroundColor: isActive ? 'var(--brand-surface)' : 'transparent',
+                          color: isActive ? 'var(--brand-primary)' : 'var(--text-primary)',
+                          border: isActive ? '1px solid var(--brand-border)' : '1px solid transparent',
+                          textAlign: 'left',
+                          fontSize: '0.8rem',
+                          fontWeight: isActive ? 700 : 500,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '8px',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', minWidth: '16px' }}>
+                            {lIdx + 1}.
+                          </span>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {l.title}
+                          </span>
+                        </div>
+                        {isDone ? (
+                          <CheckCircle2 size={14} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
+                        ) : (
+                          <Clock size={12} color="var(--text-muted)" style={{ flexShrink: 0 }} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Lesson Content Area */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', minWidth: 0, width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+        {isSyllabusCollapsed && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 16px',
+              backgroundColor: 'var(--bg-surface)',
+              borderRadius: '12px',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setIsSyllabusCollapsed(false)}
+              className="btn-secondary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', height: '34px', padding: '0 14px', borderRadius: '8px' }}
+            >
+              <PanelLeftOpen size={15} />
+              <span>Show Course Syllabus ({enrollment.progress_percent}% completed)</span>
+            </button>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+              {course.title}
+            </span>
+          </div>
+        )}
         {activeLesson && (
           <>
             {/* Header with Title & Modality Switcher */}
