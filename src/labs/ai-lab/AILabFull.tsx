@@ -13,8 +13,8 @@ interface AILabFullProps {
 const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
   const [activeModuleId, setActiveModuleId] = useState<string>(AI_MODULES[0].id);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isDefenseOpen, setIsDefenseOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 960 : false);
+  const [isDefenseOpen, setIsDefenseOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 1200 : false);
 
   const activeModule = AI_MODULES.find(m => m.id === activeModuleId) || AI_MODULES[0];
 

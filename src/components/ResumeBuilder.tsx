@@ -199,27 +199,27 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ db, currentUserId 
       </div>
 
       {/* Live Preview Column */}
-      <div className="card-elevated" style={{ backgroundColor: '#FFFFFF', padding: '32px', border: '1px solid var(--border-strong)' }}>
-        <div style={{ borderBottom: '2px solid #18181B', paddingBottom: '16px', marginBottom: '20px' }}>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#18181B', marginBottom: '4px' }}>{fullName || 'Your Name'}</h1>
+      <div className="card-elevated" style={{ backgroundColor: 'var(--bg-surface)', padding: '32px', border: '1px solid var(--border-subtle)' }}>
+        <div style={{ borderBottom: '2px solid var(--border-strong)', paddingBottom: '16px', marginBottom: '20px' }}>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>{fullName || 'Your Name'}</h1>
           <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--brand-primary)', marginBottom: '4px' }}>{headline}</div>
-          <div style={{ fontSize: '0.8rem', color: '#52525B' }}>{email} • Verified Geniusphere Student</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{email} • Verified Geniusphere Student</div>
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717A', borderBottom: '1px solid #E4E4E7', paddingBottom: '4px', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px', marginBottom: '8px' }}>
             Executive Summary
           </h3>
-          <p style={{ fontSize: '0.875rem', lineHeight: 1.6, color: '#27272A' }}>{summary}</p>
+          <p style={{ fontSize: '0.875rem', lineHeight: 1.6, color: 'var(--text-primary)' }}>{summary}</p>
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717A', borderBottom: '1px solid #E4E4E7', paddingBottom: '4px', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px', marginBottom: '8px' }}>
             Technical Competencies
           </h3>
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
             {skills.map((s) => (
-              <span key={s} style={{ backgroundColor: '#F4F4F5', color: '#18181B', padding: '2px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600 }}>
+              <span key={s} style={{ backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', padding: '2px 8px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 600 }}>
                 {s}
               </span>
             ))}
@@ -227,31 +227,31 @@ export const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ db, currentUserId 
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717A', borderBottom: '1px solid #E4E4E7', paddingBottom: '4px', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px', marginBottom: '8px' }}>
             Technical Projects & Evidence
           </h3>
           {projects.map((p) => (
             <div key={p.id} style={{ marginBottom: '12px' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#18181B' }}>{p.title}</div>
-              <div style={{ fontSize: '0.825rem', color: '#52525B', lineHeight: 1.5, marginBottom: '4px' }}>{p.description}</div>
-              <div style={{ fontSize: '0.75rem', color: '#71717A' }}>Technologies: {p.technologies.join(', ')}</div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>{p.title}</div>
+              <div style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '4px' }}>{p.description}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Technologies: {p.technologies.join(', ')}</div>
             </div>
           ))}
         </div>
 
         <div>
-          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#71717A', borderBottom: '1px solid #E4E4E7', paddingBottom: '4px', marginBottom: '8px' }}>
+          <h3 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px', marginBottom: '8px' }}>
             Verified Geniusphere Credentials
           </h3>
           {verifiedAchievements.length > 0 ? (
             verifiedAchievements.map((ach, idx) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: '#065F46', padding: '4px 0' }}>
-                <CheckCircle2 size={14} color="#059669" />
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--brand-primary)', padding: '4px 0' }}>
+                <CheckCircle2 size={14} color="var(--brand-primary)" />
                 <span>{ach}</span>
               </div>
             ))
           ) : (
-            <div style={{ fontSize: '0.8rem', color: '#71717A', fontStyle: 'italic' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
               Complete interactive labs to earn verified database-backed credentials.
             </div>
           )}

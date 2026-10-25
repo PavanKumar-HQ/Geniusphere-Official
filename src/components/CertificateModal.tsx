@@ -28,18 +28,18 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
         onClick={(e) => e.stopPropagation()}
         style={{
           maxWidth: '780px',
-          backgroundColor: '#FAFAF4',
-          border: '1.5px solid #E5F0DF',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1.5px solid var(--border-subtle)',
           borderRadius: '16px',
           padding: '32px',
-          boxShadow: 'var(--shadow-md)',
+          boxShadow: 'var(--shadow-lg, 0 20px 40px rgba(0, 0, 0, 0.4))',
         }}
       >
         {/* Top Controls */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#43A85B' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--brand-primary)' }}>
             <Award size={22} />
-            <span style={{ fontWeight: 800, fontSize: '1.05rem', color: '#26352A', fontFamily: 'var(--font-heading)' }}>
+            <span style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
               VERIFIED COURSE COMPLETION CERTIFICATE
             </span>
           </div>
@@ -50,9 +50,9 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({ certificate,
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E5F0DF',
-              color: '#26352A',
+              backgroundColor: 'var(--bg-canvas)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

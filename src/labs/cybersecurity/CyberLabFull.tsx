@@ -232,7 +232,7 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit, onClose }) =
       </header>
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: '32px 24px', overflowY: 'auto' }}>
+      <main style={{ flex: 1, padding: 'clamp(12px, 3vw, 32px) clamp(10px, 3vw, 24px)', overflowY: 'auto' }}>
         {renderContent()}
       </main>
 

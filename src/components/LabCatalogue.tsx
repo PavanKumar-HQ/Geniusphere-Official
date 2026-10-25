@@ -57,11 +57,11 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
   });
 
   return (
-    <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '36px 24px 80px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+    <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '24px 16px 80px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '24px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: 'var(--text-meta)', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: 'var(--text-meta)', color: 'var(--text-secondary)', marginBottom: '10px' }}>
             <button 
               type="button"
               onClick={onNavigateHome}
@@ -72,34 +72,34 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
             <span>/</span>
             <span>Interactive Labs</span>
           </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: 'var(--text-meta)', fontWeight: 700, marginBottom: '12px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--brand-surface)', color: 'var(--brand-primary)', fontSize: 'var(--text-meta)', fontWeight: 700, marginBottom: '10px' }}>
             <Terminal size={14} />
             <span>AUTHORITATIVE COURSE LABS &amp; SIMULATIONS</span>
           </div>
           <h1 style={{ fontSize: 'var(--text-page-title)', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
             Explore Interactive Labs
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0, maxWidth: '680px' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-body)', margin: 0, maxWidth: '680px', lineHeight: 1.5 }}>
             Hands-on concept simulations, parameter-driven experiments, and code execution sandboxes directly mapped to the 18 canonical courses.
           </p>
         </div>
-        <MascotSphere pose="coding" size={96} speechBubble="Choose a course to launch its interactive lab!" />
+        <MascotSphere pose="coding" size={88} speechBubble="Choose a course to launch its interactive lab!" />
       </div>
 
       {/* Flagship Multi-Language Coding Sandbox Banner */}
       <div
         className="card"
         style={{
-          background: 'linear-gradient(135deg, #F2F8EF 0%, #FFFFFF 100%)',
-          border: '2px solid #43A85B',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1.5px solid var(--border-subtle)',
           borderRadius: '16px',
-          padding: '24px 28px',
+          padding: '22px 24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '20px',
-          boxShadow: '0 4px 16px rgba(67, 168, 91, 0.12)',
+          gap: '18px',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         <div style={{ maxWidth: '720px' }}>
@@ -108,8 +108,9 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              backgroundColor: '#43A85B',
-              color: '#FFFFFF',
+              backgroundColor: 'var(--brand-surface)',
+              color: 'var(--brand-primary)',
+              border: '1px solid var(--border-subtle)',
               padding: '3px 10px',
               borderRadius: '100px',
               fontSize: '0.72rem',
@@ -123,10 +124,10 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
               <span>Flagship Sandbox • Python 3.12 &amp; C Compiler</span>
             </span>
           </div>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#26352A', margin: '0 0 8px 0' }}>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
             Multi-Language In-Browser Coding Sandbox
           </h2>
-          <p style={{ margin: 0, color: '#4A5B4F', fontSize: '0.92rem', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
             Directly test and compile <strong>Python</strong> (functions, loops, math, algorithms) and <strong>C Language</strong> (pointers, printf formatting, buffer boundary checks) with live terminal stdout feedback and zero setup.
           </p>
         </div>
@@ -134,24 +135,17 @@ export const LabCatalogue: React.FC<LabCatalogueProps> = ({
         {onOpenCodingSandbox && (
           <button
             type="button"
+            className="btn-primary"
             onClick={onOpenCodingSandbox}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: '#43A85B',
-              color: '#FFFFFF',
-              border: 'none',
               borderRadius: '100px',
-              padding: '12px 24px',
+              padding: '11px 22px',
               fontWeight: 800,
-              fontSize: '0.92rem',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(67, 168, 91, 0.28)',
-              transition: 'background 0.15s ease',
+              fontSize: '0.88rem',
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#38944f')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#43A85B')}
           >
             <span>Launch Python &amp; C Sandbox</span>
             <ArrowRight size={16} />

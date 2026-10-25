@@ -31,6 +31,8 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
     headerStyle = 'standard',
     headerTitle
 }) => {
+    const [showGuide, setShowGuide] = React.useState(false);
+
     return (
         <LabOrientationGuard labTitle={typeof title === 'string' ? title : 'Interactive Lab'}>
             <div
@@ -52,7 +54,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '12px 16px',
+                    padding: '10px 14px',
                     backgroundColor: '#0F172A',
                     borderBottom: '1px solid rgba(255,255,255,0.1)',
                     position: 'sticky',
@@ -61,7 +63,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                     flexShrink: 0,
                     boxSizing: 'border-box',
                 }}
-                className="flex items-center justify-between p-4 bg-slate-900/95 backdrop-blur-xl border-b border-white/10 shrink-0 sticky top-0 z-[100]"
+                className="flex items-center justify-between p-3 bg-slate-900/95 backdrop-blur-xl border-b border-white/10 shrink-0 sticky top-0 z-[100]"
             >
                 {headerStyle === 'brand-center' ? (
                     <>
@@ -79,12 +81,12 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }}
-                            className="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-all active:scale-95"
+                            className="p-2 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-all active:scale-95"
                             aria-label="Open menu"
                         >
-                            <Menu size={20} />
+                            <Menu size={18} />
                         </button>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                             {headerTitle || title}
                         </div>
                         <button
@@ -101,10 +103,10 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                                 alignItems: 'center',
                                 justifyContent: 'center',
                             }}
-                            className="p-2.5 rounded-full bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white transition-all active:scale-95"
+                            className="p-2 rounded-full bg-slate-800/50 text-slate-300 hover:bg-slate-700 hover:text-white transition-all active:scale-95"
                             aria-label="Exit lab"
                         >
-                            <X size={20} strokeWidth={2.5} />
+                            <X size={18} strokeWidth={2.5} />
                         </button>
                     </>
                 ) : (
@@ -116,100 +118,117 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '8px 12px',
+                                padding: '6px 12px',
                                 borderRadius: '8px',
                                 backgroundColor: '#1E293B',
                                 border: '1px solid rgba(255,255,255,0.1)',
                                 color: '#CBD5E1',
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 fontWeight: 700,
                                 cursor: 'pointer',
                             }}
-                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-all text-sm font-bold uppercase tracking-wider active:scale-95"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-all text-xs font-bold uppercase tracking-wider active:scale-95"
                             aria-label="Exit lab"
                         >
-                            <ChevronLeft size={18} strokeWidth={2.5} />
+                            <ChevronLeft size={16} strokeWidth={2.5} />
                             Exit
                         </button>
                         <button
                             type="button"
                             onClick={onMenuToggle}
                             style={{
-                                padding: '8px',
+                                padding: '6px',
                                 borderRadius: '8px',
                                 backgroundColor: '#1E293B',
                                 border: '1px solid rgba(255,255,255,0.1)',
                                 color: '#CBD5E1',
                                 cursor: 'pointer',
                             }}
-                            className="p-2.5 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-all active:scale-95"
+                            className="p-2 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white hover:bg-slate-700 transition-all active:scale-95"
                             aria-label="Open menu"
                         >
-                            <Menu size={20} />
+                            <Menu size={18} />
                         </button>
                     </>
                 )}
             </header>
 
-            {/* Scrollable Content */}
+            {/* Content Area */}
             <main
                 style={{
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: '16px',
-                    gap: '16px',
+                    padding: '12px 14px',
+                    gap: '12px',
                     overflowY: 'auto',
                     minHeight: 0,
                     boxSizing: 'border-box',
                 }}
-                className="flex-1 flex flex-col p-4 gap-6 overflow-y-auto pb-32 custom-scrollbar"
+                className="flex-1 flex flex-col p-3 gap-3 overflow-y-auto pb-8 custom-scrollbar"
             >
-                {/* Title Section */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {/* Badges */}
+                {/* Title & Badges */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                    <h1 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#FFFFFF', margin: 0, lineHeight: 1.2 }}>{title}</h1>
                     {badges && badges.length > 0 && (
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {badges.map((badge, i) => (
                                 <div key={i}>{badge}</div>
                             ))}
                         </div>
                     )}
-
-                    <h1 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#FFFFFF', margin: 0, lineHeight: 1.2 }}>{title}</h1>
-
-                    {description && (
-                        <div style={{ borderLeft: '3px solid #3B82F6', paddingLeft: '12px', margin: 0 }}>
-                            <div style={{ fontSize: '0.84rem', color: '#94A3B8', lineHeight: 1.5 }}>
-                                {description}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* Visual Simulation Area */}
-                <div style={{ width: '100%', minHeight: '340px', backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ width: '100%', minHeight: '260px', maxHeight: '42vh', backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
                         {visualContent}
                     </div>
                 </div>
 
-                {/* Info / Steps Card */}
-                {infoContent && (
-                    <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: 'rgba(15,23,42,0.8)', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '12px' }}>
-                        <div style={{ marginTop: '2px', flexShrink: 0 }}>
-                            <Info size={18} color="#3B82F6" />
-                        </div>
-                        <div style={{ flex: 1, fontSize: '0.82rem', color: '#CBD5E1', lineHeight: 1.5 }}>
-                            {infoContent}
-                        </div>
+                {/* Controls Deck - Attached immediately beneath simulation */}
+                {controls && (
+                    <div style={{ padding: '10px 14px', borderRadius: '12px', backgroundColor: 'rgba(15,23,42,0.95)', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                        {controls}
                     </div>
                 )}
 
-                {/* Controls Deck */}
-                {controls && (
-                    <div style={{ padding: '14px', borderRadius: '14px', backgroundColor: 'rgba(15,23,42,0.95)', border: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', marginTop: 'auto' }}>
-                        {controls}
+                {/* Collapsible Info / Concept Guide */}
+                {(infoContent || description) && (
+                    <div style={{ borderRadius: '12px', backgroundColor: 'rgba(15,23,42,0.7)', border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                        <button
+                            type="button"
+                            onClick={() => setShowGuide(!showGuide)}
+                            style={{
+                                width: '100%',
+                                padding: '10px 14px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#93C5FD',
+                                fontSize: '0.8rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Info size={15} color="#3B82F6" />
+                                {showGuide ? 'Hide Concept Guide' : 'View Concept Guide & Steps'}
+                            </span>
+                            <ChevronDown size={15} style={{ transform: showGuide ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                        </button>
+                        {showGuide && (
+                            <div style={{ padding: '0 14px 14px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.8rem', color: '#CBD5E1', lineHeight: 1.5, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '10px' }}>
+                                {description && (
+                                    <div style={{ borderLeft: '3px solid #3B82F6', paddingLeft: '10px', color: '#94A3B8' }}>
+                                        {description}
+                                    </div>
+                                )}
+                                {infoContent}
+                            </div>
+                        )}
                     </div>
                 )}
             </main>

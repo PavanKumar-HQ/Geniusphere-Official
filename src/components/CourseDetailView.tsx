@@ -407,44 +407,78 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {course.modules.map((mod, mIdx) => {
-                  const cleanModuleTitle = mod.title.replace(/^Module\s+\d+:\s*/i, '');
+                  const cleanModuleTitle = mod.title.replace(/^Module\s+\d+:\s*/i, '').replace(/^Video\s+\d+:\s*/i, '');
                   return (
                     <div key={mod.id} style={{ border: '1px solid var(--border-subtle)', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'var(--bg-surface)' }}>
-                      <div style={{ backgroundColor: 'var(--bg-surface-subdued)', padding: '12px 18px', fontWeight: 700, fontSize: '0.95rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-primary)' }}>
-                        <span>Module {mIdx + 1}: {cleanModuleTitle}</span>
-                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{mod.lessons.length} Lessons</span>
+                      <div
+                        style={{
+                          backgroundColor: 'var(--bg-surface-subdued)',
+                          padding: '10px 14px',
+                          fontWeight: 700,
+                          fontSize: '0.9rem',
+                          borderBottom: '1px solid var(--border-subtle)',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: '12px',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          Module {mIdx + 1}: {cleanModuleTitle}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            color: 'var(--text-muted)',
+                            whiteSpace: 'nowrap',
+                            flexShrink: 0,
+                            backgroundColor: 'var(--bg-surface)',
+                            border: '1px solid var(--border-subtle)',
+                            padding: '2px 8px',
+                            borderRadius: '100px',
+                          }}
+                        >
+                          {mod.lessons.length} {mod.lessons.length === 1 ? 'Lesson' : 'Lessons'}
+                        </span>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         {mod.lessons.map((les, lIdx) => {
                           const isCompleted = enrollment?.completed_lessons.includes(les.id);
+                          const cleanLessonTitle = les.title.replace(/^Video\s+\d+:\s*/i, '');
 
                           return (
                             <div
                               key={les.id}
                               style={{
-                                padding: '14px 18px',
+                                padding: '12px 14px',
                                 borderTop: lIdx > 0 ? '1px solid var(--border-subtle)' : 'none',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                                 flexWrap: 'wrap',
-                                gap: '12px',
+                                gap: '10px',
                               }}
                             >
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1', minWidth: '240px' }}>
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', flex: '1', minWidth: '220px' }}>
                                 {isCompleted ? (
-                                  <CheckCircle2 size={20} color="var(--brand-primary)" style={{ flexShrink: 0 }} />
+                                  <CheckCircle2 size={18} color="var(--brand-primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                                 ) : (
-                                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid var(--border-strong)', flexShrink: 0 }} />
+                                  <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: '2px solid var(--border-strong)', flexShrink: 0, marginTop: '2px' }} />
                                 )}
-                                <div>
-                                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: 'var(--text-primary)' }}>{les.title}</div>
-                                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>{les.summary}</div>
+                                <div style={{ minWidth: 0, flex: 1 }}>
+                                  <div style={{ fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                                    {cleanLessonTitle}
+                                  </div>
+                                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.35, marginTop: '2px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                    {les.summary}
+                                  </div>
                                 </div>
                               </div>
 
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                                <span className="badge badge-neutral" style={{ fontSize: '0.72rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginLeft: 'auto' }}>
+                                <span className="badge badge-neutral" style={{ fontSize: '0.7rem', padding: '3px 7px' }}>
                                   <Clock size={11} style={{ marginRight: '3px' }} />
                                   {les.duration_minutes}m
                                 </span>
@@ -452,7 +486,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                                   type="button"
                                   className="badge badge-brand"
                                   onClick={() => onStartLesson(course.id, les.id, 'video')}
-                                  style={{ fontSize: '0.72rem', cursor: 'pointer', border: 'none' }}
+                                  style={{ fontSize: '0.72rem', padding: '4px 8px', cursor: 'pointer', border: 'none' }}
                                   title="Watch Video Lecture"
                                 >
                                   <Video size={11} style={{ marginRight: '3px' }} /> Video
@@ -460,28 +494,19 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                                 <button
                                   type="button"
                                   className="badge badge-accent"
-                                  onClick={() => onStartLesson(course.id, les.id, 'animation')}
-                                  style={{ fontSize: '0.72rem', cursor: 'pointer', border: 'none' }}
+                                  onClick={() => onStartLesson(course.id, les.id, 'lab')}
+                                  style={{ fontSize: '0.72rem', padding: '4px 8px', cursor: 'pointer', border: 'none' }}
                                   title="Open Interactive Lab Simulation"
                                 >
                                   <Terminal size={11} style={{ marginRight: '3px' }} /> Lab
                                 </button>
                                 <button
                                   type="button"
-                                  className="badge badge-success"
-                                  onClick={() => onStartLesson(course.id, les.id, 'sandbox')}
-                                  style={{ fontSize: '0.72rem', cursor: 'pointer', border: 'none' }}
-                                  title="Open Code Sandbox"
-                                >
-                                  <Terminal size={11} style={{ marginRight: '3px' }} /> Sandbox
-                                </button>
-                                <button
-                                  type="button"
-                                  className="btn-outline"
+                                  className="btn-primary"
                                   onClick={() => onStartLesson(course.id, les.id)}
-                                  style={{ height: '34px', padding: '0 12px', fontSize: '0.82rem' }}
+                                  style={{ height: '30px', padding: '0 12px', fontSize: '0.76rem', borderRadius: '8px' }}
                                 >
-                                  Launch
+                                  {isCompleted ? 'Review' : 'Start'}
                                 </button>
                               </div>
                             </div>

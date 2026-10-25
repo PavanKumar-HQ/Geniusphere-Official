@@ -213,7 +213,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
         </div>
 
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'var(--brand-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <BookOpen size={22} color="var(--success)" />
           </div>
           <div>
@@ -223,7 +223,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
         </div>
 
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: '44px', height: '44px', borderRadius: '10px', backgroundColor: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Award size={22} color="var(--warning)" />
           </div>
           <div>
@@ -477,7 +477,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
                   <select
                     value={reviewPassed ? 'passed' : 'needs_revision'}
                     onChange={(e) => setReviewPassed(e.target.value === 'passed')}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', backgroundColor: '#FFFFFF' }}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid var(--border-strong)', backgroundColor: 'var(--bg-canvas)', color: 'var(--text-primary)' }}
                   >
                     <option value="passed">Passed (Proficient)</option>
                     <option value="needs_revision">Needs Revision</option>

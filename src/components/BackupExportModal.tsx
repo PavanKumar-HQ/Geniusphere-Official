@@ -144,13 +144,13 @@ export const BackupExportModal: React.FC<BackupExportModalProps> = ({
     >
       <div
         style={{
-          backgroundColor: '#FFFFFF',
-          border: '1px solid rgba(38, 53, 42, 0.15)',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1px solid var(--border-subtle)',
           borderRadius: '16px',
           width: '100%',
           maxWidth: '560px',
           padding: '28px',
-          boxShadow: '0 20px 40px rgba(38, 53, 42, 0.12)',
+          boxShadow: 'var(--shadow-lg, 0 20px 40px rgba(0, 0, 0, 0.4))',
           display: 'flex',
           flexDirection: 'column',
           gap: '20px',
@@ -308,7 +308,7 @@ export const BackupExportModal: React.FC<BackupExportModalProps> = ({
               justifyContent: 'center',
               gap: '8px',
               height: '42px',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: 'var(--bg-canvas)',
               border: '1px solid var(--border-strong)',
               borderRadius: '8px',
               color: 'var(--text-primary)',

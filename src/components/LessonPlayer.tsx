@@ -1368,13 +1368,12 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {standaloneLab ? (
                   <div
+                    className="lesson-embedded-lab-container"
                     style={{
                       borderRadius: '16px',
                       overflow: 'hidden',
                       border: '1.5px solid var(--border-subtle)',
                       backgroundColor: '#070B1A',
-                      minHeight: '720px',
-                      height: '780px',
                       position: 'relative',
                       display: 'flex',
                       flexDirection: 'column',

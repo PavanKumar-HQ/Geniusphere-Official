@@ -57,10 +57,10 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
         style={{
           width: '100%',
           maxWidth: '580px',
-          backgroundColor: '#FAF7F2',
-          border: '1.5px solid #D5CCC0',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1.5px solid var(--border-subtle)',
           borderRadius: '16px',
-          boxShadow: '0 20px 45px rgba(22, 78, 61, 0.16)',
+          boxShadow: 'var(--shadow-lg, 0 20px 45px rgba(0, 0, 0, 0.4))',
           overflow: 'hidden',
           color: 'var(--text-primary)',
           display: 'flex',
@@ -73,8 +73,8 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
         <div
           style={{
             padding: '20px 24px',
-            borderBottom: '1px solid #E8E2D6',
-            backgroundColor: '#FFFFFF',
+            borderBottom: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-surface)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -86,8 +86,8 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                 width: '34px',
                 height: '34px',
                 borderRadius: '8px',
-                backgroundColor: '#E5F0DF',
-                color: '#43A85B',
+                backgroundColor: 'var(--brand-surface)',
+                color: 'var(--brand-primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -96,10 +96,10 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               <Megaphone size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1rem', color: '#26352A' }}>
+              <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>
                 Genius Representative Program
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#6B7C72' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                 Campus Student Leadership Initiative
               </div>
             </div>
@@ -111,9 +111,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               width: '32px',
               height: '32px',
               borderRadius: '50%',
-              backgroundColor: '#FAFAF4',
-              border: '1px solid #E5F0DF',
-              color: '#475569',
+              backgroundColor: 'var(--bg-canvas)',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -180,16 +180,16 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1.5px solid #D5CCC0',
-                      color: '#26352A',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1.5px solid var(--border-subtle)',
+                      color: 'var(--text-primary)',
                       fontSize: '0.88rem',
                     }}
                   />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#26352A' }}>Email *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Email *</label>
                   <input
                     type="email"
                     required
@@ -200,9 +200,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1.5px solid #D5CCC0',
-                      color: '#26352A',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1.5px solid var(--border-subtle)',
+                      color: 'var(--text-primary)',
                       fontSize: '0.88rem',
                     }}
                   />
@@ -211,7 +211,7 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
 
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#26352A' }}>College / University Name *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>College / University Name *</label>
                   <input
                     type="text"
                     required
@@ -222,16 +222,16 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1.5px solid #D5CCC0',
-                      color: '#26352A',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1.5px solid var(--border-subtle)',
+                      color: 'var(--text-primary)',
                       fontSize: '0.88rem',
                     }}
                   />
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#26352A' }}>Major & Year *</label>
+                  <label style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Major & Year *</label>
                   <input
                     type="text"
                     required
@@ -242,9 +242,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                       height: '40px',
                       padding: '0 12px',
                       borderRadius: '8px',
-                      backgroundColor: '#FFFFFF',
-                      border: '1.5px solid #D5CCC0',
-                      color: '#26352A',
+                      backgroundColor: 'var(--bg-canvas)',
+                      border: '1.5px solid var(--border-subtle)',
+                      color: 'var(--text-primary)',
                       fontSize: '0.88rem',
                     }}
                   />
@@ -252,7 +252,7 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: '#26352A' }}>Why do you want to represent Geniusphere? *</label>
+                <label style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>Why do you want to represent Geniusphere? *</label>
                 <textarea
                   required
                   rows={3}
@@ -262,9 +262,9 @@ export const AmbassadorModal: React.FC<AmbassadorModalProps> = ({ isOpen, onClos
                   style={{
                     padding: '10px 12px',
                     borderRadius: '8px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1.5px solid #D5CCC0',
-                    color: '#26352A',
+                    backgroundColor: 'var(--bg-canvas)',
+                    border: '1.5px solid var(--border-subtle)',
+                    color: 'var(--text-primary)',
                     fontSize: '0.88rem',
                     resize: 'none',
                   }}

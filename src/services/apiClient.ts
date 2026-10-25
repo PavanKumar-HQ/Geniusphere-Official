@@ -21,6 +21,7 @@ export class ApiClient {
   private token: string | null = null;
   private ws: WebSocket | null = null;
   private wsListeners: Set<(event: any) => void> = new Set();
+  private wsRetryCount = 0;
 
   constructor() {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -207,14 +208,31 @@ export class ApiClient {
   /**
    * Initializes real-time authenticated WebSocket connection
    */
-  public initWebSocket(): void {
+  public async initWebSocket(): Promise<void> {
     if (typeof window === 'undefined' || !this.token) return;
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
+    // Pre-flight check if server is running on 3001 to prevent unhandled browser WebSocket errors
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600);
+      const res = await fetch(`${API_BASE_URL}/health`, { signal: controller.signal }).catch(() => null);
+      clearTimeout(timeoutId);
+      if (!res || !res.ok) {
+        return;
+      }
+    } catch {
+      return;
+    }
+
     try {
       this.ws = new WebSocket(`${WS_BASE_URL}?token=${this.token}`);
+
+      this.ws.onopen = () => {
+        this.wsRetryCount = 0;
+      };
 
       this.ws.onmessage = (event) => {
         try {
@@ -229,17 +247,20 @@ export class ApiClient {
 
       this.ws.onclose = () => {
         this.ws = null;
-        // Exponential backoff reconnect
-        setTimeout(() => {
-          if (this.token) this.initWebSocket();
-        }, 3000);
+        if (this.wsRetryCount < 3) {
+          this.wsRetryCount++;
+          const delay = Math.min(1000 * Math.pow(2, this.wsRetryCount), 12000);
+          setTimeout(() => {
+            if (this.token) this.initWebSocket();
+          }, delay);
+        }
       };
 
-      this.ws.onerror = (err) => {
-        console.warn('[ApiClient WS Error]', err);
+      this.ws.onerror = () => {
+        // Quiet fallback when standalone backend server is not running locally
       };
-    } catch (err) {
-      console.warn('[ApiClient WS Connection failed]', err);
+    } catch {
+      // Quiet fallback
     }
   }
 

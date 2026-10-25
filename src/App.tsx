@@ -191,6 +191,8 @@ export const App: React.FC = () => {
     }
   });
 
+  const showSidebarText = !isSidebarCollapsed || sidebarOpen;
+
   // Website Loading Animation States (Active throughout website)
   const [initialLoading, setInitialLoading] = useState<boolean>(() => {
     try {
@@ -1262,8 +1264,8 @@ export const App: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Primary Account & Learning Actions */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+                    {/* Primary Account & Learning Actions — High-Density 2x2 Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '14px' }}>
                       <button
                         type="button"
                         onClick={() => {
@@ -1271,24 +1273,22 @@ export const App: React.FC = () => {
                           setProfileModalOpen(true);
                         }}
                         style={{
-                          width: '100%',
-                          padding: '10px 14px',
-                          borderRadius: '10px',
+                          padding: '12px 10px',
+                          borderRadius: '12px',
                           border: '1px solid var(--border-subtle)',
                           backgroundColor: 'var(--brand-surface)',
                           color: 'var(--brand-primary)',
                           cursor: 'pointer',
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          fontWeight: 800,
-                          fontSize: '0.84rem',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                          gap: '6px',
                           textAlign: 'left',
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        <User size={16} />
-                        <span>View &amp; Edit Student Profile</span>
+                        <User size={18} />
+                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Student Profile</span>
                       </button>
 
                       <button
@@ -1298,24 +1298,22 @@ export const App: React.FC = () => {
                           handleNavigate('student-dashboard');
                         }}
                         style={{
-                          width: '100%',
-                          padding: '10px 14px',
-                          borderRadius: '10px',
+                          padding: '12px 10px',
+                          borderRadius: '12px',
                           border: '1px solid var(--border-subtle)',
-                          backgroundColor: 'var(--bg-surface)',
+                          backgroundColor: 'var(--bg-canvas)',
                           color: 'var(--text-primary)',
                           cursor: 'pointer',
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          fontWeight: 600,
-                          fontSize: '0.82rem',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                          gap: '6px',
                           textAlign: 'left',
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        <BookOpen size={16} color="var(--brand-primary)" />
-                        <span>My Enrolled Curriculum</span>
+                        <BookOpen size={18} color="var(--brand-primary)" />
+                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>My Curriculum</span>
                       </button>
 
                       <button
@@ -1325,24 +1323,22 @@ export const App: React.FC = () => {
                           handleNavigate('certificates');
                         }}
                         style={{
-                          width: '100%',
-                          padding: '10px 14px',
-                          borderRadius: '10px',
+                          padding: '12px 10px',
+                          borderRadius: '12px',
                           border: '1px solid var(--border-subtle)',
-                          backgroundColor: 'var(--bg-surface)',
+                          backgroundColor: 'var(--bg-canvas)',
                           color: 'var(--text-primary)',
                           cursor: 'pointer',
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          fontWeight: 600,
-                          fontSize: '0.82rem',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                          gap: '6px',
                           textAlign: 'left',
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        <Award size={16} color="var(--brand-primary)" />
-                        <span>Verified Certificates &amp; Transcripts</span>
+                        <Award size={18} color="var(--brand-primary)" />
+                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Certificates</span>
                       </button>
 
                       <button
@@ -1352,32 +1348,30 @@ export const App: React.FC = () => {
                           setStreakModalOpen(true);
                         }}
                         style={{
-                          width: '100%',
-                          padding: '10px 14px',
-                          borderRadius: '10px',
+                          padding: '12px 10px',
+                          borderRadius: '12px',
                           border: '1px solid var(--border-subtle)',
-                          backgroundColor: 'var(--bg-surface)',
+                          backgroundColor: 'var(--bg-canvas)',
                           color: 'var(--text-primary)',
                           cursor: 'pointer',
                           display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          fontWeight: 600,
-                          fontSize: '0.82rem',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                          gap: '6px',
                           textAlign: 'left',
                           transition: 'all 0.15s ease',
                         }}
                       >
-                        <Flame size={16} color="#D97706" />
-                        <span>Daily Habit &amp; Streak Calendar</span>
+                        <Flame size={18} color="#D97706" />
+                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Streak Calendar</span>
                       </button>
                     </div>
 
-                    {/* Preferences & Tools */}
+                    {/* Preferences & Quick Tools */}
                     <div
                       style={{
-                        display: 'flex',
-                        flexDirection: 'column',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
                         gap: '6px',
                         paddingTop: '10px',
                         borderTop: '1px solid var(--border-subtle)',
@@ -1388,36 +1382,22 @@ export const App: React.FC = () => {
                         type="button"
                         onClick={() => toggleTheme()}
                         style={{
-                          padding: '10px 14px',
+                          padding: '8px 6px',
                           borderRadius: '10px',
                           border: '1px solid var(--border-subtle)',
-                          backgroundColor: 'var(--bg-surface)',
+                          backgroundColor: 'var(--bg-canvas)',
                           color: 'var(--text-primary)',
-                          fontWeight: 600,
-                          fontSize: '0.82rem',
-                          textAlign: 'left',
+                          fontWeight: 700,
+                          fontSize: '0.74rem',
                           cursor: 'pointer',
                           display: 'flex',
+                          flexDirection: 'column',
                           alignItems: 'center',
-                          justifyContent: 'space-between',
+                          gap: '4px',
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          {isDarkMode ? <Sun size={16} color="#F59E0B" /> : <Moon size={16} color="var(--brand-primary)" />}
-                          <span>{isDarkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}</span>
-                        </div>
-                        <span
-                          style={{
-                            fontSize: '0.7rem',
-                            fontWeight: 800,
-                            padding: '2px 8px',
-                            borderRadius: '100px',
-                            backgroundColor: 'var(--bg-canvas)',
-                            color: 'var(--text-muted)',
-                          }}
-                        >
-                          {isDarkMode ? 'Dark' : 'Light'}
-                        </span>
+                        {isDarkMode ? <Sun size={15} color="#F59E0B" /> : <Moon size={15} color="var(--brand-primary)" />}
+                        <span>{isDarkMode ? 'Light' : 'Dark'}</span>
                       </button>
 
                       <button
@@ -1427,22 +1407,22 @@ export const App: React.FC = () => {
                           setThemeModalOpen(true);
                         }}
                         style={{
-                          padding: '10px 14px',
+                          padding: '8px 6px',
                           borderRadius: '10px',
                           border: '1px solid var(--border-subtle)',
-                          backgroundColor: 'var(--bg-surface)',
+                          backgroundColor: 'var(--bg-canvas)',
                           color: 'var(--text-primary)',
-                          fontWeight: 600,
-                          fontSize: '0.82rem',
-                          textAlign: 'left',
+                          fontWeight: 700,
+                          fontSize: '0.74rem',
                           cursor: 'pointer',
                           display: 'flex',
+                          flexDirection: 'column',
                           alignItems: 'center',
-                          gap: '10px',
+                          gap: '4px',
                         }}
                       >
-                        <Palette size={16} color="var(--brand-primary)" />
-                        <span>Appearance &amp; Theme Palette</span>
+                        <Palette size={15} color="var(--brand-primary)" />
+                        <span>Themes</span>
                       </button>
 
                       <button
@@ -1452,22 +1432,22 @@ export const App: React.FC = () => {
                           setUserGuideOpen(true);
                         }}
                         style={{
-                          padding: '10px 14px',
+                          padding: '8px 6px',
                           borderRadius: '10px',
                           border: '1px solid var(--border-subtle)',
-                          backgroundColor: 'var(--bg-surface)',
+                          backgroundColor: 'var(--bg-canvas)',
                           color: 'var(--text-primary)',
-                          fontWeight: 600,
-                          fontSize: '0.82rem',
-                          textAlign: 'left',
+                          fontWeight: 700,
+                          fontSize: '0.74rem',
                           cursor: 'pointer',
                           display: 'flex',
+                          flexDirection: 'column',
                           alignItems: 'center',
-                          gap: '10px',
+                          gap: '4px',
                         }}
                       >
-                        <HelpCircle size={16} color="var(--brand-primary)" />
-                        <span>Software User Guide</span>
+                        <HelpCircle size={15} color="var(--brand-primary)" />
+                        <span>Guide</span>
                       </button>
                     </div>
 
@@ -1520,11 +1500,8 @@ export const App: React.FC = () => {
 
         {/* LEFT SIDEBAR NAVIGATION RAIL (Collapsible Desktop Mini-Rail + Mobile Off-Canvas Drawer) */}
         <aside
-          className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed ? 'collapsed' : ''}`}
+          className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed && !sidebarOpen ? 'collapsed' : ''}`}
           style={{
-            width: isSidebarCollapsed ? '72px' : '260px',
-            minWidth: isSidebarCollapsed ? '72px' : '260px',
-            maxWidth: isSidebarCollapsed ? '72px' : '260px',
             overflowX: 'hidden',
           }}
         >
@@ -1541,7 +1518,7 @@ export const App: React.FC = () => {
               marginBottom: '12px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
               <div
                 style={{
                   width: '32px',
@@ -1552,11 +1529,12 @@ export const App: React.FC = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#FFFFFF',
+                  flexShrink: 0,
                 }}
               >
                 <ShieldCheck size={18} />
               </div>
-              <span style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+              <span style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif', whiteSpace: 'nowrap' }}>
                 Geniusphere
               </span>
             </div>
@@ -1589,7 +1567,7 @@ export const App: React.FC = () => {
               /* 1. TEACHER / EDUCATOR DEDICATED NAVIGATION RAIL              */
               /* ============================================================ */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div
                     className="sidebar-section-title"
                     style={{
@@ -1612,7 +1590,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Class Gradebook" : undefined}
                 >
                   <Users size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Class Gradebook</span>}
+                  {showSidebarText && <span className="sidebar-label">Class Gradebook</span>}
                 </button>
 
                 <button
@@ -1622,7 +1600,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Manage Classes" : undefined}
                 >
                   <School size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Manage Classes</span>}
+                  {showSidebarText && <span className="sidebar-label">Manage Classes</span>}
                 </button>
 
                 <button
@@ -1632,7 +1610,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Curriculum & Courses" : undefined}
                 >
                   <BookOpen size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum & Courses</span>}
+                  {showSidebarText && <span className="sidebar-label">Curriculum & Courses</span>}
                 </button>
 
                 <button
@@ -1642,7 +1620,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Lab Environments" : undefined}
                 >
                   <Terminal size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Lab Environments</span>}
+                  {showSidebarText && <span className="sidebar-label">Lab Environments</span>}
                 </button>
 
                 <button
@@ -1652,7 +1630,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Coding Sandbox (Python, JS, TS, C++, Java, C, SQL)" : undefined}
                 >
                   <Code2 size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Coding Sandbox</span>}
+                  {showSidebarText && <span className="sidebar-label">Coding Sandbox</span>}
                 </button>
 
                 <button
@@ -1662,7 +1640,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Teaching Resources" : undefined}
                 >
                   <Folder size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Teaching Resources</span>}
+                  {showSidebarText && <span className="sidebar-label">Teaching Resources</span>}
                 </button>
 
                 <button
@@ -1672,7 +1650,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Certificate Registry" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Certificate Registry</span>}
+                  {showSidebarText && <span className="sidebar-label">Certificate Registry</span>}
                 </button>
 
                 <button
@@ -1682,7 +1660,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                  {showSidebarText && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -1695,7 +1673,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <HelpCircle size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                  {showSidebarText && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
             ) : isInstAdmin ? (
@@ -1703,7 +1681,7 @@ export const App: React.FC = () => {
               /* 2. INSTITUTION ADMIN DEDICATED NAVIGATION RAIL               */
               /* ============================================================ */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div
                     className="sidebar-section-title"
                     style={{
@@ -1726,7 +1704,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Institution Workspace" : undefined}
                 >
                   <School size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Institution Workspace</span>}
+                  {showSidebarText && <span className="sidebar-label">Institution Workspace</span>}
                 </button>
 
                 <button
@@ -1736,7 +1714,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Class Rosters & Batches" : undefined}
                 >
                   <Users size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Class Rosters</span>}
+                  {showSidebarText && <span className="sidebar-label">Class Rosters</span>}
                 </button>
 
                 <button
@@ -1746,7 +1724,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Academic Gradebook" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Gradebook Performance</span>}
+                  {showSidebarText && <span className="sidebar-label">Gradebook Performance</span>}
                 </button>
 
                 <button
@@ -1756,7 +1734,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "CIE Compliance & Audit" : undefined}
                 >
                   <ShieldCheck size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">CIE Audit Log</span>}
+                  {showSidebarText && <span className="sidebar-label">CIE Audit Log</span>}
                 </button>
 
                 <button
@@ -1766,7 +1744,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Curriculum Oversight" : undefined}
                 >
                   <BookOpen size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum Oversight</span>}
+                  {showSidebarText && <span className="sidebar-label">Curriculum Oversight</span>}
                 </button>
 
                 <button
@@ -1776,7 +1754,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Lab Environments" : undefined}
                 >
                   <Terminal size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Lab Environments</span>}
+                  {showSidebarText && <span className="sidebar-label">Lab Environments</span>}
                 </button>
 
                 <button
@@ -1786,7 +1764,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Verified Credentials Registry" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Credentials Registry</span>}
+                  {showSidebarText && <span className="sidebar-label">Credentials Registry</span>}
                 </button>
 
                 <button
@@ -1796,7 +1774,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                  {showSidebarText && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -1809,7 +1787,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <HelpCircle size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                  {showSidebarText && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
             ) : isSuperadmin ? (
@@ -1817,7 +1795,7 @@ export const App: React.FC = () => {
               /* 3. PLATFORM SUPERADMIN DEDICATED NAVIGATION RAIL             */
               /* ============================================================ */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div
                     className="sidebar-section-title"
                     style={{
@@ -1840,7 +1818,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Platform Admin Console" : undefined}
                 >
                   <ShieldAlert size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Platform Admin</span>}
+                  {showSidebarText && <span className="sidebar-label">Platform Admin</span>}
                 </button>
 
                 <button
@@ -1850,7 +1828,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Institution Directory" : undefined}
                 >
                   <School size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Institutions</span>}
+                  {showSidebarText && <span className="sidebar-label">Institutions</span>}
                 </button>
 
                 <button
@@ -1860,7 +1838,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "System Audit Ledger" : undefined}
                 >
                   <ShieldCheck size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">System Audit Ledger</span>}
+                  {showSidebarText && <span className="sidebar-label">System Audit Ledger</span>}
                 </button>
 
                 <button
@@ -1870,7 +1848,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Curriculum Management" : undefined}
                 >
                   <BookOpen size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum CMS</span>}
+                  {showSidebarText && <span className="sidebar-label">Curriculum CMS</span>}
                 </button>
 
                 <button
@@ -1880,7 +1858,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Lab Sandboxes" : undefined}
                 >
                   <Terminal size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Lab Sandboxes</span>}
+                  {showSidebarText && <span className="sidebar-label">Lab Sandboxes</span>}
                 </button>
 
                 <button
@@ -1890,7 +1868,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Code Runner Engine" : undefined}
                 >
                   <Code2 size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Code Runner</span>}
+                  {showSidebarText && <span className="sidebar-label">Code Runner</span>}
                 </button>
 
                 <button
@@ -1900,7 +1878,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Global Certificates" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Global Certificates</span>}
+                  {showSidebarText && <span className="sidebar-label">Global Certificates</span>}
                 </button>
 
                 <button
@@ -1910,7 +1888,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                  {showSidebarText && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -1923,7 +1901,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <HelpCircle size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                  {showSidebarText && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
             ) : isGuardian ? (
@@ -1931,7 +1909,7 @@ export const App: React.FC = () => {
               /* 4. PARENT & GUARDIAN DEDICATED NAVIGATION RAIL               */
               /* ============================================================ */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div
                     className="sidebar-section-title"
                     style={{
@@ -1954,7 +1932,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Student Progress & Consent" : undefined}
                 >
                   <Users size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Student Progress</span>}
+                  {showSidebarText && <span className="sidebar-label">Student Progress</span>}
                 </button>
 
                 <button
@@ -1964,7 +1942,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Course Curriculum" : undefined}
                 >
                   <BookOpen size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum</span>}
+                  {showSidebarText && <span className="sidebar-label">Curriculum</span>}
                 </button>
 
                 <button
@@ -1974,7 +1952,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Verified Certificates" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Credentials</span>}
+                  {showSidebarText && <span className="sidebar-label">Credentials</span>}
                 </button>
 
                 <button
@@ -1984,7 +1962,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                  {showSidebarText && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -1997,7 +1975,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <HelpCircle size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                  {showSidebarText && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
             ) : isTrainer ? (
@@ -2005,7 +1983,7 @@ export const App: React.FC = () => {
               /* 5. VERIFIED TRAINER DEDICATED NAVIGATION RAIL                */
               /* ============================================================ */
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div
                     className="sidebar-section-title"
                     style={{
@@ -2028,7 +2006,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Trainer Workspace" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Trainer Workspace</span>}
+                  {showSidebarText && <span className="sidebar-label">Trainer Workspace</span>}
                 </button>
 
                 <button
@@ -2038,7 +2016,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Curriculum Modules" : undefined}
                 >
                   <BookOpen size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum Modules</span>}
+                  {showSidebarText && <span className="sidebar-label">Curriculum Modules</span>}
                 </button>
 
                 <button
@@ -2048,7 +2026,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Hands-on Labs" : undefined}
                 >
                   <Terminal size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Hands-on Labs</span>}
+                  {showSidebarText && <span className="sidebar-label">Hands-on Labs</span>}
                 </button>
 
                 <button
@@ -2058,7 +2036,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Code Runner Engine" : undefined}
                 >
                   <Code2 size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Code Runner</span>}
+                  {showSidebarText && <span className="sidebar-label">Code Runner</span>}
                 </button>
 
                 <button
@@ -2068,7 +2046,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                  {showSidebarText && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -2081,7 +2059,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <HelpCircle size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                  {showSidebarText && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
             ) : (
@@ -2096,7 +2074,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Landing Page" : undefined}
                 >
                   <Home size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Landing Page</span>}
+                  {showSidebarText && <span className="sidebar-label">Landing Page</span>}
                 </button>
 
                 <button
@@ -2106,7 +2084,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Courses" : undefined}
                 >
                   <BookOpen size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Courses</span>}
+                  {showSidebarText && <span className="sidebar-label">Courses</span>}
                 </button>
 
                 <button
@@ -2116,7 +2094,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "My Learning" : undefined}
                 >
                   <GraduationCap size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">My Learning</span>}
+                  {showSidebarText && <span className="sidebar-label">My Learning</span>}
                 </button>
 
                 <button
@@ -2126,7 +2104,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Labs & Projects" : undefined}
                 >
                   <Terminal size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Labs & Projects</span>}
+                  {showSidebarText && <span className="sidebar-label">Labs & Projects</span>}
                 </button>
 
                 <button
@@ -2136,7 +2114,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Coding Sandbox (Python, C, JS, SQL)" : undefined}
                 >
                   <Code2 size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Coding Sandbox</span>}
+                  {showSidebarText && <span className="sidebar-label">Coding Sandbox</span>}
                 </button>
 
                 <button
@@ -2146,7 +2124,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Community" : undefined}
                 >
                   <Users size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Community</span>}
+                  {showSidebarText && <span className="sidebar-label">Community</span>}
                 </button>
 
                 <button
@@ -2156,7 +2134,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Resources" : undefined}
                 >
                   <Folder size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Resources</span>}
+                  {showSidebarText && <span className="sidebar-label">Resources</span>}
                 </button>
 
                 <button
@@ -2166,7 +2144,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Certificates" : undefined}
                 >
                   <Award size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Certificates</span>}
+                  {showSidebarText && <span className="sidebar-label">Certificates</span>}
                 </button>
 
                 <button
@@ -2176,7 +2154,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
                 >
                   <Palette size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                  {showSidebarText && <span className="sidebar-label">Theme Settings</span>}
                 </button>
 
                 <button
@@ -2189,7 +2167,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Software User Guide" : undefined}
                 >
                   <HelpCircle size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                  {showSidebarText && <span className="sidebar-label">Software User Guide</span>}
                 </button>
 
                 <button
@@ -2202,7 +2180,7 @@ export const App: React.FC = () => {
                   title={isSidebarCollapsed ? "Notifications" : undefined}
                 >
                   <Bell size={18} />
-                  {!isSidebarCollapsed && <span className="sidebar-label">Notifications</span>}
+                  {showSidebarText && <span className="sidebar-label">Notifications</span>}
                 </button>
               </div>
             )}
@@ -2228,7 +2206,7 @@ export const App: React.FC = () => {
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
                   <MascotSphere pose="teaching" size={isSidebarCollapsed ? 30 : 40} />
-                  {!isSidebarCollapsed && (
+                  {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
                       <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                         Educator Suite
@@ -2239,7 +2217,7 @@ export const App: React.FC = () => {
                     </div>
                   )}
                 </div>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
                     <button
                       type="button"
@@ -2267,7 +2245,7 @@ export const App: React.FC = () => {
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
                   <MascotSphere pose="thinking" size={isSidebarCollapsed ? 30 : 40} />
-                  {!isSidebarCollapsed && (
+                  {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
                       <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                         Institution Hub
@@ -2278,7 +2256,7 @@ export const App: React.FC = () => {
                     </div>
                   )}
                 </div>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
                     <button
                       type="button"
@@ -2306,7 +2284,7 @@ export const App: React.FC = () => {
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
                   <MascotSphere pose="happy" size={isSidebarCollapsed ? 30 : 40} />
-                  {!isSidebarCollapsed && (
+                  {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
                       <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                         Platform Ops
@@ -2317,7 +2295,7 @@ export const App: React.FC = () => {
                     </div>
                   )}
                 </div>
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div className="sidebar-mascot-card-text" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
                     <button
                       type="button"
@@ -2345,7 +2323,7 @@ export const App: React.FC = () => {
               <div style={{ width: '100%' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: isSidebarCollapsed ? 'center' : 'flex-start', gap: '10px', marginBottom: isSidebarCollapsed ? '0' : '8px' }}>
                   <MascotSphere pose="happy" size={isSidebarCollapsed ? 28 : 38} />
-                  {!isSidebarCollapsed && (
+                  {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
                       <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
                         Keep going!
@@ -2357,7 +2335,7 @@ export const App: React.FC = () => {
                   )}
                 </div>
 
-                {!isSidebarCollapsed && (
+                {showSidebarText && (
                   <div className="sidebar-mascot-card-text">
                     <div style={{ width: '100%', height: '6px', backgroundColor: 'var(--bg-surface-subdued)', borderRadius: '100px', overflow: 'hidden', margin: '8px 0 6px' }}>
                       <div style={{ width: '60%', height: '100%', backgroundColor: 'var(--brand-primary)', borderRadius: '100px' }} />
@@ -2438,6 +2416,12 @@ export const App: React.FC = () => {
               db={db}
               onNavigate={handleNavigate}
               currentUserId={currentUserId}
+              onStartLesson={handleStartLesson}
+              onSelectCourse={handleSelectCourse}
+              onLaunchLab={(slug) => {
+                setSelectedLabSlug(slug);
+                setCurrentView('lab-workspace');
+              }}
             />
           )}
 

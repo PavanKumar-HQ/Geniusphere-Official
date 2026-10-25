@@ -44,8 +44,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
           gap: '24px',
           padding: '24px 32px',
           borderRadius: '16px',
-          backgroundColor: '#FFFFFF',
-          border: '1.5px solid #E5F0DF',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1.5px solid var(--border-subtle)',
         }}
       >
         <div style={{ maxWidth: '680px' }}>
@@ -56,21 +56,21 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
               gap: '6px',
               padding: '4px 12px',
               borderRadius: '100px',
-              backgroundColor: '#E5F0DF',
-              color: '#26352A',
+              backgroundColor: 'var(--brand-surface)',
+              color: 'var(--brand-primary)',
               fontSize: '0.74rem',
               fontWeight: 800,
               textTransform: 'uppercase',
               marginBottom: '12px',
             }}
           >
-            <ShieldCheck size={14} color="#43A85B" />
+            <ShieldCheck size={14} color="var(--brand-primary)" />
             <span>Cryptographic Credential Registry</span>
           </div>
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#26352A', margin: '0 0 10px 0' }}>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 10px 0' }}>
             Verified Certificates & Mastery
           </h1>
-          <p style={{ color: '#4A5B4F', fontSize: '0.92rem', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', margin: 0, lineHeight: 1.5 }}>
             Each credential issued in Geniusphere includes an immutable SHA-256 integrity hash, verifiable syllabus skills, and high-resolution printable diplomas for academic and career advancement.
           </p>
         </div>
@@ -88,10 +88,10 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
           style={{
             textAlign: 'center',
             padding: '64px 24px',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: 'var(--bg-surface)',
             borderRadius: '20px',
-            border: '1.5px solid #E5F0DF',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+            border: '1.5px solid var(--border-subtle)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
           }}
         >
           <div
@@ -99,8 +99,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
               width: '64px',
               height: '64px',
               borderRadius: '20px',
-              backgroundColor: '#E5F0DF',
-              color: '#43A85B',
+              backgroundColor: 'var(--brand-surface)',
+              color: 'var(--brand-primary)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -109,25 +109,21 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
           >
             <Award size={32} />
           </div>
-          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#26352A', margin: '0 0 8px' }}>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px' }}>
             No Certificates Earned Yet
           </h2>
-          <p style={{ color: '#6B7C70', maxWidth: '520px', margin: '0 auto 24px', lineHeight: 1.6, fontSize: '0.92rem' }}>
+          <p style={{ color: 'var(--text-muted)', maxWidth: '520px', margin: '0 auto 24px', lineHeight: 1.6, fontSize: '0.92rem' }}>
             You haven't completed a full curriculum yet. To earn a verifiable credential with an immutable cryptographic SHA-256 integrity hash, complete all 10 video lessons and simulation labs in any course!
           </p>
           <button
             type="button"
+            className="btn-primary"
             onClick={onNavigateCourses}
             style={{
               padding: '12px 28px',
               borderRadius: '12px',
-              backgroundColor: '#43A85B',
-              color: '#FFFFFF',
-              fontWeight: 800,
               fontSize: '0.9rem',
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(67, 168, 91, 0.25)',
+              fontWeight: 800,
             }}
           >
             Explore Course Curriculum
@@ -140,8 +136,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
             key={cert.id}
             className="card"
             style={{
-              backgroundColor: '#FFFFFF',
-              border: '1.5px solid #E5F0DF',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1.5px solid var(--border-subtle)',
               borderRadius: '16px',
               padding: '24px',
               display: 'flex',
@@ -152,7 +148,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
               overflow: 'hidden',
             }}
           >
-            {/* Top Green Accent Bar */}
+            {/* Top Accent Bar */}
             <div
               style={{
                 position: 'absolute',
@@ -160,7 +156,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
                 left: 0,
                 right: 0,
                 height: '4px',
-                backgroundColor: '#43A85B',
+                backgroundColor: 'var(--brand-primary)',
               }}
             />
 
@@ -172,20 +168,20 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
                       width: '42px',
                       height: '42px',
                       borderRadius: '12px',
-                      backgroundColor: '#E5F0DF',
+                      backgroundColor: 'var(--brand-surface)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#43A85B',
+                      color: 'var(--brand-primary)',
                     }}
                   >
                     <Award size={24} />
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#43A85B', textTransform: 'uppercase' }}>
+                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--brand-primary)', textTransform: 'uppercase' }}>
                       Certified Mastery
                     </span>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#26352A', margin: 0 }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
                       {cert.course_title}
                     </h3>
                   </div>
@@ -193,8 +189,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
 
                 <span
                   style={{
-                    backgroundColor: '#E5F0DF',
-                    color: '#26352A',
+                    backgroundColor: 'var(--brand-surface)',
+                    color: 'var(--brand-primary)',
                     fontWeight: 800,
                     fontSize: '0.8rem',
                     padding: '4px 10px',
@@ -205,7 +201,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
                 </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.82rem', color: '#6B7C70', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Calendar size={14} />
                   <span>Issued: {cert.issue_date}</span>
@@ -218,7 +214,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
 
               {/* Skills badges */}
               <div style={{ marginBottom: '20px' }}>
-                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#8A9D90', textTransform: 'uppercase', marginBottom: '6px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>
                   Verified Competencies:
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
@@ -228,17 +224,17 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
                       style={{
                         padding: '3px 8px',
                         borderRadius: '6px',
-                        backgroundColor: '#F4F7F2',
-                        border: '1px solid #E5F0DF',
+                        backgroundColor: 'var(--bg-canvas)',
+                        border: '1px solid var(--border-subtle)',
                         fontSize: '0.74rem',
                         fontWeight: 600,
-                        color: '#26352A',
+                        color: 'var(--text-primary)',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
                       }}
                     >
-                      <CheckCircle2 size={11} color="#43A85B" />
+                      <CheckCircle2 size={11} color="var(--brand-primary)" />
                       <span>{skill}</span>
                     </span>
                   ))}
@@ -248,19 +244,19 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
               {/* SHA-256 Integrity Hash Box */}
               <div
                 style={{
-                  backgroundColor: '#FAFAF4',
-                  border: '1px solid #E5F0DF',
+                  backgroundColor: 'var(--bg-canvas)',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '8px',
                   padding: '8px 12px',
                   fontSize: '0.7rem',
-                  fontFamily: 'monospace',
-                  color: '#4A5B4F',
+                  fontFamily: 'var(--font-mono, monospace)',
+                  color: 'var(--text-secondary)',
                   wordBreak: 'break-all',
                   marginBottom: '20px',
                 }}
               >
-                <div style={{ fontWeight: 800, color: '#26352A', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <ShieldCheck size={12} color="#43A85B" />
+                <div style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <ShieldCheck size={12} color="var(--brand-primary)" />
                   <span>Cryptographic Proof:</span>
                 </div>
                 {cert.verification_hash}
@@ -271,6 +267,7 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 type="button"
+                className="btn-primary"
                 onClick={() => onOpenCertificateModal(cert)}
                 style={{
                   flex: 1,
@@ -278,19 +275,11 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  backgroundColor: '#43A85B',
-                  color: '#FFFFFF',
-                  border: 'none',
                   borderRadius: '100px',
                   padding: '10px 16px',
                   fontWeight: 800,
                   fontSize: '0.86rem',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(67, 168, 91, 0.25)',
-                  transition: 'background 0.15s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#38944f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#43A85B')}
               >
                 <Printer size={15} />
                 <span>View & Print Official Diploma</span>
@@ -304,8 +293,8 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
       {/* Earn More Credentials Callout */}
       <div
         style={{
-          backgroundColor: '#FFFFFF',
-          border: '1.5px dashed #C8E3BF',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1.5px dashed var(--border-strong)',
           borderRadius: '16px',
           padding: '24px 32px',
           display: 'flex',
@@ -316,29 +305,26 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
         }}
       >
         <div>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#26352A', margin: '0 0 6px 0' }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px 0' }}>
             Looking to unlock additional verified credentials?
           </h3>
-          <p style={{ margin: 0, color: '#6A7D70', fontSize: '0.88rem' }}>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.88rem' }}>
             Complete all modules, passing scores on quizzes, and lab simulations across any of the 40 canonical courses to earn formal certificates.
           </p>
         </div>
 
         <button
           type="button"
+          className="btn-secondary"
           onClick={onNavigateCourses}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            backgroundColor: '#26352A',
-            color: '#FFFFFF',
-            border: 'none',
             borderRadius: '100px',
             padding: '12px 24px',
             fontWeight: 800,
             fontSize: '0.88rem',
-            cursor: 'pointer',
           }}
         >
           <BookOpen size={16} />

@@ -120,7 +120,12 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
     return enrollment.completed_lessons || [];
   });
   const [isCrackersActive, setIsCrackersActive] = useState(false);
-  const [isRoadmapOpen, setIsRoadmapOpen] = useState(true);
+  const [isRoadmapOpen, setIsRoadmapOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 960;
+    }
+    return true;
+  });
 
   // -------------------------------------------------------------
   // SIMULATION STATE VARIABLES FOR ALL 18 DOMAINS
@@ -444,6 +449,65 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             </button>
           )}
         </div>
+      </div>
+
+      {/* MOBILE SEGMENTED VIEW SWITCHER: LAB EXPERIMENT VS ROADMAP */}
+      <div
+        className="mobile-lab-switcher"
+        style={{
+          display: 'none',
+          gap: '8px',
+          padding: '4px',
+          backgroundColor: 'var(--bg-surface-subdued)',
+          borderRadius: '10px',
+          border: '1px solid var(--border-subtle)',
+          marginBottom: '4px',
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setIsRoadmapOpen(false)}
+          style={{
+            flex: 1,
+            height: '36px',
+            borderRadius: '8px',
+            backgroundColor: !isRoadmapOpen ? 'var(--brand-primary)' : 'transparent',
+            color: !isRoadmapOpen ? '#FFFFFF' : 'var(--text-secondary)',
+            fontWeight: 700,
+            fontSize: '0.82rem',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+          }}
+        >
+          <FlaskConical size={15} />
+          <span>Interactive Experiment</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsRoadmapOpen(true)}
+          style={{
+            flex: 1,
+            height: '36px',
+            borderRadius: '8px',
+            backgroundColor: isRoadmapOpen ? 'var(--brand-primary)' : 'transparent',
+            color: isRoadmapOpen ? '#FFFFFF' : 'var(--text-secondary)',
+            fontWeight: 700,
+            fontSize: '0.82rem',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+          }}
+        >
+          <Compass size={15} />
+          <span>Roadmap Units ({allSubmodules.length})</span>
+        </button>
       </div>
 
       {/* MAIN TWO-COLUMN WORKBENCH: GAMIFIED SNAKE PATH ON LEFT, INTERACTIVE LAB ON RIGHT */}
@@ -990,13 +1054,13 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                   style={{
                     width: '100%',
                     maxHeight: '260px',
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: 'var(--bg-surface)',
                     borderRadius: '12px',
-                    border: '1px solid var(--border-subtle, #D6DED2)',
+                    border: '1px solid var(--border-subtle)',
                   }}
                 >
                   {/* Neural Links with animated flowing pulses */}
-                  <g stroke="#E8EDE4" strokeWidth="1.5">
+                  <g stroke="var(--border-subtle)" strokeWidth="1.5">
                     {/* Layer 1 -> Hidden */}
                     <line x1="120" y1="50" x2="280" y2="40" stroke="#43A85B" strokeOpacity="0.4" strokeWidth={aiKeywordDensity / 30} />
                     <line x1="120" y1="50" x2="280" y2="85" stroke="#43A85B" strokeOpacity="0.3" strokeWidth={aiKeywordDensity / 40} />
@@ -1036,24 +1100,24 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
 
                   {/* Input Nodes */}
                   <g>
-                    <circle cx="120" cy="50" r="14" fill="#FFFFFF" stroke="#43A85B" strokeWidth="3" />
+                    <circle cx="120" cy="50" r="14" fill="var(--bg-canvas)" stroke="#43A85B" strokeWidth="3" />
                     <text x="120" y="54" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#43A85B">x1</text>
-                    <text x="35" y="54" fontSize="11" fontWeight="bold" fill="#252C27">KW Density</text>
+                    <text x="35" y="54" fontSize="11" fontWeight="bold" fill="var(--text-primary)">KW Density</text>
 
-                    <circle cx="120" cy="110" r="14" fill="#FFFFFF" stroke="#D97706" strokeWidth="3" />
+                    <circle cx="120" cy="110" r="14" fill="var(--bg-canvas)" stroke="#D97706" strokeWidth="3" />
                     <text x="120" y="114" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#D97706">x2</text>
-                    <text x="30" y="114" fontSize="11" fontWeight="bold" fill="#252C27">Urgency Score</text>
+                    <text x="30" y="114" fontSize="11" fontWeight="bold" fill="var(--text-primary)">Urgency Score</text>
 
-                    <circle cx="120" cy="170" r="14" fill="#FFFFFF" stroke="#2563EB" strokeWidth="3" />
+                    <circle cx="120" cy="170" r="14" fill="var(--bg-canvas)" stroke="#2563EB" strokeWidth="3" />
                     <text x="120" y="174" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#2563EB">x3</text>
-                    <text x="35" y="174" fontSize="11" fontWeight="bold" fill="#252C27">Domain Rep</text>
+                    <text x="35" y="174" fontSize="11" fontWeight="bold" fill="var(--text-primary)">Domain Rep</text>
                   </g>
 
                   {/* Hidden Layer Nodes */}
                   <g>
                     {[40, 85, 130, 175].map((y, i) => (
                       <g key={i}>
-                        <circle cx="280" cy={y} r="10" fill="#FFFFFF" stroke="#43A85B" strokeWidth="2.5" />
+                        <circle cx="280" cy={y} r="10" fill="var(--bg-canvas)" stroke="#43A85B" strokeWidth="2.5" />
                         <circle cx="280" cy={y} r="4" fill="#43A85B" />
                       </g>
                     ))}
@@ -1065,14 +1129,14 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       cx="480"
                       cy="70"
                       r="16"
-                      fill={aiPhishingScore > 50 ? '#DC2626' : '#FFFFFF'}
+                      fill={aiPhishingScore > 50 ? '#DC2626' : 'var(--bg-canvas)'}
                       stroke="#DC2626"
                       strokeWidth="3"
                     />
                     <text x="480" y="74" textAnchor="middle" fontSize="11" fontWeight="900" fill={aiPhishingScore > 50 ? '#FFFFFF' : '#DC2626'}>
                       P
                     </text>
-                    <text x="506" y="74" fontSize="11" fontWeight="bold" fill={aiPhishingScore > 50 ? '#DC2626' : '#6B786E'}>
+                    <text x="506" y="74" fontSize="11" fontWeight="bold" fill={aiPhishingScore > 50 ? '#DC2626' : 'var(--text-secondary)'}>
                       PHISHING
                     </text>
 
@@ -1080,14 +1144,14 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       cx="480"
                       cy="140"
                       r="16"
-                      fill={aiPhishingScore <= 50 ? '#43A85B' : '#FFFFFF'}
+                      fill={aiPhishingScore <= 50 ? '#43A85B' : 'var(--bg-canvas)'}
                       stroke="#43A85B"
                       strokeWidth="3"
                     />
                     <text x="480" y="144" textAnchor="middle" fontSize="11" fontWeight="900" fill={aiPhishingScore <= 50 ? '#FFFFFF' : '#43A85B'}>
                       L
                     </text>
-                    <text x="506" y="144" fontSize="11" fontWeight="bold" fill={aiPhishingScore <= 50 ? '#43A85B' : '#6B786E'}>
+                    <text x="506" y="144" fontSize="11" fontWeight="bold" fill={aiPhishingScore <= 50 ? '#43A85B' : 'var(--text-secondary)'}>
                       LEGITIMATE
                     </text>
                   </g>
@@ -1098,9 +1162,9 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             {engineType === 'blockchain' && (
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
                   borderRadius: '12px',
-                  border: '1px solid var(--border-subtle, #D6DED2)',
+                  border: '1px solid var(--border-subtle)',
                   padding: '16px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -1108,16 +1172,16 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                 }}
               >
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-                  <div style={{ padding: '12px', borderRadius: '8px', backgroundColor: '#F7F6F0', border: '1px solid #D6DED2' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>BLOCK #1048</div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#252C27' }}>Nonce: {bcNonce}</div>
+                  <div style={{ padding: '12px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700 }}>BLOCK #1048</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)' }}>Nonce: {bcNonce}</div>
                     <div style={{ fontSize: '0.72rem', fontFamily: 'monospace', color: '#43A85B', wordBreak: 'break-all' }}>
                       Hash: {bcHashPreview}
                     </div>
                   </div>
-                  <div style={{ padding: '12px', borderRadius: '8px', backgroundColor: '#F7F6F0', border: '1px solid #D6DED2' }}>
-                    <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>BLOCK #1049</div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#252C27', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ padding: '12px', borderRadius: '8px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700 }}>BLOCK #1049</div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                       {bcIsTampered ? (
                         <>
                           <AlertCircle size={15} color="#DC2626" />
@@ -1141,9 +1205,9 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             {engineType === 'iot' && (
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
                   borderRadius: '12px',
-                  border: '1px solid var(--border-subtle, #D6DED2)',
+                  border: '1px solid var(--border-subtle)',
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
@@ -1153,26 +1217,26 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                 }}
               >
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>CORE TEMPERATURE</div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700 }}>CORE TEMPERATURE</div>
                   <div style={{ fontSize: '1.75rem', fontWeight: 900, color: iotTemp > 38 ? '#DC2626' : '#43A85B' }}>
                     {iotTemp}°C
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#6B786E' }}>Threshold: 38°C</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Threshold: 38°C</span>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>VIBRATION FREQUENCY</div>
-                  <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#252C27' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700 }}>VIBRATION FREQUENCY</div>
+                  <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                     {iotVibration} kHz
                   </div>
-                  <span style={{ fontSize: '0.72rem', color: '#6B786E' }}>Normal Range</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Normal Range</span>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>EMERGENCY COOLING RELAY</div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700 }}>EMERGENCY COOLING RELAY</div>
                   <div
                     style={{
                       fontSize: '0.95rem',
                       fontWeight: 800,
-                      color: iotCoolingOn ? '#43A85B' : '#6B786E',
+                      color: iotCoolingOn ? '#43A85B' : 'var(--text-secondary)',
                       marginTop: '4px',
                       display: 'flex',
                       alignItems: 'center',
@@ -1196,9 +1260,9 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             {engineType === 'security' && (
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
                   borderRadius: '12px',
-                  border: '1px solid var(--border-subtle, #D6DED2)',
+                  border: '1px solid var(--border-subtle)',
                   padding: '16px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -1206,7 +1270,7 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#252C27' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     WAF Packet Filter & SQLi Quarantine
                   </span>
                   <span
@@ -1215,14 +1279,14 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       fontWeight: 800,
                       padding: '2px 8px',
                       borderRadius: '6px',
-                      backgroundColor: secPayload === 'legit' ? '#E5F0DF' : '#FEE2E2',
-                      color: secPayload === 'legit' ? '#26352A' : '#991B1B',
+                      backgroundColor: secPayload === 'legit' ? 'var(--brand-surface)' : 'rgba(239, 68, 68, 0.15)',
+                      color: secPayload === 'legit' ? 'var(--brand-primary)' : '#DC2626',
                     }}
                   >
                     {secPayload === 'legit' ? 'CLEAN PAYLOAD' : 'MALICIOUS ATTACK BLOCKED'}
                   </span>
                 </div>
-                <div style={{ fontFamily: 'monospace', fontSize: '0.76rem', color: '#252C27', backgroundColor: '#F7F6F0', padding: '10px', borderRadius: '6px' }}>
+                <div style={{ fontFamily: 'monospace', fontSize: '0.76rem', color: 'var(--text-primary)', backgroundColor: 'var(--bg-canvas)', padding: '10px', borderRadius: '6px' }}>
                   {secPayload === 'legit' && 'GET /api/v1/students?grade=10 HTTP/1.1 -> 200 OK'}
                   {secPayload === 'sqli' && "SELECT * FROM users WHERE user_id = '' OR '1'='1' -- BLOCKED BY WAF"}
                   {secPayload === 'xss' && '<script>alert(document.cookie)</script> -- SANITIZED BY CSP HEADER'}
@@ -1233,9 +1297,9 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
             {engineType === 'compound' && (
               <div
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-surface)',
                   borderRadius: '12px',
-                  border: '1px solid var(--border-subtle, #D6DED2)',
+                  border: '1px solid var(--border-subtle)',
                   padding: '16px',
                   display: 'flex',
                   alignItems: 'center',
@@ -1245,8 +1309,8 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                 }}
               >
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.72rem', color: '#6B786E', fontWeight: 700 }}>INITIAL CAPITAL</div>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#252C27' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700 }}>INITIAL CAPITAL</div>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                     ${compPrincipal.toLocaleString()}
                   </div>
                 </div>
@@ -1641,12 +1705,12 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                 style={{
                   marginTop: '4px',
                   padding: '6px 10px',
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-canvas)',
                   borderRadius: '6px',
-                  border: '1px solid #D6DED2',
+                  border: '1px solid var(--border-subtle)',
                   fontSize: '0.72rem',
                   fontFamily: 'var(--font-mono, monospace)',
-                  color: '#244C3A',
+                  color: 'var(--brand-primary)',
                 }}
               >
                 {deepDiveInfo.formula}

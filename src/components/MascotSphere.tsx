@@ -186,14 +186,14 @@ export const MascotSphere: React.FC<MascotSphereProps> = ({
       {activeSpeech && (
         <div
           style={{
-            backgroundColor: '#FFFFFF',
-            border: '1.5px solid #D2DEC9',
+            backgroundColor: 'var(--bg-surface-elevated, var(--bg-surface))',
+            border: '1.5px solid var(--border-subtle)',
             borderRadius: '14px',
             padding: '7px 14px',
             fontSize: size < 60 ? '0.72rem' : '0.8rem',
             fontWeight: 700,
-            color: '#26352A',
-            boxShadow: '0 4px 16px rgba(38, 53, 42, 0.12)',
+            color: 'var(--text-primary)',
+            boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12)',
             marginBottom: '6px',
             position: 'relative',
             maxWidth: `${Math.max(160, Math.round(size * 1.6))}px`,
@@ -212,9 +212,9 @@ export const MascotSphere: React.FC<MascotSphereProps> = ({
               transform: 'translateX(-50%) rotate(45deg)',
               width: '8px',
               height: '8px',
-              backgroundColor: '#FFFFFF',
-              borderRight: '1.5px solid #D2DEC9',
-              borderBottom: '1.5px solid #D2DEC9',
+              backgroundColor: 'var(--bg-surface-elevated, var(--bg-surface))',
+              borderRight: '1.5px solid var(--border-subtle)',
+              borderBottom: '1.5px solid var(--border-subtle)',
             }}
           />
         </div>

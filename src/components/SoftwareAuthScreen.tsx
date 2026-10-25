@@ -128,25 +128,25 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
         style={{
           width: '100%',
           maxWidth: '920px',
-          backgroundColor: '#FFFFFF',
-          borderRadius: '28px',
-          border: '1px solid #E5F0DF',
-          boxShadow: '0 16px 40px rgba(38, 53, 42, 0.06)',
+          backgroundColor: 'var(--bg-surface)',
+          borderRadius: '24px',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-lg, 0 16px 40px rgba(0, 0, 0, 0.25))',
           display: 'grid',
-          gridTemplateColumns: '1.05fr 1fr',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           overflow: 'hidden',
-          margin: '32px 0',
+          margin: '24px 0',
         }}
       >
         {/* Left Welcome Panel with Animated Mascot */}
         <div
           style={{
-            backgroundColor: '#F3F8F0',
-            padding: '44px 36px',
+            backgroundColor: 'var(--bg-canvas)',
+            padding: '36px 28px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            borderRight: '1px solid #E5F0DF',
+            borderRight: '1px solid var(--border-subtle)',
           }}
         >
           <div>
@@ -157,8 +157,8 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 gap: '6px',
                 padding: '4px 12px',
                 borderRadius: '100px',
-                backgroundColor: '#D9F477',
-                color: '#26352A',
+                backgroundColor: 'var(--brand-surface)',
+                color: 'var(--brand-primary)',
                 fontSize: '0.78rem',
                 fontWeight: 800,
                 textTransform: 'uppercase',
@@ -166,14 +166,14 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 marginBottom: '16px',
               }}
             >
-              <ShieldCheck size={13} color="#26352A" /> Single Sign-On Ready
+              <ShieldCheck size={13} color="var(--brand-primary)" /> Single Sign-On Ready
             </div>
             <h2
               style={{
                 margin: 0,
                 fontSize: '1.75rem',
                 fontWeight: 800,
-                color: '#26352A',
+                color: 'var(--text-primary)',
                 fontFamily: 'Space Grotesk, sans-serif',
                 lineHeight: 1.2,
               }}
@@ -184,7 +184,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
               style={{
                 margin: '10px 0 0',
                 fontSize: '0.88rem',
-                color: '#556D5C',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.45,
               }}
             >
@@ -211,7 +211,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
               style={{
                 fontSize: '0.74rem',
                 fontWeight: 800,
-                color: '#6A7D70',
+                color: 'var(--text-secondary)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.04em',
                 marginBottom: '8px',
@@ -229,26 +229,20 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   gap: '8px',
                   padding: '9px 12px',
                   borderRadius: '12px',
-                  border: '1px solid #DCEADA',
-                  backgroundColor: '#FFFFFF',
-                  color: '#26352A',
+                  border: '1px solid var(--border-subtle)',
+                  backgroundColor: 'var(--bg-surface)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.15s ease',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#E5F0DF';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
-                }}
               >
-                <GraduationCap size={16} color="#43A85B" />
+                <GraduationCap size={16} color="var(--brand-primary)" />
                 <div>
                   <div>Pavan Kumar</div>
-                  <div style={{ fontSize: '0.68rem', color: '#6A7D70', fontWeight: 500 }}>Student Portal</div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Student Portal</div>
                 </div>
               </button>
 
@@ -261,26 +255,20 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   gap: '8px',
                   padding: '9px 12px',
                   borderRadius: '12px',
-                  border: '1px solid #DCEADA',
-                  backgroundColor: '#FFFFFF',
-                  color: '#26352A',
+                  border: '1px solid var(--border-subtle)',
+                  backgroundColor: 'var(--bg-surface)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.15s ease',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#E5F0DF';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFFFFF';
-                }}
               >
-                <Users size={16} color="#43A85B" />
+                <Users size={16} color="var(--brand-primary)" />
                 <div>
                   <div>Dr. Sharma</div>
-                  <div style={{ fontSize: '0.68rem', color: '#6A7D70', fontWeight: 500 }}>Teacher Portal</div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Teacher Portal</div>
                 </div>
               </button>
             </div>
@@ -288,10 +276,10 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
         </div>
 
         {/* Right Form Panel */}
-        <div style={{ padding: '44px 38px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ padding: '36px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           {/* Role Tab Selector */}
           <div style={{ marginBottom: '22px' }}>
-            <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: '#26352A', marginBottom: '8px' }}>
+            <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
               Select Portal Role:
             </label>
             <div
@@ -299,10 +287,10 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr 1fr',
                 gap: '6px',
-                backgroundColor: '#FAFAF4',
+                backgroundColor: 'var(--bg-canvas)',
                 padding: '4px',
                 borderRadius: '14px',
-                border: '1px solid #E5F0DF',
+                border: '1px solid var(--border-subtle)',
               }}
             >
               <button
@@ -312,12 +300,12 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   padding: '8px 6px',
                   borderRadius: '10px',
                   border: 'none',
-                  backgroundColor: selectedRole === 'learner' ? '#FFFFFF' : 'transparent',
-                  color: '#26352A',
+                  backgroundColor: selectedRole === 'learner' ? 'var(--bg-surface)' : 'transparent',
+                  color: 'var(--text-primary)',
                   fontWeight: selectedRole === 'learner' ? 800 : 600,
                   fontSize: '0.78rem',
                   cursor: 'pointer',
-                  boxShadow: selectedRole === 'learner' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                  boxShadow: selectedRole === 'learner' ? 'var(--shadow-sm)' : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -325,7 +313,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   transition: 'all 0.15s ease',
                 }}
               >
-                <GraduationCap size={14} color={selectedRole === 'learner' ? '#43A85B' : '#6A7D70'} />
+                <GraduationCap size={14} color={selectedRole === 'learner' ? 'var(--brand-primary)' : 'var(--text-secondary)'} />
                 <span>Student</span>
               </button>
 
@@ -336,12 +324,12 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   padding: '8px 6px',
                   borderRadius: '10px',
                   border: 'none',
-                  backgroundColor: selectedRole === 'teacher' ? '#FFFFFF' : 'transparent',
-                  color: '#26352A',
+                  backgroundColor: selectedRole === 'teacher' ? 'var(--bg-surface)' : 'transparent',
+                  color: 'var(--text-primary)',
                   fontWeight: selectedRole === 'teacher' ? 800 : 600,
                   fontSize: '0.78rem',
                   cursor: 'pointer',
-                  boxShadow: selectedRole === 'teacher' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                  boxShadow: selectedRole === 'teacher' ? 'var(--shadow-sm)' : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -349,7 +337,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Users size={14} color={selectedRole === 'teacher' ? '#43A85B' : '#6A7D70'} />
+                <Users size={14} color={selectedRole === 'teacher' ? 'var(--brand-primary)' : 'var(--text-secondary)'} />
                 <span>Teacher</span>
               </button>
 
@@ -360,12 +348,12 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   padding: '8px 6px',
                   borderRadius: '10px',
                   border: 'none',
-                  backgroundColor: selectedRole === 'institution_admin' ? '#FFFFFF' : 'transparent',
-                  color: '#26352A',
+                  backgroundColor: selectedRole === 'institution_admin' ? 'var(--bg-surface)' : 'transparent',
+                  color: 'var(--text-primary)',
                   fontWeight: selectedRole === 'institution_admin' ? 800 : 600,
                   fontSize: '0.78rem',
                   cursor: 'pointer',
-                  boxShadow: selectedRole === 'institution_admin' ? '0 2px 6px rgba(0,0,0,0.06)' : 'none',
+                  boxShadow: selectedRole === 'institution_admin' ? 'var(--shadow-sm)' : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -373,7 +361,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   transition: 'all 0.15s ease',
                 }}
               >
-                <School size={14} color={selectedRole === 'institution_admin' ? '#43A85B' : '#6A7D70'} />
+                <School size={14} color={selectedRole === 'institution_admin' ? 'var(--brand-primary)' : 'var(--text-secondary)'} />
                 <span>Admin</span>
               </button>
             </div>
@@ -394,11 +382,11 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   width: '100%',
                   padding: '11px 14px',
                   borderRadius: '12px',
-                  border: '1.5px solid #E5F0DF',
-                  backgroundColor: '#FAFAF4',
+                  border: '1.5px solid var(--border-subtle)',
+                  backgroundColor: 'var(--bg-canvas)',
                   fontSize: '0.88rem',
                   fontWeight: 600,
-                  color: '#26352A',
+                  color: 'var(--text-primary)',
                   outline: 'none',
                   boxSizing: 'border-box',
                 }}
@@ -406,7 +394,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#26352A', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 Password / Secure Passkey:
               </label>
               <div style={{ position: 'relative' }}>
@@ -419,20 +407,20 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                     width: '100%',
                     padding: '11px 14px',
                     borderRadius: '12px',
-                    border: '1.5px solid #E5F0DF',
-                    backgroundColor: '#FAFAF4',
+                    border: '1.5px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-canvas)',
                     fontSize: '0.88rem',
-                    color: '#26352A',
+                    color: 'var(--text-primary)',
                     outline: 'none',
                     boxSizing: 'border-box',
                   }}
                 />
-                <Lock size={16} color="#A3B8A8" style={{ position: 'absolute', right: '14px', top: '13px' }} />
+                <Lock size={16} color="var(--text-muted)" style={{ position: 'absolute', right: '14px', top: '13px' }} />
               </div>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#26352A', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 Institution:
               </label>
               <select
@@ -442,11 +430,11 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                   width: '100%',
                   padding: '11px 14px',
                   borderRadius: '12px',
-                  border: '1.5px solid #E5F0DF',
-                  backgroundColor: '#FAFAF4',
+                  border: '1.5px solid var(--border-subtle)',
+                  backgroundColor: 'var(--bg-canvas)',
                   fontSize: '0.86rem',
                   fontWeight: 600,
-                  color: '#26352A',
+                  color: 'var(--text-primary)',
                   outline: 'none',
                   boxSizing: 'border-box',
                   cursor: 'pointer',
@@ -459,12 +447,12 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.82rem', color: '#556D5C' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  style={{ accentColor: '#43A85B', width: '16px', height: '16px' }}
+                  style={{ accentColor: 'var(--brand-primary)', width: '16px', height: '16px' }}
                 />
                 <span>Remember session on this workstation</span>
               </label>

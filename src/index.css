@@ -1351,25 +1351,47 @@ tr:hover td {
 
 /* Mobile Drawer Responsive Mode (Zero horizontal overflow, off-canvas drawer with backdrop) */
 @media (max-width: 1023px) {
-  .platform-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: min(320px, 85vw) !important;
-    max-width: 85vw !important;
-    height: 100vh;
-    height: 100dvh;
-    z-index: 1050;
-    background-color: var(--bg-surface);
-    border-right: 1px solid var(--border-subtle);
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
-    transform: translateX(-100%);
-    padding: 0;
+  .platform-sidebar,
+  .platform-sidebar.collapsed {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: min(320px, 86vw) !important;
+    min-width: min(320px, 86vw) !important;
+    max-width: 86vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    z-index: 1050 !important;
+    background-color: var(--bg-surface) !important;
+    border-right: 1px solid var(--border-subtle) !important;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28) !important;
+    transform: translateX(-100%) !important;
+    padding: 0 !important;
+    overflow-y: auto !important;
   }
 
-  .platform-sidebar.open {
-    transform: translateX(0);
+  .platform-sidebar.open,
+  .platform-sidebar.collapsed.open {
+    transform: translateX(0) !important;
+  }
+
+  .platform-sidebar.collapsed .sidebar-label,
+  .platform-sidebar.collapsed .sidebar-section-title,
+  .platform-sidebar.collapsed .sidebar-mascot-card-text {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .platform-sidebar.collapsed .sidebar-nav-btn {
+    justify-content: flex-start !important;
+    padding: 10px 14px !important;
+    gap: 12px !important;
+    width: 100% !important;
   }
 
   .platform-sidebar-backdrop {
@@ -1634,6 +1656,9 @@ aside,
   }
   .course-submodule-workbench-grid {
     grid-template-columns: 1fr !important;
+  }
+  .mobile-lab-switcher {
+    display: flex !important;
   }
 }
 
@@ -1943,6 +1968,17 @@ aside,
     display: flex !important;
     flex-direction: column-reverse !important;
     gap: 20px !important;
+  }
+}
+
+.lesson-embedded-lab-container {
+  min-height: 720px;
+  height: 780px;
+}
+@media (max-width: 768px) {
+  .lesson-embedded-lab-container {
+    min-height: 480px !important;
+    height: 72vh !important;
   }
 }
 

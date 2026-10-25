@@ -20,19 +20,54 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
+import { StudentHomeScreen } from './StudentHomeScreen';
+
 interface HomepageProps {
   db: InMemoryDatabase;
   onNavigate: (view: string, slug?: string) => void;
   currentUserId: string;
+  onStartLesson?: (courseId: string, lessonId: string, tab?: 'video' | 'lab' | 'sandbox' | 'animation') => void;
+  onSelectCourse?: (slug: string) => void;
+  onLaunchLab?: (slug: string) => void;
 }
 
-export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserId: _currentUserId }) => {
+export const Homepage: React.FC<HomepageProps> = ({
+  db,
+  onNavigate,
+  currentUserId,
+  onStartLesson,
+  onSelectCourse,
+  onLaunchLab,
+}) => {
   const publishedCourses = db.getCanonicalCourses();
   const allLabs = db.getLabDefinitions();
 
   const [pilotModalOpen, setPilotModalOpen] = useState(false);
   const [selectedDomainTab, setSelectedDomainTab] = useState<'all' | 'technology' | 'finance' | 'professional'>('all');
   const [openFaq, setOpenFaq] = useState<number | null>(0); // First FAQ open by default
+  const [showPublicMarketing, setShowPublicMarketing] = useState(false);
+
+  const userMemberships = Array.from(db.memberships.values()).filter(
+    (m) => m.user_id === currentUserId
+  );
+  const isInstitutionalNonLearner = userMemberships.some(
+    (m) => m.role === 'teacher' || m.role === 'institution_admin' || m.role === 'trainer'
+  );
+
+  // If user is a student / learner and not explicitly viewing marketing overview, render playful StudentHomeScreen
+  if (!isInstitutionalNonLearner && !showPublicMarketing && currentUserId) {
+    return (
+      <StudentHomeScreen
+        db={db}
+        currentUserId={currentUserId}
+        onNavigate={onNavigate}
+        onStartLesson={onStartLesson}
+        onSelectCourse={onSelectCourse || ((slug) => onNavigate('course-detail', slug))}
+        onLaunchLab={onLaunchLab || ((slug) => onNavigate('lab-workspace', slug))}
+        onViewMarketing={() => setShowPublicMarketing(true)}
+      />
+    );
+  }
 
   const toggleFaq = (idx: number) => {
     setOpenFaq(openFaq === idx ? null : idx);
@@ -45,6 +80,32 @@ export const Homepage: React.FC<HomepageProps> = ({ db, onNavigate, currentUserI
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0', width: '100%' }}>
+      {showPublicMarketing && (
+        <div
+          style={{
+            backgroundColor: 'var(--brand-surface)',
+            borderBottom: '1px solid var(--brand-border)',
+            padding: '10px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '0.82rem',
+            color: 'var(--brand-primary)',
+            fontWeight: 700,
+            zIndex: 10,
+          }}
+        >
+          <span>You are viewing the Public Platform Overview</span>
+          <button
+            type="button"
+            onClick={() => setShowPublicMarketing(false)}
+            className="btn-primary"
+            style={{ height: '30px', fontSize: '0.74rem', padding: '0 12px' }}
+          >
+            ← Return to Learner Space
+          </button>
+        </div>
+      )}
       {/* ============================================================ */}
       {/* 1. HERO SECTION (NotebookLM Style: Clean, Centered & Living) */}
       {/* ============================================================ */}

@@ -66,8 +66,8 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
     <div
       style={{
         width: '100%',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         padding: '18px 20px',
         position: 'relative',
@@ -292,8 +292,8 @@ export const IotSensorDialSvg: React.FC<IotSensorDialProps> = ({ currentTemp, th
         flexWrap: 'wrap',
         gap: '20px',
         padding: '20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -443,8 +443,8 @@ export const MarketTrendSvg: React.FC<MarketTrendSvgProps> = ({ scenario, beta }
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -582,8 +582,8 @@ export const CompoundGrowthSvg: React.FC<CompoundGrowthSvgProps> = ({
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -688,8 +688,8 @@ export const BudgetPieSvg: React.FC<BudgetPieSvgProps> = ({ income = 5000 }) => 
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -767,8 +767,8 @@ export const ConversationSvg: React.FC<ConversationSvgProps> = ({ currentStep = 
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -852,8 +852,8 @@ export const ClassroomSvg: React.FC<ClassroomSvgProps> = ({ currentStep = 2 }) =
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -954,8 +954,8 @@ export const PrivacyRadarSvg: React.FC<PrivacyRadarProps> = ({
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
@@ -1365,8 +1365,8 @@ export const SettlementLifecycleSvg: React.FC<SettlementLifecycleProps> = ({ cur
     <div
       style={{
         padding: '18px 20px',
-        backgroundColor: '#FFFFFF',
-        border: '1px solid #E5F0DF',
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
         borderRadius: '16px',
         boxShadow: '0 2px 10px rgba(38, 53, 42, 0.03)',
       }}
