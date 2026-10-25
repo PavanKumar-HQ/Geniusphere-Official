@@ -1137,7 +1137,7 @@ export const App: React.FC = () => {
                 }}
               >
                 <img
-                  src="/images/student_hero.jpg"
+                  src="/images/student_hero.webp"
                   alt={currentUser.name}
                   style={{
                     width: '28px',
@@ -1185,7 +1185,7 @@ export const App: React.FC = () => {
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <img
-                          src="/images/student_hero.jpg"
+                          src="/images/student_hero.webp"
                           alt={currentUser.name}
                           style={{
                             width: '42px',

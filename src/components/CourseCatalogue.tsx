@@ -1019,7 +1019,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           </div>
 
           <img
-            src="/images/student_hero.jpg"
+            src="/images/student_hero.webp"
             alt="Student"
             style={{
               width: '76px',
