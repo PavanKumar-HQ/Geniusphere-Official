@@ -128,7 +128,7 @@ export const Homepage: React.FC<HomepageProps> = ({
             transform: 'translateX(-50%)',
             width: '900px',
             height: '420px',
-            background: 'radial-gradient(ellipse at 50% 30%, rgba(37, 99, 235, 0.08), rgba(67, 168, 91, 0.04), transparent 70%)',
+            background: 'radial-gradient(ellipse at 50% 30%, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.04), transparent 70%)',
             pointerEvents: 'none',
             zIndex: 0,
           }}
@@ -180,7 +180,7 @@ export const Homepage: React.FC<HomepageProps> = ({
           {/* Main Headline (Space Grotesk, Editorial High-Impact) */}
           <h1
             style={{
-              fontFamily: 'Space Grotesk, sans-serif',
+              fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(2.5rem, 5.2vw, 4.4rem)',
               fontWeight: 800,
               lineHeight: 1.1,
@@ -450,7 +450,7 @@ export const Homepage: React.FC<HomepageProps> = ({
           </span>
           <h2
             style={{
-              fontFamily: 'Space Grotesk, sans-serif',
+              fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(2rem, 3.5vw, 2.8rem)',
               fontWeight: 800,
               color: 'var(--text-primary)',
@@ -491,7 +491,7 @@ export const Homepage: React.FC<HomepageProps> = ({
                 width: '48px',
                 height: '48px',
                 borderRadius: '14px',
-                backgroundColor: 'rgba(67, 168, 91, 0.1)',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 color: 'var(--brand-primary)',
                 display: 'flex',
                 alignItems: 'center',
@@ -695,7 +695,7 @@ export const Homepage: React.FC<HomepageProps> = ({
               </span>
               <h2
                 style={{
-                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontFamily: 'var(--font-heading)',
                   fontSize: 'clamp(1.8rem, 3vw, 2.4rem)',
                   fontWeight: 800,
                   color: 'var(--text-primary)',
@@ -917,7 +917,7 @@ export const Homepage: React.FC<HomepageProps> = ({
             </span>
             <h2
               style={{
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
                 fontSize: 'clamp(2rem, 3.2vw, 2.6rem)',
                 fontWeight: 800,
                 color: 'var(--text-primary)',
@@ -1055,7 +1055,7 @@ export const Homepage: React.FC<HomepageProps> = ({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 6px 18px rgba(67, 168, 91, 0.35)',
+              boxShadow: '0 6px 18px rgba(16, 185, 129, 0.35)',
             }}
           >
             <Award size={28} />
@@ -1063,7 +1063,7 @@ export const Homepage: React.FC<HomepageProps> = ({
 
           <h2
             style={{
-              fontFamily: 'Space Grotesk, sans-serif',
+              fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
               fontWeight: 800,
               color: 'var(--text-primary)',

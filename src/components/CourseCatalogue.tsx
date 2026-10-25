@@ -212,7 +212,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
               color: 'var(--text-primary)',
               letterSpacing: '-0.02em',
               margin: '0 0 6px',
-              fontFamily: 'Space Grotesk, sans-serif',
+              fontFamily: 'var(--font-heading)',
             }}
           >
             Explore Courses & Hands-On Skills
@@ -776,7 +776,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                           fontSize: '1.45rem',
                           fontWeight: 800,
                           color: 'var(--text-primary)',
-                          fontFamily: 'Space Grotesk, sans-serif',
+                          fontFamily: 'var(--font-heading)',
                           letterSpacing: '-0.02em',
                         }}
                       >
@@ -904,7 +904,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                   fontSize: '1.2rem',
                   fontWeight: 800,
                   color: 'var(--text-primary)',
-                  fontFamily: 'Space Grotesk, sans-serif',
+                  fontFamily: 'var(--font-heading)',
                 }}
               >
                 Ready to level up your skills?

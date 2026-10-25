@@ -81,7 +81,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
               alignItems: 'center',
               justifyContent: 'center',
               color: '#FFFFFF',
-              boxShadow: '0 4px 12px rgba(67, 168, 91, 0.25)',
+              boxShadow: '0 4px 14px rgba(16, 185, 129, 0.28)',
             }}
           >
             <ShieldCheck size={24} />
@@ -91,8 +91,8 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
               style={{
                 fontSize: '1.35rem',
                 fontWeight: 800,
-                color: '#26352A',
-                fontFamily: 'Space Grotesk, sans-serif',
+                color: 'var(--text-primary)',
+                fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.1,
               }}
@@ -174,7 +174,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 fontSize: '1.75rem',
                 fontWeight: 800,
                 color: 'var(--text-primary)',
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
                 lineHeight: 1.2,
               }}
             >
@@ -475,7 +475,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 14px rgba(67, 168, 91, 0.3)',
+                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                 transition: 'all 0.15s ease',
               }}
             >

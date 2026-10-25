@@ -182,7 +182,7 @@ export const ThemeSettingsModal: React.FC<ThemeSettingsModalProps> = ({
                     gap: '10px',
                     position: 'relative',
                     boxShadow: isSelected
-                      ? '0 4px 12px rgba(67, 168, 91, 0.18)'
+                      ? '0 4px 14px rgba(16, 185, 129, 0.22)'
                       : 'none',
                   }}
                 >

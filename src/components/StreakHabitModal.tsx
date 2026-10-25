@@ -207,12 +207,12 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                   padding: '10px 4px',
                   borderRadius: '12px',
                   backgroundColor: d.active
-                    ? 'rgba(0, 245, 160, 0.08)'
+                    ? 'var(--brand-surface)'
                     : 'var(--bg-surface)',
                   border: d.active
                     ? '1.5px solid var(--brand-primary)'
                     : '1px solid var(--border-subtle)',
-                  boxShadow: d.active ? '0 0 10px rgba(0, 245, 160, 0.15)' : 'none',
+                  boxShadow: d.active ? '0 0 12px rgba(16, 185, 129, 0.25)' : 'none',
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
@@ -245,7 +245,7 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                     backgroundColor: d.active
                       ? 'var(--brand-primary)'
                       : 'var(--bg-surface-subdued)',
-                    color: d.active ? '#03170E' : 'var(--text-muted)',
+                    color: d.active ? '#FFFFFF' : 'var(--text-muted)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -266,9 +266,9 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                       fontSize: '0.52rem',
                       fontWeight: 800,
                       backgroundColor: 'var(--brand-primary)',
-                      color: '#03170E',
-                      padding: '1px 4px',
-                      borderRadius: '3px',
+                      color: '#FFFFFF',
+                      padding: '1px 5px',
+                      borderRadius: '4px',
                       lineHeight: 1,
                     }}
                   >

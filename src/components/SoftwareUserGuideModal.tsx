@@ -178,7 +178,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
               <BookOpen size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+              <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                 Geniusphere Interactive Software Guide
               </div>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
@@ -272,7 +272,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                 fontSize: '1.4rem',
                 fontWeight: 800,
                 color: 'var(--text-primary)',
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               {currentChapter.title}
@@ -317,7 +317,7 @@ export const SoftwareUserGuideModal: React.FC<SoftwareUserGuideModalProps> = ({
                   fontSize: '0.84rem',
                   fontWeight: 800,
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(67, 168, 91, 0.3)',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                   transition: 'transform 0.15s ease',
                 }}
               >
