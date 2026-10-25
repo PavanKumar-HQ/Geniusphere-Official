@@ -84,7 +84,7 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
   const allClassrooms = Array.from(db.classrooms.values());
   const allAuditEvents = Array.from(db.auditEvents.values());
   const allTrainers = useMemo(() => db.getTrainers(currentUserId), [db, currentUserId, marketplaceVersion]);
-  const allTrainingRequests = useMemo(() => db.getTrainingRequests(currentUserId), [db, currentUserId, marketplaceVersion]);
+  const allTrainingRequests = useMemo(() => db.getTrainingRequests(undefined, true), [db, marketplaceVersion]);
   const allPayouts = useMemo(() => db.getAllPayouts(), [db, marketplaceVersion]);
   const allSafeguardingReports = useMemo(() => db.getSafeguardingReports(undefined, true), [db, marketplaceVersion]);
 

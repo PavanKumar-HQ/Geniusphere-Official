@@ -2000,6 +2000,90 @@ export const App: React.FC = () => {
                   {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
                 </button>
               </div>
+            ) : isTrainer ? (
+              /* ============================================================ */
+              /* 5. VERIFIED TRAINER DEDICATED NAVIGATION RAIL                */
+              /* ============================================================ */
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {!isSidebarCollapsed && (
+                  <div
+                    className="sidebar-section-title"
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 800,
+                      color: 'var(--brand-primary)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      padding: '0 16px 8px',
+                    }}
+                  >
+                    Trainer Delivery Rail
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('trainer-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Trainer Workspace" : undefined}
+                >
+                  <Award size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Trainer Workspace</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('catalogue')}
+                  className={`sidebar-nav-btn ${currentView === 'catalogue' || currentView === 'course-detail' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Curriculum Modules" : undefined}
+                >
+                  <BookOpen size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Curriculum Modules</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('labs')}
+                  className={`sidebar-nav-btn ${currentView === 'labs' || currentView === 'lab-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Hands-on Labs" : undefined}
+                >
+                  <Terminal size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Hands-on Labs</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('code-sandbox')}
+                  className={`sidebar-nav-btn ${currentView === 'code-sandbox' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Code Runner Engine" : undefined}
+                >
+                  <Code2 size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Code Runner</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setThemeModalOpen(true)}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Appearance & Theme Palette" : undefined}
+                >
+                  <Palette size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Theme Settings</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUserGuideOpen(true);
+                    setSidebarOpen(false);
+                  }}
+                  className="sidebar-nav-btn"
+                  title={isSidebarCollapsed ? "Software User Guide" : undefined}
+                >
+                  <HelpCircle size={18} />
+                  {!isSidebarCollapsed && <span className="sidebar-label">Software User Guide</span>}
+                </button>
+              </div>
             ) : (
               /* ============================================================ */
               /* 5. STUDENT / LEARNER DEDICATED NAVIGATION RAIL               */
@@ -2537,6 +2621,14 @@ export const App: React.FC = () => {
           />
         )}
 
+        {currentView === 'trainer-workspace' && (
+          <TrainerWorkspace
+            key={`trainer-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            currentUserId={currentUserId}
+          />
+        )}
+
         {currentView === 'parent' && (
           <ParentPortal
             key={`parent-${currentUserId}-${refreshTrigger}`}
@@ -3010,6 +3102,41 @@ export const App: React.FC = () => {
             >
               <Award size={20} />
               <span>Credentials</span>
+            </button>
+            <button
+              type="button"
+              className="mobile-tab-btn"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu size={20} />
+              <span>Menu</span>
+            </button>
+          </>
+        ) : isTrainer ? (
+          <>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
+              onClick={() => handleNavigate('trainer-workspace')}
+            >
+              <Award size={20} />
+              <span>Workspace</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'catalogue' ? 'active' : ''}`}
+              onClick={() => handleNavigate('catalogue')}
+            >
+              <BookOpen size={20} />
+              <span>Courses</span>
+            </button>
+            <button
+              type="button"
+              className={`mobile-tab-btn ${currentView === 'labs' ? 'active' : ''}`}
+              onClick={() => handleNavigate('labs')}
+            >
+              <Terminal size={20} />
+              <span>Labs</span>
             </button>
             <button
               type="button"
