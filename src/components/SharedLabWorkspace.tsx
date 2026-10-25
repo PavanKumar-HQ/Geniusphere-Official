@@ -75,7 +75,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [saveStatus, setSaveStatus] = useState<'SAVED' | 'LOCAL DRAFT' | 'UNSAVED'>('SAVED');
   const [mobileTab, setMobileTab] = useState<'instructions' | 'workspace' | 'results'>('workspace');
   const [completedAttempt, setCompletedAttempt] = useState<LabAttemptRecord | null>(null);
-  const [workspaceMode, setWorkspaceMode] = useState<'3-column' | 'focus' | 'zen'>('3-column');
+  const [workspaceMode, setWorkspaceMode] = useState<'3-column' | 'focus' | 'zen'>('focus');
   const [showHint, setShowHint] = useState<boolean>(true);
   const [centerLabViewMode, setCenterLabViewMode] = useState<'interactive-suite' | 'svg-parameters'>('interactive-suite');
 

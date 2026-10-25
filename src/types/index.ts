@@ -4,7 +4,7 @@
 // ====================================================================
 
 export type OrgType = 'school' | 'college' | 'university' | 'independent_learning';
-export type OrgRole = 'learner' | 'teacher' | 'institution_admin' | 'curriculum_author';
+export type OrgRole = 'learner' | 'teacher' | 'institution_admin' | 'curriculum_author' | 'trainer';
 export type AccountStatus = 'active' | 'pending_parent_consent' | 'suspended';
 export type ConsentStatus = 'pending' | 'verified' | 'revoked';
 export type SyncStatus = 'LOCAL_UNSYNCED' | 'SYNCING' | 'SERVER_CONFIRMED' | 'SYNC_CONFLICT';
@@ -381,5 +381,170 @@ export interface StudyResource {
   action_type: 'view_guide' | 'open_tool' | 'download';
   target_view?: string;
   is_verified: boolean;
+}
+
+// ====================================================================
+// School Training Marketplace & Verified Trainer Types
+// ====================================================================
+
+export type TrainerVerificationStatus = 'pending' | 'verified' | 'rejected' | 'suspended';
+
+export interface Trainer {
+  id: string;
+  user_id: string;
+  user_name?: string;
+  user_email?: string;
+  verification_status: TrainerVerificationStatus;
+  headline: string;
+  bio: string;
+  competencies: string[];
+  qualified_grade_levels: string[];
+  delivery_formats: ('in_person' | 'online' | 'hybrid')[];
+  service_locations: string[];
+  daily_rate_paise: number; // Stored in integer paise (e.g. 500000 = ₹5,000)
+  completed_assignments_count: number;
+  verified_at?: string | null;
+  verified_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type TrainingRequestStatus =
+  | 'draft'
+  | 'submitted'
+  | 'under_review'
+  | 'quoted'
+  | 'awaiting_school_confirmation'
+  | 'confirmed'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'disputed';
+
+export interface TrainingRequest {
+  id: string;
+  organization_id: string;
+  organization_name?: string;
+  requester_id: string;
+  requester_name?: string;
+  title: string;
+  domain: DomainType;
+  target_grade_range: string;
+  approx_cohort_size: number;
+  learning_objectives: string;
+  preferred_format: 'in_person' | 'online' | 'hybrid';
+  preferred_start_date: string;
+  preferred_end_date: string;
+  location_address: string;
+  budget_max_paise: number;
+  status: TrainingRequestStatus;
+  cancellation_reason?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrainingQuote {
+  id: string;
+  request_id: string;
+  organization_id: string;
+  gross_amount_paise: number;
+  trainer_fee_paise: number;
+  platform_fee_paise: number;
+  tax_amount_paise: number;
+  terms_markdown: string;
+  valid_until: string;
+  status: 'issued' | 'accepted' | 'rejected' | 'expired';
+  created_at: string;
+}
+
+export type TrainingAssignmentStatus =
+  | 'proposed'
+  | 'offered'
+  | 'accepted'
+  | 'declined'
+  | 'confirmed'
+  | 'completed'
+  | 'cancelled';
+
+export interface TrainingAssignment {
+  id: string;
+  request_id: string;
+  trainer_id: string;
+  trainer_name?: string;
+  status: TrainingAssignmentStatus;
+  agreed_compensation_paise: number;
+  assigned_by: string;
+  assigned_at: string;
+  accepted_at?: string | null;
+  completed_at?: string | null;
+}
+
+export type SessionDeliveryStatus = 'scheduled' | 'in_progress' | 'delivered' | 'rescheduled' | 'cancelled';
+
+export interface TrainingSession {
+  id: string;
+  assignment_id: string;
+  request_id: string;
+  classroom_id?: string | null; // LMS link
+  classroom_name?: string;
+  session_number: number;
+  topic: string;
+  scheduled_start: string;
+  scheduled_end: string;
+  format: 'in_person' | 'online' | 'hybrid';
+  meeting_or_room: string;
+  delivery_status: SessionDeliveryStatus;
+  attendance_count: number;
+  delivery_notes?: string | null;
+  verified_by_school: boolean;
+  completed_at?: string | null;
+  created_at: string;
+}
+
+export type TrainingInvoiceStatus = 'draft' | 'issued' | 'paid' | 'overdue' | 'void';
+
+export interface TrainingInvoice {
+  id: string;
+  organization_id: string;
+  request_id: string;
+  invoice_number: string;
+  subtotal_paise: number;
+  tax_paise: number;
+  total_paise: number;
+  status: TrainingInvoiceStatus;
+  issued_at: string;
+  due_at: string;
+  paid_at?: string | null;
+}
+
+export type TrainerPayoutStatus = 'accrued' | 'approved' | 'processing' | 'settled';
+
+export interface TrainerPayout {
+  id: string;
+  trainer_id: string;
+  assignment_id: string;
+  amount_paise: number;
+  status: TrainerPayoutStatus;
+  idempotency_key: string;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  settled_at?: string | null;
+  created_at: string;
+}
+
+export interface SafeguardingReport {
+  id: string;
+  organization_id: string;
+  reporter_id: string;
+  reporter_name?: string;
+  subject_user_id?: string | null;
+  subject_name?: string;
+  category: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  status: 'open' | 'investigating' | 'resolved';
+  reported_at: string;
+  resolved_at?: string | null;
+  resolution_notes?: string | null;
 }
 

@@ -17,6 +17,11 @@ import {
   Flame,
   Search,
   ArrowLeft,
+  DollarSign,
+  Calendar,
+  Briefcase,
+  AlertTriangle,
+  ShieldAlert,
 } from 'lucide-react';
 
 interface PlatformAdminWorkspaceProps {
@@ -32,7 +37,18 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
   onNavigateToAudit,
   onNavigateToCatalogue,
 }) => {
-  const [activeTab, setActiveTab] = useState<'health' | 'users' | 'content' | 'videos' | 'institutions'>('health');
+  const [activeTab, setActiveTab] = useState<'health' | 'users' | 'content' | 'videos' | 'institutions' | 'marketplace'>('health');
+  const [marketplaceVersion, setMarketplaceVersion] = useState(0);
+  const [selectedRequestIdForQuote, setSelectedRequestIdForQuote] = useState<string | null>(null);
+  const [quoteTrainerFee, setQuoteTrainerFee] = useState('5000');
+  const [quotePlatformFee, setQuotePlatformFee] = useState('1500');
+  const [selectedRequestIdForAssign, setSelectedRequestIdForAssign] = useState<string | null>(null);
+  const [assignTrainerId, setAssignTrainerId] = useState('');
+  const [assignCompFee, setAssignCompFee] = useState('5000');
+  const [resolvingReportId, setResolvingReportId] = useState<string | null>(null);
+  const [resolutionNotes, setResolutionNotes] = useState('');
+  const [marketplaceMsg, setMarketplaceMsg] = useState<string | null>(null);
+
   const [videoTitle, setVideoTitle] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [videoCategory, setVideoCategory] = useState<DomainType | 'general'>('technology');
@@ -67,6 +83,10 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
   const allCourses = useMemo(() => db.getCourses(), [db, contentVersion]);
   const allClassrooms = Array.from(db.classrooms.values());
   const allAuditEvents = Array.from(db.auditEvents.values());
+  const allTrainers = useMemo(() => db.getTrainers(currentUserId), [db, currentUserId, marketplaceVersion]);
+  const allTrainingRequests = useMemo(() => db.getTrainingRequests(currentUserId), [db, currentUserId, marketplaceVersion]);
+  const allPayouts = useMemo(() => db.getAllPayouts(), [db, marketplaceVersion]);
+  const allSafeguardingReports = useMemo(() => db.getSafeguardingReports(undefined, true), [db, marketplaceVersion]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -183,6 +203,22 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
           }}
         >
           Institutions ({allOrgs.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('marketplace')}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: '8px 16px',
+            fontWeight: activeTab === 'marketplace' ? 700 : 500,
+            color: activeTab === 'marketplace' ? '#DC2626' : 'var(--text-secondary)',
+            borderBottom: activeTab === 'marketplace' ? '2px solid #DC2626' : '2px solid transparent',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+          }}
+        >
+          Marketplace & Operations ({allTrainingRequests.length} Req / {allTrainers.length} Trainers)
         </button>
       </div>
 
@@ -1124,6 +1160,651 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Tab 6: Marketplace, Trainer Verification, Quoting & DPDP Safeguarding */}
+      {activeTab === 'marketplace' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {marketplaceMsg && (
+            <div
+              style={{
+                padding: '12px 16px',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid var(--success)',
+                color: 'var(--success)',
+                fontSize: '0.88rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <span>{marketplaceMsg}</span>
+              <button
+                type="button"
+                onClick={() => setMarketplaceMsg(null)}
+                style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', fontWeight: 700 }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {/* Operational Metrics Cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            <div className="card" style={{ padding: '20px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                Training Requests
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
+                {allTrainingRequests.length}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                {allTrainingRequests.filter((r) => r.status === 'confirmed' || r.status === 'in_progress').length} active or confirmed
+              </div>
+            </div>
+
+            <div className="card" style={{ padding: '20px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                Verified Trainers
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--success)' }}>
+                {allTrainers.filter((t) => t.verification_status === 'verified').length} / {allTrainers.length}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                {allTrainers.filter((t) => t.verification_status === 'pending').length} pending verification
+              </div>
+            </div>
+
+            <div className="card" style={{ padding: '20px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                Trainer Payout Ledger
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#F59E0B' }}>
+                ₹{((allPayouts.reduce((acc, p) => acc + p.amount_paise, 0)) / 100).toLocaleString('en-IN')}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                {allPayouts.filter((p) => p.status === 'settled').length} settled • {allPayouts.filter((p) => p.status === 'accrued').length} accrued
+              </div>
+            </div>
+
+            <div className="card" style={{ padding: '20px' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '6px' }}>
+                DPDP Minor Incidents
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: allSafeguardingReports.filter((r) => r.status === 'open').length > 0 ? '#DC2626' : 'var(--success)' }}>
+                {allSafeguardingReports.filter((r) => r.status === 'open').length}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                {allSafeguardingReports.length} total reports filed
+              </div>
+            </div>
+          </div>
+
+          {/* Section 1: Trainer Verification Queue */}
+          <div className="card" style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <Award size={20} color="var(--brand-primary)" />
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                Trainer Verification & Safeguarding Compliance Queue
+              </h3>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              Verified trainers deliver in-school STEM/CS workshops. Background checks and minor-protection certification are mandatory before any assignment.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {allTrainers.map((trainer) => (
+                <div
+                  key={trainer.id}
+                  style={{
+                    padding: '16px 20px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--bg-surface-subdued)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    flexWrap: 'wrap',
+                    gap: '16px',
+                  }}
+                >
+                  <div style={{ maxWidth: '650px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                      <span style={{ fontWeight: 800, fontSize: '1.05rem' }}>{trainer.headline}</span>
+                      <span
+                        className={`badge ${
+                          trainer.verification_status === 'verified'
+                            ? 'badge-success'
+                            : trainer.verification_status === 'pending'
+                            ? 'badge-warning'
+                            : 'badge-danger'
+                        }`}
+                      >
+                        {trainer.verification_status.toUpperCase()}
+                      </span>
+                    </div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                      {trainer.bio}
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.78rem' }}>
+                      <span className="badge badge-neutral">Completed: {trainer.completed_assignments_count} assignments</span>
+                      <span className="badge badge-neutral">Daily Rate: ₹{(trainer.daily_rate_paise / 100).toLocaleString('en-IN')}/day</span>
+                      <span className="badge badge-neutral">Grades: {trainer.qualified_grade_levels.join(', ')}</span>
+                      <span className="badge badge-neutral">Formats: {trainer.delivery_formats.join(', ')}</span>
+                    </div>
+                    <div style={{ marginTop: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                      Competencies: <strong>{trainer.competencies.join(', ')}</strong> • Service Areas: <strong>{trainer.service_locations.join(', ')}</strong>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    {trainer.verification_status !== 'verified' && (
+                      <button
+                        type="button"
+                        className="btn-primary"
+                        style={{ height: '36px', fontSize: '0.82rem' }}
+                        onClick={() => {
+                          try {
+                            db.verifyTrainer(trainer.id, currentUserId, 'verified');
+                            setMarketplaceMsg(`Trainer ${trainer.headline} verified successfully.`);
+                            setMarketplaceVersion((v) => v + 1);
+                          } catch (err: any) {
+                            setMarketplaceMsg(err.message);
+                          }
+                        }}
+                      >
+                        <CheckCircle2 size={14} style={{ marginRight: '6px' }} />
+                        Approve & Verify
+                      </button>
+                    )}
+                    {trainer.verification_status !== 'rejected' && (
+                      <button
+                        type="button"
+                        className="btn-outline"
+                        style={{ height: '36px', fontSize: '0.82rem', borderColor: '#DC2626', color: '#DC2626' }}
+                        onClick={() => {
+                          try {
+                            db.verifyTrainer(trainer.id, currentUserId, 'rejected');
+                            setMarketplaceMsg(`Trainer ${trainer.headline} rejected.`);
+                            setMarketplaceVersion((v) => v + 1);
+                          } catch (err: any) {
+                            setMarketplaceMsg(err.message);
+                          }
+                        }}
+                      >
+                        Reject
+                      </button>
+                    )}
+                    {trainer.verification_status === 'verified' && (
+                      <button
+                        type="button"
+                        className="btn-outline"
+                        style={{ height: '36px', fontSize: '0.82rem', borderColor: '#F59E0B', color: '#F59E0B' }}
+                        onClick={() => {
+                          try {
+                            db.verifyTrainer(trainer.id, currentUserId, 'suspended');
+                            setMarketplaceMsg(`Trainer ${trainer.headline} suspended.`);
+                            setMarketplaceVersion((v) => v + 1);
+                          } catch (err: any) {
+                            setMarketplaceMsg(err.message);
+                          }
+                        }}
+                      >
+                        Suspend
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Section 2: School Training Requests & Commercial Quoting */}
+          <div className="card" style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <Briefcase size={20} color="var(--brand-primary)" />
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                School Training Requests, Commercial Quotes & Trainer Assignments
+              </h3>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              Manage incoming institutional requests through strict state transitions: <code>submitted → quoted → awaiting_school_confirmation → confirmed → in_progress → completed</code>.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {allTrainingRequests.map((req) => {
+                const org = db.organizations.get(req.organization_id);
+                const isQuoting = selectedRequestIdForQuote === req.id;
+                const isAssigning = selectedRequestIdForAssign === req.id;
+
+                return (
+                  <div
+                    key={req.id}
+                    style={{
+                      padding: '18px 20px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--bg-surface-subdued)',
+                      border: '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                          <span style={{ fontWeight: 800, fontSize: '1.05rem' }}>{req.title}</span>
+                          <span className={`badge ${req.status === 'confirmed' ? 'badge-success' : req.status === 'submitted' ? 'badge-warning' : 'badge-neutral'}`}>
+                            {req.status.replace(/_/g, ' ').toUpperCase()}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                          School: <strong>{org?.name || req.organization_id}</strong> • Domain: <strong>{req.domain.toUpperCase()}</strong> • Format: <strong>{req.preferred_format.toUpperCase()}</strong> • Cohort: <strong>{req.target_grade_range} ({req.approx_cohort_size} students)</strong>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {req.status === 'submitted' && !isQuoting && (
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ height: '34px', fontSize: '0.82rem' }}
+                            onClick={() => setSelectedRequestIdForQuote(req.id)}
+                          >
+                            <DollarSign size={14} style={{ marginRight: '4px' }} />
+                            Issue Quote
+                          </button>
+                        )}
+                        {(req.status === 'quoted' || req.status === 'awaiting_school_confirmation' || req.status === 'confirmed') && !isAssigning && (
+                          <button
+                            type="button"
+                            className="btn-outline"
+                            style={{ height: '34px', fontSize: '0.82rem' }}
+                            onClick={() => setSelectedRequestIdForAssign(req.id)}
+                          >
+                            <User size={14} style={{ marginRight: '4px' }} />
+                            Assign Trainer
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+                      <strong>Objectives:</strong> {req.learning_objectives}
+                    </div>
+
+                    {/* Inline Quoting Modal Form */}
+                    {isQuoting && (
+                      <div style={{ padding: '16px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', marginTop: '8px' }}>
+                        <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '12px' }}>
+                          Issue Commercial Price Quote (Paise Math)
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+                          <div>
+                            <label style={{ fontSize: '0.78rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Trainer Fee (₹)</label>
+                            <input
+                              type="number"
+                              className="input-field"
+                              value={quoteTrainerFee}
+                              onChange={(e) => setQuoteTrainerFee(e.target.value)}
+                              style={{ width: '100%', padding: '8px' }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: '0.78rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Platform Service Fee (₹)</label>
+                            <input
+                              type="number"
+                              className="input-field"
+                              value={quotePlatformFee}
+                              onChange={(e) => setQuotePlatformFee(e.target.value)}
+                              style={{ width: '100%', padding: '8px' }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ fontSize: '0.78rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Gross Total (Incl. 18% GST)</label>
+                            <div style={{ padding: '8px', fontWeight: 800, color: 'var(--brand-primary)', fontSize: '1rem' }}>
+                              ₹{(((Number(quoteTrainerFee) + Number(quotePlatformFee)) * 1.18)).toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ height: '34px', fontSize: '0.82rem' }}
+                            onClick={() => {
+                              try {
+                                const trainerPaise = Math.round(Number(quoteTrainerFee) * 100);
+                                const platformPaise = Math.round(Number(quotePlatformFee) * 100);
+                                const subtotal = trainerPaise + platformPaise;
+                                const taxPaise = Math.round(subtotal * 0.18);
+                                const grossPaise = subtotal + taxPaise;
+
+                                db.createTrainingQuote(currentUserId, req.id, {
+                                  gross_amount_paise: grossPaise,
+                                  trainer_fee_paise: trainerPaise,
+                                  platform_fee_paise: platformPaise,
+                                  tax_amount_paise: taxPaise,
+                                  terms_markdown: 'Payment Net 15 days upon completion. Includes hands-on lab access.',
+                                  valid_until: new Date(Date.now() + 30 * 86400000).toISOString(),
+                                });
+
+                                setMarketplaceMsg(`Official Quote issued for ₹${(grossPaise / 100).toLocaleString('en-IN')}`);
+                                setSelectedRequestIdForQuote(null);
+                                setMarketplaceVersion((v) => v + 1);
+                              } catch (err: any) {
+                                setMarketplaceMsg(err.message);
+                              }
+                            }}
+                          >
+                            Submit Commercial Quote
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-outline"
+                            style={{ height: '34px', fontSize: '0.82rem' }}
+                            onClick={() => setSelectedRequestIdForQuote(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Inline Trainer Assignment Form */}
+                    {isAssigning && (
+                      <div style={{ padding: '16px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', marginTop: '8px' }}>
+                        <h4 style={{ fontSize: '0.92rem', fontWeight: 700, marginBottom: '12px' }}>
+                          Assign Verified Trainer
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '12px' }}>
+                          <div>
+                            <label style={{ fontSize: '0.78rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Select Verified Trainer</label>
+                            <select
+                              className="input-field"
+                              value={assignTrainerId}
+                              onChange={(e) => setAssignTrainerId(e.target.value)}
+                              style={{ width: '100%', padding: '8px' }}
+                            >
+                              <option value="">-- Choose verified trainer --</option>
+                              {allTrainers
+                                .filter((t) => t.verification_status === 'verified')
+                                .map((t) => (
+                                  <option key={t.id} value={t.id}>
+                                    {t.headline} (₹{(t.daily_rate_paise / 100).toLocaleString('en-IN')}/day)
+                                  </option>
+                                ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label style={{ fontSize: '0.78rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Agreed Compensation (₹)</label>
+                            <input
+                              type="number"
+                              className="input-field"
+                              value={assignCompFee}
+                              onChange={(e) => setAssignCompFee(e.target.value)}
+                              style={{ width: '100%', padding: '8px' }}
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ height: '34px', fontSize: '0.82rem' }}
+                            disabled={!assignTrainerId}
+                            onClick={() => {
+                              try {
+                                const compPaise = Math.round(Number(assignCompFee) * 100);
+                                db.assignTrainerToRequest(currentUserId, req.id, assignTrainerId, compPaise);
+                                setMarketplaceMsg(`Trainer assigned. Offer notified to trainer.`);
+                                setSelectedRequestIdForAssign(null);
+                                setMarketplaceVersion((v) => v + 1);
+                              } catch (err: any) {
+                                setMarketplaceMsg(err.message);
+                              }
+                            }}
+                          >
+                            Dispatch Assignment Offer
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-outline"
+                            style={{ height: '34px', fontSize: '0.82rem' }}
+                            onClick={() => setSelectedRequestIdForAssign(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Section 3: Trainer Payouts Authorization & Settlement */}
+          <div className="card" style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <DollarSign size={20} color="#F59E0B" />
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                Trainer Payouts & Settlement Ledger
+              </h3>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              Auditable double-entry compensation ledger. Payouts require administrative authorization before bank settlement.
+            </p>
+
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
+                    <th style={{ padding: '10px 12px' }}>Payout ID</th>
+                    <th style={{ padding: '10px 12px' }}>Trainer</th>
+                    <th style={{ padding: '10px 12px' }}>Amount (Paise / ₹)</th>
+                    <th style={{ padding: '10px 12px' }}>Status</th>
+                    <th style={{ padding: '10px 12px' }}>Idempotency Key</th>
+                    <th style={{ padding: '10px 12px' }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allPayouts.map((payout) => {
+                    const trainer = db.trainers.get(payout.trainer_id);
+                    return (
+                      <tr key={payout.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                        <td style={{ padding: '12px', fontFamily: 'monospace' }}>{payout.id}</td>
+                        <td style={{ padding: '12px' }}>{trainer?.headline || payout.trainer_id}</td>
+                        <td style={{ padding: '12px', fontWeight: 700 }}>
+                          ₹{(payout.amount_paise / 100).toLocaleString('en-IN')}
+                        </td>
+                        <td style={{ padding: '12px' }}>
+                          <span
+                            className={`badge ${
+                              payout.status === 'settled'
+                                ? 'badge-success'
+                                : payout.status === 'approved'
+                                ? 'badge-neutral'
+                                : 'badge-warning'
+                            }`}
+                          >
+                            {payout.status.toUpperCase()}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                          <code>{payout.idempotency_key}</code>
+                        </td>
+                        <td style={{ padding: '12px' }}>
+                          {payout.status === 'accrued' && (
+                            <button
+                              type="button"
+                              className="btn-outline"
+                              style={{ height: '30px', fontSize: '0.78rem' }}
+                              onClick={() => {
+                                try {
+                                  db.approveTrainerPayout(currentUserId, payout.id);
+                                  setMarketplaceMsg(`Payout ${payout.id} approved for settlement.`);
+                                  setMarketplaceVersion((v) => v + 1);
+                                } catch (err: any) {
+                                  setMarketplaceMsg(err.message);
+                                }
+                              }}
+                            >
+                              Approve Payout
+                            </button>
+                          )}
+                          {payout.status === 'approved' && (
+                            <button
+                              type="button"
+                              className="btn-primary"
+                              style={{ height: '30px', fontSize: '0.78rem' }}
+                              onClick={() => {
+                                try {
+                                  db.settleTrainerPayout(currentUserId, payout.id);
+                                  setMarketplaceMsg(`Payout ${payout.id} recorded as SETTLED.`);
+                                  setMarketplaceVersion((v) => v + 1);
+                                } catch (err: any) {
+                                  setMarketplaceMsg(err.message);
+                                }
+                              }}
+                            >
+                              Record Settled
+                            </button>
+                          )}
+                          {payout.status === 'settled' && (
+                            <span style={{ fontSize: '0.78rem', color: 'var(--success)' }}>✓ Settled</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Section 4: DPDP Minor Safeguarding Incident Review Queue */}
+          <div className="card" style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <ShieldAlert size={20} color="#DC2626" />
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>
+                DPDP Minor Safeguarding Incident Review Queue
+              </h3>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px' }}>
+              Incidents reported during school training sessions. Under Digital Personal Data Protection (DPDP) Act 2023, prompt administrative investigation is required.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {allSafeguardingReports.map((report) => {
+                const org = db.organizations.get(report.organization_id);
+                const isResolving = resolvingReportId === report.id;
+
+                return (
+                  <div
+                    key={report.id}
+                    style={{
+                      padding: '16px 20px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--bg-surface-subdued)',
+                      border: '1px solid var(--border-subtle)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: 800, fontSize: '0.98rem' }}>{report.category}</span>
+                        <span className={`badge ${report.severity === 'critical' ? 'badge-danger' : report.severity === 'high' ? 'badge-warning' : 'badge-neutral'}`}>
+                          {report.severity.toUpperCase()}
+                        </span>
+                        <span className={`badge ${report.status === 'resolved' ? 'badge-success' : 'badge-danger'}`}>
+                          {report.status.toUpperCase()}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        Reported by: <strong>{report.reporter_name}</strong> • {new Date(report.reported_at).toLocaleString()}
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)' }}>
+                      {report.description}
+                    </div>
+
+                    {report.resolution_notes && (
+                      <div style={{ fontSize: '0.82rem', padding: '8px 12px', borderRadius: '4px', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)' }}>
+                        <strong>Resolution:</strong> {report.resolution_notes} (at {report.resolved_at ? new Date(report.resolved_at).toLocaleString() : ''})
+                      </div>
+                    )}
+
+                    {report.status !== 'resolved' && !isResolving && (
+                      <div style={{ marginTop: '6px' }}>
+                        <button
+                          type="button"
+                          className="btn-outline"
+                          style={{ height: '32px', fontSize: '0.78rem' }}
+                          onClick={() => setResolvingReportId(report.id)}
+                        >
+                          Resolve Incident
+                        </button>
+                      </div>
+                    )}
+
+                    {isResolving && (
+                      <div style={{ marginTop: '8px', padding: '12px', borderRadius: '6px', backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
+                        <label style={{ fontSize: '0.78rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Resolution Notes</label>
+                        <input
+                          type="text"
+                          className="input-field"
+                          placeholder="e.g. Conducted interview with trainer and school supervisor; corrective actions implemented."
+                          value={resolutionNotes}
+                          onChange={(e) => setResolutionNotes(e.target.value)}
+                          style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
+                        />
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ height: '32px', fontSize: '0.78rem' }}
+                            disabled={!resolutionNotes.trim()}
+                            onClick={() => {
+                              try {
+                                db.resolveSafeguardingReport(currentUserId, report.id, resolutionNotes);
+                                setMarketplaceMsg(`Safeguarding incident ${report.id} resolved.`);
+                                setResolvingReportId(null);
+                                setResolutionNotes('');
+                                setMarketplaceVersion((v) => v + 1);
+                              } catch (err: any) {
+                                setMarketplaceMsg(err.message);
+                              }
+                            }}
+                          >
+                            Save Resolution
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-outline"
+                            style={{ height: '32px', fontSize: '0.78rem' }}
+                            onClick={() => {
+                              setResolvingReportId(null);
+                              setResolutionNotes('');
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

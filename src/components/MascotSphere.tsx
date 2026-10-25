@@ -37,49 +37,49 @@ interface PoseAsset {
 
 const POSE_ASSETS: Record<MascotExpression, PoseAsset> = {
   happy: {
-    webp: '/images/mascot/mascot_happy.png',
+    webp: '/images/mascot/mascot_happy.webp',
     png: '/images/mascot/mascot_happy.png',
     alt: 'Geniusphere Mascot Sphere smiling and waving',
     speechFallback: 'Hello! Ready to level up your skills today?',
   },
   encouraging: {
-    webp: '/images/mascot/mascot_happy.png',
+    webp: '/images/mascot/mascot_happy.webp',
     png: '/images/mascot/mascot_happy.png',
     alt: 'Geniusphere Mascot Sphere giving encouragement',
     speechFallback: 'Small steps every day lead to giant leaps!',
   },
   coding: {
-    webp: '/images/mascot/mascot_laptop.png',
+    webp: '/images/mascot/mascot_laptop.webp',
     png: '/images/mascot/mascot_laptop.png',
     alt: 'Geniusphere Mascot Sphere coding on a glowing laptop',
     speechFallback: 'Writing code and running test assertions!',
   },
   loading: {
-    webp: '/images/mascot/mascot_laptop.png',
+    webp: '/images/mascot/mascot_laptop.webp',
     png: '/images/mascot/mascot_laptop.png',
     alt: 'Geniusphere Mascot Sphere working diligently',
     speechFallback: 'Crunching data in the cloud sandbox...',
   },
   celebrating: {
-    webp: '/images/mascot/mascot_celebrating.png',
+    webp: '/images/mascot/mascot_celebrating.webp',
     png: '/images/mascot/mascot_celebrating.png',
     alt: 'Geniusphere Mascot Sphere cheering in celebration with confetti',
     speechFallback: 'Incredible work! Milestone unlocked!',
   },
   celebrating_certificate: {
-    webp: '/images/mascot/mascot_celebrating.png',
+    webp: '/images/mascot/mascot_celebrating.webp',
     png: '/images/mascot/mascot_celebrating.png',
     alt: 'Geniusphere Mascot Sphere celebrating certificate earned',
     speechFallback: 'Verified credential earned! So proud of you!',
   },
   teaching: {
-    webp: '/images/mascot/mascot_teaching.png',
+    webp: '/images/mascot/mascot_teaching.webp',
     png: '/images/mascot/mascot_teaching.png',
     alt: 'Geniusphere Mascot Sphere educator with glasses and pointer stick',
     speechFallback: 'Welcome to class! Let us explore the core concepts.',
   },
   guidance: {
-    webp: '/images/mascot/mascot_teaching.png',
+    webp: '/images/mascot/mascot_teaching.webp',
     png: '/images/mascot/mascot_teaching.png',
     alt: 'Geniusphere Mascot Sphere guiding the student step by step',
     speechFallback: 'Here is a helpful tip to guide your solution!',

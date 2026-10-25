@@ -317,7 +317,7 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
 }) => {
   const course = db.getCourseById(courseId);
   const [currentLessonId, setCurrentLessonId] = useState<string>(initialLessonId);
-  const [activeTab, setActiveTab] = useState<'video' | 'lab' | 'sandbox'>(() => {
+  const [activeTab, setActiveTab] = useState<'video' | 'notes' | 'quiz' | 'lab' | 'sandbox'>(() => {
     if (initialTab === 'animation' || initialTab === 'lab') return 'lab';
     if (initialTab === 'sandbox') return 'sandbox';
     return 'video';
@@ -706,19 +706,19 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                 {activeLesson.summary}
               </p>
 
-              {/* 3-MODALITY INTEGRATED LEARNING TABS */}
-              <div style={{ display: 'flex', gap: '8px', padding: '4px', backgroundColor: 'var(--bg-canvas)', borderRadius: '10px', border: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}>
+              {/* 5-STEP INTEGRATED LEARNING FLOW TABS */}
+              <div style={{ display: 'flex', gap: '6px', padding: '4px', backgroundColor: 'var(--bg-canvas)', borderRadius: '12px', border: '1px solid var(--border-subtle)', flexWrap: 'wrap' }}>
                 <button
                   type="button"
                   onClick={() => setActiveTab('video')}
                   style={{
-                    height: '38px',
-                    padding: '0 16px',
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     backgroundColor: activeTab === 'video' ? 'var(--brand-primary)' : 'transparent',
                     color: activeTab === 'video' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.82rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
@@ -726,21 +726,67 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     cursor: 'pointer',
                   }}
                 >
-                  <VideoIcon size={15} />
-                  <span>Video Lectures</span>
+                  <VideoIcon size={14} />
+                  <span>1. Video Lecture</span>
                 </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('notes')}
+                  style={{
+                    height: '36px',
+                    padding: '0 14px',
+                    borderRadius: '8px',
+                    backgroundColor: activeTab === 'notes' ? 'var(--brand-primary)' : 'transparent',
+                    color: activeTab === 'notes' ? '#FFFFFF' : 'var(--text-secondary)',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <BookOpen size={14} />
+                  <span>2. Reading Notes</span>
+                </button>
+
+                {activeLesson.quiz && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('quiz')}
+                    style={{
+                      height: '36px',
+                      padding: '0 14px',
+                      borderRadius: '8px',
+                      backgroundColor: activeTab === 'quiz' ? 'var(--brand-primary)' : 'transparent',
+                      color: activeTab === 'quiz' ? '#FFFFFF' : 'var(--text-secondary)',
+                      fontWeight: 700,
+                      fontSize: '0.82rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <HelpCircle size={14} />
+                    <span>3. Knowledge Check</span>
+                  </button>
+                )}
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('lab')}
                   style={{
-                    height: '38px',
-                    padding: '0 16px',
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     backgroundColor: activeTab === 'lab' ? 'var(--brand-primary)' : 'transparent',
                     color: activeTab === 'lab' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.82rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
@@ -748,21 +794,21 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     cursor: 'pointer',
                   }}
                 >
-                  <FlaskConical size={15} />
-                  <span>Interactive Lab</span>
+                  <FlaskConical size={14} />
+                  <span>4. Interactive Lab</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setActiveTab('sandbox')}
                   style={{
-                    height: '38px',
-                    padding: '0 16px',
+                    height: '36px',
+                    padding: '0 14px',
                     borderRadius: '8px',
                     backgroundColor: activeTab === 'sandbox' ? 'var(--brand-primary)' : 'transparent',
                     color: activeTab === 'sandbox' ? '#FFFFFF' : 'var(--text-secondary)',
                     fontWeight: 700,
-                    fontSize: '0.85rem',
+                    fontSize: '0.82rem',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
@@ -770,8 +816,8 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     cursor: 'pointer',
                   }}
                 >
-                  <TerminalIcon size={15} />
-                  <span>Code Sandbox</span>
+                  <TerminalIcon size={14} />
+                  <span>5. Code Sandbox</span>
                 </button>
               </div>
             </div>
@@ -957,6 +1003,32 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   </div>
                 </div>
 
+                {/* Next Step Navigation */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('notes')}
+                    className="btn-primary"
+                    style={{
+                      height: '42px',
+                      padding: '0 20px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <span>Next: Review Study Notes</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 2: STUDY NOTES & TAILORED CODE */}
+            {activeTab === 'notes' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* Elected Programming Language Banner & Live Tailored Concept */}
                 <div
                   className="card"
@@ -1148,8 +1220,41 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                   </div>
                 </div>
 
-                {/* Knowledge Check Quiz */}
-                {activeLesson.quiz && (
+                {/* Notes Navigation */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('video')}
+                    className="btn-secondary"
+                    style={{ height: '40px', padding: '0 18px', fontSize: '0.85rem' }}
+                  >
+                    ← Back to Video
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('quiz')}
+                    className="btn-primary"
+                    style={{
+                      height: '40px',
+                      padding: '0 20px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <span>Next: Knowledge Check</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 3: KNOWLEDGE CHECK QUIZ */}
+            {activeTab === 'quiz' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {activeLesson.quiz ? (
                   <div className="card" style={{ padding: '24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                       <HelpCircle size={20} color="var(--brand-primary)" />
@@ -1217,7 +1322,44 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                       </div>
                     </form>
                   </div>
+                ) : (
+                  <div className="card" style={{ padding: '36px', textAlign: 'center' }}>
+                    <HelpCircle size={32} color="var(--brand-primary)" style={{ margin: '0 auto 12px' }} />
+                    <h3 style={{ margin: '0 0 8px', fontSize: '1.1rem' }}>No Quiz Required For This Lesson</h3>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                      You're all set! Proceed straight to the hands-on simulation lab.
+                    </p>
+                  </div>
                 )}
+
+                {/* Quiz Navigation */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('notes')}
+                    className="btn-secondary"
+                    style={{ height: '40px', padding: '0 18px', fontSize: '0.85rem' }}
+                  >
+                    ← Back to Notes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('lab')}
+                    className="btn-primary"
+                    style={{
+                      height: '40px',
+                      padding: '0 20px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '0.88rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <span>Next: Interactive Lab</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
               </div>
             )}
 

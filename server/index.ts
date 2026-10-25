@@ -429,7 +429,221 @@ export async function createServer() {
     return { ok: true };
   });
 
-  // 9. Hybrid AI Gateway Endpoints
+  // ==================================================================
+  // 9. SCHOOL TRAINING MARKETPLACE & VERIFIED TRAINER ENDPOINTS
+  // ==================================================================
+  fastify.get('/api/trainers', async (request) => {
+    const isSuper = (request as any).user?.isSuperadmin ?? false;
+    return domainService.getTrainers(isSuper);
+  });
+
+  fastify.get('/api/trainers/me', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const trainer = await domainService.getTrainerByUserId(request.user!.userId);
+    if (!trainer) {
+      return reply.status(404).send({ error: 'Trainer profile not found' });
+    }
+    return trainer;
+  });
+
+  fastify.post('/api/trainers/register', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const body = (request.body as any) || {};
+    try {
+      const trainer = await domainService.registerTrainer(request.user!.userId, body);
+      return reply.status(201).send(trainer);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.patch('/api/trainers/:id/verify', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    const { status } = (request.body as any) || {};
+    try {
+      return await domainService.verifyTrainer(request.user!.userId, id, status);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/requests', { preHandler: [authenticateRequest] }, async (request) => {
+    const isSuper = request.user!.isSuperadmin;
+    const orgId = request.user!.orgId;
+    return domainService.getTrainingRequests(orgId, isSuper);
+  });
+
+  fastify.post('/api/marketplace/requests', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const orgId = request.user!.orgId;
+    if (!orgId) {
+      return reply.status(400).send({ error: 'User is not associated with an organization' });
+    }
+    const body = (request.body as any) || {};
+    try {
+      const created = await domainService.createTrainingRequest(request.user!.userId, orgId, body);
+      return reply.status(201).send(created);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.patch('/api/marketplace/requests/:id/status', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const { status, reason } = (request.body as any) || {};
+    try {
+      return await domainService.updateTrainingRequestStatus(request.user!.userId, id, status, reason);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/requests/:id/quote', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    const body = (request.body as any) || {};
+    try {
+      return await domainService.createTrainingQuote(request.user!.userId, id, body);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/quotes/:id/accept', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.acceptTrainingQuote(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/requests/:id/assign', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    const { trainerId, compensationPaise } = (request.body as any) || {};
+    try {
+      return await domainService.assignTrainer(request.user!.userId, id, trainerId, compensationPaise);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/assignments/:id/respond', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const { accept } = (request.body as any) || {};
+    try {
+      return await domainService.respondToAssignment(request.user!.userId, id, Boolean(accept));
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/sessions', { preHandler: [authenticateRequest] }, async (request) => {
+    const user = request.user!;
+    return domainService.getTrainingSessions(user.userId, user.role || 'learner', user.orgId);
+  });
+
+  fastify.post('/api/marketplace/sessions/:id/deliver', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const { attendanceCount, notes } = (request.body as any) || {};
+    try {
+      return await domainService.logSessionDelivery(request.user!.userId, id, attendanceCount || 0, notes);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/sessions/:id/verify', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.verifySessionAttendance(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/invoices', { preHandler: [authenticateRequest] }, async (request) => {
+    const user = request.user!;
+    return domainService.getInvoices(user.orgId, user.isSuperadmin);
+  });
+
+  fastify.post('/api/marketplace/invoices/:id/pay', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.payInvoice(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/payouts', { preHandler: [authenticateRequest] }, async (request) => {
+    const user = request.user!;
+    const trainer = await domainService.getTrainerByUserId(user.userId);
+    return domainService.getPayouts(trainer?.id, user.isSuperadmin);
+  });
+
+  fastify.post('/api/marketplace/payouts/:id/approve', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.approvePayout(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/payouts/:id/settle', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.settlePayout(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/safeguarding', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const orgId = request.user!.orgId;
+    if (!orgId) {
+      return reply.status(400).send({ error: 'User is not associated with an organization' });
+    }
+    const body = (request.body as any) || {};
+    try {
+      const report = await domainService.reportSafeguarding(request.user!.userId, orgId, body);
+      return reply.status(201).send(report);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/safeguarding', { preHandler: [authenticateRequest] }, async (request) => {
+    const user = request.user!;
+    return domainService.getSafeguardingReports(user.orgId, user.isSuperadmin);
+  });
+
+  fastify.patch('/api/marketplace/safeguarding/:id/resolve', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    const { resolutionNotes } = (request.body as any) || {};
+    try {
+      return await domainService.resolveSafeguarding(request.user!.userId, id, resolutionNotes || 'Resolved');
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  // 10. Hybrid AI Gateway Endpoints
   fastify.get('/api/ai/status', async () => {
     return aiGateway.getStatus();
   });

@@ -17,6 +17,7 @@ import { SchoolKit } from './components/SchoolKit';
 import { StudentDashboard } from './components/StudentDashboard';
 import { InstitutionAdminWorkspace } from './components/InstitutionAdminWorkspace';
 import { PlatformAdminWorkspace } from './components/PlatformAdminWorkspace';
+import { TrainerWorkspace } from './components/TrainerWorkspace';
 import { LabCatalogue } from './components/LabCatalogue';
 import { SharedLabWorkspace } from './components/SharedLabWorkspace';
 import { ScamDefenseJourney } from './components/ScamDefenseJourney';
@@ -99,6 +100,7 @@ export type AppView =
   | 'classrooms'
   | 'institution-workspace'
   | 'platform-workspace'
+  | 'trainer-workspace'
   | 'resume-builder'
   | 'schoolkit'
   | 'parent'
@@ -124,6 +126,7 @@ export const App: React.FC = () => {
     { id: 'user-parent-1', name: 'Sunita Patel (Guardian of Aarav)', role: 'guardian', badge: 'Parent' },
     { id: 'user-admin-1', name: 'Principal Verma (Institution Admin)', role: 'institution_admin', badge: 'Inst Admin' },
     { id: 'user-superadmin-1', name: 'Platform Superadmin (System Operations)', role: 'superadmin', badge: 'Superadmin' },
+    { id: 'user-trainer-1', name: 'Vikram Singh (Verified Trainer)', role: 'trainer', badge: 'Trainer' },
     { id: 'user-cie-auditor', name: 'Dr. Suresh Kumar (CIE Reviewer, PESU)', role: 'auditor', badge: 'CIE Audit' },
   ];
 
@@ -159,6 +162,7 @@ export const App: React.FC = () => {
       'user-parent-1': 'sunita.patel@gmail.com',
       'user-admin-1': 'principal.verma@dpts.edu',
       'user-superadmin-1': 'admin@geniusphere.tech',
+      'user-trainer-1': 'vikram.trainer@geniusphere.tech',
     };
     const targetEmail = emailMap[currentUserId] || 'learner@geniusphere.tech';
     apiClient.login(targetEmail).catch((err) => {
@@ -267,7 +271,8 @@ export const App: React.FC = () => {
   const isInstAdmin = currentUser.role === 'institution_admin' || currentUser.role === 'admin';
   const isSuperadmin = currentUser.role === 'superadmin';
   const isGuardian = currentUser.role === 'guardian';
-  const isLearner = !isTeacher && !isInstAdmin && !isSuperadmin && !isGuardian;
+  const isTrainer = currentUser.role === 'trainer';
+  const isLearner = !isTeacher && !isInstAdmin && !isSuperadmin && !isGuardian && !isTrainer;
 
   const [unreadCount, setUnreadCount] = useState<number>(() =>
     backendEngine.notifications.getUnreadCount(currentUser.id)
@@ -413,29 +418,35 @@ export const App: React.FC = () => {
     setNotificationsOpen(false);
     setSearchSuggestionsOpen(false);
 
-    // STRICT ROLE ACCESS GUARD: Prevent students, teachers, and admins from interfering with each other
+    // STRICT ROLE ACCESS GUARD: Prevent students, teachers, admins, and trainers from interfering with each other
     if (currentUser.role === 'learner') {
-      const restrictedForLearner = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'audit'];
+      const restrictedForLearner = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'trainer-workspace', 'audit'];
       if (restrictedForLearner.includes(view)) {
         setCurrentView('student-dashboard');
         return;
       }
     } else if (currentUser.role === 'teacher') {
-      const restrictedForTeacher = ['platform-workspace', 'parent'];
+      const restrictedForTeacher = ['platform-workspace', 'trainer-workspace', 'parent'];
       if (restrictedForTeacher.includes(view)) {
         setCurrentView('gradebook');
         return;
       }
     } else if (currentUser.role === 'institution_admin') {
-      const restrictedForAdmin = ['student-dashboard', 'platform-workspace', 'parent'];
+      const restrictedForAdmin = ['student-dashboard', 'platform-workspace', 'trainer-workspace', 'parent'];
       if (restrictedForAdmin.includes(view)) {
         setCurrentView('institution-workspace');
         return;
       }
     } else if (currentUser.role === 'guardian') {
-      const restrictedForGuardian = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'student-dashboard'];
+      const restrictedForGuardian = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'trainer-workspace', 'student-dashboard'];
       if (restrictedForGuardian.includes(view)) {
         setCurrentView('parent');
+        return;
+      }
+    } else if (currentUser.role === 'trainer') {
+      const restrictedForTrainer = ['gradebook', 'classrooms', 'institution-workspace', 'platform-workspace', 'parent'];
+      if (restrictedForTrainer.includes(view)) {
+        setCurrentView('trainer-workspace');
         return;
       }
     }
@@ -473,6 +484,7 @@ export const App: React.FC = () => {
       view === 'student-dashboard' ||
       view === 'institution-workspace' ||
       view === 'platform-workspace' ||
+      view === 'trainer-workspace' ||
       view === 'scam-defense' ||
       view === 'cie-audit' ||
       view === 'diagram-studio' ||
@@ -515,6 +527,7 @@ export const App: React.FC = () => {
     else if (role === 'institution_admin') setCurrentView('institution-workspace');
     else if (role === 'superadmin') setCurrentView('platform-workspace');
     else if (role === 'guardian') setCurrentView('parent');
+    else if (role === 'trainer') setCurrentView('trainer-workspace');
   };
 
   if (!isAuthenticated) {
@@ -780,6 +793,43 @@ export const App: React.FC = () => {
                   >
                     <Users size={14} />
                     <span>Classrooms</span>
+                  </button>
+                </>
+              )}
+
+              {isTrainer && (
+                <>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'home' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('home')}
+                  >
+                    <Home size={14} />
+                    <span>Home</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('trainer-workspace')}
+                  >
+                    <Award size={14} />
+                    <span>Trainer Hub</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'catalogue' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('catalogue')}
+                  >
+                    <BookOpen size={14} />
+                    <span>Curriculum</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'labs' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('labs')}
+                  >
+                    <Terminal size={14} />
+                    <span>Labs</span>
                   </button>
                 </>
               )}

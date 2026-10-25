@@ -3,6 +3,7 @@ import { InMemoryDatabase } from '../db/in-memory-db';
 import { MascotSphere } from './MascotSphere';
 import { Course } from '../types';
 import { apiClient } from '../services/apiClient';
+import { CourseCardIllustrated } from './CourseCardIllustrated';
 import {
   BookOpen,
   ArrowRight,
@@ -183,224 +184,59 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       }}
     >
       {/* ================================================================ */}
-      {/* TOP HERO HEADER SECTION WITH STUDYING MASCOT & STAT BADGES       */}
+      {/* COMPACT STUDENT-FIRST HERO HEADER WITH PURPOSEFUL MASCOT         */}
       {/* ================================================================ */}
       <div
-        className="course-catalogue-hero-grid"
         style={{
           backgroundColor: 'var(--bg-surface)',
-          borderRadius: '24px',
-          padding: 'clamp(20px, 4vw, 36px)',
+          borderRadius: '20px',
+          padding: '24px 28px',
           border: '1px solid var(--border-subtle)',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '20px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)',
         }}
       >
-        {/* Left: Titles & Mission Statement */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '4px 12px',
-                borderRadius: '100px',
-                backgroundColor: 'var(--bg-surface-subdued)',
-                color: 'var(--brand-primary)',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                marginBottom: '10px',
-                border: '1px solid var(--border-subtle)',
-              }}
-            >
-              <BookOpen size={13} color="var(--brand-primary)" /> Canonical Skills Curriculum
-            </span>
-            <h1
-              style={{
-                fontSize: '2.5rem',
-                fontWeight: 900,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.03em',
-                margin: 0,
-                lineHeight: 1.15,
-                fontFamily: 'Space Grotesk, sans-serif',
-              }}
-            >
-              Course Catalogue
-            </h1>
+        <div style={{ maxWidth: '680px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '3px 10px', borderRadius: '100px', backgroundColor: 'var(--bg-surface-subdued)', color: 'var(--brand-primary)', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+            <BookOpen size={12} color="var(--brand-primary)" />
+            <span>Interactive Course Catalogue</span>
           </div>
-
-          <h2
+          <h1
             style={{
-              fontSize: '1.15rem',
-              fontWeight: 700,
-              color: 'var(--brand-primary)',
-              margin: 0,
+              fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)',
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.02em',
+              margin: '0 0 6px',
+              fontFamily: 'Space Grotesk, sans-serif',
             }}
           >
-            Choose your learning path. Master real-world capabilities.
-          </h2>
-
+            Explore Courses & Hands-On Skills
+          </h1>
           <p
             style={{
               color: 'var(--text-secondary)',
-              fontSize: '0.94rem',
-              lineHeight: 1.55,
+              fontSize: '0.92rem',
+              lineHeight: 1.5,
               margin: 0,
-              maxWidth: '520px',
             }}
           >
-            Explore our curated 40-course syllabus across Technology, Applied Indian Finance, and Career Readiness.
-            Every course features hands-on exercises, browser sandboxes, and verified milestone certification.
+            Curated, practical curriculum across Technology, Financial Literacy, and Professional Skills with browser labs and verified credentials.
           </p>
         </div>
 
-        {/* Center: Mascot Sphere with Cap & Glowing Digital Book */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: '-10px',
-              left: '12px',
-              transform: 'rotate(-5deg)',
-              fontFamily: 'Space Grotesk, sans-serif',
-              fontWeight: 800,
-              fontSize: '0.92rem',
-              color: 'var(--brand-lime-text, #252C27)',
-              backgroundColor: 'var(--brand-lime, #A9C86A)',
-              padding: '5px 14px',
-              borderRadius: '12px',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
-              zIndex: 2,
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Small steps. Giant leaps.
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <MascotSphere
             pose="studying"
-            size={160}
+            size={76}
             animated={true}
             interactive={true}
+            speechBubble="Choose your learning track!"
           />
-        </div>
-
-        {/* Far Right: Stat Highlights matching Enterprise SaaS Standard */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            backgroundColor: 'var(--bg-surface-subdued)',
-            padding: '18px 20px',
-            borderRadius: '18px',
-            border: '1px solid var(--border-subtle)',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--bg-surface)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--brand-primary)',
-                flexShrink: 0,
-                border: '1px solid var(--border-subtle)',
-              }}
-            >
-              <Cpu size={18} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>3 Learning Streams</div>
-              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Technology, Finance & Careers</div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--bg-surface)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--brand-primary)',
-                flexShrink: 0,
-                border: '1px solid var(--border-subtle)',
-              }}
-            >
-              <BookOpen size={18} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>40 Full Courses</div>
-              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>180+ verified lessons & quizzes</div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--bg-surface)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--brand-primary)',
-                flexShrink: 0,
-                border: '1px solid var(--border-subtle)',
-              }}
-            >
-              <Terminal size={18} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>Interactive Sandboxes</div>
-              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>Multi-language live execution</div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--bg-surface)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--brand-primary)',
-                flexShrink: 0,
-                border: '1px solid var(--border-subtle)',
-              }}
-            >
-              <Award size={18} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '0.92rem', color: 'var(--text-primary)' }}>Verifiable Credentials</div>
-              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>SHA-256 tamper-proof hash</div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -981,14 +817,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 <div
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',
-                    gap: '22px',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+                    gap: '20px',
                   }}
                 >
                   {allCanonicalCourses
                     .filter((c) => c.domain === stream.id)
                     .map((course) => (
-                      <CourseCard
+                      <CourseCardIllustrated
                         key={course.id}
                         course={course}
                         streamMeta={streamMeta}
@@ -1008,14 +844,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))',
-            gap: '22px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+            gap: '20px',
           }}
         >
           {filteredCourses.map((course: Course) => {
             const streamMeta = getStreamMeta(course.domain);
             return (
-              <CourseCard
+              <CourseCardIllustrated
                 key={course.id}
                 course={course}
                 streamMeta={streamMeta}
@@ -1192,199 +1028,4 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
   );
 };
 
-/* ========================================================================= */
-/* INDIVIDUAL COURSE CARD COMPONENT                                          */
-/* Spacious, high readability, clean hover effects                           */
-/* ========================================================================= */
-interface CourseCardProps {
-  course: Course;
-  streamMeta: {
-    label: string;
-    color: string;
-    bg: string;
-    accent: string;
-    borderColor: string;
-  };
-  onSelectCourse: (slug: string) => void;
-}
 
-const CourseCard: React.FC<CourseCardProps> = ({
-  course,
-  streamMeta,
-  onSelectCourse,
-}) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  // Check if course has lab or coding lesson
-  const hasHandsOnLab = Boolean(
-    course.modules?.some((m) =>
-      m.lessons?.some((l) => l.title.toLowerCase().includes('lab') || l.title.toLowerCase().includes('sandbox'))
-    )
-  );
-
-  return (
-    <div
-      onClick={() => onSelectCourse(course.slug)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      style={{
-        backgroundColor: 'var(--bg-surface)',
-        borderRadius: '20px',
-        border: `1.5px solid ${isHovered ? streamMeta.accent : 'var(--border-subtle)'}`,
-        padding: '24px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        gap: '16px',
-        cursor: 'pointer',
-        boxShadow: isHovered
-          ? '0 10px 28px rgba(0, 0, 0, 0.08)'
-          : '0 2px 8px rgba(0, 0, 0, 0.02)',
-        transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
-        transition: 'transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease',
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {/* Top Badges Row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span
-            style={{
-              backgroundColor: streamMeta.bg,
-              color: streamMeta.color,
-              border: `1px solid ${streamMeta.borderColor}`,
-              padding: '4px 10px',
-              borderRadius: '100px',
-              fontSize: '0.74rem',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              letterSpacing: '0.03em',
-            }}
-          >
-            {course.domain}
-          </span>
-
-          <span
-            style={{
-              backgroundColor: 'var(--bg-surface-subdued)',
-              color: 'var(--text-muted)',
-              padding: '3px 9px',
-              borderRadius: '6px',
-              fontSize: '0.74rem',
-              fontWeight: 700,
-              textTransform: 'capitalize',
-              border: '1px solid var(--border-subtle)',
-            }}
-          >
-            {course.level}
-          </span>
-        </div>
-
-        {/* Title */}
-        <h3
-          style={{
-            margin: 0,
-            fontSize: '1.2rem',
-            fontWeight: 800,
-            color: isHovered ? streamMeta.accent : 'var(--text-primary)',
-            lineHeight: 1.3,
-            fontFamily: 'Space Grotesk, sans-serif',
-            transition: 'color 0.15s ease',
-          }}
-        >
-          {course.title}
-        </h3>
-
-        {/* Summary Description */}
-        <p
-          style={{
-            margin: 0,
-            fontSize: '0.88rem',
-            color: 'var(--text-secondary)',
-            lineHeight: 1.5,
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
-          {course.summary}
-        </p>
-
-        {/* Interactive Lab Highlight Tag if applicable */}
-        {hasHandsOnLab && (
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '5px',
-              padding: '3px 8px',
-              borderRadius: '6px',
-              backgroundColor: 'var(--bg-surface-subdued)',
-              color: 'var(--brand-primary)',
-              fontSize: '0.74rem',
-              fontWeight: 700,
-              width: 'fit-content',
-              border: '1px solid var(--border-subtle)',
-            }}
-          >
-            <Terminal size={12} />
-            <span>Interactive Lab Included</span>
-          </div>
-        )}
-      </div>
-
-      {/* Card Footer: Metadata and Action Button */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderTop: '1px solid var(--border-subtle)',
-          paddingTop: '14px',
-          marginTop: '4px',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <Clock size={13} color="var(--brand-primary)" /> {course.duration_hours}h
-          </span>
-          <span>•</span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <BookOpen size={13} color="var(--brand-primary)" /> {course.modules.length} modules
-          </span>
-        </div>
-
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectCourse(course.slug);
-          }}
-          style={{
-            backgroundColor: isHovered ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
-            color: isHovered ? '#FFFFFF' : 'var(--text-primary)',
-            border: 'none',
-            borderRadius: '100px',
-            padding: '7px 16px',
-            fontSize: '0.82rem',
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'all 0.15s ease',
-          }}
-        >
-          <span>Explore Syllabus</span>
-          <ArrowRight
-            size={13}
-            style={{
-              transform: isHovered ? 'translateX(2px)' : 'translateX(0)',
-              transition: 'transform 0.15s ease',
-            }}
-          />
-        </button>
-      </div>
-    </div>
-  );
-};

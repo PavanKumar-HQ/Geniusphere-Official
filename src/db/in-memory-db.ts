@@ -27,6 +27,18 @@ import {
   UserProgressState,
   LabDefinition,
   LabAttemptRecord,
+  Trainer,
+  TrainerVerificationStatus,
+  TrainingRequest,
+  TrainingRequestStatus,
+  TrainingQuote,
+  TrainingAssignment,
+  TrainingAssignmentStatus,
+  TrainingSession,
+  SessionDeliveryStatus,
+  TrainingInvoice,
+  TrainerPayout,
+  SafeguardingReport,
 } from '../types';
 import {
   ALL_COURSES,
@@ -80,6 +92,14 @@ export class InMemoryDatabase {
   studyResources: Map<string, StudyResource> = new Map();
   certificates: Map<string, Certificate> = new Map();
   userProgress: Map<string, UserProgressState> = new Map();
+  trainers: Map<string, Trainer> = new Map();
+  trainingRequests: Map<string, TrainingRequest> = new Map();
+  trainingQuotes: Map<string, TrainingQuote> = new Map();
+  trainingAssignments: Map<string, TrainingAssignment> = new Map();
+  trainingSessions: Map<string, TrainingSession> = new Map();
+  trainingInvoices: Map<string, TrainingInvoice> = new Map();
+  trainerPayouts: Map<string, TrainerPayout> = new Map();
+  safeguardingReports: Map<string, SafeguardingReport> = new Map();
   private lastAuditRowHash = '0000000000000000000000000000000000000000000000000000000000000000';
 
   constructor() {
@@ -121,6 +141,14 @@ export class InMemoryDatabase {
     this.studyResources.clear();
     this.labDefinitions.clear();
     this.labAttempts.clear();
+    this.trainers.clear();
+    this.trainingRequests.clear();
+    this.trainingQuotes.clear();
+    this.trainingAssignments.clear();
+    this.trainingSessions.clear();
+    this.trainingInvoices.clear();
+    this.trainerPayouts.clear();
+    this.safeguardingReports.clear();
 
     APPROVED_LABS.forEach((l) => this.labDefinitions.set(l.id, { ...l }));
     INITIAL_VIDEO_LESSONS.forEach((v) => this.videoLessons.set(v.id, { ...v }));
@@ -367,6 +395,159 @@ export class InMemoryDatabase {
       verified_achievements: ['Module: Cybersecurity & Defensive Web Security (Verified 100%)'],
       updated_at: new Date().toISOString(),
     });
+
+    // 10. Seed Verified Marketplace Trainer
+    const trainerUser1: User = {
+      id: 'user-trainer-1',
+      email: 'vikram.trainer@geniusphere.tech',
+      full_name: 'Vikram Singh',
+      date_of_birth: '1990-04-18',
+      is_minor: false,
+      is_superadmin: false,
+      account_status: 'active',
+      created_at: new Date(Date.now() - 40 * 86400000).toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.users.set(trainerUser1.id, trainerUser1);
+
+    const trainer1: Trainer = {
+      id: 'trainer-1',
+      user_id: trainerUser1.id,
+      user_name: trainerUser1.full_name,
+      user_email: trainerUser1.email,
+      verification_status: 'verified',
+      headline: 'Senior Cloud & Cybersecurity Specialist',
+      bio: 'Ex-AWS Solutions Architect with 8+ years practical training experience across secondary and higher secondary STEM cohorts.',
+      competencies: ['Cybersecurity Defensive Web', 'Cloud Architecture', 'Python for AI', 'Linux Systems Administration'],
+      qualified_grade_levels: ['Grade 9-10', 'Grade 11-12', 'College/University'],
+      delivery_formats: ['in_person', 'online', 'hybrid'],
+      service_locations: ['Delhi NCR', 'Bengaluru', 'Remote/Online'],
+      daily_rate_paise: 650000, // ₹6,500/day in paise
+      completed_assignments_count: 14,
+      verified_at: new Date(Date.now() - 30 * 86400000).toISOString(),
+      verified_by: superadmin1.id,
+      created_at: new Date(Date.now() - 40 * 86400000).toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.trainers.set(trainer1.id, trainer1);
+
+    // 11. Seed School Training Request & Lifecycle
+    const sampleRequest: TrainingRequest = {
+      id: 'req-training-101',
+      organization_id: org1.id,
+      organization_name: org1.name,
+      requester_id: admin1.id,
+      requester_name: admin1.full_name,
+      title: 'Practical Web Defense & Cryptography Workshop',
+      domain: 'technology',
+      target_grade_range: 'Grade 10-12',
+      approx_cohort_size: 45,
+      learning_objectives: 'Equip senior students with practical understanding of SQL injection defense, JWT security, and network protocol auditing.',
+      preferred_format: 'in_person',
+      preferred_start_date: new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0],
+      preferred_end_date: new Date(Date.now() + 12 * 86400000).toISOString().split('T')[0],
+      location_address: 'DPTS Main Auditorium, Mathura Road, New Delhi',
+      budget_max_paise: 5000000, // ₹50,000 max in paise
+      status: 'confirmed',
+      created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+      updated_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+    };
+    this.trainingRequests.set(sampleRequest.id, sampleRequest);
+
+    // 12. Seed Training Quote
+    const sampleQuote: TrainingQuote = {
+      id: 'quote-101',
+      request_id: sampleRequest.id,
+      organization_id: org1.id,
+      gross_amount_paise: 4500000, // ₹45,000 in paise
+      trainer_fee_paise: 3200000,  // ₹32,000 in paise
+      platform_fee_paise: 800000,  // ₹8,000 in paise (retained revenue)
+      tax_amount_paise: 500000,    // ₹5,000 in paise (GST)
+      terms_markdown: 'Covers 2 on-site workshop sessions, student lab materials, and verified completion credentials. Net 15 invoice terms.',
+      valid_until: new Date(Date.now() + 14 * 86400000).toISOString(),
+      status: 'accepted',
+      created_at: new Date(Date.now() - 4 * 86400000).toISOString(),
+    };
+    this.trainingQuotes.set(sampleQuote.id, sampleQuote);
+
+    // 13. Seed Training Assignment
+    const sampleAssignment: TrainingAssignment = {
+      id: 'assign-101',
+      request_id: sampleRequest.id,
+      trainer_id: trainer1.id,
+      trainer_name: trainer1.user_name,
+      status: 'confirmed',
+      agreed_compensation_paise: 3200000,
+      assigned_by: superadmin1.id,
+      assigned_at: new Date(Date.now() - 3 * 86400000).toISOString(),
+      accepted_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    };
+    this.trainingAssignments.set(sampleAssignment.id, sampleAssignment);
+
+    // 14. Seed Confirmed Training Sessions (Connected to class-sec-101 LMS!)
+    const sess1: TrainingSession = {
+      id: 'sess-101',
+      assignment_id: sampleAssignment.id,
+      request_id: sampleRequest.id,
+      classroom_id: class1.id,
+      classroom_name: class1.name,
+      session_number: 1,
+      topic: 'Live Attack Vectors & SQL Injection Defense',
+      scheduled_start: new Date(Date.now() + 2 * 86400000).toISOString(),
+      scheduled_end: new Date(Date.now() + 2 * 86400000 + 7200000).toISOString(),
+      format: 'in_person',
+      meeting_or_room: 'Main CS Lab 3, DPTS Campus',
+      delivery_status: 'scheduled',
+      attendance_count: 0,
+      verified_by_school: false,
+      created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    };
+
+    const sess2: TrainingSession = {
+      id: 'sess-102',
+      assignment_id: sampleAssignment.id,
+      request_id: sampleRequest.id,
+      classroom_id: class1.id,
+      classroom_name: class1.name,
+      session_number: 2,
+      topic: 'Cryptographic Integrity, JWT & Network Protocol Audits',
+      scheduled_start: new Date(Date.now() + 5 * 86400000).toISOString(),
+      scheduled_end: new Date(Date.now() + 5 * 86400000 + 7200000).toISOString(),
+      format: 'in_person',
+      meeting_or_room: 'Main CS Lab 3, DPTS Campus',
+      delivery_status: 'scheduled',
+      attendance_count: 0,
+      verified_by_school: false,
+      created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+    };
+    this.trainingSessions.set(sess1.id, sess1);
+    this.trainingSessions.set(sess2.id, sess2);
+
+    // 15. Seed Invoice & Payout Ledger
+    const sampleInvoice: TrainingInvoice = {
+      id: 'inv-101',
+      organization_id: org1.id,
+      request_id: sampleRequest.id,
+      invoice_number: 'INV-2026-DPTS-001',
+      subtotal_paise: 4000000,
+      tax_paise: 500000,
+      total_paise: 4500000,
+      status: 'issued',
+      issued_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+      due_at: new Date(Date.now() + 14 * 86400000).toISOString(),
+    };
+    this.trainingInvoices.set(sampleInvoice.id, sampleInvoice);
+
+    const samplePayout: TrainerPayout = {
+      id: 'payout-101',
+      trainer_id: trainer1.id,
+      assignment_id: sampleAssignment.id,
+      amount_paise: 3200000,
+      status: 'accrued',
+      idempotency_key: `idem_payout_${sampleAssignment.id}`,
+      created_at: new Date(Date.now() - 1 * 86400000).toISOString(),
+    };
+    this.trainerPayouts.set(samplePayout.id, samplePayout);
   }
 
   // ==================================================================
@@ -1963,6 +2144,773 @@ export class InMemoryDatabase {
     if (Array.isArray(state.auditEvents)) {
       for (const [k, v] of state.auditEvents) this.auditEvents.set(k, v);
     }
+  }
+
+  // ==================================================================
+  // SCHOOL TRAINING MARKETPLACE & VERIFIED TRAINER OPERATIONS
+  // ==================================================================
+
+  getTrainers(callerUserId?: string): Trainer[] {
+    const list = Array.from(this.trainers.values());
+    // Only return verified trainers to regular public/school users;
+    // Superadmins can inspect all verification statuses.
+    if (callerUserId && this.isPlatformSuperadmin(callerUserId)) {
+      return list;
+    }
+    return list.filter((t) => t.verification_status === 'verified');
+  }
+
+  getTrainerById(id: string): Trainer | undefined {
+    return this.trainers.get(id);
+  }
+
+  getTrainerByUserId(userId: string): Trainer | undefined {
+    for (const t of this.trainers.values()) {
+      if (t.user_id === userId) return t;
+    }
+    return undefined;
+  }
+
+  registerTrainer(data: Partial<Trainer> & { user_id: string; headline: string; bio: string }): Trainer {
+    const user = this.users.get(data.user_id);
+    if (!user) {
+      throw new DatabaseError('User account not found', '23503', 404);
+    }
+    const existing = this.getTrainerByUserId(data.user_id);
+    if (existing) {
+      throw new DatabaseError('Trainer profile already exists for this user', '23505', 409);
+    }
+
+    const trainerId = `trainer-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newTrainer: Trainer = {
+      id: trainerId,
+      user_id: data.user_id,
+      user_name: user.full_name,
+      user_email: user.email,
+      verification_status: 'pending',
+      headline: data.headline,
+      bio: data.bio,
+      competencies: data.competencies || [],
+      qualified_grade_levels: data.qualified_grade_levels || ['Grade 9-10', 'Grade 11-12'],
+      delivery_formats: data.delivery_formats || ['in_person', 'online'],
+      service_locations: data.service_locations || ['Online/Remote'],
+      daily_rate_paise: typeof data.daily_rate_paise === 'number' ? data.daily_rate_paise : 500000,
+      completed_assignments_count: 0,
+      verified_at: null,
+      verified_by: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.trainers.set(newTrainer.id, newTrainer);
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: data.user_id,
+      action_type: 'TRAINER_REGISTERED',
+      resource_type: 'trainer',
+      resource_id: newTrainer.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { headline: newTrainer.headline, competencies: newTrainer.competencies },
+    });
+
+    return newTrainer;
+  }
+
+  verifyTrainer(trainerId: string, verifiedByUserId: string, status: TrainerVerificationStatus): Trainer {
+    if (!this.isPlatformSuperadmin(verifiedByUserId)) {
+      throw new DatabaseError('Only platform superadmins can review and verify trainers', '42501', 403);
+    }
+    const trainer = this.trainers.get(trainerId);
+    if (!trainer) {
+      throw new DatabaseError('Trainer not found', '23503', 404);
+    }
+
+    trainer.verification_status = status;
+    trainer.verified_at = status === 'verified' ? new Date().toISOString() : null;
+    trainer.verified_by = status === 'verified' ? verifiedByUserId : null;
+    trainer.updated_at = new Date().toISOString();
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: verifiedByUserId,
+      action_type: 'TRAINER_VERIFIED',
+      resource_type: 'trainer',
+      resource_id: trainer.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { newStatus: status, verifiedBy: verifiedByUserId },
+    });
+
+    return trainer;
+  }
+
+  getTrainingRequests(callerOrgId?: string, isSuperadmin: boolean = false): TrainingRequest[] {
+    const list = Array.from(this.trainingRequests.values());
+    if (isSuperadmin) return list;
+    if (!callerOrgId) return [];
+    return list.filter((r) => r.organization_id === callerOrgId);
+  }
+
+  getTrainingRequestById(id: string, callerOrgId?: string, isSuperadmin: boolean = false): TrainingRequest | undefined {
+    const req = this.trainingRequests.get(id);
+    if (!req) return undefined;
+    if (isSuperadmin) return req;
+    if (callerOrgId && req.organization_id !== callerOrgId) {
+      throw new DatabaseError('Cross-organization access forbidden', '42501', 403);
+    }
+    return req;
+  }
+
+  createTrainingRequest(
+    callerUserId: string,
+    orgId: string,
+    data: Omit<TrainingRequest, 'id' | 'organization_id' | 'requester_id' | 'status' | 'created_at' | 'updated_at'>
+  ): TrainingRequest {
+    if (!this.hasOrgRole(callerUserId, orgId, 'institution_admin') && !this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Forbidden: Only institution administrators can submit training requests', '42501', 403);
+    }
+
+    const org = this.organizations.get(orgId);
+    if (!org) {
+      throw new DatabaseError('Organization not found', '23503', 404);
+    }
+    const requester = this.users.get(callerUserId);
+
+    const requestId = `req-training-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newRequest: TrainingRequest = {
+      ...data,
+      id: requestId,
+      organization_id: orgId,
+      organization_name: org.name,
+      requester_id: callerUserId,
+      requester_name: requester?.full_name || 'School Administrator',
+      status: 'submitted',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.trainingRequests.set(newRequest.id, newRequest);
+
+    this.logAuditEvent({
+      organization_id: orgId,
+      actor_id: callerUserId,
+      action_type: 'TRAINING_REQUEST_SUBMITTED',
+      resource_type: 'training_request',
+      resource_id: newRequest.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: {
+        title: newRequest.title,
+        domain: newRequest.domain,
+        cohortSize: newRequest.approx_cohort_size,
+        budgetMaxPaise: newRequest.budget_max_paise,
+      },
+    });
+
+    return newRequest;
+  }
+
+  updateTrainingRequestStatus(
+    requestId: string,
+    nextStatus: TrainingRequestStatus,
+    callerUserId: string,
+    reason?: string
+  ): TrainingRequest {
+    const req = this.trainingRequests.get(requestId);
+    if (!req) {
+      throw new DatabaseError('Training request not found', '23503', 404);
+    }
+
+    const isSuper = this.isPlatformSuperadmin(callerUserId);
+    const isInstAdmin = this.hasOrgRole(callerUserId, req.organization_id, 'institution_admin');
+
+    if (!isSuper && !isInstAdmin) {
+      throw new DatabaseError('Unauthorized to update training request state', '42501', 403);
+    }
+
+    // State machine validation
+    const validTransitions: Record<TrainingRequestStatus, TrainingRequestStatus[]> = {
+      draft: ['submitted', 'cancelled'],
+      submitted: ['under_review', 'cancelled'],
+      under_review: ['quoted', 'cancelled'],
+      quoted: ['awaiting_school_confirmation', 'cancelled'],
+      awaiting_school_confirmation: ['confirmed', 'cancelled'],
+      confirmed: ['in_progress', 'cancelled', 'disputed'],
+      in_progress: ['completed', 'disputed'],
+      completed: [],
+      cancelled: [],
+      disputed: ['under_review', 'cancelled'],
+    };
+
+    const allowed = validTransitions[req.status] || [];
+    if (!allowed.includes(nextStatus)) {
+      throw new DatabaseError(
+        `Invalid training request state transition from '${req.status}' to '${nextStatus}'`,
+        '23514',
+        400
+      );
+    }
+
+    req.status = nextStatus;
+    if (reason) req.cancellation_reason = reason;
+    req.updated_at = new Date().toISOString();
+
+    this.logAuditEvent({
+      organization_id: req.organization_id,
+      actor_id: callerUserId,
+      action_type: 'TRAINING_REQUEST_STATUS_CHANGED',
+      resource_type: 'training_request',
+      resource_id: req.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { previousStatus: req.status, newStatus: nextStatus, reason },
+    });
+
+    return req;
+  }
+
+  getQuoteForRequest(requestId: string, callerOrgId?: string, isSuperadmin: boolean = false): TrainingQuote | undefined {
+    for (const q of this.trainingQuotes.values()) {
+      if (q.request_id === requestId) {
+        if (!isSuperadmin && callerOrgId && q.organization_id !== callerOrgId) {
+          throw new DatabaseError('Cross-organization quote access forbidden', '42501', 403);
+        }
+        return q;
+      }
+    }
+    return undefined;
+  }
+
+  createTrainingQuote(
+    callerUserId: string,
+    requestId: string,
+    data: {
+      gross_amount_paise: number;
+      trainer_fee_paise: number;
+      platform_fee_paise: number;
+      tax_amount_paise: number;
+      terms_markdown: string;
+      valid_until: string;
+    }
+  ): TrainingQuote {
+    if (!this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Only platform superadmins can issue commercial quotes', '42501', 403);
+    }
+    const req = this.trainingRequests.get(requestId);
+    if (!req) {
+      throw new DatabaseError('Training request not found', '23503', 404);
+    }
+
+    const quoteId = `quote-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newQuote: TrainingQuote = {
+      id: quoteId,
+      request_id: requestId,
+      organization_id: req.organization_id,
+      gross_amount_paise: data.gross_amount_paise,
+      trainer_fee_paise: data.trainer_fee_paise,
+      platform_fee_paise: data.platform_fee_paise,
+      tax_amount_paise: data.tax_amount_paise,
+      terms_markdown: data.terms_markdown,
+      valid_until: data.valid_until,
+      status: 'issued',
+      created_at: new Date().toISOString(),
+    };
+
+    this.trainingQuotes.set(newQuote.id, newQuote);
+    req.status = 'awaiting_school_confirmation';
+    req.updated_at = new Date().toISOString();
+
+    this.logAuditEvent({
+      organization_id: req.organization_id,
+      actor_id: callerUserId,
+      action_type: 'TRAINING_QUOTE_ISSUED',
+      resource_type: 'training_quote',
+      resource_id: newQuote.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: {
+        requestId,
+        grossAmountPaise: data.gross_amount_paise,
+        trainerFeePaise: data.trainer_fee_paise,
+        platformFeePaise: data.platform_fee_paise,
+      },
+    });
+
+    return newQuote;
+  }
+
+  acceptTrainingQuote(callerUserId: string, quoteId: string): { request: TrainingRequest; quote: TrainingQuote; invoice: TrainingInvoice } {
+    const quote = this.trainingQuotes.get(quoteId);
+    if (!quote) {
+      throw new DatabaseError('Training quote not found', '23503', 404);
+    }
+    const req = this.trainingRequests.get(quote.request_id);
+    if (!req) {
+      throw new DatabaseError('Associated training request not found', '23503', 404);
+    }
+
+    if (!this.hasOrgRole(callerUserId, req.organization_id, 'institution_admin') && !this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Unauthorized to confirm commercial quote for this organization', '42501', 403);
+    }
+
+    quote.status = 'accepted';
+    req.status = 'confirmed';
+    req.updated_at = new Date().toISOString();
+
+    // Auto-generate invoice upon quote acceptance
+    const invoiceId = `inv-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const invoiceNumber = `INV-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+    const newInvoice: TrainingInvoice = {
+      id: invoiceId,
+      organization_id: req.organization_id,
+      request_id: req.id,
+      invoice_number: invoiceNumber,
+      subtotal_paise: quote.gross_amount_paise - quote.tax_amount_paise,
+      tax_paise: quote.tax_amount_paise,
+      total_paise: quote.gross_amount_paise,
+      status: 'issued',
+      issued_at: new Date().toISOString(),
+      due_at: new Date(Date.now() + 15 * 86400000).toISOString(), // Net 15
+    };
+    this.trainingInvoices.set(newInvoice.id, newInvoice);
+
+    this.logAuditEvent({
+      organization_id: req.organization_id,
+      actor_id: callerUserId,
+      action_type: 'TRAINING_QUOTE_ACCEPTED',
+      resource_type: 'training_quote',
+      resource_id: quote.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { requestId: req.id, invoiceId: newInvoice.id, totalPaise: newInvoice.total_paise },
+    });
+
+    return { request: req, quote, invoice: newInvoice };
+  }
+
+  assignTrainerToRequest(
+    callerUserId: string,
+    requestId: string,
+    trainerId: string,
+    agreedCompensationPaise: number
+  ): TrainingAssignment {
+    if (!this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Only platform superadmins can assign trainers to school requests', '42501', 403);
+    }
+    const req = this.trainingRequests.get(requestId);
+    if (!req) {
+      throw new DatabaseError('Training request not found', '23503', 404);
+    }
+    const trainer = this.trainers.get(trainerId);
+    if (!trainer) {
+      throw new DatabaseError('Trainer not found', '23503', 404);
+    }
+    if (trainer.verification_status !== 'verified') {
+      throw new DatabaseError('Cannot assign unverified trainer to school programme', '23514', 400);
+    }
+
+    const assignmentId = `assign-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newAssignment: TrainingAssignment = {
+      id: assignmentId,
+      request_id: requestId,
+      trainer_id: trainerId,
+      trainer_name: trainer.user_name,
+      status: 'offered',
+      agreed_compensation_paise: agreedCompensationPaise || trainer.daily_rate_paise,
+      assigned_by: callerUserId,
+      assigned_at: new Date().toISOString(),
+    };
+
+    this.trainingAssignments.set(newAssignment.id, newAssignment);
+
+    this.logAuditEvent({
+      organization_id: req.organization_id,
+      actor_id: callerUserId,
+      action_type: 'TRAINER_ASSIGNMENT_OFFERED',
+      resource_type: 'training_assignment',
+      resource_id: newAssignment.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { requestId, trainerId, compensationPaise: agreedCompensationPaise },
+    });
+
+    return newAssignment;
+  }
+
+  getAssignmentsForTrainer(trainerId: string): TrainingAssignment[] {
+    return Array.from(this.trainingAssignments.values()).filter((a) => a.trainer_id === trainerId);
+  }
+
+  respondToAssignmentOffer(trainerUserId: string, assignmentId: string, accept: boolean): TrainingAssignment {
+    const assignment = this.trainingAssignments.get(assignmentId);
+    if (!assignment) {
+      throw new DatabaseError('Assignment not found', '23503', 404);
+    }
+    const trainer = this.trainers.get(assignment.trainer_id);
+    if (!trainer || trainer.user_id !== trainerUserId) {
+      throw new DatabaseError('Forbidden: only the assigned trainer can accept or decline this offer', '42501', 403);
+    }
+
+    if (assignment.status !== 'offered') {
+      throw new DatabaseError(`Cannot respond to assignment in status '${assignment.status}'`, '23514', 400);
+    }
+
+    assignment.status = accept ? 'confirmed' : 'declined';
+    if (accept) {
+      assignment.accepted_at = new Date().toISOString();
+      // Accrue payout in ledger once confirmed
+      this.accrueTrainerPayout(assignment.id, trainer.id, assignment.agreed_compensation_paise);
+    }
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: trainerUserId,
+      action_type: accept ? 'TRAINER_ASSIGNMENT_ACCEPTED' : 'TRAINER_ASSIGNMENT_DECLINED',
+      resource_type: 'training_assignment',
+      resource_id: assignment.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { assignmentId, accepted: accept },
+    });
+
+    return assignment;
+  }
+
+  createTrainingSessions(
+    callerUserId: string,
+    assignmentId: string,
+    requestId: string,
+    sessions: Omit<TrainingSession, 'id' | 'assignment_id' | 'request_id' | 'created_at'>[]
+  ): TrainingSession[] {
+    const isSuper = this.isPlatformSuperadmin(callerUserId);
+    if (!isSuper) {
+      throw new DatabaseError('Only platform operations can provision session delivery schedules', '42501', 403);
+    }
+
+    const created: TrainingSession[] = [];
+    for (const s of sessions) {
+      const sessId = `sess-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      const newSession: TrainingSession = {
+        ...s,
+        id: sessId,
+        assignment_id: assignmentId,
+        request_id: requestId,
+        delivery_status: 'scheduled',
+        attendance_count: 0,
+        verified_by_school: false,
+        created_at: new Date().toISOString(),
+      };
+      this.trainingSessions.set(newSession.id, newSession);
+      created.push(newSession);
+    }
+
+    return created;
+  }
+
+  getSessionsForRequest(requestId: string): TrainingSession[] {
+    return Array.from(this.trainingSessions.values()).filter((s) => s.request_id === requestId);
+  }
+
+  getSessionsForTrainer(trainerId: string): TrainingSession[] {
+    const assignmentIds = new Set(
+      Array.from(this.trainingAssignments.values())
+        .filter((a) => a.trainer_id === trainerId)
+        .map((a) => a.id)
+    );
+    return Array.from(this.trainingSessions.values()).filter((s) => assignmentIds.has(s.assignment_id));
+  }
+
+  getUpcomingTrainingSessions(userId: string): TrainingSession[] {
+    // 1. If trainer
+    const trainer = this.getTrainerByUserId(userId);
+    if (trainer) {
+      return this.getSessionsForTrainer(trainer.id);
+    }
+
+    // 2. If student: find student's enrolled classrooms and return associated training sessions
+    const enrolledClassroomIds = new Set<string>();
+    for (const enr of this.enrollments.values()) {
+      if (enr.student_id === userId) {
+        enrolledClassroomIds.add(enr.classroom_id);
+      }
+    }
+
+    if (enrolledClassroomIds.size > 0) {
+      return Array.from(this.trainingSessions.values()).filter(
+        (s) => s.classroom_id && enrolledClassroomIds.has(s.classroom_id)
+      );
+    }
+
+    // Default: return all scheduled sessions in student's default school if any
+    return Array.from(this.trainingSessions.values()).filter((s) => s.delivery_status === 'scheduled');
+  }
+
+  logSessionDelivery(trainerUserId: string, sessionId: string, attendanceCount: number, notes?: string): TrainingSession {
+    const session = this.trainingSessions.get(sessionId);
+    if (!session) {
+      throw new DatabaseError('Training session not found', '23503', 404);
+    }
+    const assignment = this.trainingAssignments.get(session.assignment_id);
+    if (!assignment) {
+      throw new DatabaseError('Associated assignment not found', '23503', 404);
+    }
+    const trainer = this.trainers.get(assignment.trainer_id);
+    if (!trainer || trainer.user_id !== trainerUserId) {
+      throw new DatabaseError('Forbidden: only the assigned trainer can record session delivery', '42501', 403);
+    }
+
+    session.delivery_status = 'delivered';
+    session.attendance_count = attendanceCount;
+    session.delivery_notes = notes || null;
+    session.completed_at = new Date().toISOString();
+
+    trainer.completed_assignments_count += 1;
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: trainerUserId,
+      action_type: 'TRAINING_SESSION_DELIVERED',
+      resource_type: 'training_session',
+      resource_id: session.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { sessionId, attendanceCount, notes },
+    });
+
+    return session;
+  }
+
+  verifySessionAttendance(schoolUserId: string, sessionId: string): TrainingSession {
+    const session = this.trainingSessions.get(sessionId);
+    if (!session) {
+      throw new DatabaseError('Training session not found', '23503', 404);
+    }
+    const req = this.trainingRequests.get(session.request_id);
+    if (!req) {
+      throw new DatabaseError('Associated request not found', '23503', 404);
+    }
+
+    if (!this.hasOrgRole(schoolUserId, req.organization_id, 'institution_admin') &&
+        !this.hasOrgRole(schoolUserId, req.organization_id, 'teacher') &&
+        !this.isPlatformSuperadmin(schoolUserId)) {
+      throw new DatabaseError('Unauthorized to verify session attendance for this school', '42501', 403);
+    }
+
+    session.verified_by_school = true;
+
+    this.logAuditEvent({
+      organization_id: req.organization_id,
+      actor_id: schoolUserId,
+      action_type: 'SESSION_ATTENDANCE_VERIFIED',
+      resource_type: 'training_session',
+      resource_id: session.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { sessionId, verifiedBy: schoolUserId },
+    });
+
+    return session;
+  }
+
+  getInvoicesForOrg(orgId: string): TrainingInvoice[] {
+    return Array.from(this.trainingInvoices.values()).filter((inv) => inv.organization_id === orgId);
+  }
+
+  getAllInvoices(): TrainingInvoice[] {
+    return Array.from(this.trainingInvoices.values());
+  }
+
+  payInvoice(callerUserId: string, invoiceId: string): TrainingInvoice {
+    const inv = this.trainingInvoices.get(invoiceId);
+    if (!inv) {
+      throw new DatabaseError('Invoice not found', '23503', 404);
+    }
+
+    if (!this.hasOrgRole(callerUserId, inv.organization_id, 'institution_admin') && !this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Unauthorized to settle invoices for this organization', '42501', 403);
+    }
+
+    inv.status = 'paid';
+    inv.paid_at = new Date().toISOString();
+
+    this.logAuditEvent({
+      organization_id: inv.organization_id,
+      actor_id: callerUserId,
+      action_type: 'TRAINING_INVOICE_PAID',
+      resource_type: 'training_invoice',
+      resource_id: inv.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { invoiceId, totalPaise: inv.total_paise },
+    });
+
+    return inv;
+  }
+
+  getPayoutsForTrainer(trainerId: string): TrainerPayout[] {
+    return Array.from(this.trainerPayouts.values()).filter((p) => p.trainer_id === trainerId);
+  }
+
+  getAllPayouts(): TrainerPayout[] {
+    return Array.from(this.trainerPayouts.values());
+  }
+
+  accrueTrainerPayout(assignmentId: string, trainerId: string, amountPaise: number): TrainerPayout {
+    const idemKey = `idem_payout_${assignmentId}`;
+    // Check if already accrued to guarantee idempotency
+    for (const p of this.trainerPayouts.values()) {
+      if (p.idempotency_key === idemKey) return p;
+    }
+
+    const payoutId = `payout-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newPayout: TrainerPayout = {
+      id: payoutId,
+      trainer_id: trainerId,
+      assignment_id: assignmentId,
+      amount_paise: amountPaise,
+      status: 'accrued',
+      idempotency_key: idemKey,
+      created_at: new Date().toISOString(),
+    };
+
+    this.trainerPayouts.set(newPayout.id, newPayout);
+    return newPayout;
+  }
+
+  approveTrainerPayout(callerUserId: string, payoutId: string): TrainerPayout {
+    if (!this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Only platform superadmins can authorize trainer payout disbursements', '42501', 403);
+    }
+    const payout = this.trainerPayouts.get(payoutId);
+    if (!payout) {
+      throw new DatabaseError('Payout record not found', '23503', 404);
+    }
+    if (payout.status !== 'accrued') {
+      throw new DatabaseError(`Cannot approve payout in status '${payout.status}'`, '23514', 400);
+    }
+
+    payout.status = 'approved';
+    payout.approved_by = callerUserId;
+    payout.approved_at = new Date().toISOString();
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: callerUserId,
+      action_type: 'TRAINER_PAYOUT_APPROVED',
+      resource_type: 'trainer_payout',
+      resource_id: payout.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { payoutId, amountPaise: payout.amount_paise },
+    });
+
+    return payout;
+  }
+
+  settleTrainerPayout(callerUserId: string, payoutId: string): TrainerPayout {
+    if (!this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Only platform superadmins can execute payout settlements', '42501', 403);
+    }
+    const payout = this.trainerPayouts.get(payoutId);
+    if (!payout) {
+      throw new DatabaseError('Payout record not found', '23503', 404);
+    }
+    if (payout.status !== 'approved' && payout.status !== 'processing') {
+      throw new DatabaseError(`Cannot settle payout in status '${payout.status}'`, '23514', 400);
+    }
+
+    payout.status = 'settled';
+    payout.settled_at = new Date().toISOString();
+
+    this.logAuditEvent({
+      organization_id: null,
+      actor_id: callerUserId,
+      action_type: 'TRAINER_PAYOUT_SETTLED',
+      resource_type: 'trainer_payout',
+      resource_id: payout.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { payoutId, amountPaise: payout.amount_paise, settledAt: payout.settled_at },
+    });
+
+    return payout;
+  }
+
+  reportSafeguardingIncident(
+    reporterUserId: string,
+    orgId: string,
+    category: string,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    description: string,
+    subjectUserId?: string
+  ): SafeguardingReport {
+    const reporter = this.users.get(reporterUserId);
+    const subject = subjectUserId ? this.users.get(subjectUserId) : undefined;
+
+    const reportId = `sg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const newReport: SafeguardingReport = {
+      id: reportId,
+      organization_id: orgId,
+      reporter_id: reporterUserId,
+      reporter_name: reporter?.full_name || 'Anonymous Reporter',
+      subject_user_id: subjectUserId || null,
+      subject_name: subject?.full_name || undefined,
+      category,
+      severity,
+      description,
+      status: 'open',
+      reported_at: new Date().toISOString(),
+    };
+
+    this.safeguardingReports.set(newReport.id, newReport);
+
+    this.logAuditEvent({
+      organization_id: orgId,
+      actor_id: reporterUserId,
+      action_type: 'SAFEGUARDING_INCIDENT_REPORTED',
+      resource_type: 'safeguarding_report',
+      resource_id: newReport.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { category, severity },
+    });
+
+    return newReport;
+  }
+
+  getSafeguardingReports(callerOrgId?: string, isSuperadmin: boolean = false): SafeguardingReport[] {
+    const list = Array.from(this.safeguardingReports.values());
+    if (isSuperadmin) return list;
+    if (!callerOrgId) return [];
+    return list.filter((r) => r.organization_id === callerOrgId);
+  }
+
+  resolveSafeguardingReport(adminUserId: string, reportId: string, resolutionNotes: string): SafeguardingReport {
+    if (!this.isPlatformSuperadmin(adminUserId)) {
+      throw new DatabaseError('Only platform superadmins can resolve safeguarding reports', '42501', 403);
+    }
+    const report = this.safeguardingReports.get(reportId);
+    if (!report) {
+      throw new DatabaseError('Safeguarding report not found', '23503', 404);
+    }
+
+    report.status = 'resolved';
+    report.resolved_at = new Date().toISOString();
+    report.resolution_notes = resolutionNotes;
+
+    this.logAuditEvent({
+      organization_id: report.organization_id,
+      actor_id: adminUserId,
+      action_type: 'SAFEGUARDING_INCIDENT_RESOLVED',
+      resource_type: 'safeguarding_report',
+      resource_id: report.id,
+      ip_address: '127.0.0.1',
+      user_agent: 'Geniusphere-Marketplace/2.0',
+      details: { reportId, resolutionNotes },
+    });
+
+    return report;
   }
 }
 

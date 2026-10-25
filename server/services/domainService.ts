@@ -829,6 +829,533 @@ export class DomainService {
       return updatedUser;
     }, userId);
   }
+
+  // ==================================================================
+  // SCHOOL TRAINING MARKETPLACE & VERIFIED TRAINER DOMAIN OPERATIONS
+  // ==================================================================
+
+  public async getTrainers(isSuperadmin: boolean = false) {
+    const res = await query(
+      isSuperadmin
+        ? `SELECT t.*, u.full_name as user_name, u.email as user_email
+           FROM public.trainers t
+           JOIN public.users u ON u.id = t.user_id
+           ORDER BY t.created_at DESC`
+        : `SELECT t.*, u.full_name as user_name, u.email as user_email
+           FROM public.trainers t
+           JOIN public.users u ON u.id = t.user_id
+           WHERE t.verification_status = 'verified'
+           ORDER BY t.completed_assignments_count DESC, t.created_at DESC`
+    );
+    return res.rows;
+  }
+
+  public async getTrainerByUserId(userId: string) {
+    const res = await query(
+      `SELECT t.*, u.full_name as user_name, u.email as user_email
+       FROM public.trainers t
+       JOIN public.users u ON u.id = t.user_id
+       WHERE t.user_id = $1 LIMIT 1`,
+      [userId]
+    );
+    return res.rows[0] || null;
+  }
+
+  public async registerTrainer(userId: string, data: { headline: string; bio: string; competencies?: string[]; dailyRatePaise?: number }) {
+    return withTransaction(async (client) => {
+      const existing = await client.query(`SELECT id FROM public.trainers WHERE user_id = $1`, [userId]);
+      if (existing.rowCount! > 0) {
+        throw new Error('Trainer profile already registered');
+      }
+
+      const res = await client.query(
+        `INSERT INTO public.trainers (
+           user_id, headline, bio, competencies, daily_rate_paise, verification_status
+         ) VALUES ($1, $2, $3, $4, $5, 'pending')
+         RETURNING *`,
+        [
+          userId,
+          data.headline.trim(),
+          data.bio.trim(),
+          JSON.stringify(data.competencies || []),
+          data.dailyRatePaise || 500000,
+        ]
+      );
+
+      const eventId = `evt_trainer_reg_${Date.now()}`;
+      await client.query(
+        `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
+         VALUES ($1, $2, $3)`,
+        [
+          eventId,
+          'trainer.registered',
+          JSON.stringify({ userId, trainerId: res.rows[0].id }),
+        ]
+      );
+
+      return res.rows[0];
+    }, userId);
+  }
+
+  public async verifyTrainer(superadminUserId: string, trainerId: string, status: 'verified' | 'rejected' | 'suspended') {
+    return withTransaction(async (client) => {
+      const updateRes = await client.query(
+        `UPDATE public.trainers
+         SET verification_status = $1,
+             verified_at = CASE WHEN $1 = 'verified' THEN NOW() ELSE NULL END,
+             verified_by = CASE WHEN $1 = 'verified' THEN $2::uuid ELSE NULL END,
+             updated_at = NOW()
+         WHERE id = $3
+         RETURNING *`,
+        [status, superadminUserId, trainerId]
+      );
+      if (updateRes.rowCount === 0) {
+        throw new Error('Trainer not found');
+      }
+      return updateRes.rows[0];
+    }, superadminUserId);
+  }
+
+  public async getTrainingRequests(userOrgId?: string, isSuperadmin: boolean = false) {
+    if (isSuperadmin) {
+      const res = await query(
+        `SELECT tr.*, o.name as organization_name, u.full_name as requester_name
+         FROM public.training_requests tr
+         JOIN public.organizations o ON o.id = tr.organization_id
+         JOIN public.users u ON u.id = tr.requester_id
+         ORDER BY tr.created_at DESC`
+      );
+      return res.rows;
+    }
+    if (!userOrgId) return [];
+
+    const res = await query(
+      `SELECT tr.*, o.name as organization_name, u.full_name as requester_name
+       FROM public.training_requests tr
+       JOIN public.organizations o ON o.id = tr.organization_id
+       JOIN public.users u ON u.id = tr.requester_id
+       WHERE tr.organization_id = $1
+       ORDER BY tr.created_at DESC`,
+      [userOrgId]
+    );
+    return res.rows;
+  }
+
+  public async createTrainingRequest(
+    userId: string,
+    orgId: string,
+    data: {
+      title: string;
+      domain: string;
+      targetGradeRange: string;
+      approxCohortSize: number;
+      learningObjectives: string;
+      preferredFormat: string;
+      preferredStartDate: string;
+      preferredEndDate: string;
+      locationAddress: string;
+      budgetMaxPaise: number;
+    }
+  ) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.training_requests (
+           organization_id, requester_id, title, domain, target_grade_range,
+           approx_cohort_size, learning_objectives, preferred_format,
+           preferred_start_date, preferred_end_date, location_address, budget_max_paise, status
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, 'submitted')
+         RETURNING *`,
+        [
+          orgId,
+          userId,
+          data.title.trim(),
+          data.domain,
+          data.targetGradeRange,
+          data.approxCohortSize,
+          data.learningObjectives.trim(),
+          data.preferredFormat,
+          data.preferredStartDate,
+          data.preferredEndDate,
+          data.locationAddress.trim(),
+          data.budgetMaxPaise,
+        ]
+      );
+
+      const eventId = `evt_req_${Date.now()}`;
+      await client.query(
+        `INSERT INTO public.transactional_outbox (event_id, event_type, payload)
+         VALUES ($1, $2, $3)`,
+        [
+          eventId,
+          'training_request.submitted',
+          JSON.stringify({ requestId: res.rows[0].id, orgId, title: data.title }),
+        ]
+      );
+
+      return res.rows[0];
+    }, userId);
+  }
+
+  public async updateTrainingRequestStatus(userId: string, requestId: string, nextStatus: string, reason?: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.training_requests
+         SET status = $1, cancellation_reason = $2, updated_at = NOW()
+         WHERE id = $3
+         RETURNING *`,
+        [nextStatus, reason || null, requestId]
+      );
+      if (res.rowCount === 0) {
+        throw new Error('Training request not found');
+      }
+      return res.rows[0];
+    }, userId);
+  }
+
+  public async createTrainingQuote(
+    superadminUserId: string,
+    requestId: string,
+    data: {
+      grossAmountPaise: number;
+      trainerFeePaise: number;
+      platformFeePaise: number;
+      taxAmountPaise: number;
+      termsMarkdown: string;
+      validUntil: string;
+    }
+  ) {
+    return withTransaction(async (client) => {
+      const reqRes = await client.query(`SELECT organization_id FROM public.training_requests WHERE id = $1`, [requestId]);
+      if (reqRes.rowCount === 0) {
+        throw new Error('Training request not found');
+      }
+      const orgId = reqRes.rows[0].organization_id;
+
+      const res = await client.query(
+        `INSERT INTO public.training_quotes (
+           request_id, organization_id, gross_amount_paise, trainer_fee_paise,
+           platform_fee_paise, tax_amount_paise, terms_markdown, valid_until, status
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'issued')
+         ON CONFLICT (request_id) DO UPDATE SET
+           gross_amount_paise = EXCLUDED.gross_amount_paise,
+           trainer_fee_paise = EXCLUDED.trainer_fee_paise,
+           platform_fee_paise = EXCLUDED.platform_fee_paise,
+           tax_amount_paise = EXCLUDED.tax_amount_paise,
+           terms_markdown = EXCLUDED.terms_markdown,
+           valid_until = EXCLUDED.valid_until,
+           status = 'issued'
+         RETURNING *`,
+        [
+          requestId,
+          orgId,
+          data.grossAmountPaise,
+          data.trainerFeePaise,
+          data.platformFeePaise,
+          data.taxAmountPaise,
+          data.termsMarkdown,
+          data.validUntil,
+        ]
+      );
+
+      await client.query(
+        `UPDATE public.training_requests SET status = 'awaiting_school_confirmation', updated_at = NOW() WHERE id = $1`,
+        [requestId]
+      );
+
+      return res.rows[0];
+    }, superadminUserId);
+  }
+
+  public async acceptTrainingQuote(userId: string, quoteId: string) {
+    return withTransaction(async (client) => {
+      const quoteRes = await client.query(`SELECT * FROM public.training_quotes WHERE id = $1`, [quoteId]);
+      if (quoteRes.rowCount === 0) throw new Error('Quote not found');
+      const quote = quoteRes.rows[0];
+
+      await client.query(`UPDATE public.training_quotes SET status = 'accepted' WHERE id = $1`, [quoteId]);
+      await client.query(`UPDATE public.training_requests SET status = 'confirmed', updated_at = NOW() WHERE id = $1`, [quote.request_id]);
+
+      // Generate invoice
+      const invoiceNum = `INV-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      const invRes = await client.query(
+        `INSERT INTO public.training_invoices (
+           organization_id, request_id, invoice_number, subtotal_paise, tax_paise, total_paise, status, due_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, 'issued', NOW() + interval '15 days')
+         RETURNING *`,
+        [
+          quote.organization_id,
+          quote.request_id,
+          invoiceNum,
+          quote.gross_amount_paise - quote.tax_amount_paise,
+          quote.tax_amount_paise,
+          quote.gross_amount_paise,
+        ]
+      );
+
+      return { quote, invoice: invRes.rows[0] };
+    }, userId);
+  }
+
+  public async assignTrainer(superadminUserId: string, requestId: string, trainerId: string, compensationPaise: number) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.training_assignments (
+           request_id, trainer_id, status, agreed_compensation_paise, assigned_by
+         ) VALUES ($1, $2, 'offered', $3, $4)
+         ON CONFLICT (request_id, trainer_id) DO UPDATE SET
+           status = 'offered', agreed_compensation_paise = EXCLUDED.agreed_compensation_paise
+         RETURNING *`,
+        [requestId, trainerId, compensationPaise, superadminUserId]
+      );
+      return res.rows[0];
+    }, superadminUserId);
+  }
+
+  public async respondToAssignment(trainerUserId: string, assignmentId: string, accept: boolean) {
+    return withTransaction(async (client) => {
+      const nextStatus = accept ? 'confirmed' : 'declined';
+      const res = await client.query(
+        `UPDATE public.training_assignments ta
+         SET status = $1, accepted_at = CASE WHEN $1 = 'confirmed' THEN NOW() ELSE NULL END
+         FROM public.trainers t
+         WHERE ta.id = $2 AND ta.trainer_id = t.id AND t.user_id = $3
+         RETURNING ta.*, t.id as trainer_id`,
+        [nextStatus, assignmentId, trainerUserId]
+      );
+      if (res.rowCount === 0) {
+        throw new Error('Assignment not found or unauthorized');
+      }
+
+      const assignment = res.rows[0];
+      if (accept) {
+        const idemKey = `idem_payout_${assignment.id}`;
+        await client.query(
+          `INSERT INTO public.trainer_payouts (
+             trainer_id, assignment_id, amount_paise, status, idempotency_key
+           ) VALUES ($1, $2, $3, 'accrued', $4)
+           ON CONFLICT (idempotency_key) DO NOTHING`,
+          [assignment.trainer_id, assignment.id, assignment.agreed_compensation_paise, idemKey]
+        );
+      }
+
+      return assignment;
+    }, trainerUserId);
+  }
+
+  public async getTrainingSessions(userId: string, role: string, orgId?: string) {
+    if (role === 'trainer') {
+      const res = await query(
+        `SELECT ts.*, tr.title as request_title, tr.organization_id, o.name as organization_name
+         FROM public.training_sessions ts
+         JOIN public.training_assignments ta ON ta.id = ts.assignment_id
+         JOIN public.trainers t ON t.id = ta.trainer_id
+         JOIN public.training_requests tr ON tr.id = ts.request_id
+         JOIN public.organizations o ON o.id = tr.organization_id
+         WHERE t.user_id = $1
+         ORDER BY ts.scheduled_start ASC`,
+        [userId]
+      );
+      return res.rows;
+    }
+    if (role === 'learner') {
+      const res = await query(
+        `SELECT ts.*, c.name as classroom_name
+         FROM public.training_sessions ts
+         JOIN public.classrooms c ON c.id = ts.classroom_id
+         JOIN public.classroom_enrollments ce ON ce.classroom_id = c.id
+         WHERE ce.student_id = $1
+         ORDER BY ts.scheduled_start ASC`,
+        [userId]
+      );
+      return res.rows;
+    }
+    if (orgId) {
+      const res = await query(
+        `SELECT ts.*, tr.title as request_title, c.name as classroom_name
+         FROM public.training_sessions ts
+         JOIN public.training_requests tr ON tr.id = ts.request_id
+         LEFT JOIN public.classrooms c ON c.id = ts.classroom_id
+         WHERE tr.organization_id = $1
+         ORDER BY ts.scheduled_start ASC`,
+        [orgId]
+      );
+      return res.rows;
+    }
+    const res = await query(`SELECT * FROM public.training_sessions ORDER BY scheduled_start ASC`);
+    return res.rows;
+  }
+
+  public async logSessionDelivery(trainerUserId: string, sessionId: string, attendanceCount: number, notes?: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.training_sessions ts
+         SET delivery_status = 'delivered', attendance_count = $1, delivery_notes = $2, completed_at = NOW()
+         FROM public.training_assignments ta, public.trainers t
+         WHERE ts.id = $3 AND ts.assignment_id = ta.id AND ta.trainer_id = t.id AND t.user_id = $4
+         RETURNING ts.*, t.id as trainer_id`,
+        [attendanceCount, notes || null, sessionId, trainerUserId]
+      );
+      if (res.rowCount === 0) {
+        throw new Error('Session not found or unauthorized');
+      }
+
+      await client.query(
+        `UPDATE public.trainers SET completed_assignments_count = completed_assignments_count + 1 WHERE id = $1`,
+        [res.rows[0].trainer_id]
+      );
+
+      return res.rows[0];
+    }, trainerUserId);
+  }
+
+  public async verifySessionAttendance(schoolUserId: string, sessionId: string) {
+    const res = await query(
+      `UPDATE public.training_sessions SET verified_by_school = TRUE WHERE id = $1 RETURNING *`,
+      [sessionId]
+    );
+    if (res.rowCount === 0) throw new Error('Session not found');
+    return res.rows[0];
+  }
+
+  public async getInvoices(orgId?: string, isSuperadmin: boolean = false) {
+    if (isSuperadmin) {
+      const res = await query(
+        `SELECT ti.*, o.name as organization_name, tr.title as request_title
+         FROM public.training_invoices ti
+         JOIN public.organizations o ON o.id = ti.organization_id
+         JOIN public.training_requests tr ON tr.id = ti.request_id
+         ORDER BY ti.issued_at DESC`
+      );
+      return res.rows;
+    }
+    if (!orgId) return [];
+    const res = await query(
+      `SELECT ti.*, o.name as organization_name, tr.title as request_title
+       FROM public.training_invoices ti
+       JOIN public.organizations o ON o.id = ti.organization_id
+       JOIN public.training_requests tr ON tr.id = ti.request_id
+       WHERE ti.organization_id = $1
+       ORDER BY ti.issued_at DESC`,
+      [orgId]
+    );
+    return res.rows;
+  }
+
+  public async payInvoice(userId: string, invoiceId: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.training_invoices SET status = 'paid', paid_at = NOW() WHERE id = $1 RETURNING *`,
+        [invoiceId]
+      );
+      if (res.rowCount === 0) throw new Error('Invoice not found');
+      return res.rows[0];
+    }, userId);
+  }
+
+  public async getPayouts(trainerId?: string, isSuperadmin: boolean = false) {
+    if (isSuperadmin) {
+      const res = await query(
+        `SELECT tp.*, t.headline, u.full_name as trainer_name
+         FROM public.trainer_payouts tp
+         JOIN public.trainers t ON t.id = tp.trainer_id
+         JOIN public.users u ON u.id = t.user_id
+         ORDER BY tp.created_at DESC`
+      );
+      return res.rows;
+    }
+    if (!trainerId) return [];
+    const res = await query(
+      `SELECT * FROM public.trainer_payouts WHERE trainer_id = $1 ORDER BY created_at DESC`,
+      [trainerId]
+    );
+    return res.rows;
+  }
+
+  public async approvePayout(superadminUserId: string, payoutId: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.trainer_payouts
+         SET status = 'approved', approved_by = $1, approved_at = NOW()
+         WHERE id = $2 AND status = 'accrued'
+         RETURNING *`,
+        [superadminUserId, payoutId]
+      );
+      if (res.rowCount === 0) throw new Error('Payout not found or not in accrued status');
+      return res.rows[0];
+    }, superadminUserId);
+  }
+
+  public async settlePayout(superadminUserId: string, payoutId: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.trainer_payouts
+         SET status = 'settled', settled_at = NOW()
+         WHERE id = $1 AND status IN ('approved', 'processing')
+         RETURNING *`,
+        [payoutId]
+      );
+      if (res.rowCount === 0) throw new Error('Payout not found or not approved');
+      return res.rows[0];
+    }, superadminUserId);
+  }
+
+  public async reportSafeguarding(reporterUserId: string, orgId: string, data: { category: string; severity: string; description: string; subjectUserId?: string }) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.safeguarding_reports (
+           organization_id, reporter_id, subject_user_id, category, severity, description
+         ) VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING *`,
+        [
+          orgId,
+          reporterUserId,
+          data.subjectUserId || null,
+          data.category,
+          data.severity,
+          data.description.trim(),
+        ]
+      );
+      return res.rows[0];
+    }, reporterUserId);
+  }
+
+  public async getSafeguardingReports(orgId?: string, isSuperadmin: boolean = false) {
+    if (isSuperadmin) {
+      const res = await query(
+        `SELECT sr.*, o.name as organization_name, u.full_name as reporter_name
+         FROM public.safeguarding_reports sr
+         JOIN public.organizations o ON o.id = sr.organization_id
+         JOIN public.users u ON u.id = sr.reporter_id
+         ORDER BY sr.reported_at DESC`
+      );
+      return res.rows;
+    }
+    if (!orgId) return [];
+    const res = await query(
+      `SELECT sr.*, o.name as organization_name, u.full_name as reporter_name
+       FROM public.safeguarding_reports sr
+       JOIN public.organizations o ON o.id = sr.organization_id
+       JOIN public.users u ON u.id = sr.reporter_id
+       WHERE sr.organization_id = $1
+       ORDER BY sr.reported_at DESC`,
+      [orgId]
+    );
+    return res.rows;
+  }
+
+  public async resolveSafeguarding(superadminUserId: string, reportId: string, resolutionNotes: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.safeguarding_reports
+         SET status = 'resolved', resolution_notes = $1, resolved_at = NOW()
+         WHERE id = $2
+         RETURNING *`,
+        [resolutionNotes, reportId]
+      );
+      if (res.rowCount === 0) throw new Error('Safeguarding report not found');
+      return res.rows[0];
+    }, superadminUserId);
+  }
 }
 
 export const domainService = new DomainService();
