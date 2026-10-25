@@ -4,7 +4,7 @@ import {
   submitOrder,
   computeBookMetrics,
   generateSyntheticFlow,
-} from '../../Geniusphere-main/labs/stock-market-basics---interactive-lab/orderBookEngine';
+} from '../../src/labs/stock-market-lab/orderBookEngine';
 
 describe('Order Book Continuous Double Auction Matching Engine', () => {
   it('initializes book with proper bids, asks, and positive spread', () => {
