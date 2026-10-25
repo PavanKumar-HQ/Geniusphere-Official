@@ -45,31 +45,31 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
     switch (domain) {
       case 'finance':
         return {
-          gradient: 'linear-gradient(135deg, #1E3A2F 0%, #2A5C43 100%)',
-          accent: '#A9C86A',
-          badgeBg: 'rgba(169, 200, 106, 0.18)',
-          badgeColor: '#EAF4D3',
-          icon: <Coins size={22} color="#A9C86A" />,
+          gradient: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #047857 100%)',
+          accent: '#10B981',
+          badgeBg: 'rgba(16, 185, 129, 0.22)',
+          badgeColor: '#ECFDF5',
+          icon: <Coins size={22} color="#10B981" />,
           label: 'Finance & Markets',
           svgType: 'finance',
         };
       case 'professional':
         return {
-          gradient: 'linear-gradient(135deg, #2D3A4A 0%, #3B4D63 100%)',
-          accent: '#7DD3FC',
-          badgeBg: 'rgba(125, 211, 252, 0.18)',
-          badgeColor: '#E0F2FE',
-          icon: <Users size={22} color="#7DD3FC" />,
+          gradient: 'linear-gradient(135deg, #0F172A 0%, #1E293B 55%, #2563EB 100%)',
+          accent: '#60A5FA',
+          badgeBg: 'rgba(96, 165, 250, 0.22)',
+          badgeColor: '#EFF6FF',
+          icon: <Users size={22} color="#60A5FA" />,
           label: 'Professional Skills',
           svgType: 'professional',
         };
       case 'technology':
       default:
         return {
-          gradient: 'linear-gradient(135deg, #1A382B 0%, #244C3A 100%)',
+          gradient: 'linear-gradient(135deg, #0F172A 0%, #064E3B 55%, #047857 100%)',
           accent: '#34D399',
-          badgeBg: 'rgba(52, 211, 153, 0.18)',
-          badgeColor: '#D1FAE5',
+          badgeBg: 'rgba(52, 211, 153, 0.22)',
+          badgeColor: '#ECFDF5',
           icon: <Cpu size={22} color="#34D399" />,
           label: 'Technology & AI',
           svgType: 'technology',
@@ -139,7 +139,7 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
       onMouseLeave={() => setIsHovered(false)}
       style={{
         backgroundColor: 'var(--bg-surface)',
-        borderRadius: '18px',
+        borderRadius: '20px',
         border: `1.5px solid ${isHovered ? accentColor : 'var(--border-subtle)'}`,
         overflow: 'hidden',
         display: 'flex',
@@ -147,10 +147,10 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
         justifyContent: 'space-between',
         cursor: 'pointer',
         boxShadow: isHovered
-          ? '0 12px 28px rgba(0, 0, 0, 0.08)'
-          : '0 2px 8px rgba(0, 0, 0, 0.02)',
-        transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
-        transition: 'transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease',
+          ? '0 16px 36px -8px rgba(16, 185, 129, 0.16), 0 8px 16px -4px rgba(0, 0, 0, 0.06)'
+          : 'var(--shadow-sm)',
+        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+        transition: 'transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, border-color 0.22s ease',
         outline: 'none',
       }}
     >
@@ -256,7 +256,7 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
             fontWeight: 800,
             color: isHovered ? accentColor : 'var(--text-primary)',
             lineHeight: 1.3,
-            fontFamily: 'Space Grotesk, sans-serif',
+            fontFamily: 'var(--font-heading)',
             transition: 'color 0.15s ease',
             display: '-webkit-box',
             WebkitLineClamp: 2,
@@ -324,15 +324,15 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
           <div style={{ marginTop: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>
               <span>Progress</span>
-              <span style={{ color: 'var(--brand-primary)' }}>{progressPercent}%</span>
+              <span style={{ color: 'var(--brand-primary)', fontWeight: 800 }}>{progressPercent}%</span>
             </div>
-            <div style={{ height: '5px', backgroundColor: 'var(--bg-canvas)', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--bg-canvas)', borderRadius: '100px', overflow: 'hidden' }}>
               <div
                 style={{
                   width: `${Math.min(100, progressPercent)}%`,
                   height: '100%',
-                  backgroundColor: 'var(--brand-primary)',
-                  borderRadius: '3px',
+                  background: 'var(--grad-brand)',
+                  borderRadius: '100px',
                 }}
               />
             </div>

@@ -1051,26 +1051,13 @@ export const App: React.FC = () => {
             {/* Gamified Habit Streak Chip (Tap to view streak & habit calendar) */}
             <button
               type="button"
+              className="streak-chip-btn"
               onClick={() => setStreakModalOpen(true)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                height: '34px',
-                padding: '0 10px',
-                borderRadius: '100px',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                color: '#D97706',
-                cursor: 'pointer',
-                fontWeight: 800,
-                fontSize: '0.8rem',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                transition: 'all 0.15s ease',
-              }}
               title="Daily Habit Streak — Click to open Streak Calendar"
             >
-              <Flame size={15} color="#D97706" />
+              <span className="flame-anim">
+                <Flame size={15} color="#D97706" />
+              </span>
               <span>{userProgress.streak_days || 7}</span>
             </button>
 
@@ -2246,7 +2233,7 @@ export const App: React.FC = () => {
                   <MascotSphere pose="teaching" size={isSidebarCollapsed ? 30 : 40} />
                   {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
-                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                         Educator Suite
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
@@ -2285,7 +2272,7 @@ export const App: React.FC = () => {
                   <MascotSphere pose="thinking" size={isSidebarCollapsed ? 30 : 40} />
                   {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
-                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                         Institution Hub
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
@@ -2324,7 +2311,7 @@ export const App: React.FC = () => {
                   <MascotSphere pose="happy" size={isSidebarCollapsed ? 30 : 40} />
                   {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
-                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                         Platform Ops
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
@@ -2363,7 +2350,7 @@ export const App: React.FC = () => {
                   <MascotSphere pose="happy" size={isSidebarCollapsed ? 28 : 38} />
                   {showSidebarText && (
                     <div className="sidebar-mascot-card-text">
-                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif' }}>
+                      <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                         Keep going!
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>

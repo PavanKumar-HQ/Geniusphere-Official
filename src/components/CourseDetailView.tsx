@@ -230,7 +230,7 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
-                  boxShadow: '0 4px 12px rgba(67, 168, 91, 0.3)',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                 }}
               >
                 <Play size={16} fill="currentColor" />

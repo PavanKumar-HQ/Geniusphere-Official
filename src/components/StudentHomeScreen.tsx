@@ -324,7 +324,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           style={{
             padding: '7px 14px',
             borderRadius: '100px',
-            backgroundColor: 'var(--brand-primary)',
+            background: 'var(--grad-brand)',
             color: '#FFFFFF',
             border: 'none',
             fontSize: '0.78rem',
@@ -333,7 +333,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            boxShadow: '0 2px 6px rgba(67, 168, 91, 0.25)',
+            boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
           }}
         >
           <Sparkles size={14} />
@@ -424,25 +424,27 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
         <div className="app-carousel" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
           {/* Quest 1: Watch Lesson */}
           <div
-            className="app-carousel-item-compact"
+            className="app-carousel-item-compact card-hover-lift"
             style={{
               backgroundColor: 'var(--bg-surface)',
-              borderRadius: '16px',
+              borderRadius: '18px',
               padding: '16px',
               border: '1px solid var(--border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '12px',
+              cursor: 'pointer',
             }}
+            onClick={() => handleResumePrimaryLesson()}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '42px',
+                  height: '42px',
                   borderRadius: '12px',
-                  backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                  backgroundColor: 'rgba(16, 185, 129, 0.12)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -453,7 +455,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
                 <BookOpen size={20} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.86rem', color: 'var(--text-primary)' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)' }}>
                   Complete 1 Video Lesson
                 </div>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
@@ -461,17 +463,27 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
                 </div>
               </div>
             </div>
-            <span className="badge badge-accent" style={{ fontSize: '0.72rem', fontWeight: 800 }}>
+            <span
+              style={{
+                backgroundColor: 'rgba(16, 185, 129, 0.14)',
+                color: 'var(--brand-primary)',
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                padding: '4px 8px',
+                borderRadius: '100px',
+                border: '1px solid rgba(16, 185, 129, 0.25)',
+              }}
+            >
               +50 XP
             </span>
           </div>
 
           {/* Quest 2: Run a Simulation Lab */}
           <div
-            className="app-carousel-item-compact"
+            className="app-carousel-item-compact card-hover-lift"
             style={{
               backgroundColor: 'var(--bg-surface)',
-              borderRadius: '16px',
+              borderRadius: '18px',
               padding: '16px',
               border: '1px solid var(--border-subtle)',
               display: 'flex',
@@ -483,8 +495,8 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '42px',
+                  height: '42px',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(16, 185, 129, 0.12)',
                   display: 'flex',
@@ -497,7 +509,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
                 <Terminal size={20} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.86rem', color: 'var(--text-primary)' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)' }}>
                   Interactive Experiment
                 </div>
                 <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
@@ -509,7 +521,7 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
               type="button"
               onClick={() => onLaunchLab('office-lab')}
               className="btn-secondary"
-              style={{ padding: '6px 12px', fontSize: '0.75rem', height: '32px' }}
+              style={{ padding: '6px 14px', fontSize: '0.75rem', height: '32px', borderRadius: '100px', fontWeight: 800 }}
             >
               Open Lab
             </button>
@@ -517,10 +529,10 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
 
           {/* Quest 3: Maintain Streak */}
           <div
-            className="app-carousel-item-compact"
+            className="app-carousel-item-compact card-hover-lift"
             style={{
               backgroundColor: 'var(--bg-surface)',
-              borderRadius: '16px',
+              borderRadius: '18px',
               padding: '16px',
               border: '1px solid var(--border-subtle)',
               display: 'flex',
@@ -532,8 +544,8 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '42px',
+                  height: '42px',
                   borderRadius: '12px',
                   backgroundColor: 'rgba(217, 119, 6, 0.12)',
                   display: 'flex',
@@ -543,10 +555,12 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
                   flexShrink: 0,
                 }}
               >
-                <Flame size={20} />
+                <span className="flame-anim">
+                  <Flame size={20} />
+                </span>
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '0.86rem', color: 'var(--text-primary)' }}>
+                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: 'var(--text-primary)' }}>
                   Active Streak Check-in
                 </div>
                 <div style={{ fontSize: '0.74rem', color: '#D97706', fontWeight: 700 }}>

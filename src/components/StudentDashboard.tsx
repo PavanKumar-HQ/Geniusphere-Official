@@ -307,7 +307,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 fontWeight: 800,
                 color: 'var(--text-primary)',
                 margin: 0,
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.02em',
               }}
             >
@@ -358,8 +358,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       {primaryContinueItem.course && (
         <div
           style={{
-            background: 'linear-gradient(135deg, var(--brand-primary) 0%, #153225 100%)',
-            borderRadius: '22px',
+            background: 'linear-gradient(135deg, #0F172A 0%, #064E3B 55%, #047857 100%)',
+            borderRadius: '24px',
             padding: '28px 32px',
             color: '#FFFFFF',
             display: 'flex',
@@ -367,7 +367,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '24px',
-            boxShadow: '0 8px 24px rgba(36, 76, 58, 0.16)',
+            boxShadow: '0 16px 36px -6px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(16, 185, 129, 0.2)',
             position: 'relative',
             overflow: 'hidden',
           }}
@@ -378,10 +378,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               position: 'absolute',
               right: '-40px',
               top: '-40px',
-              width: '260px',
-              height: '260px',
+              width: '280px',
+              height: '280px',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(169, 200, 106, 0.15) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%)',
               pointerEvents: 'none',
             }}
           />
@@ -390,7 +390,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <span
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.18)',
+                  backgroundColor: 'rgba(16, 185, 129, 0.18)',
+                  color: '#34D399',
+                  border: '1px solid rgba(52, 211, 153, 0.25)',
                   padding: '3px 10px',
                   borderRadius: '100px',
                   fontSize: '0.72rem',
@@ -402,7 +404,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               >
                 {enrolledCoursesWithDetails.length > 0 ? 'PICK UP WHERE YOU LEFT OFF' : 'RECOMMENDED STARTING TRACK'}
               </span>
-              <span style={{ fontSize: '0.75rem', opacity: 0.85 }}>
+              <span style={{ fontSize: '0.75rem', color: '#6EE7B7', fontWeight: 600 }}>
                 {primaryContinueItem.course.domain.toUpperCase()}
               </span>
             </div>
@@ -413,7 +415,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 fontWeight: 800,
                 color: '#FFFFFF',
                 margin: '0 0 8px',
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.25,
               }}
@@ -421,24 +423,25 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               {primaryContinueItem.course.title}
             </h2>
 
-            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', opacity: 0.9, lineHeight: 1.5, maxWidth: '540px' }}>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: '#CBD5E1', lineHeight: 1.5, maxWidth: '540px' }}>
               {primaryContinueItem.course.summary}
             </p>
 
             {/* Real Progress Bar */}
             {primaryContinueItem.enrollment.progress_percent > 0 && (
               <div style={{ maxWidth: '380px', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: '6px', color: '#94A3B8' }}>
                   <span>Course Progress</span>
-                  <span>{primaryContinueItem.enrollment.progress_percent}% Complete</span>
+                  <span style={{ color: '#34D399', fontWeight: 800 }}>{primaryContinueItem.enrollment.progress_percent}% Complete</span>
                 </div>
-                <div style={{ height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.2)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '100px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: `${primaryContinueItem.enrollment.progress_percent}%`,
                       height: '100%',
-                      backgroundColor: 'var(--brand-lime, #A9C86A)',
-                      borderRadius: '3px',
+                      background: 'linear-gradient(90deg, #10B981, #34D399)',
+                      borderRadius: '100px',
+                      boxShadow: '0 0 10px rgba(52, 211, 153, 0.6)',
                       transition: 'width 0.3s ease',
                     }}
                   />
@@ -452,8 +455,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               type="button"
               onClick={() => onSelectCourse(primaryContinueItem.course!.slug)}
               style={{
-                backgroundColor: 'var(--brand-lime, #A9C86A)',
-                color: '#153225',
+                background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                color: '#FFFFFF',
                 border: 'none',
                 borderRadius: '100px',
                 padding: '14px 28px',
@@ -463,13 +466,19 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
+                boxShadow: '0 8px 24px -4px rgba(16, 185, 129, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2)',
                 transition: 'transform 0.15s ease, box-shadow 0.15s ease',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 12px 28px -4px rgba(16, 185, 129, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 8px 24px -4px rgba(16, 185, 129, 0.5)';
+              }}
             >
-              <Play size={18} fill="#153225" />
+              <Play size={18} fill="#FFFFFF" />
               <span>{primaryContinueItem.enrollment.progress_percent > 0 ? 'Resume Lesson' : 'Start Course'}</span>
             </button>
           </div>
@@ -639,7 +648,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'Space Grotesk, sans-serif' }}>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-heading)' }}>
               Your Learning Journey
             </h2>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
@@ -736,7 +745,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'Space Grotesk, sans-serif' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-heading)' }}>
               {enrolledCoursesWithDetails.length > 0 ? 'Active Courses' : 'Featured Courses for You'}
             </h2>
             <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
@@ -801,7 +810,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Calendar size={18} color="var(--brand-primary)" />
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'Space Grotesk, sans-serif' }}>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-heading)' }}>
               School & Classroom Sessions
             </h2>
           </div>
@@ -901,7 +910,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '3px 10px', borderRadius: '100px', backgroundColor: 'var(--bg-surface-subdued)', color: 'var(--brand-primary)', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '6px' }}>
               <span>17 Topics • 170 Lessons • 170 SVG Labs</span>
             </div>
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'Space Grotesk, sans-serif' }}>
+            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-heading)' }}>
               Interactive Curriculum Studio
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', margin: '4px 0 0' }}>
