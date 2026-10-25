@@ -1,1 +1,1 @@
-export type View = 'home' | 'learn' | 'simulate' | 'defend' | 'games' | 'module';
+export type View = 'home' | 'learn' | 'simulate' | 'defend' | 'firewall' | 'games' | 'module';

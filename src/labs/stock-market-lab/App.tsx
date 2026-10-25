@@ -6,11 +6,13 @@ import Sidebar from './components/Sidebar';
 import SimulationStage from './components/SimulationStage';
 import RightPanel from './components/RightPanel';
 import Controls from './components/Controls';
+import { OrderBookSimulator } from './components/OrderBookSimulator';
 import { MobileLayout, MobileBadge, MobileControlGroup } from '../../components/lab/MobileLayout';
-import { X, Menu } from 'lucide-react';
+import { X, Menu, BookOpen, Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose, onExit }) => {
+const App: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
+  const [labMode, setLabMode] = useState<'concepts' | 'orderbook'>('concepts');
   const [currentStep, setCurrentStep] = useState<SimulationStep>(SimulationStep.COMPANY_NEEDS_MONEY);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isSimplified, setIsSimplified] = useState<boolean>(false);
@@ -82,25 +84,46 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
           }
           headerStyle="brand-center"
           headerTitle={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#22D3EE', fontWeight: 700 }} className="flex items-center gap-2 text-cyan-400 font-bold">
-              <div style={{ width: '24px', height: '24px', borderRadius: '4px', backgroundColor: '#06B6D4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', fontSize: '12px', fontWeight: 800 }} className="w-6 h-6 rounded bg-cyan-500 flex items-center justify-center text-black text-xs font-bold">S</div>
-              <span style={{ fontSize: '14px', letterSpacing: '-0.025em' }} className="text-sm tracking-tight">STOCK MARKET</span>
+            <div className="flex items-center gap-2 text-cyan-400 font-bold">
+              <div className="w-6 h-6 rounded bg-cyan-500 flex items-center justify-center text-black text-xs font-bold">S</div>
+              <span className="text-sm tracking-tight">STOCK MARKET</span>
             </div>
           }
           badges={[
+            <MobileBadge variant="cyan" key="b0" onClick={() => setLabMode(m => m === 'concepts' ? 'orderbook' : 'concepts')}>
+              {labMode === 'concepts' ? 'MODE: CONCEPTS' : 'MODE: LIVE BOOK'}
+            </MobileBadge>,
             <MobileBadge variant="cyan" key="b1">STEP: {currentStep + 1}/{isSimplified ? 3 : 8}</MobileBadge>,
             isPlaying ? <MobileBadge variant="yellow" key="b2">SIMULATION_ACTIVE</MobileBadge> : null
           ]}
           visualContent={
             <div className="h-full flex flex-col p-2">
-              <SimulationStage
-                step={currentStep}
-                isSimplified={isSimplified}
-              />
+              {labMode === 'concepts' ? (
+                <SimulationStage
+                  step={currentStep}
+                  isSimplified={isSimplified}
+                />
+              ) : (
+                <OrderBookSimulator />
+              )}
             </div>
           }
           controls={
             <div className="flex flex-col gap-4 w-full">
+              <div className="flex justify-center gap-2">
+                <button
+                  onClick={() => setLabMode('concepts')}
+                  className={`px-3 py-1 text-xs font-bold rounded ${labMode === 'concepts' ? 'bg-cyan-500 text-black' : 'bg-slate-800 text-slate-300'}`}
+                >
+                  Concepts
+                </button>
+                <button
+                  onClick={() => setLabMode('orderbook')}
+                  className={`px-3 py-1 text-xs font-bold rounded ${labMode === 'orderbook' ? 'bg-cyan-500 text-black' : 'bg-slate-800 text-slate-300'}`}
+                >
+                  Live Order Book
+                </button>
+              </div>
               <MobileControlGroup
                 onPlay={() => setIsPlaying(!isPlaying)}
                 onReset={resetSim}
@@ -125,7 +148,7 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
             </div>
           }
           onMenuToggle={() => setIsSidebarOpen(true)}
-          onExit={onClose || onExit || (() => window.history.back())}
+          onExit={onClose || (() => window.history.back())}
         />
 
         {/* Sidebar Portal for Mobile */}
@@ -149,8 +172,8 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
         </AnimatePresence>
       </div>
 
-        {/* Desktop View (Only Visible on Large Screens) */}
-      <div className="hidden lg:flex flex-col h-full min-h-0 w-full bg-[#070B1A] grid-bg overflow-hidden text-slate-200">
+      {/* Desktop View (Only Visible on Large Screens) */}
+      <div className="hidden lg:flex flex-col h-screen w-full bg-[#070B1A] grid-bg overflow-hidden text-slate-200">
         {/* Header */}
         <header className="h-16 flex items-center justify-between px-8 border-b border-cyan-900/30 glass-panel z-10">
           <div className="flex items-center gap-3">
@@ -159,22 +182,37 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
               STOCK MARKET BASICS LAB
             </h1>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="text-xs uppercase tracking-widest text-cyan-500/60 font-medium">
-              Educational Simulation v1.0
-            </div>
-            {(onClose || onExit) && (
-              <button
-                onClick={onClose || onExit}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 bg-red-500/15 text-red-400 hover:bg-red-500/25 hover:text-red-300 border border-red-500/30 transition-all"
-              >
-                <X size={14} />
-                <span>Exit Lab</span>
-              </button>
-            )}
+
+          {/* Mode Switcher */}
+          <div className="flex items-center gap-2 bg-[#0D152A] p-1 rounded-lg border border-cyan-900/40">
+            <button
+              type="button"
+              onClick={() => setLabMode('concepts')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded flex items-center gap-1.5 transition-all ${
+                labMode === 'concepts'
+                  ? 'bg-cyan-500 text-black shadow font-bold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <BookOpen size={14} /> Guided Concepts
+            </button>
+            <button
+              type="button"
+              onClick={() => setLabMode('orderbook')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded flex items-center gap-1.5 transition-all ${
+                labMode === 'orderbook'
+                  ? 'bg-cyan-500 text-black shadow font-bold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Layers size={14} /> Live Limit Order Book
+            </button>
+          </div>
+
+          <div className="text-xs uppercase tracking-widest text-cyan-500/60 font-medium">
+            Educational Simulation v2.0
           </div>
         </header>
-
 
         {/* Main Content Area */}
         <main className="flex-1 flex flex-row overflow-hidden p-4 gap-4">
@@ -186,26 +224,32 @@ const App: React.FC<{ onClose?: () => void; onExit?: () => void }> = ({ onClose,
           />
 
           {/* Center: Interactive Simulation */}
-          <div className="flex-1 flex flex-col gap-4">
-            <div className="flex-1 glass-panel relative overflow-hidden group">
+          <div className="flex-1 flex flex-col gap-4 overflow-y-auto">
+            <div className="flex-1 glass-panel relative overflow-y-auto p-4 group">
               <div className="absolute inset-0 grid-bg animate-grid pointer-events-none" />
-              <SimulationStage
-                step={currentStep}
-                isSimplified={isSimplified}
-              />
+              {labMode === 'concepts' ? (
+                <SimulationStage
+                  step={currentStep}
+                  isSimplified={isSimplified}
+                />
+              ) : (
+                <OrderBookSimulator />
+              )}
             </div>
 
-            {/* Bottom Controls */}
-            <Controls
-              currentStep={currentStep}
-              totalSteps={isSimplified ? 3 : 8}
-              isPlaying={isPlaying}
-              onPlayToggle={() => setIsPlaying(!isPlaying)}
-              onReset={resetSim}
-              onNext={nextStep}
-              onPrev={prevStep}
-              isSimplified={isSimplified}
-            />
+            {/* Bottom Controls (Only in Concepts mode) */}
+            {labMode === 'concepts' && (
+              <Controls
+                currentStep={currentStep}
+                totalSteps={isSimplified ? 3 : 8}
+                isPlaying={isPlaying}
+                onPlayToggle={() => setIsPlaying(!isPlaying)}
+                onReset={resetSim}
+                onNext={nextStep}
+                onPrev={prevStep}
+                isSimplified={isSimplified}
+              />
+            )}
           </div>
 
           {/* Right Sidebar: Info Panels */}

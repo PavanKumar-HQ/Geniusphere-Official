@@ -7,8 +7,9 @@ import { IntroWorld } from './IntroWorld';
 import { SimulatePage } from './SimulatePage';
 import { DefendPage } from './DefendPage';
 import { GamesPage } from './GamesPage';
+import { InteractiveFirewallSimulator } from './components/InteractiveFirewallSimulator';
 import type { View } from './CyberLabApp';
-import { Shield, BookOpen, Zap, Gamepad2, Home } from 'lucide-react';
+import { Shield, BookOpen, Zap, Gamepad2, Home, Network } from 'lucide-react';
 
 interface CyberLabFullProps {
   onExit?: () => void;
@@ -58,6 +59,12 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit, onClose }) =
         return <SimulatePage onBack={() => handleNavigate('home')} />;
       case 'defend':
         return <DefendPage onBack={() => handleNavigate('home')} />;
+      case 'firewall':
+        return (
+          <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '16px' }}>
+            <InteractiveFirewallSimulator onChallengeComplete={(id) => setCompletedModules(prev => new Set(prev).add(id))} />
+          </div>
+        );
       case 'games':
         return <GamesPage onBack={() => handleNavigate('home')} />;
       case 'module':
@@ -79,6 +86,7 @@ export const CyberLabFull: React.FC<CyberLabFullProps> = ({ onExit, onClose }) =
   const navItems: { key: View; label: string; icon: React.ReactNode }[] = [
     { key: 'home', label: 'Home', icon: <Home size={16} /> },
     { key: 'learn', label: 'Learn', icon: <BookOpen size={16} /> },
+    { key: 'firewall', label: 'Firewall Lab', icon: <Network size={16} /> },
     { key: 'simulate', label: 'Simulate', icon: <Zap size={16} /> },
     { key: 'defend', label: 'Defend', icon: <Shield size={16} /> },
     { key: 'games', label: 'Play', icon: <Gamepad2 size={16} /> },

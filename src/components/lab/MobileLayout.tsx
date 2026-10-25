@@ -218,8 +218,7 @@ export const MobileLayout: React.FC<MobileLayoutProps> = ({
     );
 };
 
-// Helper Components for standard look
-export const MobileBadge: React.FC<{ children: React.ReactNode; variant?: "purple" | "yellow" | "cyan" | "green" }> = ({ children, variant = "purple" }) => {
+export const MobileBadge: React.FC<{ children: React.ReactNode; variant?: "purple" | "yellow" | "cyan" | "green"; onClick?: () => void }> = ({ children, variant = "purple", onClick }) => {
     const palette = {
         purple: { bg: 'rgba(79, 70, 229, 0.2)', color: '#818CF8', border: 'rgba(129, 140, 248, 0.3)' },
         yellow: { bg: 'rgba(245, 158, 11, 0.2)', color: '#FCD34D', border: 'rgba(252, 211, 77, 0.3)' },
@@ -229,6 +228,7 @@ export const MobileBadge: React.FC<{ children: React.ReactNode; variant?: "purpl
     const c = palette[variant] || palette.purple;
     return (
         <span
+            onClick={onClick}
             style={{
                 padding: '3px 8px',
                 borderRadius: '4px',
@@ -240,8 +240,9 @@ export const MobileBadge: React.FC<{ children: React.ReactNode; variant?: "purpl
                 color: c.color,
                 border: `1px solid ${c.border}`,
                 display: 'inline-block',
+                cursor: onClick ? 'pointer' : 'default',
             }}
-            className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border`}
+            className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider border ${onClick ? 'cursor-pointer hover:opacity-80 active:scale-95 transition-all' : ''}`}
         >
             {children}
         </span>
