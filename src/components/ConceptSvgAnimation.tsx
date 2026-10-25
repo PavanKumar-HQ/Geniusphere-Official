@@ -650,8 +650,8 @@ export const ConceptSvgAnimation: React.FC<ConceptSvgAnimationProps> = ({
               <text x="340" y="78" fill={themeTextPrimary} fontSize="12" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
                 EXCHANGE ORDER BOOK & HIGH-FREQUENCY MATCHING ENGINE
               </text>
-              <rect x="120" y="95" width="160" height="90" rx="8" fill={isHud ? 'rgba(67, 168, 91, 0.15)' : '#E5F0DF'} stroke="#43A85B" strokeWidth="1.5" />
-              <text x="200" y="115" fill="#43A85B" fontSize="10" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
+              <rect x="120" y="95" width="160" height="90" rx="8" fill={isHud ? 'rgba(16, 185, 129, 0.15)' : 'var(--brand-surface)'} stroke="#10B981" strokeWidth="1.5" />
+              <text x="200" y="115" fill="#10B981" fontSize="10" fontWeight="800" textAnchor="middle" fontFamily="var(--font-mono)">
                 BIDS (BUY DEPTH)
               </text>
               <text x="200" y="135" fill={themeTextPrimary} fontSize="9.5" textAnchor="middle" fontFamily="var(--font-mono)">

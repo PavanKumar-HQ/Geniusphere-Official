@@ -139,7 +139,7 @@ export const ContactCommunityView: React.FC<ContactCommunityViewProps> = ({
                 fontWeight: 900,
                 color: 'var(--text-primary)',
                 margin: 0,
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               {activeTab === 'contact' ? 'Contact & Institutional Relations' : 'Student & Educator Community'}
@@ -289,7 +289,7 @@ export const ContactCommunityView: React.FC<ContactCommunityViewProps> = ({
                     width: '56px',
                     height: '56px',
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(67, 168, 91, 0.1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
                     color: 'var(--brand-primary)',
                     display: 'flex',
                     alignItems: 'center',

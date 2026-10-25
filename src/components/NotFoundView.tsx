@@ -70,7 +70,7 @@ export const NotFoundView: React.FC<NotFoundViewProps> = ({
             fontWeight: 900,
             color: 'var(--text-primary)',
             margin: '8px 0 16px',
-            fontFamily: 'Space Grotesk, sans-serif',
+            fontFamily: 'var(--font-heading)',
           }}
         >
           Curriculum Destination Uncharted

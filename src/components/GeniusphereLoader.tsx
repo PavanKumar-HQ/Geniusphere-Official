@@ -75,7 +75,7 @@ export const GeniusphereLoader: React.FC<GeniusphereLoaderProps> = ({
             cy="60"
             r="54"
             fill="none"
-            stroke={isDark ? 'rgba(255,255,255,0.08)' : 'rgba(67, 168, 91, 0.15)'}
+            stroke={isDark ? 'rgba(255,255,255,0.08)' : 'rgba(16, 185, 129, 0.15)'}
             strokeWidth="3"
             strokeDasharray="8 6"
           />
@@ -85,7 +85,7 @@ export const GeniusphereLoader: React.FC<GeniusphereLoaderProps> = ({
             cy="60"
             r="54"
             fill="none"
-            stroke="var(--brand-primary, #43A85B)"
+            stroke="var(--brand-primary, #10B981)"
             strokeWidth="3.5"
             strokeDasharray="45 180"
             strokeLinecap="round"
@@ -106,7 +106,7 @@ export const GeniusphereLoader: React.FC<GeniusphereLoaderProps> = ({
             }}
           />
           {/* Orbiting Satellite Particle */}
-          <circle cx="60" cy="6" r="4.5" fill="var(--brand-primary, #43A85B)" />
+          <circle cx="60" cy="6" r="4.5" fill="var(--brand-primary, #10B981)" />
         </svg>
 
         {/* Mascot Center with Subtle Breathing Animation */}
@@ -161,7 +161,7 @@ export const GeniusphereLoader: React.FC<GeniusphereLoaderProps> = ({
             left: 0,
             height: '100%',
             width: '45%',
-            backgroundColor: 'var(--brand-primary, #43A85B)',
+            backgroundColor: 'var(--brand-primary, #10B981)',
             borderRadius: '100px',
             animation: 'shimmer 1.6s ease-in-out infinite',
           }}

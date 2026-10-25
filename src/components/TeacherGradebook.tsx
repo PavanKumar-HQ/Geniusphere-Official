@@ -138,7 +138,7 @@ export const TeacherGradebook: React.FC<TeacherGradebookProps> = ({ db, teacherI
                   fontWeight: 700,
                   padding: '2px 8px',
                   borderRadius: '100px',
-                  backgroundColor: 'rgba(67, 168, 91, 0.15)',
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
                   color: 'var(--brand-primary)',
                 }}
               >

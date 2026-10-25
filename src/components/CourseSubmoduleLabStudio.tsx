@@ -708,12 +708,12 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                       border: isCurrent
                         ? '3px solid #00F5A0'
                         : isDone
-                        ? '2.5px solid #43A85B'
-                        : '2px solid #D6DED2',
+                        ? '2.5px solid var(--brand-primary)'
+                        : '2px solid var(--border-subtle)',
                       boxShadow: isCurrent
-                        ? '0 0 16px rgba(0,245,160,0.5), 0 4px 12px rgba(36,76,58,0.2)'
+                        ? '0 0 16px rgba(16, 185, 129, 0.5), 0 4px 12px rgba(15, 23, 42, 0.2)'
                         : isDone
-                        ? '0 4px 12px rgba(67, 168, 91, 0.25)'
+                        ? '0 4px 12px rgba(16, 185, 129, 0.28)'
                         : '0 2px 6px rgba(0,0,0,0.06)',
                       display: 'flex',
                       alignItems: 'center',
@@ -1033,8 +1033,8 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
               </div>
               <div
                 style={{
-                  backgroundColor: 'rgba(67, 168, 91, 0.12)',
-                  color: '#26352A',
+                  backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.74rem',
                   fontWeight: 800,
                   padding: '3px 10px',
@@ -1335,8 +1335,8 @@ export const CourseSubmoduleLabStudio: React.FC<CourseSubmoduleLabStudioProps> =
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                backgroundColor: aiPhishingScore > 50 ? 'rgba(220, 38, 38, 0.08)' : 'rgba(67, 168, 91, 0.08)',
-                border: `1px solid ${aiPhishingScore > 50 ? '#FECACA' : '#C8E3BF'}`,
+                backgroundColor: aiPhishingScore > 50 ? 'rgba(220, 38, 38, 0.08)' : 'rgba(16, 185, 129, 0.08)',
+                border: `1px solid ${aiPhishingScore > 50 ? '#FECACA' : 'rgba(16, 185, 129, 0.3)'}`,
                 borderRadius: '10px',
                 padding: '10px 16px',
                 flexWrap: 'wrap',

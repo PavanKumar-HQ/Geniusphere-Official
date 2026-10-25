@@ -181,11 +181,11 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
               cx="275"
               cy={node.y}
               r="13"
-              fill={isPhish ? 'rgba(220, 38, 38, 0.1)' : 'rgba(67, 168, 91, 0.12)'}
-              stroke={isPhish ? '#DC2626' : '#43A85B'}
+              fill={isPhish ? 'rgba(220, 38, 38, 0.1)' : 'rgba(16, 185, 129, 0.12)'}
+              stroke={isPhish ? '#DC2626' : '#10B981'}
               strokeWidth="2"
             />
-            <circle cx="275" cy={node.y} r="4" fill={isPhish ? '#DC2626' : '#43A85B'} />
+            <circle cx="275" cy={node.y} r="4" fill={isPhish ? '#DC2626' : '#10B981'} />
           </g>
         ))}
 
@@ -1402,14 +1402,14 @@ export const SettlementLifecycleSvg: React.FC<SettlementLifecycleProps> = ({ cur
                   width: '38px',
                   height: '38px',
                   borderRadius: '50%',
-                  backgroundColor: isPassed ? '#43A85B' : isCurrent ? '#D9F477' : '#FFFFFF',
-                  border: `2px solid ${isPassed || isCurrent ? '#43A85B' : '#DCEADA'}`,
-                  color: isPassed ? '#FFFFFF' : '#26352A',
+                  backgroundColor: isPassed ? '#10B981' : isCurrent ? '#D9F477' : '#FFFFFF',
+                  border: `2px solid ${isPassed || isCurrent ? '#10B981' : '#DCEADA'}`,
+                  color: isPassed ? '#FFFFFF' : '#0F172A',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.25s ease',
-                  boxShadow: isCurrent ? '0 0 10px rgba(67, 168, 91, 0.35)' : 'none',
+                  boxShadow: isCurrent ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none',
                 }}
               >
                 {isPassed ? <Check size={18} /> : <Icon size={17} />}
@@ -1418,7 +1418,7 @@ export const SettlementLifecycleSvg: React.FC<SettlementLifecycleProps> = ({ cur
                 style={{
                   fontSize: '0.72rem',
                   fontWeight: isCurrent ? 800 : 600,
-                  color: isCurrent ? '#26352A' : isPassed ? '#43A85B' : '#6A7D70',
+                  color: isCurrent ? 'var(--text-primary)' : isPassed ? '#10B981' : 'var(--text-muted)',
                   textAlign: 'center',
                   maxWidth: '70px',
                 }}

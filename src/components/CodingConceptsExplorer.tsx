@@ -369,7 +369,7 @@ export const CodingConceptsExplorer: React.FC<CodingConceptsExplorerProps> = ({
                 fontWeight: 800,
                 color: 'var(--text-primary)',
                 margin: '0 0 4px',
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               Coding Concepts & Multi-Language Matrix

@@ -352,14 +352,14 @@ export const PlatformAdminWorkspace: React.FC<PlatformAdminWorkspaceProps> = ({
                         width: '64px',
                         height: '64px',
                         borderRadius: '50%',
-                        backgroundColor: '#43A85B',
+                        backgroundColor: 'var(--brand-primary)',
                         color: '#FFFFFF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '1.4rem',
                         fontWeight: 800,
-                        boxShadow: '0 4px 12px rgba(67, 168, 91, 0.3)',
+                        boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                       }}
                     >
                       {u.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}

@@ -235,7 +235,7 @@ export const GamifiedLearningRoadmap: React.FC<GamifiedLearningRoadmapProps> = (
             <div style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.08em', opacity: 0.9, fontWeight: 800 }}>
               UNIT 1 • INTELLIGENT SYSTEMS & CRYPTOGRAPHY
             </div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 800, fontFamily: 'Space Grotesk, sans-serif' }}>
+            <div style={{ fontSize: '1.25rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>
               Master Neural Weights, SHA-256 Mining & Sensor Logic
             </div>
           </div>

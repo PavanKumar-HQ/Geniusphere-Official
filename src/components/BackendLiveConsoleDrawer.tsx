@@ -281,7 +281,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
                 width: '40px',
                 height: '40px',
                 borderRadius: '12px',
-                backgroundColor: 'rgba(67, 168, 91, 0.15)',
+                backgroundColor: 'rgba(16, 185, 129, 0.15)',
                 color: 'var(--brand-primary)',
                 display: 'flex',
                 alignItems: 'center',
@@ -301,7 +301,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
                     fontWeight: 700,
                     padding: '2px 8px',
                     borderRadius: '100px',
-                    backgroundColor: 'rgba(67, 168, 91, 0.15)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
                     color: 'var(--brand-primary)',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -350,7 +350,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
                 padding: '6px 12px',
                 borderRadius: '8px',
                 border: '1px solid var(--brand-primary)',
-                backgroundColor: 'rgba(67, 168, 91, 0.12)',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
                 color: 'var(--brand-primary)',
                 fontSize: '0.76rem',
                 fontWeight: 700,
@@ -425,7 +425,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
           <div
             style={{
               padding: '10px 24px',
-              backgroundColor: 'rgba(67, 168, 91, 0.12)',
+              backgroundColor: 'rgba(16, 185, 129, 0.12)',
               borderBottom: '1px solid var(--brand-primary)',
               color: 'var(--brand-primary)',
               fontSize: '0.82rem',
@@ -565,7 +565,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
                       style={{
                         padding: '2px 6px',
                         borderRadius: '4px',
-                        backgroundColor: 'rgba(67, 168, 91, 0.15)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
                         color: 'var(--brand-primary)',
                         fontWeight: 800,
                         fontSize: '0.72rem',
@@ -578,7 +578,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
                       style={{
                         padding: '1px 5px',
                         borderRadius: '4px',
-                        backgroundColor: 'rgba(67, 168, 91, 0.1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         color: 'var(--brand-primary)',
                         fontSize: '0.7rem',
                       }}
@@ -613,7 +613,7 @@ export const BackendLiveConsoleDrawer: React.FC<BackendLiveConsoleDrawerProps> =
                           padding: '5px 12px',
                           borderRadius: '6px',
                           border: selectedTable === tbl ? '1px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                          backgroundColor: selectedTable === tbl ? 'rgba(67, 168, 91, 0.12)' : 'var(--bg-surface)',
+                          backgroundColor: selectedTable === tbl ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-surface)',
                           color: selectedTable === tbl ? 'var(--brand-primary)' : 'var(--text-primary)',
                           fontSize: '0.76rem',
                           fontWeight: selectedTable === tbl ? 800 : 500,

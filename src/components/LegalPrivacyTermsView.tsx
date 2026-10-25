@@ -87,7 +87,7 @@ export const LegalPrivacyTermsView: React.FC<LegalPrivacyTermsViewProps> = ({
                 fontWeight: 900,
                 color: 'var(--text-primary)',
                 margin: 0,
-                fontFamily: 'Space Grotesk, sans-serif',
+                fontFamily: 'var(--font-heading)',
               }}
             >
               Legal & Safeguarding Charter

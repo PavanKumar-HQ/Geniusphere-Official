@@ -702,7 +702,7 @@ export const NotebookKnowledgeGraphAnimation: React.FC<NotebookKnowledgeGraphAni
                     fontSize: '0.86rem',
                     fontWeight: 800,
                     color: 'var(--text-primary)',
-                    fontFamily: 'Space Grotesk, sans-serif',
+                    fontFamily: 'var(--font-heading)',
                   }}
                 >
                   Geniusphere Engine
@@ -896,7 +896,7 @@ export const NotebookKnowledgeGraphAnimation: React.FC<NotebookKnowledgeGraphAni
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                boxShadow: '0 4px 12px rgba(67, 168, 91, 0.25)',
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.28)',
                 transition: 'all 0.15s ease',
               }}
             >

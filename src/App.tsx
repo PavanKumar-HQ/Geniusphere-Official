@@ -1559,7 +1559,7 @@ export const App: React.FC = () => {
               >
                 <ShieldCheck size={18} />
               </div>
-              <span style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'Space Grotesk, sans-serif', whiteSpace: 'nowrap' }}>
+              <span style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', whiteSpace: 'nowrap' }}>
                 Geniusphere
               </span>
             </div>
