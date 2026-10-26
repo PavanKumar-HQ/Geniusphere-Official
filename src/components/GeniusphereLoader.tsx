@@ -45,75 +45,17 @@ export const GeniusphereLoader: React.FC<GeniusphereLoaderProps> = ({
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      {/* Orbital Mascot Sphere Container */}
+      {/* Sleek Modern Spinner */}
       <div
         style={{
-          position: 'relative',
-          width: `${ringSize}px`,
-          height: `${ringSize}px`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          width: size === 'sm' ? '32px' : size === 'lg' ? '54px' : '44px',
+          height: size === 'sm' ? '32px' : size === 'lg' ? '54px' : '44px',
+          border: '3px solid var(--border-subtle)',
+          borderTopColor: 'var(--brand-primary, #10B981)',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite',
         }}
-      >
-        {/* Animated Botanical Orbital Rings */}
-        <svg
-          viewBox="0 0 120 120"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            animation: 'rotateFan 3.5s linear infinite',
-            pointerEvents: 'none',
-          }}
-        >
-          {/* Subtle Track Ring */}
-          <circle
-            cx="60"
-            cy="60"
-            r="54"
-            fill="none"
-            stroke={isDark ? 'rgba(255,255,255,0.08)' : 'rgba(16, 185, 129, 0.15)'}
-            strokeWidth="3"
-            strokeDasharray="8 6"
-          />
-          {/* Fast Primary Orbital Arc */}
-          <circle
-            cx="60"
-            cy="60"
-            r="54"
-            fill="none"
-            stroke="var(--brand-primary, #10B981)"
-            strokeWidth="3.5"
-            strokeDasharray="45 180"
-            strokeLinecap="round"
-          />
-          {/* Counter-Rotating Secondary Ring */}
-          <circle
-            cx="60"
-            cy="60"
-            r="44"
-            fill="none"
-            stroke="var(--brand-lime, #D9F477)"
-            strokeWidth="2.5"
-            strokeDasharray="30 120"
-            strokeLinecap="round"
-            style={{
-              animation: 'rotateFan 2s linear infinite reverse',
-              transformOrigin: 'center',
-            }}
-          />
-          {/* Orbiting Satellite Particle */}
-          <circle cx="60" cy="6" r="4.5" fill="var(--brand-primary, #10B981)" />
-        </svg>
-
-        {/* Mascot Center with Subtle Breathing Animation */}
-        <div className="signal-pulse" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <MascotSphere pose="loading" size={sphereSize} animated={true} />
-        </div>
-      </div>
+      />
 
       {/* Message Text with Brand Typography */}
       <div>
