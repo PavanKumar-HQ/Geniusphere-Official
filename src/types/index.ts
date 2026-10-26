@@ -183,6 +183,9 @@ export interface Course {
   modules: CourseModule[];
   linked_lab_id?: string;
   linked_lab_slug?: string;
+  paired_lab_concept?: string;
+  capstone_prompt?: string;
+  assessment_plan?: string;
   created_at: string;
 }
 

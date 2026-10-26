@@ -367,6 +367,47 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
             </div>
           </div>
 
+          {/* Master Course Blueprint Pack: Paired Lab, Capstone & Assessment Architecture */}
+          {(course.paired_lab_concept || course.capstone_prompt || course.assessment_plan) && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+              {course.paired_lab_concept && (
+                <div className="card" style={{ borderLeft: '4px solid var(--brand-accent)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <Terminal size={18} color="var(--brand-accent)" />
+                    <h4 style={{ fontSize: '0.96rem', fontWeight: 800 }}>Paired Practical Lab</h4>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                    {course.paired_lab_concept}
+                  </p>
+                </div>
+              )}
+
+              {course.capstone_prompt && (
+                <div className="card" style={{ borderLeft: '4px solid var(--brand-primary)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <Award size={18} color="var(--brand-primary)" />
+                    <h4 style={{ fontSize: '0.96rem', fontWeight: 800 }}>Capstone / Final Artifact</h4>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                    {course.capstone_prompt}
+                  </p>
+                </div>
+              )}
+
+              {course.assessment_plan && (
+                <div className="card" style={{ borderLeft: '4px solid #8B5CF6' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <ListChecks size={18} color="#8B5CF6" />
+                    <h4 style={{ fontSize: '0.96rem', fontWeight: 800 }}>Assessment Plan</h4>
+                  </div>
+                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                    {course.assessment_plan}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Module & Lesson Syllabus */}
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>

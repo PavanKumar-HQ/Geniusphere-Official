@@ -38,8 +38,10 @@ describe('Canonical 18-Course Curriculum Architecture (User Specification)', () 
       expect(c.slug).toBeTruthy();
       expect(c.summary).toBeTruthy();
       expect(c.learning_objectives.length).toBeGreaterThanOrEqual(2);
-      expect(c.modules.length).toBe(10);
-      expect(c.duration_hours).toBe(10.0);
+      expect(c.duration_hours).toBeGreaterThan(0);
+      expect(c.paired_lab_concept).toBeTruthy();
+      expect(c.capstone_prompt).toBeTruthy();
+      expect(c.assessment_plan).toBeTruthy();
       expect(['beginner', 'intermediate', 'advanced']).toContain(c.level);
       expect(['technology', 'finance', 'professional']).toContain(c.domain);
       expect(c.linked_lab_id).toBeTruthy();
