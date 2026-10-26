@@ -44,7 +44,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       : 'all'
   );
   const [selectedLevel, setSelectedLevel] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'grouped'>('grouped');
 
   const [apiCourses, setApiCourses] = useState<Course[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -722,16 +722,20 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             <ArrowRight size={16} />
           </button>
         </div>
-      ) : selectedStream === 'all' && viewMode === 'grouped' && !search.trim() && selectedLevel === 'all' ? (
+      ) : selectedStream === 'all' && viewMode === 'grouped' ? (
         /* ================================================================ */
         /* GROUPED BY STREAM SECTIONS (Generous, full-width rows)           */
         /* ================================================================ */
         <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
           {streams.map((stream) => {
             const streamMeta = getStreamMeta(stream.id);
+            const streamCourses = filteredCourses.filter((c) => c.domain === stream.id);
+            if (streamCourses.length === 0) return null;
+
             return (
               <div
                 key={stream.id}
+                id={`category-${stream.id}`}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -770,18 +774,33 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                       {getStreamIcon(stream.id, 24)}
                     </div>
                     <div>
-                      <h2
-                        style={{
-                          margin: 0,
-                          fontSize: '1.45rem',
-                          fontWeight: 800,
-                          color: 'var(--text-primary)',
-                          fontFamily: 'var(--font-heading)',
-                          letterSpacing: '-0.02em',
-                        }}
-                      >
-                        {stream.title}
-                      </h2>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <h2
+                          style={{
+                            margin: 0,
+                            fontSize: '1.45rem',
+                            fontWeight: 800,
+                            color: 'var(--text-primary)',
+                            fontFamily: 'var(--font-heading)',
+                            letterSpacing: '-0.02em',
+                          }}
+                        >
+                          {stream.title}
+                        </h2>
+                        <span
+                          style={{
+                            backgroundColor: 'var(--bg-surface)',
+                            color: streamMeta.accent,
+                            border: `1px solid ${streamMeta.borderColor}`,
+                            borderRadius: '100px',
+                            padding: '2px 10px',
+                            fontSize: '0.78rem',
+                            fontWeight: 800,
+                          }}
+                        >
+                          {streamCourses.length} {streamCourses.length === 1 ? 'course' : 'courses'}
+                        </span>
+                      </div>
                       <p
                         style={{
                           margin: '4px 0 0',
@@ -816,7 +835,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                       boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
                     }}
                   >
-                    <span>View all {stream.courses.length} courses</span>
+                    <span>Filter solely this category</span>
                     <ArrowRight size={14} />
                   </button>
                 </div>
@@ -829,16 +848,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                     gap: '20px',
                   }}
                 >
-                  {allCanonicalCourses
-                    .filter((c) => c.domain === stream.id)
-                    .map((course) => (
-                      <CourseCardIllustrated
-                        key={course.id}
-                        course={course}
-                        streamMeta={streamMeta}
-                        onSelectCourse={onSelectCourse}
-                      />
-                    ))}
+                  {streamCourses.map((course) => (
+                    <CourseCardIllustrated
+                      key={course.id}
+                      course={course}
+                      streamMeta={streamMeta}
+                      onSelectCourse={onSelectCourse}
+                    />
+                  ))}
                 </div>
               </div>
             );
@@ -846,27 +863,101 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         </div>
       ) : (
         /* ================================================================ */
-        /* CONTINUOUS SPACIOUS COURSE GRID                                  */
+        /* SINGLE CATEGORY OR CONTINUOUS GRID VIEW                          */
         /* Clean, high-legibility cards with breathing room                 */
         /* ================================================================ */
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
-            gap: '20px',
-          }}
-        >
-          {filteredCourses.map((course: Course) => {
-            const streamMeta = getStreamMeta(course.domain);
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {selectedStream !== 'all' && (() => {
+            const currentStream = streams.find((s) => s.id === selectedStream);
+            const streamMeta = getStreamMeta(selectedStream);
+            if (!currentStream) return null;
             return (
-              <CourseCardIllustrated
-                key={course.id}
-                course={course}
-                streamMeta={streamMeta}
-                onSelectCourse={onSelectCourse}
-              />
+              <div
+                style={{
+                  backgroundColor: streamMeta.bg,
+                  border: `1px solid ${streamMeta.borderColor}`,
+                  borderRadius: '20px',
+                  padding: '20px 24px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '14px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div
+                    style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '12px',
+                      backgroundColor: 'var(--bg-surface)',
+                      color: streamMeta.accent,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: `1px solid var(--border-subtle)`,
+                    }}
+                  >
+                    {getStreamIcon(selectedStream, 22)}
+                  </div>
+                  <div>
+                    <h2
+                      style={{
+                        margin: 0,
+                        fontSize: '1.35rem',
+                        fontWeight: 800,
+                        color: 'var(--text-primary)',
+                        fontFamily: 'var(--font-heading)',
+                      }}
+                    >
+                      {currentStream.title}
+                    </h2>
+                    <p style={{ margin: '3px 0 0', fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
+                      {currentStream.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedStream('all')}
+                  style={{
+                    backgroundColor: 'var(--bg-surface)',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '100px',
+                    padding: '8px 16px',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  View All Categories
+                </button>
+              </div>
             );
-          })}
+          })()}
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
+              gap: '20px',
+            }}
+          >
+            {filteredCourses.map((course: Course) => {
+              const streamMeta = getStreamMeta(course.domain);
+              return (
+                <CourseCardIllustrated
+                  key={course.id}
+                  course={course}
+                  streamMeta={streamMeta}
+                  onSelectCourse={onSelectCourse}
+                />
+              );
+            })}
+          </div>
         </div>
       )}
 

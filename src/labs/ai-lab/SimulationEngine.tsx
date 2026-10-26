@@ -90,6 +90,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
   const initialPoints = useMemo(() => generateClassifierDataset(42), []);
   const allDatasetPoints = useMemo(() => [...initialPoints, ...customPoints], [initialPoints, customPoints]);
+  const datasetPoints = allDatasetPoints;
 
   const classifierMetrics: ClassifierSimulationMetrics = useMemo(() => {
     return evaluateClassifierBoundary(allDatasetPoints, keywordWeight, urgencyWeight, senderReputation);
