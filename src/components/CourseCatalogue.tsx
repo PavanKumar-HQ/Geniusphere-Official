@@ -180,16 +180,17 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       style={{
         maxWidth: '1280px',
         margin: '0 auto',
-        padding: '32px 24px 80px',
+        padding: '0 0 60px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '32px',
+        gap: '24px',
       }}
     >
       {/* ================================================================ */}
       {/* COMPACT STUDENT-FIRST HERO HEADER WITH PURPOSEFUL MASCOT         */}
       {/* ================================================================ */}
       <div
+        className="mobile-hero-compact"
         style={{
           backgroundColor: 'var(--bg-surface)',
           borderRadius: '20px',
@@ -199,31 +200,33 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '20px',
+          gap: '16px',
           boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)',
         }}
       >
-        <div style={{ maxWidth: '680px' }}>
+        <div style={{ maxWidth: '680px', flex: 1, minWidth: '240px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '3px 10px', borderRadius: '100px', backgroundColor: 'var(--bg-surface-subdued)', color: 'var(--brand-primary)', fontSize: '0.74rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
             <BookOpen size={12} color="var(--brand-primary)" />
             <span>Interactive Course Catalogue</span>
           </div>
           <h1
             style={{
-              fontSize: 'clamp(1.6rem, 2.8vw, 2.2rem)',
+              fontSize: 'clamp(1.4rem, 2.8vw, 2.1rem)',
               fontWeight: 800,
               color: 'var(--text-primary)',
               letterSpacing: '-0.02em',
               margin: '0 0 6px',
               fontFamily: 'var(--font-heading)',
+              lineHeight: 1.25,
             }}
           >
             Explore Courses & Hands-On Skills
           </h1>
           <p
+            className="mobile-hide-sm"
             style={{
               color: 'var(--text-secondary)',
-              fontSize: '0.92rem',
+              fontSize: '0.88rem',
               lineHeight: 1.5,
               margin: 0,
             }}
@@ -232,10 +235,10 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div className="mobile-hero-mascot" style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
           <MascotSphere
             pose="studying"
-            size={76}
+            size={68}
             animated={true}
             interactive={true}
             speechBubble="Choose your learning track!"
@@ -261,7 +264,7 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
         }}
       >
         {/* Stream Selector Navigation Tabs */}
-        <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px' }}>
           {/* All Courses Tab */}
           <button
             type="button"

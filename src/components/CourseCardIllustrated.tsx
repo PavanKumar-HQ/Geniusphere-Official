@@ -136,6 +136,7 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className="mobile-card-illustrated"
       style={{
         backgroundColor: 'var(--bg-surface)',
         borderRadius: '20px',
@@ -155,6 +156,7 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
     >
       {/* 1. Meaningful Subject Illustration Header */}
       <div
+        className="mobile-card-header"
         style={{
           height: '110px',
           background: theme.gradient,
@@ -247,7 +249,7 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
       </div>
 
       {/* 2. Content Body: Concise Title & Short Descriptor */}
-      <div style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
+      <div className="mobile-card-body" style={{ padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: '10px', flex: 1 }}>
         <h3
           style={{
             margin: 0,
@@ -341,6 +343,7 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
 
       {/* 3. Card Footer with Clear Action */}
       <div
+        className="mobile-card-footer"
         style={{
           padding: '12px 20px',
           borderTop: '1px solid var(--border-subtle)',

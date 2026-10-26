@@ -93,10 +93,11 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
 
   return (
     <div
+      className="section-context-bar"
       style={{
         backgroundColor: 'var(--bg-surface)',
         borderBottom: '1px solid var(--border-subtle)',
-        padding: '10px 24px',
+        padding: '8px 16px',
         transition: 'background-color 0.2s ease, border-color 0.2s ease',
       }}
     >
@@ -107,10 +108,12 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
         }}
       >
         {/* Left Side: Back Button & Clean Breadcrumb Path */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
           <button
             type="button"
             onClick={onBack || (() => onNavigate(meta.parentView))}
@@ -118,15 +121,16 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 14px',
+              padding: '6px 12px',
               borderRadius: '8px',
               border: '1px solid var(--border-subtle)',
               backgroundColor: 'var(--bg-canvas)',
               color: 'var(--text-primary)',
-              fontSize: '0.82rem',
+              fontSize: '0.80rem',
               fontWeight: 700,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
+              whiteSpace: 'nowrap',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'var(--bg-surface-subdued)';
@@ -139,10 +143,10 @@ export const SectionContextBar: React.FC<SectionContextBarProps> = ({
             <span>Back to {meta.parent}</span>
           </button>
 
-          <div style={{ width: '1px', height: '18px', backgroundColor: 'var(--border-subtle)' }} />
+          <div style={{ width: '1px', height: '16px', backgroundColor: 'var(--border-subtle)' }} />
 
           {/* Breadcrumb Trail */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.80rem', whiteSpace: 'nowrap' }}>
             <button
               type="button"
               onClick={() => onNavigate(meta.parentView)}

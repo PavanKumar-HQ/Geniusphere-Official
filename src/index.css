@@ -1760,7 +1760,7 @@ html[data-theme='dark'] .platform-header {
 
 @media (max-width: 768px) {
   .platform-header {
-    height: calc(60px + env(safe-area-inset-top, 0px)) !important;
+    height: calc(56px + env(safe-area-inset-top, 0px)) !important;
   }
   .platform-header-inner {
     padding: 0 12px !important;
@@ -1774,9 +1774,93 @@ html[data-theme='dark'] .platform-header {
   }
 }
 
-@media (max-width: 540px) {
-  .header-hide-sm {
+@media (max-width: 480px) {
+  .platform-header-inner {
+    padding: 0 8px !important;
+    gap: 6px !important;
+  }
+  .header-brand-title {
+    font-size: 1.15rem !important;
+  }
+  .header-brand-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .header-actions-group {
+    gap: 6px !important;
+  }
+  .streak-chip-btn {
+    height: 32px !important;
+    padding: 0 8px !important;
+    font-size: 0.78rem !important;
+  }
+}
+
+/* Master responsive main area wrapper (replaces bulky desktop inline paddings) */
+.platform-main-area {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.platform-main-area.with-contained-padding {
+  padding: 24px 24px 80px;
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .platform-main-area.with-contained-padding {
+    padding: 14px 12px calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Pitch-Ready Mobile Hero Cards & Typography Clamps */
+@media (max-width: 640px) {
+  .mobile-hero-compact {
+    padding: 16px 16px !important;
+    border-radius: 18px !important;
+    gap: 12px !important;
+  }
+  .mobile-hero-mascot {
+    width: 46px !important;
+    height: 46px !important;
+    transform: scale(0.72) !important;
+    transform-origin: center right !important;
+  }
+  .mobile-hide-sm {
     display: none !important;
+  }
+  .mobile-compact-stats {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  .mobile-compact-stats > * {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 6px 10px !important;
+  }
+  .mobile-btn-full {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .mobile-card-illustrated {
+    border-radius: 16px !important;
+  }
+  .mobile-card-header {
+    height: 96px !important;
+    padding: 10px 14px !important;
+  }
+  .mobile-card-body {
+    padding: 14px 14px !important;
+    gap: 8px !important;
+  }
+  .mobile-card-footer {
+    padding: 10px 14px !important;
   }
 }
 

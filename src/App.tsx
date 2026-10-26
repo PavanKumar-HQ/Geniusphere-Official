@@ -661,6 +661,7 @@ export const App: React.FC = () => {
               }}
             >
               <div
+                className="header-brand-icon"
                 style={{
                   width: '36px',
                   height: '36px',
@@ -671,11 +672,13 @@ export const App: React.FC = () => {
                   justifyContent: 'center',
                   color: '#FFFFFF',
                   boxShadow: '0 4px 12px rgba(16, 185, 129, 0.35)',
+                  flexShrink: 0,
                 }}
               >
                 <ShieldCheck size={20} />
               </div>
               <span
+                className="header-brand-title"
                 style={{
                   fontFamily: 'var(--font-heading)',
                   fontSize: '1.35rem',
@@ -683,6 +686,7 @@ export const App: React.FC = () => {
                   letterSpacing: '-0.03em',
                   color: 'var(--text-primary)',
                   lineHeight: 1.1,
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Geniusphere
@@ -1066,7 +1070,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* RIGHT: NOTIFICATIONS BELL, STREAK CHIP & USER AVATAR PILL */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', flexShrink: 0 }}>
+          <div className="header-actions-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', flexShrink: 0 }}>
 
             {/* Gamified Habit Streak Chip (Tap to view streak & habit calendar) */}
             <button
@@ -2575,13 +2579,8 @@ export const App: React.FC = () => {
             }}
           />
           <main
+            className={`platform-main-area ${currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '' : 'with-contained-padding'}`}
             style={{
-              flex: 1,
-              position: 'relative',
-              padding: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '0' : '28px 28px 80px',
-              maxWidth: currentView === 'home' || currentView === 'lab-workspace' || currentView === 'diagram-studio' ? '100%' : '1320px',
-              margin: '0 auto',
-              width: '100%',
               height: currentView === 'lab-workspace' ? 'calc(100vh - 70px)' : undefined,
               overflow: currentView === 'lab-workspace' ? 'hidden' : undefined,
               minHeight: currentView === 'lab-workspace' ? undefined : 'calc(100vh - 70px)',

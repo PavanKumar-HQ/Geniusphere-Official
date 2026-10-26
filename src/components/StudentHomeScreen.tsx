@@ -121,12 +121,24 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
   }, [allCourses, primaryCourse]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', maxWidth: '1240px', margin: '0 auto', padding: '16px 16px 48px' }}>
+    <div
+      className="student-home-container"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+        width: '100%',
+        maxWidth: '1240px',
+        margin: '0 auto',
+        padding: '0 0 60px',
+      }}
+    >
       
       {/* ================================================================ */}
       {/* 1. PERSONALIZED WELCOME & MASCOT GUIDANCE BANNER                 */}
       {/* ================================================================ */}
       <div
+        className="mobile-hero-compact"
         style={{
           background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%)',
           borderRadius: '24px',
@@ -140,43 +152,45 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.03)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', minWidth: '260px' }}>
-          <MascotSphere pose="happy" size={64} />
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-              <span style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--brand-primary)', letterSpacing: '0.05em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: 0 }}>
+          <div className="mobile-hero-mascot" style={{ flexShrink: 0 }}>
+            <MascotSphere pose="happy" size={56} />
+          </div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.70rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--brand-primary)', letterSpacing: '0.04em' }}>
                 LEARNER QUEST HUB
               </span>
-              <span className="badge badge-accent" style={{ fontSize: '0.65rem', padding: '2px 8px' }}>
-                Level {level} Explorer
+              <span className="badge badge-accent" style={{ fontSize: '0.62rem', padding: '1px 6px' }}>
+                Lvl {level}
               </span>
             </div>
-            <h1 style={{ fontSize: 'clamp(1.25rem, 3vw, 1.65rem)', fontWeight: 900, margin: 0, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+            <h1 style={{ fontSize: 'clamp(1.15rem, 3vw, 1.55rem)', fontWeight: 900, margin: 0, color: 'var(--text-primary)', lineHeight: 1.2 }}>
               Hi, {user?.full_name?.split(' ')[0] || 'Learner'}!
             </h1>
-            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            <p className="mobile-hide-sm" style={{ margin: '3px 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
               1 lesson away from your next streak milestone. Keep building your superpower!
             </p>
           </div>
         </div>
 
         {/* Gamified Habit & Telemetry Stats */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+        <div className="mobile-compact-stats" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px 14px',
+              gap: '6px',
+              padding: '6px 12px',
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '100px',
               border: '1px solid var(--border-subtle)',
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.02)',
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.02)',
             }}
           >
-            <Flame size={18} color="#D97706" />
-            <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#D97706' }}>
-              {streakDays} Days Streak
+            <Flame size={16} color="#D97706" />
+            <span style={{ fontWeight: 800, fontSize: '0.80rem', color: '#D97706', whiteSpace: 'nowrap' }}>
+              {streakDays} Days
             </span>
           </div>
 
@@ -184,16 +198,16 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '8px 14px',
+              gap: '6px',
+              padding: '6px 12px',
               backgroundColor: 'var(--bg-surface)',
               borderRadius: '100px',
               border: '1px solid var(--border-subtle)',
-              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.02)',
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.02)',
             }}
           >
-            <Zap size={18} color="var(--brand-primary)" />
-            <span style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+            <Zap size={16} color="var(--brand-primary)" />
+            <span style={{ fontWeight: 800, fontSize: '0.80rem', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
               {totalXp} XP
             </span>
           </div>
@@ -204,16 +218,17 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
       {/* 2. ONE CLEAR DOMINANT NEXT ACTION: CONTINUE YOUR LESSON HERO     */}
       {/* ================================================================ */}
       <div
+        className="mobile-hero-compact"
         style={{
           background: 'var(--hero-card-bg)',
           borderRadius: '24px',
-          padding: '28px 32px',
+          padding: '24px 28px',
           color: 'var(--text-primary)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '24px',
+          gap: '20px',
           border: '1px solid var(--hero-card-border)',
           boxShadow: 'var(--hero-card-shadow)',
           position: 'relative',
@@ -233,33 +248,33 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           }}
         />
 
-        <div style={{ flex: 1, minWidth: '280px', zIndex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ flex: 1, minWidth: 0, zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <span
               style={{
                 backgroundColor: 'var(--hero-card-pill-bg)',
                 color: 'var(--hero-card-pill-text)',
-                padding: '4px 10px',
+                padding: '3px 8px',
                 borderRadius: '100px',
-                fontSize: '0.72rem',
+                fontSize: '0.68rem',
                 fontWeight: 800,
-                letterSpacing: '0.06em',
+                letterSpacing: '0.05em',
                 textTransform: 'uppercase',
                 border: '1px solid var(--hero-card-border)',
               }}
             >
               CONTINUE YOUR LESSON
             </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               {primaryCourse?.domain?.toUpperCase()}
             </span>
           </div>
 
-          <h2 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 1.95rem)', fontWeight: 800, margin: '0 0 8px', color: 'var(--hero-card-title)', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.8rem)', fontWeight: 800, margin: '0 0 6px', color: 'var(--hero-card-title)', lineHeight: 1.25, letterSpacing: '-0.02em' }}>
             {primaryCourse?.title}
           </h2>
 
-          <p style={{ margin: '0 0 18px', fontSize: '0.9rem', color: 'var(--hero-card-desc)', maxWidth: '580px', lineHeight: 1.5 }}>
+          <p style={{ margin: '0 0 14px', fontSize: '0.85rem', color: 'var(--hero-card-desc)', maxWidth: '580px', lineHeight: 1.45 }}>
             {nextLesson?.lesson ? (
               <span>Next up: <strong style={{ color: 'var(--hero-card-title)' }}>{nextLesson.lesson.title}</strong></span>
             ) : (
@@ -268,12 +283,12 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
           </p>
 
           {/* Genuine Persisted Progress Bar */}
-          <div style={{ maxWidth: '420px', marginBottom: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
-              <span>{completedCount} of {totalLessonsCount} lessons mastered</span>
+          <div style={{ maxWidth: '420px', marginBottom: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', fontWeight: 700, marginBottom: '5px', color: 'var(--text-secondary)' }}>
+              <span>{completedCount} of {totalLessonsCount} lessons</span>
               <span style={{ fontWeight: 800, color: 'var(--brand-primary)' }}>{progressPercent}% Complete</span>
             </div>
-            <div style={{ height: '8px', backgroundColor: 'var(--border-subtle)', borderRadius: '100px', overflow: 'hidden' }}>
+            <div style={{ height: '7px', backgroundColor: 'var(--border-subtle)', borderRadius: '100px', overflow: 'hidden' }}>
               <div
                 style={{
                   width: `${Math.max(5, progressPercent)}%`,
@@ -288,22 +303,23 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
         </div>
 
         {/* Action Button */}
-        <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: 'max-content' }}>
           <button
             type="button"
             onClick={handleResumePrimaryLesson}
+            className="mobile-btn-full"
             style={{
               background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: '100px',
-              padding: '14px 28px',
+              padding: '12px 24px',
               fontWeight: 800,
-              fontSize: '0.96rem',
+              fontSize: '0.92rem',
               cursor: 'pointer',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '10px',
+              gap: '8px',
               boxShadow: '0 8px 24px -4px rgba(16, 185, 129, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.2)',
               transition: 'transform 0.15s ease, box-shadow 0.15s ease',
             }}
@@ -316,9 +332,9 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
               e.currentTarget.style.boxShadow = '0 8px 24px -4px rgba(16, 185, 129, 0.5)';
             }}
           >
-            <Play size={18} fill="#FFFFFF" />
+            <Play size={16} fill="#FFFFFF" />
             <span>Resume Lesson</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={16} />
           </button>
         </div>
       </div>
