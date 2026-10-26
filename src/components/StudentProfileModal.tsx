@@ -414,8 +414,8 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                   </div>
                 </div>
 
-                <p className="text-[11px] text-slate-500 italic text-center pt-1">
-                  Learning statistics are cryptographically synchronized with the authoritative database. No simulated or mock metrics.
+                <p className="text-[11px] text-slate-500 text-center pt-1">
+                  Learning statistics reflect your saved course activity and lab submissions.
                 </p>
               </div>
             </>

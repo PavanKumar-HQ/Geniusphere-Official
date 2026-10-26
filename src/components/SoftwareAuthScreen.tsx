@@ -54,14 +54,6 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
     }, 450);
   };
 
-  const handleQuickLaunch = (userId: string) => {
-    const user = users.find((u) => u.id === userId) || users[0];
-    setAuthInProgress(true);
-    setTimeout(() => {
-      onLogin(user.id, user.role);
-    }, 300);
-  };
-
   return (
     <div
       style={{
@@ -203,7 +195,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 lineHeight: 1.45,
               }}
             >
-              Access curriculum courses, interactive coding sandboxes, gradebooks, and cryptographically verified credentials.
+              Access curriculum courses, interactive coding sandboxes, gradebooks, and verified course certificates.
             </p>
           </div>
 
@@ -220,73 +212,18 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
             />
           </div>
 
-          {/* Quick Workstation Launchers */}
-          <div>
-            <div
-              style={{
-                fontSize: '0.74rem',
-                fontWeight: 800,
-                color: 'var(--text-secondary)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                marginBottom: '8px',
-              }}
-            >
-              Instant Workstation Access:
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <button
-                type="button"
-                onClick={() => handleQuickLaunch('user-student-1')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '9px 12px',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border-subtle)',
-                  backgroundColor: 'var(--bg-surface)',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <GraduationCap size={16} color="var(--brand-primary)" />
-                <div>
-                  <div>Pavan Kumar</div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Student Portal</div>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLaunch('user-teacher-1')}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '9px 12px',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border-subtle)',
-                  backgroundColor: 'var(--bg-surface)',
-                  color: 'var(--text-primary)',
-                  fontSize: '0.8rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <Users size={16} color="var(--brand-primary)" />
-                <div>
-                  <div>Dr. Sharma</div>
-                  <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Teacher Portal</div>
-                </div>
-              </button>
-            </div>
+          <div
+            style={{
+              padding: '12px 14px',
+              borderRadius: '12px',
+              backgroundColor: 'var(--bg-surface)',
+              border: '1px solid var(--border-subtle)',
+              fontSize: '0.78rem',
+              color: 'var(--text-secondary)',
+              lineHeight: 1.5,
+            }}
+          >
+            Sign in with your educational account to save your learning progress, lab simulations, and course certificates directly to your local workspace.
           </div>
         </div>
 
