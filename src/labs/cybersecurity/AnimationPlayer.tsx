@@ -167,15 +167,17 @@ const PhishingAnimation: React.FC<AnimationComponentProps> = ({ module, currentS
 
             {/* Defense Barrier (Step 4 & Defense Mode) */}
             {defenseIsShown && (
-                <g transform="translate(265, 35)">
-                    {/* Shield Icon */}
-                    <ShieldIcon className="text-emerald-400 scale-125" />
+                <g transform="translate(270, 48)">
                     {/* Glowing Defense Barrier Wall */}
-                    <line x1={40} y1={5} x2={40} y2={95} stroke="#10B981" strokeWidth={3} strokeDasharray="4 2" />
+                    <line x1={15} y1={-8} x2={15} y2={76} stroke="#10B981" strokeWidth={2.5} strokeDasharray="4 2" />
                     {!reducedMotion && (
-                        <circle cx={40} cy={50} r={18} fill="none" stroke="#34D399" strokeWidth={2} className="shockwave" />
+                        <circle cx={15} cy={30} r={14} fill="none" stroke="#34D399" strokeWidth={1.5} className="shockwave" />
                     )}
-                    <text x={40} y={110} textAnchor="middle" fontSize={8} fill="#34D399" fontWeight={700}>EMAIL FILTER ACTIVE</text>
+                    {/* Shield Icon - centered on wall */}
+                    <g transform="translate(-6, 8) scale(0.7)">
+                        <ShieldIcon className="text-emerald-400" />
+                    </g>
+                    <text x={15} y={88} textAnchor="middle" fontSize={7.5} fill="#34D399" fontWeight={700}>EMAIL FILTER ACTIVE</text>
                 </g>
             )}
 

@@ -84,7 +84,7 @@ export const CyberGuideChat: React.FC = () => {
   };
 
   return (
-    <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 1000 }}>
+    <div style={{ position: 'fixed', bottom: '32px', right: '32px', zIndex: 90 }}>
       {isOpen && (
         <div
           style={{
