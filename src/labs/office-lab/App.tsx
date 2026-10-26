@@ -145,7 +145,7 @@ const App: React.FC<OfficeLabProps> = ({ onClose, onExit, initialApp }) => {
 
             {/* Document Page Canvas */}
             <div
-              className="bg-[#0B132B] rounded-b-2xl p-6 md:p-8 flex-1 border border-white/15 relative overflow-y-auto flex flex-col min-h-[420px] shadow-2xl"
+              className="bg-slate-900 rounded-b-2xl p-6 md:p-8 flex-1 border border-white/10 relative overflow-y-auto flex flex-col min-h-[420px] shadow-2xl"
               style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
               <div className="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>

@@ -11,7 +11,7 @@ export const DefensePanel: React.FC<DefensePanelProps> = ({ module, onClose }) =
   return (
     <div
       className="w-full md:w-80 bg-slate-900 border-t md:border-t-0 md:border-l border-slate-800 p-6 flex flex-col gap-8 shrink-0 overflow-y-auto h-auto md:h-full custom-scrollbar"
-      style={{ width: '280px', minWidth: '240px', height: '100%', backgroundColor: '#0B132B', borderLeft: '1px solid #1E293B', padding: '16px 14px', boxSizing: 'border-box' }}
+      style={{ width: '280px', minWidth: '240px', height: '100%', backgroundColor: '#1E293B', borderLeft: '1px solid rgba(255,255,255,0.08)', padding: '16px 14px', boxSizing: 'border-box' }}
     >
       <div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
