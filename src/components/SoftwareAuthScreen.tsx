@@ -9,6 +9,13 @@ interface SoftwareAuthScreenProps {
 
 export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin, users }) => {
   const [selectedRole, setSelectedRole] = useState<'learner' | 'teacher' | 'institution_admin'>('learner');
+  const [fullName, setFullName] = useState(() => {
+    try {
+      return localStorage.getItem('geniusphere_user_name') || 'Pavan Kumar';
+    } catch {
+      return 'Pavan Kumar';
+    }
+  });
   const [email, setEmail] = useState('pavan.kumar@geniusphere.edu');
   const [password, setPassword] = useState('••••••••••••');
   const [institution, setInstitution] = useState('Delhi Public Technical School (DPTS)');
@@ -29,6 +36,14 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setAuthInProgress(true);
+
+    try {
+      if (fullName.trim()) {
+        localStorage.setItem('geniusphere_user_name', fullName.trim());
+      }
+    } catch (err) {
+      console.warn('Could not save user name:', err);
+    }
 
     setTimeout(() => {
       let targetUser = users.find((u) => u.role === selectedRole);
@@ -369,6 +384,32 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
 
           {/* Form */}
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <label htmlFor="user-full-name-input" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                Your Full Name:
+              </label>
+              <input
+                id="user-full-name-input"
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Enter your name (e.g. Pavan Kumar)"
+                style={{
+                  width: '100%',
+                  padding: '11px 14px',
+                  borderRadius: '12px',
+                  border: '1.5px solid var(--border-subtle)',
+                  backgroundColor: 'var(--bg-canvas)',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
+              />
+            </div>
+
             <div>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#26352A', marginBottom: '6px' }}>
                 Institutional Email:

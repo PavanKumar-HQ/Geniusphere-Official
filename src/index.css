@@ -1625,7 +1625,7 @@ aside,
 
 .workspace-grid-container {
   display: grid;
-  grid-template-columns: 310px minmax(0, 1fr) 270px;
+  grid-template-columns: 290px minmax(0, 1fr) 260px;
   gap: 0;
   height: 100%;
   width: 100%;
@@ -1635,7 +1635,7 @@ aside,
 }
 
 .workspace-grid-container.mode-focus {
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
 }
 
 .workspace-grid-container.mode-zen {
@@ -1657,7 +1657,7 @@ aside,
 
 @media (max-width: 1380px) {
   .workspace-grid-container {
-    grid-template-columns: 270px minmax(0, 1fr) 240px;
+    grid-template-columns: 260px minmax(0, 1fr) 230px;
   }
 }
 
@@ -1667,6 +1667,12 @@ aside,
   }
   .workspace-panel-criteria {
     display: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .workspace-grid-container.mode-focus {
+    grid-template-columns: 230px minmax(0, 1fr);
   }
 }
 

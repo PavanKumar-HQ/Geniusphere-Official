@@ -273,9 +273,14 @@ export const App: React.FC = () => {
   const baseUser = users.find((u) => u.id === currentUserId) || users[0];
   const dbUser = db.users.get(currentUserId);
   const currentUser = useMemo(() => {
+    let resolvedName = dbUser?.full_name || baseUser.name;
+    if (baseUser.role === 'learner' && typeof window !== 'undefined') {
+      const savedName = localStorage.getItem('geniusphere_user_name');
+      if (savedName) resolvedName = savedName;
+    }
     return {
       ...baseUser,
-      name: dbUser?.full_name || baseUser.name,
+      name: resolvedName,
       email: dbUser?.email || 'learner@geniusphere.tech',
     };
   }, [baseUser, dbUser?.full_name, dbUser?.email, refreshTrigger]);

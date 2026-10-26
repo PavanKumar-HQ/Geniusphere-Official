@@ -223,6 +223,105 @@ export function computeForwardPass(params: {
 }
 
 /**
+ * 2D Neural Classification Playground Simulation Model
+ * Live interactive scatter plot of data points, decision hyperplane,
+ * and real-time precision/confidence evaluation.
+ */
+export interface ClassifierDataPoint {
+  id: number;
+  x: number; // Feature 1: Keyword Density [0-100]
+  y: number; // Feature 2: Urgency Level [0-100]
+  label: 'legitimate' | 'malicious';
+}
+
+export function generateClassifierDataset(seed = 42): ClassifierDataPoint[] {
+  const points: ClassifierDataPoint[] = [];
+  // Cluster A: Legitimate emails (low keyword density, low-to-mid urgency)
+  for (let i = 0; i < 40; i++) {
+    const rx = ((Math.sin(seed + i * 1.7) + 1) / 2) * 45 + 5;
+    const ry = ((Math.cos(seed + i * 2.3) + 1) / 2) * 50 + 5;
+    points.push({
+      id: i + 1,
+      x: Math.round(rx),
+      y: Math.round(ry),
+      label: 'legitimate',
+    });
+  }
+
+  // Cluster B: Malicious / Spam emails (high keyword density, high urgency)
+  for (let i = 0; i < 40; i++) {
+    const rx = ((Math.sin(seed + (i + 40) * 1.9) + 1) / 2) * 45 + 50;
+    const ry = ((Math.cos(seed + (i + 40) * 2.7) + 1) / 2) * 45 + 45;
+    points.push({
+      id: i + 41,
+      x: Math.round(rx),
+      y: Math.round(ry),
+      label: 'malicious',
+    });
+  }
+
+  return points;
+}
+
+export interface ClassifierSimulationMetrics {
+  precision: number;
+  recall: number;
+  accuracy: number;
+  confidence: number;
+  classifiedMaliciousCount: number;
+  classifiedLegitimateCount: number;
+}
+
+export function evaluateClassifierBoundary(
+  points: ClassifierDataPoint[],
+  keywordWeight: number, // [0 - 100]
+  urgencyWeight: number, // [0 - 100]
+  reputationDiscount: number // [0 - 100]
+): ClassifierSimulationMetrics {
+  let truePositives = 0;
+  let falsePositives = 0;
+  let trueNegatives = 0;
+  let falseNegatives = 0;
+
+  // Decision boundary equation: w1 * (x / 100) + w2 * (y / 100) - (threshold - discount) >= 0
+  const threshold = 0.55;
+  const repEffect = (reputationDiscount / 100) * 0.25;
+
+  for (const p of points) {
+    const score = (keywordWeight / 100) * (p.x / 100) * 0.6 +
+                  (urgencyWeight / 100) * (p.y / 100) * 0.5 - repEffect;
+    const predicted = score >= threshold ? 'malicious' : 'legitimate';
+
+    if (predicted === 'malicious' && p.label === 'malicious') truePositives++;
+    else if (predicted === 'malicious' && p.label === 'legitimate') falsePositives++;
+    else if (predicted === 'legitimate' && p.label === 'legitimate') trueNegatives++;
+    else falseNegatives++;
+  }
+
+  const precision = truePositives + falsePositives > 0
+    ? Math.round((truePositives / (truePositives + falsePositives)) * 100)
+    : 100;
+  const recall = truePositives + falseNegatives > 0
+    ? Math.round((truePositives / (truePositives + falseNegatives)) * 100)
+    : 100;
+  const accuracy = points.length > 0
+    ? Math.round(((truePositives + trueNegatives) / points.length) * 100)
+    : 100;
+
+  // Average confidence score
+  const confidence = Math.min(99, Math.max(72, Math.round((precision * 0.55) + (accuracy * 0.45))));
+
+  return {
+    precision,
+    recall,
+    accuracy,
+    confidence,
+    classifiedMaliciousCount: truePositives + falsePositives,
+    classifiedLegitimateCount: trueNegatives + falseNegatives,
+  };
+}
+
+/**
  * Temperature-Scaled Softmax and Probabilistic Sampling:
  * P(token_i) = exp(z_i / T) / sum_j exp(z_j / T)
  */

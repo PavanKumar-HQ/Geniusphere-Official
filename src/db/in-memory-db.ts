@@ -186,10 +186,14 @@ export class InMemoryDatabase {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
+    const savedLearnerName = typeof window !== 'undefined'
+      ? (localStorage.getItem('geniusphere_user_name') || 'Pavan Kumar')
+      : 'Pavan Kumar';
+
     const student1: User = {
       id: 'user-student-1',
       email: 'student1@dpts.edu',
-      full_name: 'Aarav Patel',
+      full_name: savedLearnerName,
       date_of_birth: '2010-08-20',
       is_minor: true,
       is_superadmin: false,

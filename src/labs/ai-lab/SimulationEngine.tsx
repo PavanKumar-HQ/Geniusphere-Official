@@ -8,6 +8,10 @@ import {
   computeSoftmaxWithTemperature,
   sampleFromDistribution,
   evaluatePromptDefense,
+  generateClassifierDataset,
+  evaluateClassifierBoundary,
+  ClassifierDataPoint,
+  ClassifierSimulationMetrics,
   TokenItem,
   EmbeddingCoord,
   NeuralNetworkState,
@@ -27,10 +31,14 @@ import {
   AlertTriangle,
   Lock,
   Search,
-  Dice5
+  Dice5,
+  Activity,
+  Layers,
+  Crosshair
 } from 'lucide-react';
 
 export type SimulatorTab =
+  | 'classifier'
   | 'tokenization'
   | 'embeddings'
   | 'attention'
@@ -47,12 +55,13 @@ interface SimulationEngineProps {
 }
 
 const STAGES: { id: SimulatorTab; label: string; number: number }[] = [
-  { id: 'tokenization', label: '1. Tokenization', number: 1 },
-  { id: 'embeddings', label: '2. Embedding 2D Map', number: 2 },
-  { id: 'attention', label: '3. Attention Arcs', number: 3 },
-  { id: 'neural', label: '4. Forward Pass', number: 4 },
-  { id: 'probability', label: '5. Probability & Temp', number: 5 },
-  { id: 'safety', label: '6. Prompt Shield', number: 6 },
+  { id: 'classifier', label: '1. Neural Decision Simulator', number: 1 },
+  { id: 'tokenization', label: '2. Tokenization', number: 2 },
+  { id: 'embeddings', label: '3. Embedding 2D Map', number: 3 },
+  { id: 'attention', label: '4. Attention Arcs', number: 4 },
+  { id: 'neural', label: '5. Forward Pass', number: 5 },
+  { id: 'probability', label: '6. Probability & Temp', number: 6 },
+  { id: 'safety', label: '7. Prompt Shield', number: 7 },
 ];
 
 export const SimulationEngine: React.FC<SimulationEngineProps> = ({
@@ -63,10 +72,24 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
   minimal = false,
 }) => {
   // Navigation & Control States
-  const [activeTab, setActiveTab] = useState<SimulatorTab>('tokenization');
+  const [activeTab, setActiveTab] = useState<SimulatorTab>('classifier');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [speed, setSpeed] = useState<number>(1); // 0.5, 1, 2
   const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+
+  // Stage 1 (New Visual Simulation): 2D Neural Decision Boundary Model
+  const [keywordWeight, setKeywordWeight] = useState<number>(68);
+  const [urgencyWeight, setUrgencyWeight] = useState<number>(75);
+  const [senderReputation, setSenderReputation] = useState<number>(82);
+  const [featureUrlCount, setFeatureUrlCount] = useState<boolean>(true);
+  const [featureSuspiciousAttachment, setFeatureSuspiciousAttachment] = useState<boolean>(true);
+  const [featureHeaderAnomaly, setFeatureHeaderAnomaly] = useState<boolean>(true);
+  const [selectedPointId, setSelectedPointId] = useState<number | null>(null);
+
+  const datasetPoints = useMemo(() => generateClassifierDataset(42), []);
+  const classifierMetrics: ClassifierSimulationMetrics = useMemo(() => {
+    return evaluateClassifierBoundary(datasetPoints, keywordWeight, urgencyWeight, senderReputation);
+  }, [datasetPoints, keywordWeight, urgencyWeight, senderReputation]);
 
   // Stage A: Tokenization Input
   const [inputText, setInputText] = useState<string>('Artificial intelligence learns from patterns in data.');
@@ -336,7 +359,472 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
         </div>
       </div>
 
-      {/* Tab 1: Tokenization */}
+      {/* Stage 1: Interactive 2D Neural Decision Boundary Simulation (Matches Mockup Design) */}
+      {activeTab === 'classifier' && (
+        <section className="flex flex-col gap-5">
+          {/* Top Simulation Banner */}
+          <div className="bg-[#0B132B] border border-cyan-500/30 rounded-2xl p-4 md:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                  Interactive Simulation Suite
+                </span>
+                <span className="text-xs text-slate-400">Live Mathematical Decision Model</span>
+              </div>
+              <h3 className="text-xl font-black text-white mt-1">
+                2D Neural Decision Boundary &amp; Spam Classification Matrix
+              </h3>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Adjust input weights on the left to recalculate the decision hyperplane, confidence gauges, and neural activation paths in real time.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setKeywordWeight(Math.floor(Math.random() * 60) + 35);
+                  setUrgencyWeight(Math.floor(Math.random() * 60) + 35);
+                  setSenderReputation(Math.floor(Math.random() * 50) + 50);
+                }}
+                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-xl text-xs font-bold border border-cyan-500/30 flex items-center gap-1.5 transition-all"
+              >
+                <Dice5 size={14} />
+                <span>Perturb Weights</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 3-Column Visual Layout (Matching Approved Design Mockup) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+            {/* Column 1: Feature Inputs Panel (Collapsible / Interactive Sliders) */}
+            <div className="lg:col-span-4 bg-[#0B132B] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 shadow-xl">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sliders size={18} className="text-cyan-400" />
+                  <span className="text-sm font-black text-white tracking-wide">Feature Inputs</span>
+                </div>
+                <span className="text-[11px] font-mono text-cyan-400 font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">
+                  3 Sliders
+                </span>
+              </div>
+
+              {/* Slider 1: Keyword Density */}
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="feature-keyword-density" className="text-xs font-bold text-slate-200">
+                    Keyword Density
+                  </label>
+                  <span className="text-xs font-mono font-black text-cyan-300">{keywordWeight}%</span>
+                </div>
+                <input
+                  id="feature-keyword-density"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={keywordWeight}
+                  onChange={(e) => setKeywordWeight(parseInt(e.target.value, 10))}
+                  className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
+                />
+                <span className="text-[11px] text-slate-400">Frequency of high-risk terms (e.g. urgent, wire, password)</span>
+              </div>
+
+              {/* Slider 2: Urgency Level */}
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="feature-urgency-level" className="text-xs font-bold text-slate-200">
+                    Urgency Level
+                  </label>
+                  <span className="text-xs font-mono font-black text-cyan-300">{urgencyWeight}%</span>
+                </div>
+                <input
+                  id="feature-urgency-level"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={urgencyWeight}
+                  onChange={(e) => setUrgencyWeight(parseInt(e.target.value, 10))}
+                  className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
+                />
+                <span className="text-[11px] text-slate-400">Psychological pressure and immediate expiration cues</span>
+              </div>
+
+              {/* Slider 3: Sender Reputation */}
+              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="feature-sender-reputation" className="text-xs font-bold text-slate-200">
+                    Sender Reputation
+                  </label>
+                  <span className="text-xs font-mono font-black text-emerald-400">{senderReputation}%</span>
+                </div>
+                <input
+                  id="feature-sender-reputation"
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={senderReputation}
+                  onChange={(e) => setSenderReputation(parseInt(e.target.value, 10))}
+                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
+                />
+                <span className="text-[11px] text-slate-400">SPF, DKIM, and historical domain authentication trust</span>
+              </div>
+
+              {/* Binary Switches */}
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-800/80">
+                <div className="flex items-center justify-between text-xs py-1">
+                  <span className="text-slate-300 font-semibold">URL Count Anomaly</span>
+                  <button
+                    type="button"
+                    onClick={() => setFeatureUrlCount(!featureUrlCount)}
+                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
+                      featureUrlCount ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50' : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {featureUrlCount ? 'Elevated' : 'Normal'}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between text-xs py-1">
+                  <span className="text-slate-300 font-semibold">Attachment Type</span>
+                  <button
+                    type="button"
+                    onClick={() => setFeatureSuspiciousAttachment(!featureSuspiciousAttachment)}
+                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
+                      featureSuspiciousAttachment ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {featureSuspiciousAttachment ? 'Suspicious (.exe / .zip)' : 'Safe (PDF)'}
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between text-xs py-1">
+                  <span className="text-slate-300 font-semibold">Header Spoof Check</span>
+                  <button
+                    type="button"
+                    onClick={() => setFeatureHeaderAnomaly(!featureHeaderAnomaly)}
+                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
+                      featureHeaderAnomaly ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50' : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {featureHeaderAnomaly ? 'Strict Verified' : 'Bypass'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Column 2: 2D Scatter Plot & Animated Neural Diagram (Center Stage) */}
+            <div className="lg:col-span-5 flex flex-col gap-5">
+              {/* 2D Neural Decision Boundary Scatter Plot */}
+              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 flex flex-col gap-3 shadow-xl relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Crosshair size={16} className="text-cyan-400" />
+                    <span className="text-sm font-black text-white">2D Decision Boundary Scatter Plot</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px]">
+                    <span className="flex items-center gap-1.5 text-cyan-400 font-bold">
+                      <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span> Legitimate
+                    </span>
+                    <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> Spam/Threat
+                    </span>
+                  </div>
+                </div>
+
+                {/* SVG 2D Scatter Canvas */}
+                <div className="relative w-full aspect-[4/3] bg-[#030712] rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
+                  <svg viewBox="0 0 400 300" className="w-full h-full select-none">
+                    {/* Grid lines */}
+                    <defs>
+                      <pattern id="scatter-grid" width="40" height="30" patternUnits="userSpaceOnUse">
+                        <path d="M 40 0 L 0 0 0 30" fill="none" stroke="rgba(34,211,238,0.06)" strokeWidth="1" />
+                      </pattern>
+                      <linearGradient id="boundaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.8" />
+                        <stop offset="100%" stopColor="#34D399" stopOpacity="0.8" />
+                      </linearGradient>
+                    </defs>
+                    <rect width="400" height="300" fill="url(#scatter-grid)" />
+
+                    {/* Decision Boundary Line (Calculated dynamically from weights) */}
+                    {(() => {
+                      // Line: w1 * (x/100) + w2 * (y/100) = threshold - repEffect
+                      // Map SVG coords (0 to 400, 0 to 300 with inverted Y)
+                      const slope = -((keywordWeight || 50) / (urgencyWeight || 50));
+                      const yIntercept = (100 - (senderReputation * 0.3)) * 2.2;
+                      const x1 = 20;
+                      const y1 = Math.min(280, Math.max(20, 280 - (slope * 20 + yIntercept)));
+                      const x2 = 380;
+                      const y2 = Math.min(280, Math.max(20, 280 - (slope * 380 + yIntercept)));
+
+                      return (
+                        <g>
+                          {/* Soft boundary region glow */}
+                          <line
+                            x1={x1}
+                            y1={y1}
+                            x2={x2}
+                            y2={y2}
+                            stroke="rgba(34,211,238,0.25)"
+                            strokeWidth="14"
+                            strokeLinecap="round"
+                          />
+                          {/* Crisp decision line */}
+                          <line
+                            x1={x1}
+                            y1={y1}
+                            x2={x2}
+                            y2={y2}
+                            stroke="url(#boundaryGradient)"
+                            strokeWidth="3"
+                            strokeDasharray="4 2"
+                          />
+                        </g>
+                      );
+                    })()}
+
+                    {/* Data Points */}
+                    {datasetPoints.map((pt) => {
+                      const svgX = 20 + (pt.x / 100) * 360;
+                      const svgY = 280 - (pt.y / 100) * 250;
+                      const isSelected = selectedPointId === pt.id;
+                      const isLegit = pt.label === 'legitimate';
+
+                      return (
+                        <g
+                          key={pt.id}
+                          className="cursor-pointer"
+                          onClick={() => setSelectedPointId(pt.id)}
+                        >
+                          <circle
+                            cx={svgX}
+                            cy={svgY}
+                            r={isSelected ? 7 : 4.5}
+                            fill={isLegit ? '#22D3EE' : '#10B981'}
+                            opacity={isSelected ? 1 : 0.8}
+                            stroke={isSelected ? '#FFFFFF' : isLegit ? '#0891B2' : '#059669'}
+                            strokeWidth={isSelected ? 2.5 : 1}
+                          />
+                        </g>
+                      );
+                    })}
+
+                    {/* Axes */}
+                    <line x1="20" y1="280" x2="390" y2="280" stroke="#475569" strokeWidth="1.5" />
+                    <line x1="20" y1="280" x2="20" y2="10" stroke="#475569" strokeWidth="1.5" />
+                    <text x="200" y="296" fontSize="10" fill="#94A3B8" textAnchor="middle" fontWeight="bold">
+                      Feature 1: Spam Keyword Density →
+                    </text>
+                    <text x="12" y="140" fontSize="10" fill="#94A3B8" textAnchor="middle" fontWeight="bold" transform="rotate(-90 12 140)">
+                      Feature 2: Urgency Score →
+                    </text>
+                  </svg>
+
+                  {/* Selected point popup card */}
+                  {selectedPointId && (
+                    <div className="absolute top-3 left-3 bg-slate-900/95 border border-cyan-500/50 px-3 py-1.5 rounded-lg text-xs font-mono shadow-2xl backdrop-blur-md">
+                      <div className="text-cyan-300 font-bold">Data Sample #{selectedPointId}</div>
+                      <div className="text-slate-300 text-[11px]">
+                        Class: {datasetPoints.find(p => p.id === selectedPointId)?.label.toUpperCase()}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Neural Network Node Diagram with Animated Synaptic Weights */}
+              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 flex flex-col gap-3 shadow-xl">
+                <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                  <div className="flex items-center gap-2">
+                    <Activity size={16} className="text-emerald-400" />
+                    <span className="text-sm font-black text-white">Neural Synaptic Activation Flow</span>
+                  </div>
+                  <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                    Forward Propagation
+                  </span>
+                </div>
+
+                <div className="w-full bg-[#030712] rounded-xl border border-slate-800 p-2">
+                  <svg viewBox="0 0 460 160" className="w-full h-full">
+                    {/* Layer Labels */}
+                    <text x="50" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">INPUT LAYER</text>
+                    <text x="170" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">HIDDEN LAYER 1</text>
+                    <text x="290" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">HIDDEN LAYER 2</text>
+                    <text x="400" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">OUTPUT</text>
+
+                    {/* Synaptic Connections (Lines with animated glowing pulse) */}
+                    {[50, 80, 110, 140].map((y1, i) =>
+                      [40, 70, 100, 130].map((y2, j) => (
+                        <line
+                          key={`l1-${i}-${j}`}
+                          x1="50"
+                          y1={y1}
+                          x2="170"
+                          y2={y2}
+                          stroke="rgba(34,211,238,0.25)"
+                          strokeWidth={i === j ? 1.8 : 0.8}
+                        />
+                      ))
+                    )}
+
+                    {[40, 70, 100, 130].map((y1, i) =>
+                      [55, 85, 115].map((y2, j) => (
+                        <line
+                          key={`l2-${i}-${j}`}
+                          x1="170"
+                          y1={y1}
+                          x2="290"
+                          y2={y2}
+                          stroke="rgba(16,185,129,0.25)"
+                          strokeWidth={i === j ? 1.8 : 0.8}
+                        />
+                      ))
+                    )}
+
+                    {[55, 85, 115].map((y1, i) =>
+                      [70, 110].map((y2, j) => (
+                        <line
+                          key={`l3-${i}-${j}`}
+                          x1="290"
+                          y1={y1}
+                          x2="400"
+                          y2={y2}
+                          stroke="rgba(52,211,153,0.4)"
+                          strokeWidth="1.5"
+                        />
+                      ))
+                    )}
+
+                    {/* Input Nodes */}
+                    {[50, 80, 110, 140].map((y, i) => (
+                      <circle key={`in-${i}`} cx="50" cy={y} r="8" fill="#0B132B" stroke="#22D3EE" strokeWidth="2" />
+                    ))}
+
+                    {/* Hidden 1 Nodes */}
+                    {[40, 70, 100, 130].map((y, i) => (
+                      <circle key={`h1-${i}`} cx="170" cy={y} r="8" fill={i === 1 ? '#0E7490' : '#0B132B'} stroke="#22D3EE" strokeWidth="2" />
+                    ))}
+
+                    {/* Hidden 2 Nodes */}
+                    {[55, 85, 115].map((y, i) => (
+                      <circle key={`h2-${i}`} cx="290" cy={y} r="8" fill={i === 0 ? '#047857' : '#0B132B'} stroke="#34D399" strokeWidth="2" />
+                    ))}
+
+                    {/* Output Nodes */}
+                    <circle cx="400" cy="70" r="10" fill="#10B981" stroke="#34D399" strokeWidth="2.5" />
+                    <text x="400" y="73" fontSize="8" fill="#FFFFFF" fontWeight="black" textAnchor="middle">L</text>
+                    <text x="420" y="73" fontSize="10" fill="#34D399" fontWeight="bold">Legit</text>
+
+                    <circle cx="400" cy="110" r="10" fill="#0B132B" stroke="#64748B" strokeWidth="2" />
+                    <text x="400" y="113" fontSize="8" fill="#94A3B8" fontWeight="black" textAnchor="middle">S</text>
+                    <text x="420" y="113" fontSize="10" fill="#94A3B8" fontWeight="bold">Spam</text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Column 3: Live Real-Time Metrics & Decision Confidence Gauges */}
+            <div className="lg:col-span-3 flex flex-col gap-4">
+              {/* Metric 1: Precision Gauge */}
+              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 mb-2">
+                  Model Precision
+                </span>
+                <div className="relative w-32 h-16 overflow-hidden flex items-end justify-center">
+                  {/* Semicircle Gauge Arc */}
+                  <svg viewBox="0 0 100 50" className="w-full h-full">
+                    <path
+                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      fill="none"
+                      stroke="#1E293B"
+                      strokeWidth="10"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      fill="none"
+                      stroke="#22D3EE"
+                      strokeWidth="10"
+                      strokeDasharray="125"
+                      strokeDashoffset={125 - (125 * classifierMetrics.precision) / 100}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute bottom-0 text-xl font-black text-white">
+                    {classifierMetrics.precision}%
+                  </span>
+                </div>
+                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-3">
+                  <div
+                    className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-300"
+                    style={{ width: `${classifierMetrics.precision}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Metric 2: Decision Confidence Gauge */}
+              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 mb-2">
+                  Decision Confidence
+                </span>
+                <div className="relative w-32 h-16 overflow-hidden flex items-end justify-center">
+                  <svg viewBox="0 0 100 50" className="w-full h-full">
+                    <path
+                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      fill="none"
+                      stroke="#1E293B"
+                      strokeWidth="10"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      fill="none"
+                      stroke="#34D399"
+                      strokeWidth="10"
+                      strokeDasharray="125"
+                      strokeDashoffset={125 - (125 * classifierMetrics.confidence) / 100}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute bottom-0 text-xl font-black text-white">
+                    {classifierMetrics.confidence}%
+                  </span>
+                </div>
+                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-3">
+                  <div
+                    className="h-full bg-gradient-to-r from-emerald-400 to-teal-300 transition-all duration-300"
+                    style={{ width: `${classifierMetrics.confidence}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Metric 3: Decision Margin & Classification Counts */}
+              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-4 flex flex-col gap-2.5 shadow-xl">
+                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
+                  Partition Breakdown
+                </span>
+
+                <div className="flex justify-between items-center text-xs bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                  <span className="text-cyan-400 font-bold">Legitimate Mails:</span>
+                  <span className="font-mono font-black text-white">{classifierMetrics.classifiedLegitimateCount}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-xs bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                  <span className="text-emerald-400 font-bold">Spam / Blocked:</span>
+                  <span className="font-mono font-black text-white">{classifierMetrics.classifiedMaliciousCount}</span>
+                </div>
+
+                <div className="flex justify-between items-center text-xs bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                  <span className="text-slate-300 font-bold">Separation Margin:</span>
+                  <span className="font-mono font-black text-cyan-300">{(classifierMetrics.accuracy * 0.95).toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Tab 2: Tokenization */}
       {activeTab === 'tokenization' && (
         <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">

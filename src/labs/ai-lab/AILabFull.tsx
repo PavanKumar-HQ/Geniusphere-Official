@@ -13,8 +13,8 @@ interface AILabFullProps {
 const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
   const [activeModuleId, setActiveModuleId] = useState<string>(AI_MODULES[0].id);
   const [isSimulating, setIsSimulating] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 960 : false);
-  const [isDefenseOpen, setIsDefenseOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth > 1200 : false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isDefenseOpen, setIsDefenseOpen] = useState(false);
 
   const activeModule = AI_MODULES.find(m => m.id === activeModuleId) || AI_MODULES[0];
 
@@ -192,25 +192,34 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
           width: '100%',
         }}
       >
-        {/* Left Modules Sidebar (Collapsible) */}
+        {/* Left Modules Sidebar (Collapsible Drawer / Slide-Over) */}
         {isSidebarOpen && (
           <div
             style={{
-              width: '260px',
-              minWidth: '240px',
-              maxWidth: '300px',
-              flexShrink: 0,
-              borderRight: '1px solid rgba(34,211,238,0.1)',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: '280px',
+              maxWidth: '85vw',
+              zIndex: 30,
+              borderRight: '1px solid rgba(34,211,238,0.2)',
               overflowY: 'auto',
-              backgroundColor: 'rgba(2,6,23,0.7)',
+              backgroundColor: 'rgba(2,6,23,0.96)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '10px 0 30px rgba(0,0,0,0.6)',
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
+              animation: 'fadeInLeft 0.2s ease-out',
             }}
           >
             <Sidebar
               activeModuleId={activeModuleId}
-              onSelectModule={handleSelectModule}
+              onSelectModule={(id) => {
+                handleSelectModule(id);
+                setIsSidebarOpen(false);
+              }}
               onClose={() => setIsSidebarOpen(false)}
             />
           </div>
@@ -224,6 +233,7 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
             flexDirection: 'column',
             overflowY: 'auto',
             minWidth: 0,
+            width: '100%',
             height: '100%',
             backgroundColor: '#020617',
           }}
@@ -236,12 +246,32 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
           />
         </main>
 
-        {/* Right defense info panel (Collapsible) */}
+        {/* Right defense info panel (Collapsible Drawer / Slide-Over) */}
         {isDefenseOpen && (
-          <DefensePanel
-            module={activeModule}
-            onClose={() => setIsDefenseOpen(false)}
-          />
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: '320px',
+              maxWidth: '85vw',
+              zIndex: 30,
+              borderLeft: '1px solid rgba(16,185,129,0.2)',
+              overflowY: 'auto',
+              backgroundColor: 'rgba(2,6,23,0.96)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: '-10px 0 30px rgba(0,0,0,0.6)',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <DefensePanel
+              module={activeModule}
+              onClose={() => setIsDefenseOpen(false)}
+            />
+          </div>
         )}
       </div>
     </div>
