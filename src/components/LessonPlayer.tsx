@@ -1044,27 +1044,6 @@ export const LessonPlayer: React.FC<LessonPlayerProps> = ({
                     </div>
                   </div>
                 </div>
-
-                {/* Next Step Navigation */}
-                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab('notes')}
-                    className="btn-primary"
-                    style={{
-                      height: '42px',
-                      padding: '0 20px',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '0.88rem',
-                      fontWeight: 700,
-                    }}
-                  >
-                    <span>Next: Review Study Notes</span>
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
               </div>
             )}
 
