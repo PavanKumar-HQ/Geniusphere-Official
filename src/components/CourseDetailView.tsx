@@ -706,6 +706,9 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
                                   className="btn-primary"
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    if (!enrollment) {
+                                      db.enrollInCourse(currentUserId, course.id);
+                                    }
                                     onStartLesson(course.id, les.id);
                                   }}
                                   style={{ height: '32px', padding: '0 16px', fontSize: '0.80rem', borderRadius: '100px', fontWeight: 800 }}
