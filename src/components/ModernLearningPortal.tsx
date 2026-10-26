@@ -530,14 +530,15 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
           })}
         </div>
 
-        {/* Active Lab Preview Card */}
+        {/* Active Lab Preview Card (Friendly, soft, kid-relatable card) */}
         <div
           style={{
-            backgroundColor: '#070B1A',
+            backgroundColor: 'var(--bg-canvas, #F8FAFC)',
             borderRadius: '16px',
             padding: '24px 28px',
-            color: '#FFFFFF',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'var(--text-primary)',
+            border: '2px solid var(--border-subtle, #E2E8F0)',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -547,18 +548,28 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
         >
           <div style={{ flex: 1, minWidth: '280px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <span className="badge badge-brand" style={{ fontSize: '0.68rem' }}>
-                CLIENT-SIDE ENGINE
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  padding: '3px 10px',
+                  borderRadius: '100px',
+                  backgroundColor: 'var(--brand-surface, #ECFDF5)',
+                  color: 'var(--brand-primary, #059669)',
+                  border: '1px solid var(--brand-border, #A7F3D0)',
+                }}
+              >
+                ⚡ HANDS-ON ADVENTURE
               </span>
-              <span style={{ fontSize: '0.72rem', color: 'rgba(255, 255, 255, 0.5)' }}>
-                0ms Latency • Deterministic Verification
+              <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                Fun Step-by-Step Learning Game
               </span>
             </div>
 
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 6px', color: '#FFFFFF' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-primary)' }}>
               {activeShowcase.title}
             </h3>
-            <p style={{ margin: 0, fontSize: '0.86rem', color: '#94A3B8', maxWidth: '600px', lineHeight: 1.5 }}>
+            <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-secondary)', maxWidth: '600px', lineHeight: 1.5 }}>
               {activeShowcase.desc}
             </p>
           </div>
@@ -567,19 +578,20 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
             <button
               type="button"
               onClick={() => onLaunchLab(activeShowcase.slug)}
-              className="btn-accent"
+              className="neo-btn-primary"
               style={{
-                height: '42px',
-                padding: '0 22px',
-                fontSize: '0.86rem',
+                height: '44px',
+                padding: '0 24px',
+                fontSize: '0.9rem',
                 fontWeight: 800,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
+                borderRadius: '12px',
               }}
             >
-              <FlaskConical size={16} />
-              <span>Launch {activeShowcase.title.split(' ')[0]} Lab</span>
+              <FlaskConical size={18} />
+              <span>Play {activeShowcase.title.split(' ')[0]} Lab ✨</span>
             </button>
           </div>
         </div>

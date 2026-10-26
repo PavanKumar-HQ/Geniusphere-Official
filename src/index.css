@@ -2581,32 +2581,42 @@ html {
    INTERACTIVE LABS & SIMULATION SUITES DESIGN TOKENS & UTILITIES
    ==================================================================== */
 :root {
-  --lab-bg: #070B1A;
-  --lab-card: #0F1629;
-  --lab-blue: #3BF0FF;
-  --lab-purple: #7C6BFF;
-  --lab-green: #00FFA3;
-  --lab-red: #FF4D4D;
-  --lab-text: #E6E9F0;
+  --lab-bg: #F8FAFC;
+  --lab-card: #FFFFFF;
+  --lab-blue: #0284C7;
+  --lab-purple: #7C3AED;
+  --lab-green: #059669;
+  --lab-red: #EF4444;
+  --lab-text: #0F172A;
 }
 
-.bg-lab-bg { background-color: #070B1A !important; }
-.bg-lab-card { background-color: #0F1629 !important; }
-.bg-lab-blue { background-color: #3BF0FF !important; }
-.bg-lab-purple { background-color: #7C6BFF !important; }
-.bg-lab-green { background-color: #00FFA3 !important; }
-.bg-lab-red { background-color: #FF4D4D !important; }
+html[data-theme='dark'] {
+  --lab-bg: #090D16;
+  --lab-card: #0F172A;
+  --lab-blue: #38BDF8;
+  --lab-purple: #A78BFA;
+  --lab-green: #10B981;
+  --lab-red: #F87171;
+  --lab-text: #F8FAFC;
+}
 
-.text-lab-text { color: #E6E9F0 !important; }
-.text-lab-blue { color: #3BF0FF !important; }
-.text-lab-purple { color: #7C6BFF !important; }
-.text-lab-green { color: #00FFA3 !important; }
-.text-lab-red { color: #FF4D4D !important; }
+.bg-lab-bg { background-color: var(--lab-bg) !important; }
+.bg-lab-card { background-color: var(--lab-card) !important; }
+.bg-lab-blue { background-color: var(--lab-blue) !important; }
+.bg-lab-purple { background-color: var(--lab-purple) !important; }
+.bg-lab-green { background-color: var(--lab-green) !important; }
+.bg-lab-red { background-color: var(--lab-red) !important; }
 
-.border-lab-blue { border-color: #3BF0FF !important; }
-.border-lab-purple { border-color: #7C6BFF !important; }
-.border-lab-green { border-color: #00FFA3 !important; }
-.border-lab-red { border-color: #FF4D4D !important; }
+.text-lab-text { color: var(--lab-text) !important; }
+.text-lab-blue { color: var(--lab-blue) !important; }
+.text-lab-purple { color: var(--lab-purple) !important; }
+.text-lab-green { color: var(--lab-green) !important; }
+.text-lab-red { color: var(--lab-red) !important; }
+
+.border-lab-blue { border-color: var(--lab-blue) !important; }
+.border-lab-purple { border-color: var(--lab-purple) !important; }
+.border-lab-green { border-color: var(--lab-green) !important; }
+.border-lab-red { border-color: var(--lab-red) !important; }
 
 /* Visual Glass Panels & Atmospheric Grids */
 .glass-panel {
