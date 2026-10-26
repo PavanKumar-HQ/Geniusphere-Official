@@ -730,22 +730,6 @@ export const App: React.FC = () => {
                     <GraduationCap size={14} />
                     <span>My Learning</span>
                   </button>
-                  <button
-                    type="button"
-                    className={`nav-tab-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
-                    onClick={() => handleNavigate('institution-workspace')}
-                  >
-                    <School size={14} />
-                    <span>School Needs</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`nav-tab-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
-                    onClick={() => handleNavigate('trainer-workspace')}
-                  >
-                    <Award size={14} />
-                    <span>Trainer Earnings</span>
-                  </button>
                 </>
               )}
 
@@ -1403,55 +1387,89 @@ export const App: React.FC = () => {
                         <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Streak Calendar</span>
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setUserMenuOpen(false);
-                          handleNavigate('institution-workspace');
-                        }}
-                        style={{
-                          padding: '12px 10px',
-                          borderRadius: '12px',
-                          border: '1.5px solid rgba(5, 150, 105, 0.25)',
-                          backgroundColor: 'var(--brand-surface)',
-                          color: 'var(--text-primary)',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'flex-start',
-                          gap: '6px',
-                          textAlign: 'left',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        <School size={18} color="var(--brand-primary)" />
-                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>School Needs</span>
-                      </button>
+                    </div>
 
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setUserMenuOpen(false);
-                          handleNavigate('trainer-workspace');
-                        }}
-                        style={{
-                          padding: '12px 10px',
-                          borderRadius: '12px',
-                          border: '1.5px solid rgba(5, 150, 105, 0.25)',
-                          backgroundColor: 'var(--brand-surface)',
-                          color: 'var(--text-primary)',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'flex-start',
-                          gap: '6px',
-                          textAlign: 'left',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        <Award size={18} color="var(--brand-primary)" />
-                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Trainer Earnings</span>
-                      </button>
+                    {/* Switch Workspace Role Section */}
+                    <div style={{ paddingTop: '10px', borderTop: '1px solid var(--border-subtle)', marginBottom: '14px' }}>
+                      <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                        Switch Workspace / Portal
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            handleAuthenticate('user-student-1', 'learner');
+                          }}
+                          style={{
+                            padding: '8px 4px',
+                            borderRadius: '10px',
+                            border: currentUser.role === 'learner' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                            backgroundColor: currentUser.role === 'learner' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <GraduationCap size={15} color="var(--brand-primary)" />
+                          <span>Student</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            handleAuthenticate('user-admin-1', 'institution_admin');
+                          }}
+                          style={{
+                            padding: '8px 4px',
+                            borderRadius: '10px',
+                            border: currentUser.role === 'institution_admin' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                            backgroundColor: currentUser.role === 'institution_admin' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <School size={15} color="var(--brand-primary)" />
+                          <span>School Admin</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            handleAuthenticate('user-trainer-1', 'trainer');
+                          }}
+                          style={{
+                            padding: '8px 4px',
+                            borderRadius: '10px',
+                            border: currentUser.role === 'trainer' ? '1.5px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                            backgroundColor: currentUser.role === 'trainer' ? 'var(--brand-surface)' : 'var(--bg-canvas)',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          <Award size={15} color="var(--brand-primary)" />
+                          <span>Trainer</span>
+                        </button>
+                      </div>
                     </div>
 
                     {/* Preferences & Quick Tools */}
@@ -2222,26 +2240,6 @@ export const App: React.FC = () => {
                 >
                   <Folder size={18} />
                   {showSidebarText && <span className="sidebar-label">Resources</span>}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('institution-workspace')}
-                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
-                  title={isSidebarCollapsed ? "School Training Needs" : undefined}
-                >
-                  <School size={18} />
-                  {showSidebarText && <span className="sidebar-label">School Needs</span>}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleNavigate('trainer-workspace')}
-                  className={`sidebar-nav-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
-                  title={isSidebarCollapsed ? "Trainer Earnings & Availability" : undefined}
-                >
-                  <Award size={18} />
-                  {showSidebarText && <span className="sidebar-label">Trainer Earnings</span>}
                 </button>
 
                 <button
