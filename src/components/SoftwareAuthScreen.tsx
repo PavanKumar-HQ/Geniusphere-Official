@@ -11,26 +11,19 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
   const [selectedRole, setSelectedRole] = useState<'learner' | 'teacher' | 'institution_admin'>('learner');
   const [fullName, setFullName] = useState(() => {
     try {
-      return localStorage.getItem('geniusphere_user_name') || 'Pavan Kumar';
+      return localStorage.getItem('geniusphere_user_name') || '';
     } catch {
-      return 'Pavan Kumar';
+      return '';
     }
   });
-  const [email, setEmail] = useState('pavan.kumar@geniusphere.edu');
-  const [password, setPassword] = useState('••••••••••••');
-  const [institution, setInstitution] = useState('Delhi Public Technical School (DPTS)');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [institution, setInstitution] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [authInProgress, setAuthInProgress] = useState(false);
 
   const handleRoleChange = (role: 'learner' | 'teacher' | 'institution_admin') => {
     setSelectedRole(role);
-    if (role === 'learner') {
-      setEmail('pavan.kumar@geniusphere.edu');
-    } else if (role === 'teacher') {
-      setEmail('dr.sharma@dpts.edu');
-    } else {
-      setEmail('principal.verma@dpts.edu');
-    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {

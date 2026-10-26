@@ -172,35 +172,11 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '5px',
-                padding: '3px 10px',
-                backgroundColor: 'var(--brand-surface)',
-                color: 'var(--brand-primary)',
-                borderRadius: '100px',
-                fontSize: '0.72rem',
-                fontWeight: 800,
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-              }}
-            >
-              <Compass size={13} />
-              Sovereign Learning Portal
-            </span>
-            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Delhi Public Technology School
-            </span>
-          </div>
-
           <h1
             style={{
               fontSize: 'clamp(1.5rem, 3vw, 2.1rem)',
               fontWeight: 900,
-              margin: '0 0 4px',
+              margin: '0 0 6px',
               color: 'var(--text-primary)',
               letterSpacing: '-0.03em',
               lineHeight: 1.2,
@@ -209,7 +185,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
             Welcome back, {user?.full_name?.split(' ')[0] || 'Learner'}
           </h1>
           <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--text-secondary)', maxWidth: '620px' }}>
-            Resume active syllabus modules, experiment with 15 verified interactive labs, and build authoritative credentials.
+            Resume your coursework, practice in interactive labs, and track your verified certificates.
           </p>
         </div>
 

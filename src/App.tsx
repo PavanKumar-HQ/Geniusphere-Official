@@ -118,9 +118,12 @@ export const App: React.FC = () => {
   // Single persistent in-memory database instance for genuine state progression
   const db = useMemo(() => new InMemoryDatabase(), []);
 
-  // Supported actors in the environment (matching Design Board 2: Pavan Kumar / Learner)
+  // Supported actors in the environment
+  const storedName = typeof window !== 'undefined' ? localStorage.getItem('geniusphere_user_name') : null;
+  const learnerDisplayName = storedName ? `${storedName} (Learner)` : 'Student (Learner)';
+
   const users = [
-    { id: 'user-student-1', name: 'Pavan Kumar (Learner)', role: 'learner', badge: 'Learner' },
+    { id: 'user-student-1', name: learnerDisplayName, role: 'learner', badge: 'Learner' },
     { id: 'user-student-2', name: 'Aarav Patel (Student, Minor)', role: 'learner', badge: 'Student' },
     { id: 'user-teacher-1', name: 'Dr. Sharma (Teacher, DPTS)', role: 'teacher', badge: 'Teacher' },
     { id: 'user-parent-1', name: 'Sunita Patel (Guardian of Aarav)', role: 'guardian', badge: 'Parent' },

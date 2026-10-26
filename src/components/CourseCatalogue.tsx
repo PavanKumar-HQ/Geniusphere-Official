@@ -589,99 +589,54 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
                 {/* Stream Section Header */}
                 <div
                   style={{
-                    backgroundColor: streamMeta.bg,
-                    border: `1px solid ${streamMeta.borderColor}`,
-                    borderRadius: '20px',
-                    padding: '24px 28px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '16px',
+                    gap: '12px',
+                    paddingBottom: '10px',
+                    borderBottom: '2px solid var(--border-subtle)',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div
-                      style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '14px',
-                        backgroundColor: 'var(--bg-surface)',
-                        color: streamMeta.accent,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-                        border: `1px solid var(--border-subtle)`,
-                      }}
-                    >
-                      {getStreamIcon(stream.id, 24)}
-                    </div>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <h2
-                          style={{
-                            margin: 0,
-                            fontSize: '1.45rem',
-                            fontWeight: 800,
-                            color: 'var(--text-primary)',
-                            fontFamily: 'var(--font-heading)',
-                            letterSpacing: '-0.02em',
-                          }}
-                        >
-                          {stream.title}
-                        </h2>
-                        <span
-                          style={{
-                            backgroundColor: 'var(--bg-surface)',
-                            color: streamMeta.accent,
-                            border: `1px solid ${streamMeta.borderColor}`,
-                            borderRadius: '100px',
-                            padding: '2px 10px',
-                            fontSize: '0.78rem',
-                            fontWeight: 800,
-                          }}
-                        >
-                          {streamCourses.length} {streamCourses.length === 1 ? 'course' : 'courses'}
-                        </span>
-                      </div>
-                      <p
-                        style={{
-                          margin: '4px 0 0',
-                          fontSize: '0.9rem',
-                          color: 'var(--text-secondary)',
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {stream.summary}
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedStream(stream.id);
-                      window.scrollTo({ top: 380, behavior: 'smooth' });
-                    }}
+                  <div
                     style={{
-                      backgroundColor: 'var(--bg-surface)',
-                      color: 'var(--text-primary)',
-                      border: `1px solid var(--border-subtle)`,
-                      borderRadius: '100px',
-                      padding: '8px 18px',
-                      fontSize: '0.84rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'inline-flex',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--brand-surface)',
+                      color: 'var(--brand-primary)',
+                      display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                      justifyContent: 'center',
+                      flexShrink: 0,
                     }}
                   >
-                    <span>Filter solely this category</span>
-                    <ArrowRight size={14} />
-                  </button>
+                    {getStreamIcon(stream.id, 18)}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h2
+                      style={{
+                        margin: 0,
+                        fontSize: '1.25rem',
+                        fontWeight: 800,
+                        color: 'var(--text-primary)',
+                        fontFamily: 'var(--font-heading)',
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      {stream.title}
+                    </h2>
+                    <span
+                      style={{
+                        backgroundColor: 'var(--bg-surface-subdued)',
+                        color: 'var(--text-muted)',
+                        borderRadius: '100px',
+                        padding: '2px 8px',
+                        fontSize: '0.74rem',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {streamCourses.length} {streamCourses.length === 1 ? 'course' : 'courses'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Stream Courses Grid */}
