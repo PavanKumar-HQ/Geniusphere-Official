@@ -77,7 +77,7 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
   const [completedAttempt, setCompletedAttempt] = useState<LabAttemptRecord | null>(null);
   const [workspaceMode, setWorkspaceMode] = useState<'3-column' | 'focus' | 'zen'>('focus');
   const [showHint, setShowHint] = useState<boolean>(true);
-  const [centerLabViewMode, setCenterLabViewMode] = useState<'interactive-suite' | 'svg-parameters'>('interactive-suite');
+  const [centerLabViewMode, setCenterLabViewMode] = useState<'interactive-suite' | 'svg-parameters'>('svg-parameters');
 
   // Animated Step-by-Step state
   const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
@@ -1299,6 +1299,51 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             <span style={{ fontWeight: 600 }}>{saveStatus}</span>
           </div>
 
+          {/* Tasks Progress & Submit & Claim XP in Header */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '3px 8px',
+              borderRadius: '8px',
+              backgroundColor: 'var(--brand-surface)',
+              border: '1px solid var(--border-subtle)',
+            }}
+          >
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                color: 'var(--brand-primary)',
+                fontWeight: 800,
+                fontSize: '0.74rem',
+              }}
+            >
+              <Award size={13} />
+              <span>{checkedCriteria.filter(Boolean).length}/{lab.validation_criteria.length} Tasks</span>
+            </span>
+
+            <button
+              type="button"
+              onClick={handleSubmitAttempt}
+              className="neo-btn-primary"
+              style={{
+                height: '26px',
+                padding: '0 10px',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <CheckCircle2 size={13} />
+              <span>Claim XP</span>
+            </button>
+          </div>
+
           {/* Reset Control */}
           <button
             type="button"
@@ -1425,63 +1470,6 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             minWidth: 0,
           }}
         >
-          {/* Quick Mission Checklist Banner in Focus Mode */}
-          {workspaceMode === 'focus' && (
-            <div
-              style={{
-                padding: '14px 18px',
-                borderRadius: '12px',
-                backgroundColor: 'var(--bg-surface)',
-                border: '1.5px solid var(--border-subtle)',
-                boxShadow: '0 2px 0 var(--border-subtle)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '12px',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '4px 10px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--brand-surface)',
-                    color: 'var(--brand-primary)',
-                    fontWeight: 800,
-                    fontSize: '0.78rem',
-                  }}
-                >
-                  <Award size={14} />
-                  <span>TASKS: {checkedCriteria.filter(Boolean).length} / {lab.validation_criteria.length} COMPLETED</span>
-                </span>
-                <span style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                  Complete the steps to unlock +100 XP
-                </span>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSubmitAttempt}
-                className="neo-btn-primary"
-                style={{
-                  height: '34px',
-                  padding: '0 16px',
-                  fontSize: '0.82rem',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                }}
-              >
-                <CheckCircle2 size={15} />
-                <span>Submit &amp; Claim XP</span>
-              </button>
-            </div>
-          )}
 
           {/* REAL STANDALONE INTERACTIVE LAB EMBEDDED DIRECTLY IN THE WORKSPACE */}
           {standaloneLabMeta && centerLabViewMode === 'interactive-suite' ? (

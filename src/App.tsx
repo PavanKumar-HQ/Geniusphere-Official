@@ -1689,6 +1689,7 @@ export const App: React.FC = () => {
         <aside
           className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed && !sidebarOpen ? 'collapsed' : ''}`}
           style={{
+            display: currentView === 'lab-workspace' ? 'none' : undefined,
             width: isSidebarCollapsed && !sidebarOpen ? '72px' : undefined,
             minWidth: isSidebarCollapsed && !sidebarOpen ? '72px' : undefined,
             maxWidth: isSidebarCollapsed && !sidebarOpen ? '72px' : undefined,
