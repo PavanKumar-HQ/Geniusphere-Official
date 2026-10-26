@@ -397,198 +397,254 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
           {/* 3-Column Visual Layout (Matching Approved Design Mockup) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-            {/* Column 1: Feature Inputs Panel (Collapsible / Interactive Sliders) */}
-            <div className="lg:col-span-4 bg-[#0B132B] border border-white/10 rounded-2xl p-5 flex flex-col gap-4 shadow-xl">
+            {/* Column 1: Feature Inputs Panel (Matches Mockup Left Card) */}
+            <div className="lg:col-span-3 bg-[#0D1527] border border-cyan-500/20 rounded-2xl p-5 flex flex-col gap-5 shadow-2xl backdrop-blur-md">
               <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <div className="flex items-center gap-2">
-                  <Sliders size={18} className="text-cyan-400" />
-                  <span className="text-sm font-black text-white tracking-wide">Feature Inputs</span>
-                </div>
-                <span className="text-[11px] font-mono text-cyan-400 font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-500/30">
-                  3 Sliders
-                </span>
+                <span className="text-sm font-bold text-slate-100 tracking-wide">Feature Inputs</span>
+                <span className="text-slate-400 text-xs">▼</span>
               </div>
 
               {/* Slider 1: Keyword Density */}
-              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="feature-keyword-density" className="text-xs font-bold text-slate-200">
-                    Keyword Density
-                  </label>
-                  <span className="text-xs font-mono font-black text-cyan-300">{keywordWeight}%</span>
+                  <span className="text-xs font-semibold text-slate-200">Keyword Density</span>
+                  {/* Glowing pill toggle switch */}
+                  <div
+                    onClick={() => setKeywordWeight(keywordWeight > 0 ? 0 : 68)}
+                    className="w-10 h-5 bg-emerald-500 rounded-full p-0.5 cursor-pointer flex items-center justify-end shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all"
+                  >
+                    <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                  </div>
                 </div>
-                <input
-                  id="feature-keyword-density"
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={keywordWeight}
-                  onChange={(e) => setKeywordWeight(parseInt(e.target.value, 10))}
-                  className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
-                />
-                <span className="text-[11px] text-slate-400">Frequency of high-risk terms (e.g. urgent, wire, password)</span>
+                <div className="relative pt-1 flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={keywordWeight}
+                    onChange={(e) => setKeywordWeight(parseInt(e.target.value, 10))}
+                    className="w-full accent-cyan-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg appearance-none"
+                  />
+                  <span className="text-xs font-mono font-bold text-cyan-300 w-9 text-right">{keywordWeight}%</span>
+                </div>
               </div>
 
               {/* Slider 2: Urgency Level */}
-              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="feature-urgency-level" className="text-xs font-bold text-slate-200">
-                    Urgency Level
-                  </label>
-                  <span className="text-xs font-mono font-black text-cyan-300">{urgencyWeight}%</span>
+                  <span className="text-xs font-semibold text-slate-200">Urgency Level</span>
+                  <div
+                    onClick={() => setUrgencyWeight(urgencyWeight > 0 ? 0 : 75)}
+                    className="w-10 h-5 bg-emerald-500 rounded-full p-0.5 cursor-pointer flex items-center justify-end shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all"
+                  >
+                    <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                  </div>
                 </div>
-                <input
-                  id="feature-urgency-level"
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={urgencyWeight}
-                  onChange={(e) => setUrgencyWeight(parseInt(e.target.value, 10))}
-                  className="w-full accent-cyan-400 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
-                />
-                <span className="text-[11px] text-slate-400">Psychological pressure and immediate expiration cues</span>
+                <div className="relative pt-1 flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={urgencyWeight}
+                    onChange={(e) => setUrgencyWeight(parseInt(e.target.value, 10))}
+                    className="w-full accent-cyan-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg appearance-none"
+                  />
+                  <span className="text-xs font-mono font-bold text-cyan-300 w-9 text-right">{urgencyWeight}%</span>
+                </div>
               </div>
 
               {/* Slider 3: Sender Reputation */}
-              <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="feature-sender-reputation" className="text-xs font-bold text-slate-200">
-                    Sender Reputation
-                  </label>
-                  <span className="text-xs font-mono font-black text-emerald-400">{senderReputation}%</span>
+                  <span className="text-xs font-semibold text-slate-200">Sender Reputation</span>
+                  <div
+                    onClick={() => setSenderReputation(senderReputation > 0 ? 0 : 82)}
+                    className="w-10 h-5 bg-emerald-500 rounded-full p-0.5 cursor-pointer flex items-center justify-end shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all"
+                  >
+                    <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                  </div>
                 </div>
-                <input
-                  id="feature-sender-reputation"
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={senderReputation}
-                  onChange={(e) => setSenderReputation(parseInt(e.target.value, 10))}
-                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-slate-800 rounded-lg appearance-none"
-                />
-                <span className="text-[11px] text-slate-400">SPF, DKIM, and historical domain authentication trust</span>
+                <div className="relative pt-1 flex items-center gap-3">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={senderReputation}
+                    onChange={(e) => setSenderReputation(parseInt(e.target.value, 10))}
+                    className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg appearance-none"
+                  />
+                  <span className="text-xs font-mono font-bold text-emerald-400 w-9 text-right">{senderReputation}%</span>
+                </div>
               </div>
 
-              {/* Binary Switches */}
-              <div className="flex flex-col gap-2 pt-2 border-t border-slate-800/80">
-                <div className="flex items-center justify-between text-xs py-1">
-                  <span className="text-slate-300 font-semibold">URL Count Anomaly</span>
-                  <button
-                    type="button"
-                    onClick={() => setFeatureUrlCount(!featureUrlCount)}
-                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
-                      featureUrlCount ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50' : 'bg-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {featureUrlCount ? 'Elevated' : 'Normal'}
-                  </button>
+              {/* Binary Switches exactly matching Mockup (URL Count, Attachment Type, Header Anomaly) */}
+              <div className="flex flex-col gap-4 pt-3 border-t border-slate-800">
+                {/* URL Count Anomaly */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-200">URL Count</span>
+                    <div
+                      onClick={() => setFeatureUrlCount(!featureUrlCount)}
+                      className={`w-10 h-5 rounded-full p-0.5 cursor-pointer flex items-center transition-all ${
+                        featureUrlCount ? 'bg-slate-700 justify-start' : 'bg-emerald-500 justify-end shadow-[0_0_10px_rgba(16,185,129,0.5)]'
+                      }`}
+                    >
+                      <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-center text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setFeatureUrlCount(false)}
+                      className={`py-1 rounded-lg font-bold transition-all ${!featureUrlCount ? 'bg-slate-800 text-white' : 'text-slate-400'}`}
+                    >
+                      Low
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFeatureUrlCount(true)}
+                      className={`py-1 rounded-lg font-bold transition-all ${featureUrlCount ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30' : 'text-slate-400'}`}
+                    >
+                      High
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs py-1">
-                  <span className="text-slate-300 font-semibold">Attachment Type</span>
-                  <button
-                    type="button"
-                    onClick={() => setFeatureSuspiciousAttachment(!featureSuspiciousAttachment)}
-                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
-                      featureSuspiciousAttachment ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' : 'bg-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {featureSuspiciousAttachment ? 'Suspicious (.exe / .zip)' : 'Safe (PDF)'}
-                  </button>
+                {/* Attachment Type */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-200">Attachment Type</span>
+                    <div
+                      onClick={() => setFeatureSuspiciousAttachment(!featureSuspiciousAttachment)}
+                      className="w-10 h-5 bg-emerald-500 rounded-full p-0.5 cursor-pointer flex items-center justify-end shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all"
+                    >
+                      <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-center text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setFeatureSuspiciousAttachment(false)}
+                      className={`py-1 rounded-lg font-bold transition-all ${!featureSuspiciousAttachment ? 'bg-slate-800 text-white' : 'text-slate-400'}`}
+                    >
+                      Safe
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFeatureSuspiciousAttachment(true)}
+                      className={`py-1 rounded-lg font-bold transition-all ${featureSuspiciousAttachment ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30' : 'text-slate-400'}`}
+                    >
+                      Suspicious
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs py-1">
-                  <span className="text-slate-300 font-semibold">Header Spoof Check</span>
-                  <button
-                    type="button"
+                {/* Header Anomaly */}
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-xs font-semibold text-slate-200">Header Anomaly</span>
+                  <div
                     onClick={() => setFeatureHeaderAnomaly(!featureHeaderAnomaly)}
-                    className={`px-2.5 py-1 rounded-lg font-bold text-[11px] transition-all ${
-                      featureHeaderAnomaly ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50' : 'bg-slate-800 text-slate-400'
-                    }`}
+                    className="w-10 h-5 bg-emerald-500 rounded-full p-0.5 cursor-pointer flex items-center justify-end shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all"
                   >
-                    {featureHeaderAnomaly ? 'Strict Verified' : 'Bypass'}
-                  </button>
+                    <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Column 2: 2D Scatter Plot & Animated Neural Diagram (Center Stage) */}
-            <div className="lg:col-span-5 flex flex-col gap-5">
+            <div className="lg:col-span-6 flex flex-col gap-5">
               {/* 2D Neural Decision Boundary Scatter Plot */}
-              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 flex flex-col gap-3 shadow-xl relative overflow-hidden">
+              <div className="bg-[#0D1527] border border-cyan-500/20 rounded-2xl p-5 flex flex-col gap-3 shadow-2xl backdrop-blur-md relative overflow-hidden">
                 <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-slate-100">
+                    2D Neural Decision Boundary Scatter Plot
+                  </span>
                   <div className="flex items-center gap-2">
-                    <Crosshair size={16} className="text-cyan-400" />
-                    <span className="text-sm font-black text-white">2D Decision Boundary Scatter Plot</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px]">
-                    <span className="flex items-center gap-1.5 text-cyan-400 font-bold">
-                      <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span> Legitimate
+                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                      Interactive 2D
                     </span>
-                    <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> Spam/Threat
+                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-900 text-slate-400 border border-slate-800">
+                      Decision Hyperplanes
                     </span>
                   </div>
                 </div>
 
-                {/* SVG 2D Scatter Canvas */}
-                <div className="relative w-full aspect-[4/3] bg-[#030712] rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
-                  <svg viewBox="0 0 400 300" className="w-full h-full select-none">
-                    {/* Grid lines */}
-                    <defs>
-                      <pattern id="scatter-grid" width="40" height="30" patternUnits="userSpaceOnUse">
-                        <path d="M 40 0 L 0 0 0 30" fill="none" stroke="rgba(34,211,238,0.06)" strokeWidth="1" />
-                      </pattern>
-                      <linearGradient id="boundaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.8" />
-                        <stop offset="100%" stopColor="#34D399" stopOpacity="0.8" />
-                      </linearGradient>
-                    </defs>
-                    <rect width="400" height="300" fill="url(#scatter-grid)" />
+                <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-300">
+                  <span className="flex items-center gap-1.5 text-cyan-300">
+                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#22D3EE]"></span>
+                    Legitimate (Cyan)
+                  </span>
+                  <span className="flex items-center gap-1.5 text-emerald-400">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#34D399]"></span>
+                    Spam/Malicious (Emerald)
+                  </span>
+                </div>
 
-                    {/* Decision Boundary Line (Calculated dynamically from weights) */}
+                {/* SVG 2D Scatter Canvas with Dense Organic Point Clouds */}
+                <div className="relative w-full aspect-[16/9] bg-[#070D1B] rounded-xl border border-slate-800/80 overflow-hidden flex items-center justify-center shadow-inner">
+                  <svg viewBox="0 0 500 280" className="w-full h-full select-none">
+                    <defs>
+                      <linearGradient id="hyperplaneLine" x1="0%" y1="100%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#38BDF8" />
+                        <stop offset="100%" stopColor="#3B82F6" />
+                      </linearGradient>
+                      <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                      <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                    </defs>
+
+                    {/* Faint coordinate axes */}
+                    <line x1="25" y1="255" x2="480" y2="255" stroke="#334155" strokeWidth="1.5" />
+                    <line x1="25" y1="255" x2="25" y2="15" stroke="#334155" strokeWidth="1.5" />
+                    <polyline points="22,22 25,15 28,22" fill="none" stroke="#334155" strokeWidth="1.5" />
+                    <polyline points="473,252 480,255 473,258" fill="none" stroke="#334155" strokeWidth="1.5" />
+
+                    {/* Dynamic Blue Decision Hyperplane Line (Matches Mockup Angle & Glow) */}
                     {(() => {
-                      // Line: w1 * (x/100) + w2 * (y/100) = threshold - repEffect
-                      // Map SVG coords (0 to 400, 0 to 300 with inverted Y)
                       const slope = -((keywordWeight || 50) / (urgencyWeight || 50));
-                      const yIntercept = (100 - (senderReputation * 0.3)) * 2.2;
-                      const x1 = 20;
-                      const y1 = Math.min(280, Math.max(20, 280 - (slope * 20 + yIntercept)));
-                      const x2 = 380;
-                      const y2 = Math.min(280, Math.max(20, 280 - (slope * 380 + yIntercept)));
+                      const yIntercept = (100 - (senderReputation * 0.28)) * 2.3;
+                      const x1 = 90;
+                      const y1 = Math.min(250, Math.max(20, 260 - (slope * 90 + yIntercept)));
+                      const x2 = 420;
+                      const y2 = Math.min(250, Math.max(20, 260 - (slope * 420 + yIntercept)));
 
                       return (
                         <g>
-                          {/* Soft boundary region glow */}
                           <line
                             x1={x1}
                             y1={y1}
                             x2={x2}
                             y2={y2}
-                            stroke="rgba(34,211,238,0.25)"
-                            strokeWidth="14"
+                            stroke="#3B82F6"
+                            strokeWidth="8"
+                            strokeOpacity="0.3"
                             strokeLinecap="round"
                           />
-                          {/* Crisp decision line */}
                           <line
                             x1={x1}
                             y1={y1}
                             x2={x2}
                             y2={y2}
-                            stroke="url(#boundaryGradient)"
-                            strokeWidth="3"
-                            strokeDasharray="4 2"
+                            stroke="url(#hyperplaneLine)"
+                            strokeWidth="2.5"
                           />
                         </g>
                       );
                     })()}
 
-                    {/* Data Points */}
+                    {/* Dense Scatter Points */}
                     {datasetPoints.map((pt) => {
-                      const svgX = 20 + (pt.x / 100) * 360;
-                      const svgY = 280 - (pt.y / 100) * 250;
-                      const isSelected = selectedPointId === pt.id;
                       const isLegit = pt.label === 'legitimate';
+                      // Scale into svg [35, 470] and [25, 245]
+                      const svgX = 35 + (pt.x / 100) * 435;
+                      const svgY = 250 - (pt.y / 100) * 225;
+                      const isSelected = selectedPointId === pt.id;
 
                       return (
                         <g
@@ -599,162 +655,237 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                           <circle
                             cx={svgX}
                             cy={svgY}
-                            r={isSelected ? 7 : 4.5}
-                            fill={isLegit ? '#22D3EE' : '#10B981'}
-                            opacity={isSelected ? 1 : 0.8}
-                            stroke={isSelected ? '#FFFFFF' : isLegit ? '#0891B2' : '#059669'}
-                            strokeWidth={isSelected ? 2.5 : 1}
+                            r={isSelected ? 6 : isLegit ? 3.5 : 3.8}
+                            fill={isLegit ? '#22D3EE' : '#34D399'}
+                            opacity={isSelected ? 1 : 0.85}
+                            filter={isLegit ? 'url(#glow-cyan)' : 'url(#glow-emerald)'}
                           />
+                          {/* Inner initial indicator (L for legit, S for spam) on larger dots */}
+                          {pt.id % 5 === 0 && (
+                            <text
+                              x={svgX}
+                              y={svgY + 2.5}
+                              fontSize="5.5"
+                              fill="#030712"
+                              fontWeight="900"
+                              textAnchor="middle"
+                              pointerEvents="none"
+                            >
+                              {isLegit ? 'L' : 'S'}
+                            </text>
+                          )}
                         </g>
                       );
                     })}
-
-                    {/* Axes */}
-                    <line x1="20" y1="280" x2="390" y2="280" stroke="#475569" strokeWidth="1.5" />
-                    <line x1="20" y1="280" x2="20" y2="10" stroke="#475569" strokeWidth="1.5" />
-                    <text x="200" y="296" fontSize="10" fill="#94A3B8" textAnchor="middle" fontWeight="bold">
-                      Feature 1: Spam Keyword Density →
-                    </text>
-                    <text x="12" y="140" fontSize="10" fill="#94A3B8" textAnchor="middle" fontWeight="bold" transform="rotate(-90 12 140)">
-                      Feature 2: Urgency Score →
-                    </text>
                   </svg>
-
-                  {/* Selected point popup card */}
-                  {selectedPointId && (
-                    <div className="absolute top-3 left-3 bg-slate-900/95 border border-cyan-500/50 px-3 py-1.5 rounded-lg text-xs font-mono shadow-2xl backdrop-blur-md">
-                      <div className="text-cyan-300 font-bold">Data Sample #{selectedPointId}</div>
-                      <div className="text-slate-300 text-[11px]">
-                        Class: {datasetPoints.find(p => p.id === selectedPointId)?.label.toUpperCase()}
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* Neural Network Node Diagram with Animated Synaptic Weights */}
-              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 flex flex-col gap-3 shadow-xl">
+              {/* Neural Network Node Diagram (Matches Mockup Lower Card) */}
+              <div className="bg-[#0D1527] border border-cyan-500/20 rounded-2xl p-5 flex flex-col gap-3 shadow-2xl backdrop-blur-md">
                 <div className="flex items-center justify-between border-b border-white/10 pb-2">
-                  <div className="flex items-center gap-2">
-                    <Activity size={16} className="text-emerald-400" />
-                    <span className="text-sm font-black text-white">Neural Synaptic Activation Flow</span>
-                  </div>
-                  <span className="text-[11px] font-mono text-emerald-400 font-bold">
-                    Forward Propagation
+                  <span className="text-sm font-bold text-slate-100">Neural Network Node Diagram</span>
+                  <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1">
+                    <span>Animated Weights</span>
+                    <span>»</span>
                   </span>
                 </div>
 
-                <div className="w-full bg-[#030712] rounded-xl border border-slate-800 p-2">
-                  <svg viewBox="0 0 460 160" className="w-full h-full">
-                    {/* Layer Labels */}
-                    <text x="50" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">INPUT LAYER</text>
-                    <text x="170" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">HIDDEN LAYER 1</text>
-                    <text x="290" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">HIDDEN LAYER 2</text>
-                    <text x="400" y="20" fontSize="9" fill="#64748B" fontWeight="bold" textAnchor="middle">OUTPUT</text>
+                <div className="w-full bg-[#070D1B] rounded-xl border border-slate-800/80 p-2 overflow-x-auto">
+                  <svg viewBox="0 0 540 200" className="w-full h-full min-w-[480px]">
+                    <defs>
+                      <filter id="node-glow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
+                        <feMerge>
+                          <feMergeNode />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                    </defs>
 
-                    {/* Synaptic Connections (Lines with animated glowing pulse) */}
-                    {[50, 80, 110, 140].map((y1, i) =>
-                      [40, 70, 100, 130].map((y2, j) => (
-                        <line
-                          key={`l1-${i}-${j}`}
-                          x1="50"
-                          y1={y1}
-                          x2="170"
-                          y2={y2}
-                          stroke="rgba(34,211,238,0.25)"
-                          strokeWidth={i === j ? 1.8 : 0.8}
-                        />
-                      ))
-                    )}
+                    {/* Column Headers */}
+                    <text x="60" y="22" fontSize="10" fill="#94A3B8" fontWeight="bold" textAnchor="middle">Input Layer</text>
+                    <text x="210" y="22" fontSize="10" fill="#94A3B8" fontWeight="bold" textAnchor="middle">Hidden Layer 1</text>
+                    <text x="360" y="22" fontSize="10" fill="#94A3B8" fontWeight="bold" textAnchor="middle">Hidden Layer 2</text>
+                    <text x="475" y="22" fontSize="10" fill="#94A3B8" fontWeight="bold" textAnchor="middle">Output Layer</text>
 
-                    {[40, 70, 100, 130].map((y1, i) =>
-                      [55, 85, 115].map((y2, j) => (
-                        <line
-                          key={`l2-${i}-${j}`}
-                          x1="170"
-                          y1={y1}
-                          x2="290"
-                          y2={y2}
-                          stroke="rgba(16,185,129,0.25)"
-                          strokeWidth={i === j ? 1.8 : 0.8}
-                        />
-                      ))
-                    )}
-
-                    {[55, 85, 115].map((y1, i) =>
-                      [70, 110].map((y2, j) => (
-                        <line
-                          key={`l3-${i}-${j}`}
-                          x1="290"
-                          y1={y1}
-                          x2="400"
-                          y2={y2}
-                          stroke="rgba(52,211,153,0.4)"
-                          strokeWidth="1.5"
-                        />
-                      ))
-                    )}
-
-                    {/* Input Nodes */}
-                    {[50, 80, 110, 140].map((y, i) => (
-                      <circle key={`in-${i}`} cx="50" cy={y} r="8" fill="#0B132B" stroke="#22D3EE" strokeWidth="2" />
+                    {/* Nodes Coordinates */}
+                    {/* Input Layer: 6 nodes (labeled 1..6) */}
+                    {[45, 70, 95, 120, 145, 170].map((y, idx) => (
+                      <g key={`in-node-${idx}`}>
+                        <text x="35" y={y + 3} fontSize="9" fill="#94A3B8" textAnchor="middle" fontWeight="bold">{idx + 1}</text>
+                        <circle cx="60" cy={y} r="8" fill="#0B132B" stroke="#64748B" strokeWidth="1.5" />
+                      </g>
                     ))}
 
-                    {/* Hidden 1 Nodes */}
-                    {[40, 70, 100, 130].map((y, i) => (
-                      <circle key={`h1-${i}`} cx="170" cy={y} r="8" fill={i === 1 ? '#0E7490' : '#0B132B'} stroke="#22D3EE" strokeWidth="2" />
+                    {/* Hidden Layer 1: 8 nodes */}
+                    {[35, 55, 75, 95, 115, 135, 155, 175].map((y, idx) => {
+                      const isActive = idx === 1 || idx === 7;
+                      return (
+                        <circle
+                          key={`h1-node-${idx}`}
+                          cx="210"
+                          cy={y}
+                          r="8"
+                          fill={isActive ? '#34D399' : '#0B132B'}
+                          stroke={isActive ? '#34D399' : '#475569'}
+                          strokeWidth={isActive ? 2.5 : 1.5}
+                          filter={isActive ? 'url(#node-glow)' : 'none'}
+                        />
+                      );
+                    })}
+
+                    {/* Hidden Layer 2: 6 nodes */}
+                    {[45, 70, 95, 120, 145, 170].map((y, idx) => {
+                      const isActive = idx === 0 || idx === 5;
+                      return (
+                        <circle
+                          key={`h2-node-${idx}`}
+                          cx="360"
+                          cy={y}
+                          r="8"
+                          fill={isActive ? '#22D3EE' : '#0B132B'}
+                          stroke={isActive ? '#22D3EE' : '#475569'}
+                          strokeWidth={isActive ? 2.5 : 1.5}
+                          filter={isActive ? 'url(#node-glow)' : 'none'}
+                        />
+                      );
+                    })}
+
+                    {/* Output Layer: 2 nodes (Legitimate & Spam) */}
+                    <g>
+                      <circle cx="475" cy="80" r="10" fill="#34D399" stroke="#34D399" strokeWidth="2.5" filter="url(#node-glow)" />
+                      <text x="495" y="84" fontSize="10" fill="#F1F5F9" fontWeight="bold">Legitimate</text>
+                    </g>
+                    <g>
+                      <circle cx="475" cy="130" r="10" fill="#0B132B" stroke="#475569" strokeWidth="1.8" />
+                      <text x="495" y="134" fontSize="10" fill="#94A3B8" fontWeight="bold">Spam</text>
+                    </g>
+
+                    {/* Synaptic Connections & Numerical Weight Callouts */}
+                    {[45, 70, 95, 120, 145, 170].map((y1, i) =>
+                      [35, 55, 75, 95, 115, 135, 155, 175].map((y2, j) => {
+                        const isPrimary = (i === 0 && j === 1) || (i === 5 && j === 7);
+                        return (
+                          <line
+                            key={`c1-${i}-${j}`}
+                            x1="68"
+                            y1={y1}
+                            x2="202"
+                            y2={y2}
+                            stroke={isPrimary ? '#22D3EE' : 'rgba(100,116,139,0.22)'}
+                            strokeWidth={isPrimary ? 1.8 : 0.6}
+                          />
+                        );
+                      })
+                    )}
+
+                    {/* Weight numbers between Input and Hidden 1 */}
+                    <text x="135" y="44" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">0.3</text>
+                    <text x="135" y="62" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">0.3</text>
+                    <text x="135" y="80" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">0.4</text>
+                    <text x="135" y="125" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">0.6</text>
+                    <text x="135" y="145" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">0.3</text>
+                    <text x="135" y="165" fontSize="7.5" fill="#38BDF8" fontFamily="monospace">0.5</text>
+
+                    {[35, 55, 75, 95, 115, 135, 155, 175].map((y1, i) =>
+                      [45, 70, 95, 120, 145, 170].map((y2, j) => {
+                        const isPrimary = (i === 1 && j === 0) || (i === 7 && j === 5);
+                        return (
+                          <line
+                            key={`c2-${i}-${j}`}
+                            x1="218"
+                            y1={y1}
+                            x2="352"
+                            y2={y2}
+                            stroke={isPrimary ? '#34D399' : 'rgba(52,211,153,0.18)'}
+                            strokeWidth={isPrimary ? 2 : 0.6}
+                          />
+                        );
+                      })
+                    )}
+
+                    {/* Weight numbers between Hidden 1 and Hidden 2 */}
+                    <text x="285" y="44" fontSize="7.5" fill="#34D399" fontFamily="monospace">0.3</text>
+                    <text x="285" y="62" fontSize="7.5" fill="#34D399" fontFamily="monospace">0.2</text>
+                    <text x="285" y="80" fontSize="7.5" fill="#34D399" fontFamily="monospace">0.3</text>
+                    <text x="285" y="100" fontSize="7.5" fill="#34D399" fontFamily="monospace">0.8</text>
+                    <text x="285" y="150" fontSize="7.5" fill="#34D399" fontFamily="monospace">0.2</text>
+                    <text x="285" y="170" fontSize="7.5" fill="#34D399" fontFamily="monospace">0.1</text>
+
+                    {/* Connections to Output */}
+                    {[45, 70, 95, 120, 145, 170].map((y1, i) => (
+                      <g key={`out-lines-${i}`}>
+                        <line
+                          x1="368"
+                          y1={y1}
+                          x2="465"
+                          y2="80"
+                          stroke={i === 0 ? '#34D399' : 'rgba(52,211,153,0.25)'}
+                          strokeWidth={i === 0 ? 2 : 0.8}
+                          strokeDasharray={i === 0 ? 'none' : '3 2'}
+                        />
+                        <line
+                          x1="368"
+                          y1={y1}
+                          x2="465"
+                          y2="130"
+                          stroke="rgba(100,116,139,0.2)"
+                          strokeWidth="0.8"
+                        />
+                      </g>
                     ))}
 
-                    {/* Hidden 2 Nodes */}
-                    {[55, 85, 115].map((y, i) => (
-                      <circle key={`h2-${i}`} cx="290" cy={y} r="8" fill={i === 0 ? '#047857' : '#0B132B'} stroke="#34D399" strokeWidth="2" />
-                    ))}
-
-                    {/* Output Nodes */}
-                    <circle cx="400" cy="70" r="10" fill="#10B981" stroke="#34D399" strokeWidth="2.5" />
-                    <text x="400" y="73" fontSize="8" fill="#FFFFFF" fontWeight="black" textAnchor="middle">L</text>
-                    <text x="420" y="73" fontSize="10" fill="#34D399" fontWeight="bold">Legit</text>
-
-                    <circle cx="400" cy="110" r="10" fill="#0B132B" stroke="#64748B" strokeWidth="2" />
-                    <text x="400" y="113" fontSize="8" fill="#94A3B8" fontWeight="black" textAnchor="middle">S</text>
-                    <text x="420" y="113" fontSize="10" fill="#94A3B8" fontWeight="bold">Spam</text>
+                    <text x="415" y="70" fontSize="8" fill="#34D399" fontFamily="monospace" fontWeight="bold">0.5</text>
+                    <text x="415" y="138" fontSize="8" fill="#64748B" fontFamily="monospace">0.3</text>
                   </svg>
                 </div>
               </div>
             </div>
 
-            {/* Column 3: Live Real-Time Metrics & Decision Confidence Gauges */}
+            {/* Column 3: Live Real-Time Metrics & Decision Hyperplane (Matches Mockup Right Cards) */}
             <div className="lg:col-span-3 flex flex-col gap-4">
-              {/* Metric 1: Precision Gauge */}
-              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 mb-2">
-                  Model Precision
-                </span>
-                <div className="relative w-32 h-16 overflow-hidden flex items-end justify-center">
-                  {/* Semicircle Gauge Arc */}
-                  <svg viewBox="0 0 100 50" className="w-full h-full">
+              {/* Metric 1: Precision Gauge (Matches Mockup Upper Right Card) */}
+              <div className="bg-[#0D1527] border border-cyan-500/20 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl backdrop-blur-md">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-200">Precision</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                    Gauge
+                  </span>
+                </div>
+
+                <div className="relative w-full h-24 overflow-hidden flex items-end justify-center">
+                  <svg viewBox="0 0 140 75" className="w-40 h-24">
+                    <defs>
+                      <linearGradient id="precisionGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#22D3EE" />
+                        <stop offset="100%" stopColor="#34D399" />
+                      </linearGradient>
+                    </defs>
                     <path
-                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      d="M 15 70 A 55 55 0 0 1 125 70"
                       fill="none"
                       stroke="#1E293B"
-                      strokeWidth="10"
+                      strokeWidth="11"
                       strokeLinecap="round"
                     />
                     <path
-                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      d="M 15 70 A 55 55 0 0 1 125 70"
                       fill="none"
-                      stroke="#22D3EE"
-                      strokeWidth="10"
-                      strokeDasharray="125"
-                      strokeDashoffset={125 - (125 * classifierMetrics.precision) / 100}
+                      stroke="url(#precisionGrad)"
+                      strokeWidth="11"
+                      strokeDasharray="172"
+                      strokeDashoffset={172 - (172 * classifierMetrics.precision) / 100}
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="absolute bottom-0 text-xl font-black text-white">
+                  <span className="absolute bottom-1 text-2xl font-black text-white tracking-tight">
                     {classifierMetrics.precision}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-3">
+
+                {/* Progress bar line below gauge */}
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-300"
                     style={{ width: `${classifierMetrics.precision}%` }}
@@ -762,61 +893,83 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                 </div>
               </div>
 
-              {/* Metric 2: Decision Confidence Gauge */}
-              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xl">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400 mb-2">
-                  Decision Confidence
-                </span>
-                <div className="relative w-32 h-16 overflow-hidden flex items-end justify-center">
-                  <svg viewBox="0 0 100 50" className="w-full h-full">
+              {/* Metric 2: Confidence Gauge (Matches Mockup Middle Right Card) */}
+              <div className="bg-[#0D1527] border border-cyan-500/20 rounded-2xl p-4 flex flex-col gap-3 shadow-2xl backdrop-blur-md">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-200">Confidence</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                    Gauges
+                  </span>
+                </div>
+
+                <div className="relative w-full h-24 overflow-hidden flex items-end justify-center">
+                  <svg viewBox="0 0 140 75" className="w-40 h-24">
+                    <defs>
+                      <linearGradient id="confidenceGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#34D399" />
+                        <stop offset="100%" stopColor="#22D3EE" />
+                      </linearGradient>
+                    </defs>
                     <path
-                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      d="M 15 70 A 55 55 0 0 1 125 70"
                       fill="none"
                       stroke="#1E293B"
-                      strokeWidth="10"
+                      strokeWidth="11"
                       strokeLinecap="round"
                     />
                     <path
-                      d="M 10 50 A 40 40 0 0 1 90 50"
+                      d="M 15 70 A 55 55 0 0 1 125 70"
                       fill="none"
-                      stroke="#34D399"
-                      strokeWidth="10"
-                      strokeDasharray="125"
-                      strokeDashoffset={125 - (125 * classifierMetrics.confidence) / 100}
+                      stroke="url(#confidenceGrad)"
+                      strokeWidth="11"
+                      strokeDasharray="172"
+                      strokeDashoffset={172 - (172 * classifierMetrics.confidence) / 100}
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="absolute bottom-0 text-xl font-black text-white">
+                  <span className="absolute bottom-1 text-2xl font-black text-white tracking-tight">
                     {classifierMetrics.confidence}%
                   </span>
                 </div>
-                <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden mt-3">
+
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-400 to-teal-300 transition-all duration-300"
+                    className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-300"
                     style={{ width: `${classifierMetrics.confidence}%` }}
                   />
                 </div>
               </div>
 
-              {/* Metric 3: Decision Margin & Classification Counts */}
-              <div className="bg-[#0B132B] border border-white/10 rounded-2xl p-4 flex flex-col gap-2.5 shadow-xl">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
-                  Partition Breakdown
-                </span>
+              {/* Metric 3: Decision Hyperplane Margins Diagram (Matches Mockup Lower Right Card) */}
+              <div className="bg-[#0D1527] border border-cyan-500/20 rounded-2xl p-4 flex flex-col gap-2 shadow-2xl backdrop-blur-md">
+                <span className="text-xs font-bold text-slate-200">Decision Hyperplane</span>
 
-                <div className="flex justify-between items-center text-xs bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                  <span className="text-cyan-400 font-bold">Legitimate Mails:</span>
-                  <span className="font-mono font-black text-white">{classifierMetrics.classifiedLegitimateCount}</span>
-                </div>
+                <div className="w-full aspect-[4/3] bg-[#070D1B] rounded-xl border border-slate-800/80 p-2 flex items-center justify-center relative">
+                  <svg viewBox="0 0 180 120" className="w-full h-full select-none">
+                    {/* Axes */}
+                    <line x1="20" y1="100" x2="165" y2="100" stroke="#334155" strokeWidth="1.2" />
+                    <line x1="20" y1="100" x2="20" y2="15" stroke="#334155" strokeWidth="1.2" />
+                    <polyline points="18,20 20,15 22,20" fill="none" stroke="#334155" strokeWidth="1.2" />
+                    <polyline points="160,98 165,100 160,102" fill="none" stroke="#334155" strokeWidth="1.2" />
 
-                <div className="flex justify-between items-center text-xs bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                  <span className="text-emerald-400 font-bold">Spam / Blocked:</span>
-                  <span className="font-mono font-black text-white">{classifierMetrics.classifiedMaliciousCount}</span>
-                </div>
+                    {/* Parallel Hyperplane Margins (Dashed outer lines, Solid central blue decision boundary) */}
+                    {/* Upper margin line (dashed) */}
+                    <line x1="40" y1="100" x2="135" y2="25" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 3" />
+                    {/* Primary hyperplane (solid bold blue) */}
+                    <line x1="55" y1="100" x2="150" y2="25" stroke="#3B82F6" strokeWidth="2.5" />
+                    {/* Lower margin line (dashed) */}
+                    <line x1="70" y1="100" x2="165" y2="25" stroke="#38BDF8" strokeWidth="1.5" strokeDasharray="3 3" />
 
-                <div className="flex justify-between items-center text-xs bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                  <span className="text-slate-300 font-bold">Separation Margin:</span>
-                  <span className="font-mono font-black text-cyan-300">{(classifierMetrics.accuracy * 0.95).toFixed(1)}%</span>
+                    {/* Margin Annotations and Arrows */}
+                    <text x="35" y="45" fontSize="8" fill="#CBD5E1" fontWeight="bold">Margins</text>
+                    <text x="110" y="70" fontSize="8" fill="#CBD5E1" fontWeight="bold">Margins</text>
+                    <line x1="68" y1="46" x2="88" y2="60" stroke="#CBD5E1" strokeWidth="0.8" />
+                    <line x1="110" y1="72" x2="128" y2="58" stroke="#CBD5E1" strokeWidth="0.8" />
+                  </svg>
+
+                  <div className="absolute bottom-2 text-center text-sm font-black text-cyan-300 font-mono">
+                    {(classifierMetrics.accuracy * 0.915).toFixed(1)}%
+                  </div>
                 </div>
               </div>
             </div>

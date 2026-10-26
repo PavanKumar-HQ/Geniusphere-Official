@@ -236,26 +236,31 @@ export interface ClassifierDataPoint {
 
 export function generateClassifierDataset(seed = 42): ClassifierDataPoint[] {
   const points: ClassifierDataPoint[] = [];
-  // Cluster A: Legitimate emails (low keyword density, low-to-mid urgency)
-  for (let i = 0; i < 40; i++) {
-    const rx = ((Math.sin(seed + i * 1.7) + 1) / 2) * 45 + 5;
-    const ry = ((Math.cos(seed + i * 2.3) + 1) / 2) * 50 + 5;
+
+  // Cluster A: Legitimate emails (Cyan cluster, concentrated in lower-left / mid-left)
+  for (let i = 0; i < 90; i++) {
+    const angle = (i / 90) * Math.PI * 2;
+    const r = ((Math.sin(seed + i * 3.1) + 1) / 2) * 24;
+    const cx = 36 + Math.cos(angle) * r * 1.3 + ((Math.cos(seed + i * 5.7) + 1) / 2) * 12;
+    const cy = 40 + Math.sin(angle) * r * 0.9 + ((Math.sin(seed + i * 4.3) + 1) / 2) * 10;
     points.push({
       id: i + 1,
-      x: Math.round(rx),
-      y: Math.round(ry),
+      x: Math.round(Math.min(95, Math.max(5, cx))),
+      y: Math.round(Math.min(95, Math.max(5, cy))),
       label: 'legitimate',
     });
   }
 
-  // Cluster B: Malicious / Spam emails (high keyword density, high urgency)
-  for (let i = 0; i < 40; i++) {
-    const rx = ((Math.sin(seed + (i + 40) * 1.9) + 1) / 2) * 45 + 50;
-    const ry = ((Math.cos(seed + (i + 40) * 2.7) + 1) / 2) * 45 + 45;
+  // Cluster B: Malicious / Spam emails (Emerald cluster, concentrated in upper-right / mid-right)
+  for (let i = 0; i < 90; i++) {
+    const angle = (i / 90) * Math.PI * 2;
+    const r = ((Math.cos(seed + i * 2.9) + 1) / 2) * 24;
+    const cx = 72 + Math.cos(angle) * r * 1.3 + ((Math.sin(seed + (i + 50) * 3.3) + 1) / 2) * 10;
+    const cy = 68 + Math.sin(angle) * r * 0.9 + ((Math.cos(seed + (i + 50) * 4.1) + 1) / 2) * 12;
     points.push({
-      id: i + 41,
-      x: Math.round(rx),
-      y: Math.round(ry),
+      id: i + 91,
+      x: Math.round(Math.min(95, Math.max(5, cx))),
+      y: Math.round(Math.min(95, Math.max(5, cy))),
       label: 'malicious',
     });
   }

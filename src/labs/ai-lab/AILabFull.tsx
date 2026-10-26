@@ -105,29 +105,36 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
             {isSimulating ? '● LIVE' : '○ READY'}
           </span>
 
-          {/* Toggle Modules Sidebar */}
-          <button
-            type="button"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '5px 10px',
-              borderRadius: '6px',
-              border: isSidebarOpen ? '1px solid rgba(34,211,238,0.4)' : '1px solid rgba(148,163,184,0.2)',
-              backgroundColor: isSidebarOpen ? 'rgba(34,211,238,0.12)' : 'rgba(15,23,42,0.6)',
-              color: isSidebarOpen ? '#22D3EE' : '#94A3B8',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              transition: 'all 0.15s ease',
-            }}
-            title={isSidebarOpen ? 'Hide Modules Sidebar' : 'Show Modules Sidebar'}
-          >
-            <Layers size={13} />
-            <span>Modules ({AI_MODULES.length})</span>
-          </button>
+          {/* Clean Integrated Module Selector Dropdown (Replaces confusing second sidebar list) */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <select
+              aria-label="Select AI Module"
+              value={activeModuleId}
+              onChange={(e) => handleSelectModule(e.target.value)}
+              style={{
+                backgroundColor: 'rgba(15,23,42,0.85)',
+                color: '#22D3EE',
+                border: '1px solid rgba(34,211,238,0.3)',
+                borderRadius: '8px',
+                padding: '5px 28px 5px 10px',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                outline: 'none',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+              }}
+            >
+              {AI_MODULES.map((m) => (
+                <option key={m.id} value={m.id} style={{ backgroundColor: '#0F172A', color: '#E2E8F0' }}>
+                  {m.category.toUpperCase()}: {m.title}
+                </option>
+              ))}
+            </select>
+            <span style={{ position: 'absolute', right: '8px', pointerEvents: 'none', fontSize: '10px', color: '#22D3EE' }}>
+              ▼
+            </span>
+          </div>
 
           {/* Toggle Defense Protocols Panel */}
           <button
@@ -192,39 +199,6 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
           width: '100%',
         }}
       >
-        {/* Left Modules Sidebar (Collapsible Drawer / Slide-Over) */}
-        {isSidebarOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: '280px',
-              maxWidth: '85vw',
-              zIndex: 30,
-              borderRight: '1px solid rgba(34,211,238,0.2)',
-              overflowY: 'auto',
-              backgroundColor: 'rgba(2,6,23,0.96)',
-              backdropFilter: 'blur(16px)',
-              boxShadow: '10px 0 30px rgba(0,0,0,0.6)',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              animation: 'fadeInLeft 0.2s ease-out',
-            }}
-          >
-            <Sidebar
-              activeModuleId={activeModuleId}
-              onSelectModule={(id) => {
-                handleSelectModule(id);
-                setIsSidebarOpen(false);
-              }}
-              onClose={() => setIsSidebarOpen(false)}
-            />
-          </div>
-        )}
-
         {/* Main simulation workspace */}
         <main
           style={{
