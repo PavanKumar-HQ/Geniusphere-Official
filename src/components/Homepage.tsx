@@ -20,7 +20,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-import { StudentHomeScreen } from './StudentHomeScreen';
+import { ModernLearningPortal } from './ModernLearningPortal';
 
 interface HomepageProps {
   db: InMemoryDatabase;
@@ -54,17 +54,16 @@ export const Homepage: React.FC<HomepageProps> = ({
     (m) => m.role === 'teacher' || m.role === 'institution_admin' || m.role === 'trainer'
   );
 
-  // If user is a student / learner and not explicitly viewing marketing overview, render playful StudentHomeScreen
+  // Render the Modern Unified Learning Portal (Curated Courses, Quick-Start Labs, Recent Activity)
   if (!isInstitutionalNonLearner && !showPublicMarketing && currentUserId) {
     return (
-      <StudentHomeScreen
+      <ModernLearningPortal
         db={db}
         currentUserId={currentUserId}
         onNavigate={onNavigate}
         onStartLesson={onStartLesson}
         onSelectCourse={onSelectCourse || ((slug) => onNavigate('course-detail', slug))}
         onLaunchLab={onLaunchLab || ((slug) => onNavigate('lab-workspace', slug))}
-        onViewMarketing={() => setShowPublicMarketing(true)}
       />
     );
   }
