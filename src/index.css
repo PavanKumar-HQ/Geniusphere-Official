@@ -36,10 +36,10 @@ button:focus-visible {
    ==================================================================== */
 
 :root {
-  /* Ultra-Clean Modern Typography: Plus Jakarta Sans (Headings/Brand) + Inter (UI/Body) */
-  --font-display-brand: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Warm, Friendly & Approachable Typography: Outfit (Headings/Brand) + Plus Jakarta Sans (UI/Body) */
+  --font-display-brand: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas, monospace;
 
   /* Master Modern App Palette: Clean Slate + Luminous Emerald + Ice Gray */
@@ -164,75 +164,75 @@ button:focus-visible {
    Geniusphere 10-Theme Palette Token Engine
    ==================================================================== */
 
-/* 1. Light (Default) — Crisp Slate + Vivid Emerald */
+/* 1. Light (Default) — Soft Warm Cream-Slate + Vibrant Friendly Emerald */
 :root,
 html[data-theme='light'] {
-  --bg-canvas: #F8FAFC;
+  --bg-canvas: #F8F9FA;
   --bg-surface: #FFFFFF;
-  --bg-surface-subdued: #F1F5F9;
+  --bg-surface-subdued: #F1F3F5;
   --bg-surface-elevated: #FFFFFF;
-  --brand-primary: #059669;
-  --brand-primary-bright: #10B981;
-  --brand-primary-hover: #047857;
-  --brand-primary-active: #064E3B;
-  --brand-forest: #059669;
-  --brand-surface: #ECFDF5;
-  --brand-border: #A7F3D0;
-  --border-subtle: #E2E8F0;
-  --border-strong: #CBD5E1;
-  --brand-lime: #10B981;
-  --brand-lime-text: #064E3B;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-inverse: #FFFFFF;
-  --selected-bg: #ECFDF5;
-  --editor-bg: #F8FAFC;
-  --sidebar-bg: #FFFFFF;
-  --sidebar-border: #E2E8F0;
-  /* Light Theme Adaptive Hero Card Tokens */
-  --hero-card-bg: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #ECFDF5 100%);
-  --hero-card-border: #A7F3D0;
-  --hero-card-title: #064E3B;
-  --hero-card-desc: #166534;
-  --hero-card-pill-bg: rgba(5, 150, 105, 0.12);
-  --hero-card-pill-text: #047857;
-  --hero-card-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
-}
-
-/* 2. Dark — Deep Obsidian Void + Neon Mint + Slate Cards */
-html[data-theme='dark'] {
-  --bg-canvas: #090D16;
-  --bg-surface: #0F172A;
-  --bg-surface-subdued: #1E293B;
-  --bg-surface-elevated: #1E293B;
   --brand-primary: #10B981;
   --brand-primary-bright: #34D399;
   --brand-primary-hover: #059669;
   --brand-primary-active: #047857;
   --brand-forest: #10B981;
-  --brand-surface: rgba(16, 185, 129, 0.12);
-  --brand-border: rgba(16, 185, 129, 0.28);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --brand-lime: #34D399;
+  --brand-surface: #ECFDF5;
+  --brand-border: #A7F3D0;
+  --border-subtle: #E5E7EB;
+  --border-strong: #D1D5DB;
+  --brand-lime: #10B981;
+  --brand-lime-text: #064E3B;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-inverse: #FFFFFF;
+  --selected-bg: #ECFDF5;
+  --editor-bg: #F8F9FA;
+  --sidebar-bg: #FFFFFF;
+  --sidebar-border: #E5E7EB;
+  /* Light Theme Adaptive Hero Card Tokens */
+  --hero-card-bg: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #ECFDF5 100%);
+  --hero-card-border: #A7F3D0;
+  --hero-card-title: #064E3B;
+  --hero-card-desc: #166534;
+  --hero-card-pill-bg: rgba(16, 185, 129, 0.15);
+  --hero-card-pill-text: #047857;
+  --hero-card-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.12), 0 3px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* 2. Dark — Cozy Midnight Slate + Soft Mint Cards */
+html[data-theme='dark'] {
+  --bg-canvas: #0F172A;
+  --bg-surface: #1E293B;
+  --bg-surface-subdued: #334155;
+  --bg-surface-elevated: #334155;
+  --brand-primary: #34D399;
+  --brand-primary-bright: #6EE7B7;
+  --brand-primary-hover: #10B981;
+  --brand-primary-active: #059669;
+  --brand-forest: #34D399;
+  --brand-surface: rgba(52, 211, 153, 0.14);
+  --brand-border: rgba(52, 211, 153, 0.32);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --brand-lime: #6EE7B7;
   --brand-lime-text: #064E3B;
   --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
-  --text-muted: #64748B;
-  --text-inverse: #090D16;
-  --selected-bg: rgba(16, 185, 129, 0.15);
-  --editor-bg: #090D16;
-  --sidebar-bg: #0C1220;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --text-secondary: #CBD5E1;
+  --text-muted: #94A3B8;
+  --text-inverse: #0F172A;
+  --selected-bg: rgba(52, 211, 153, 0.16);
+  --editor-bg: #0F172A;
+  --sidebar-bg: #131D31;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
   /* Dark Theme Adaptive Hero Card Tokens */
-  --hero-card-bg: linear-gradient(135deg, #090D16 0%, #0F172A 50%, #064E3B 100%);
-  --hero-card-border: rgba(16, 185, 129, 0.28);
+  --hero-card-bg: linear-gradient(135deg, #1E293B 0%, #1E3A2F 100%);
+  --hero-card-border: rgba(52, 211, 153, 0.3);
   --hero-card-title: #FFFFFF;
-  --hero-card-desc: #CBD5E1;
-  --hero-card-pill-bg: rgba(16, 185, 129, 0.18);
-  --hero-card-pill-text: #34D399;
-  --hero-card-shadow: 0 12px 36px -6px rgba(0, 0, 0, 0.35);
+  --hero-card-desc: #E2E8F0;
+  --hero-card-pill-bg: rgba(52, 211, 153, 0.2);
+  --hero-card-pill-text: #6EE7B7;
+  --hero-card-shadow: 0 12px 32px -6px rgba(0, 0, 0, 0.4);
 }
 
 /* 3. Sepia — Warm cream + parchment + olive */
