@@ -98,7 +98,7 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         </div>
       </div>
 
-      <svg viewBox="0 0 580 195" style={{ width: '100%', height: 'auto', display: 'block' }}>
+      <svg viewBox="0 0 620 195" style={{ width: '100%', height: 'auto', display: 'block' }}>
         <defs>
           <linearGradient id="synapsePhish" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#43A85B" stopOpacity="0.8" />
@@ -117,9 +117,9 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
             return (
               <line
                 key={`in-hid-${i}-${j}`}
-                x1="130"
+                x1="145"
                 y1={inNode.y}
-                x2="275"
+                x2="285"
                 y2={hidNode.y}
                 stroke={isPhish ? 'url(#synapsePhish)' : 'url(#synapseLegit)'}
                 strokeWidth={Math.max(1, activeWeight * 3)}
@@ -132,14 +132,14 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         {/* Traveling Signal Pulse Animation */}
         <circle r="3" fill="#43A85B" opacity="0.8">
           <animateMotion
-            path={`M 130 ${inputNodes[0].y} L 275 ${hiddenNodes[1].y} L 435 ${outputNodes[isPhish ? 0 : 1].y}`}
+            path={`M 145 ${inputNodes[0].y} L 285 ${hiddenNodes[1].y} L 440 ${outputNodes[isPhish ? 0 : 1].y}`}
             dur="2.4s"
             repeatCount="indefinite"
           />
         </circle>
         <circle r="3" fill="#82C424" opacity="0.8">
           <animateMotion
-            path={`M 130 ${inputNodes[1].y} L 275 ${hiddenNodes[2].y} L 435 ${outputNodes[isPhish ? 0 : 1].y}`}
+            path={`M 145 ${inputNodes[1].y} L 285 ${hiddenNodes[2].y} L 440 ${outputNodes[isPhish ? 0 : 1].y}`}
             dur="2.8s"
             repeatCount="indefinite"
           />
@@ -150,9 +150,9 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
           outputNodes.map((outNode, j) => (
             <line
               key={`hid-out-${i}-${j}`}
-              x1="288"
+              x1="298"
               y1={hidNode.y}
-              x2="432"
+              x2="438"
               y2={outNode.y}
               stroke={outNode.active ? outNode.color : '#CBD5E1'}
               strokeWidth={outNode.active ? 2.5 : 0.9}
@@ -164,11 +164,11 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         {/* Input Layer Nodes */}
         {inputNodes.map((node, i) => (
           <g key={`in-node-${i}`}>
-            <circle cx="115" cy={node.y} r="15" fill="#FFFFFF" stroke={node.color} strokeWidth="2.5" />
-            <text x="115" y={node.y + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="#26352A">
+            <circle cx="135" cy={node.y} r="15" fill="#FFFFFF" stroke={node.color} strokeWidth="2.5" />
+            <text x="135" y={node.y + 4} textAnchor="middle" fontSize="10" fontWeight="800" fill="#26352A">
               x{i + 1}
             </text>
-            <text x="92" y={node.y + 3} textAnchor="end" fontSize="10" fontWeight="700" fill="#4A5E4F">
+            <text x="112" y={node.y + 3} textAnchor="end" fontSize="10" fontWeight="700" fill="#4A5E4F">
               {node.label}
             </text>
           </g>
@@ -178,14 +178,14 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         {hiddenNodes.map((node, j) => (
           <g key={`hid-node-${j}`}>
             <circle
-              cx="275"
+              cx="285"
               cy={node.y}
               r="13"
               fill={isPhish ? 'rgba(220, 38, 38, 0.1)' : 'rgba(16, 185, 129, 0.12)'}
               stroke={isPhish ? '#DC2626' : '#10B981'}
               strokeWidth="2"
             />
-            <circle cx="275" cy={node.y} r="4" fill={isPhish ? '#DC2626' : '#10B981'} />
+            <circle cx="285" cy={node.y} r="4" fill={isPhish ? '#DC2626' : '#10B981'} />
           </g>
         ))}
 
@@ -193,7 +193,7 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
         {outputNodes.map((node, k) => (
           <g key={`out-node-${k}`}>
             <circle
-              cx="450"
+              cx="455"
               cy={node.y}
               r="18"
               fill={node.active ? node.color : '#FFFFFF'}
@@ -201,7 +201,7 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
               strokeWidth={node.active ? 3 : 1.5}
             />
             <text
-              x="450"
+              x="455"
               y={node.y + 4}
               textAnchor="middle"
               fontSize="11"
@@ -211,7 +211,7 @@ export const NeuralNetworkSvg: React.FC<NeuralNetworkSvgProps> = ({
               {node.code}
             </text>
             <text
-              x="476"
+              x="482"
               y={node.y + 4}
               textAnchor="start"
               fontSize="10.5"
