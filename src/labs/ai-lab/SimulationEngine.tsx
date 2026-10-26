@@ -159,6 +159,9 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
     );
   }, [userPromptInput, delimiterSandbox, patternFilter, semanticPolicy]);
 
+  // Live simulation pulse for animated SVG signal transitions
+  const [simPulse, setSimPulse] = useState<number>(0);
+
   // Synchronize top-level simulation trigger
   useEffect(() => {
     if (isSimulating) {
@@ -166,17 +169,13 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
     }
   }, [isSimulating]);
 
-  // Auto-play stepper through stages
+  // Live simulation engine timer (updates signal pulses and active live stream)
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
     if (isPlaying) {
       interval = setInterval(() => {
-        setActiveTab((currentTab) => {
-          const currentIdx = STAGES.findIndex(s => s.id === currentTab);
-          const nextIdx = (currentIdx + 1) % STAGES.length;
-          return STAGES[nextIdx].id;
-        });
-      }, 4000 / speed);
+        setSimPulse((p) => (p + 1) % 100);
+      }, 50 / speed);
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -231,38 +230,45 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#020617] text-slate-100 relative overflow-y-auto custom-scrollbar p-4 md:p-6 gap-6">
-      {/* Educational Model Header & Disclaimers */}
-      <div className="bg-[#0B132B] border border-cyan-500/30 rounded-2xl p-4 md:p-5 shadow-2xl relative overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
-              <Zap size={22} />
-            </div>
-            <div>
-              <h2 className="text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                Interactive AI Simulator: Educational Deep-Dive
-              </h2>
-              <p className="text-xs text-slate-300 font-medium mt-0.5">
-                Module Context: <span className="text-cyan-400 font-bold">{module.title}</span> • Inspect each transformation step from raw text to neural output
-              </p>
-            </div>
+      {/* Compact Educational Model Header & Disclaimers */}
+      <div className="bg-[#0B132B] border border-cyan-500/30 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
+            <Zap size={20} />
           </div>
-
-          {/* Educational Model Certification Badge */}
-          <div className="flex items-center gap-2 bg-slate-900/90 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl shadow-inner">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
-            <span className="text-xs font-mono font-bold text-emerald-300">
-              Deterministic Math Engine Online
-            </span>
+          <div>
+            <h2 className="text-lg md:text-xl font-black text-white tracking-tight flex items-center gap-2">
+              Interactive AI Simulator
+              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold uppercase tracking-wider">
+                Deterministic Engine
+              </span>
+            </h2>
+            <p className="text-xs text-slate-300 font-medium mt-0.5">
+              Module: <span className="text-cyan-400 font-bold">{module.title}</span> • Inspect each step from raw data to neural inference
+            </p>
           </div>
         </div>
 
-        {/* Global Transparent Math Disclaimer */}
-        <div className="bg-cyan-950/40 border border-cyan-500/25 rounded-xl p-3 text-xs text-cyan-200 flex items-start gap-2.5 leading-relaxed font-normal">
-          <Info size={16} className="text-cyan-400 shrink-0 mt-0.5" />
-          <div>
-            <strong className="text-cyan-300 font-bold">Educational Transparency:</strong> Every calculation (Token IDs, 2D coordinates, Scaled Dot-Product Attention, $z = Wx + b$ activations, Softmax probabilities, and Prompt Shield filters) is computed locally in your browser. These are pedagogical educational demonstrations designed to show how foundational transformers and neural nets work, rather than commercial black-box weights.
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 bg-slate-900/90 border border-emerald-500/30 px-3 py-1.5 rounded-xl shadow-inner">
+            <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-cyan-400 animate-ping' : 'bg-emerald-400 animate-pulse'}`}></div>
+            <span className="text-xs font-mono font-bold text-emerald-300">
+              {isPlaying ? 'Simulating Pipeline' : 'Deterministic Ready'}
+            </span>
           </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setKeywordWeight(Math.floor(Math.random() * 60) + 35);
+              setUrgencyWeight(Math.floor(Math.random() * 60) + 35);
+              setSenderReputation(Math.floor(Math.random() * 50) + 50);
+            }}
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-xl text-xs font-bold border border-cyan-500/30 flex items-center gap-1.5 transition-all shadow-md active:scale-95"
+          >
+            <Dice5 size={14} />
+            <span>Perturb Weights</span>
+          </button>
         </div>
       </div>
 
@@ -280,7 +286,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                 setActiveTab(stage.id);
                 setIsPlaying(false);
               }}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
                 isActive
                   ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.35)]'
                   : 'bg-slate-900/70 text-slate-300 border-slate-800 hover:text-white hover:bg-slate-800'
@@ -293,51 +299,51 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
       </nav>
 
       {/* Persistent Simulator Control Toolbar */}
-      <div className="bg-[#0B1120] border border-white/10 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xl">
+      <div className="bg-[#0B1120] border border-white/10 rounded-2xl p-3 md:p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-xl">
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => {
               if (!isPlaying) onStartSim();
               setIsPlaying(!isPlaying);
             }}
-            className={`px-5 py-2.5 rounded-xl font-bold text-xs tracking-wider flex items-center gap-2 transition-all shadow-lg active:scale-95 ${
+            className={`px-5 py-2 rounded-xl font-bold text-xs tracking-wider flex items-center gap-2 transition-all shadow-lg active:scale-95 ${
               isPlaying
                 ? 'bg-amber-500 text-slate-950 hover:bg-amber-400'
                 : 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
             }`}
           >
-            <Play size={16} fill={isPlaying ? "none" : "currentColor"} />
-            <span>{isPlaying ? 'PAUSE PIPELINE' : 'START PIPELINE'}</span>
+            <Play size={15} fill={isPlaying ? "none" : "currentColor"} />
+            <span>{isPlaying ? 'PAUSE PIPELINE' : 'START SIMULATION'}</span>
           </button>
 
           <button
             onClick={handleStepBackward}
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all"
+            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all"
             title="Step Backward"
           >
-            <ChevronLeft size={16} />
+            <ChevronLeft size={15} />
           </button>
 
           <button
             onClick={handleStepForward}
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all"
+            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all"
             title="Step Forward"
           >
-            <ChevronRight size={16} />
+            <ChevronRight size={15} />
           </button>
 
           <button
             onClick={handleReset}
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all"
+            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition-all"
             title="Reset Simulation"
           >
-            <RotateCcw size={16} />
+            <RotateCcw size={15} />
           </button>
         </div>
 
         {/* Speed & Accessibility Controls */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">
-          <div className="flex items-center gap-1.5 bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-300">
+          <div className="flex items-center gap-1.5 bg-slate-900 px-3 py-1 rounded-xl border border-slate-800">
             <span className="font-semibold text-slate-400">Speed:</span>
             {[0.5, 1, 2].map(rate => (
               <button
@@ -352,7 +358,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
             ))}
           </div>
 
-          <label className="flex items-center gap-2 cursor-pointer bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-800">
+          <label className="flex items-center gap-2 cursor-pointer bg-slate-900 px-3 py-1 rounded-xl border border-slate-800">
             <input
               type="checkbox"
               checked={reducedMotion}
@@ -366,39 +372,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Stage 1: Interactive 2D Neural Decision Boundary Simulation (Matches Mockup Design) */}
       {activeTab === 'classifier' && (
-        <section className="flex flex-col gap-5">
-          {/* Top Simulation Banner */}
-          <div className="bg-[#0B132B] border border-cyan-500/30 rounded-2xl p-4 md:p-5 flex flex-wrap items-center justify-between gap-4 shadow-xl">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                  Interactive Simulation Suite
-                </span>
-                <span className="text-xs text-slate-400">Live Mathematical Decision Model</span>
-              </div>
-              <h3 className="text-xl font-black text-white mt-1">
-                2D Neural Decision Boundary &amp; Spam Classification Matrix
-              </h3>
-              <p className="text-xs text-slate-300 mt-0.5">
-                Adjust input weights on the left to recalculate the decision hyperplane, confidence gauges, and neural activation paths in real time.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setKeywordWeight(Math.floor(Math.random() * 60) + 35);
-                  setUrgencyWeight(Math.floor(Math.random() * 60) + 35);
-                  setSenderReputation(Math.floor(Math.random() * 50) + 50);
-                }}
-                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-xl text-xs font-bold border border-cyan-500/30 flex items-center gap-1.5 transition-all"
-              >
-                <Dice5 size={14} />
-                <span>Perturb Weights</span>
-              </button>
-            </div>
-          </div>
+        <section className="flex flex-col gap-4">
 
           {/* 3-Column Visual Layout (Matching Approved Design Mockup) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
@@ -634,14 +608,10 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                         <stop offset="0%" stopColor="#38BDF8" />
                         <stop offset="100%" stopColor="#3B82F6" />
                       </linearGradient>
-                      <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="2" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                      </filter>
-                      <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur stdDeviation="2" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                      </filter>
+                      <linearGradient id="scanlineBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="rgba(34, 211, 238, 0)" />
+                        <stop offset="100%" stopColor="rgba(34, 211, 238, 0.15)" />
+                      </linearGradient>
                     </defs>
 
                     {/* Faint coordinate axes */}
@@ -709,17 +679,41 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                       );
                     })()}
 
+                    {/* Sweep Scanline across scatter canvas when simulating */}
+                    {isPlaying && (
+                      <g>
+                        <line
+                          x1={25 + ((simPulse * 4.5) % 455)}
+                          y1="15"
+                          x2={25 + ((simPulse * 4.5) % 455)}
+                          y2="255"
+                          stroke="rgba(34, 211, 238, 0.45)"
+                          strokeWidth="2"
+                          strokeDasharray="4 2"
+                        />
+                        <rect
+                          x={Math.max(25, 25 + ((simPulse * 4.5) % 455) - 30)}
+                          y="15"
+                          width="30"
+                          height="240"
+                          fill="url(#scanlineBeamGrad)"
+                          pointerEvents="none"
+                        />
+                      </g>
+                    )}
+
                     {/* Dense Scatter Points */}
                     {allDatasetPoints.map((pt) => {
                       const isLegit = pt.label === 'legitimate';
                       const svgX = 35 + (pt.x / 100) * 435;
                       const svgY = 250 - (pt.y / 100) * 225;
                       const isSelected = selectedPointId === pt.id;
+                      const isHot = isPlaying && Math.abs((svgX - (25 + ((simPulse * 4.5) % 455)))) < 18;
 
                       return (
                         <g
                           key={pt.id}
-                          className="cursor-pointer"
+                          className="cursor-pointer transition-transform duration-100"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedPointId(pt.id);
@@ -728,15 +722,19 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                           <circle
                             cx={svgX}
                             cy={svgY}
-                            r={isSelected ? 6.5 : isLegit ? 3.5 : 3.8}
+                            r={isSelected ? 6.5 : isHot ? 5 : isLegit ? 3.5 : 3.8}
                             fill={isLegit ? '#22D3EE' : '#34D399'}
-                            opacity={isSelected ? 1 : 0.85}
-                            stroke={isSelected ? '#FFFFFF' : 'none'}
-                            strokeWidth={isSelected ? 2 : 0}
-                            filter={isLegit ? 'url(#glow-cyan)' : 'url(#glow-emerald)'}
+                            opacity={isSelected || isHot ? 1 : 0.85}
+                            stroke={isSelected ? '#FFFFFF' : isHot ? (isLegit ? '#67E8F9' : '#A7F3D0') : 'none'}
+                            strokeWidth={isSelected ? 2 : isHot ? 1.5 : 0}
+                            style={{
+                              filter: isSelected || isHot
+                                ? `drop-shadow(0 0 4px ${isLegit ? '#22D3EE' : '#34D399'})`
+                                : undefined,
+                            }}
                           />
-                          {/* Inner initial indicator (L for legit, S for spam) on larger dots */}
-                          {(pt.id % 5 === 0 || isSelected) && (
+                          {/* Inner initial indicator (L for legit, S for spam) on key dots */}
+                          {(pt.id % 6 === 0 || isSelected) && (
                             <text
                               x={svgX}
                               y={svgY + 2.5}
@@ -868,7 +866,9 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                             x2="202"
                             y2={y2}
                             stroke={isPrimary ? '#22D3EE' : 'rgba(100,116,139,0.22)'}
-                            strokeWidth={isPrimary ? 1.8 : 0.6}
+                            strokeWidth={isPrimary ? (isPlaying ? 2.2 : 1.8) : 0.6}
+                            strokeDasharray={isPrimary && isPlaying ? '6 4' : 'none'}
+                            strokeDashoffset={isPrimary && isPlaying ? -(simPulse * 2.5) : 0}
                           />
                         );
                       })
@@ -893,7 +893,9 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                             x2="352"
                             y2={y2}
                             stroke={isPrimary ? '#34D399' : 'rgba(52,211,153,0.18)'}
-                            strokeWidth={isPrimary ? 2 : 0.6}
+                            strokeWidth={isPrimary ? (isPlaying ? 2.5 : 2) : 0.6}
+                            strokeDasharray={isPrimary && isPlaying ? '6 4' : 'none'}
+                            strokeDashoffset={isPrimary && isPlaying ? -(simPulse * 2.5) : 0}
                           />
                         );
                       })
@@ -916,8 +918,9 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                           x2="465"
                           y2="80"
                           stroke={i === 0 ? '#34D399' : 'rgba(52,211,153,0.25)'}
-                          strokeWidth={i === 0 ? 2 : 0.8}
-                          strokeDasharray={i === 0 ? 'none' : '3 2'}
+                          strokeWidth={i === 0 ? (isPlaying ? 2.4 : 2) : 0.8}
+                          strokeDasharray={i === 0 ? (isPlaying ? '6 3' : 'none') : '3 2'}
+                          strokeDashoffset={i === 0 && isPlaying ? -(simPulse * 3) : 0}
                         />
                         <line
                           x1="368"
@@ -929,6 +932,36 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                         />
                       </g>
                     ))}
+
+                    {/* Live Traveling Signal Pulse Beads along Primary Synapse */}
+                    {isPlaying && (
+                      <g pointerEvents="none">
+                        {/* Layer 1 -> Layer 2 traveling packet */}
+                        <circle
+                          cx={68 + ((simPulse % 50) / 50) * (202 - 68)}
+                          cy={45 + ((simPulse % 50) / 50) * (55 - 45)}
+                          r="3"
+                          fill="#FFFFFF"
+                          style={{ filter: 'drop-shadow(0 0 6px #22D3EE)' }}
+                        />
+                        {/* Layer 2 -> Layer 3 traveling packet */}
+                        <circle
+                          cx={218 + (((simPulse + 25) % 50) / 50) * (352 - 218)}
+                          cy={55 + (((simPulse + 25) % 50) / 50) * (45 - 55)}
+                          r="3"
+                          fill="#FFFFFF"
+                          style={{ filter: 'drop-shadow(0 0 6px #34D399)' }}
+                        />
+                        {/* Layer 3 -> Output traveling packet */}
+                        <circle
+                          cx={368 + ((simPulse % 50) / 50) * (465 - 368)}
+                          cy={45 + ((simPulse % 50) / 50) * (80 - 45)}
+                          r="3.5"
+                          fill="#67E8F9"
+                          style={{ filter: 'drop-shadow(0 0 8px #38BDF8)' }}
+                        />
+                      </g>
+                    )}
 
                     <text x="415" y="70" fontSize="8" fill="#34D399" fontFamily="monospace" fontWeight="bold">0.5</text>
                     <text x="415" y="138" fontSize="8" fill="#64748B" fontFamily="monospace">0.3</text>

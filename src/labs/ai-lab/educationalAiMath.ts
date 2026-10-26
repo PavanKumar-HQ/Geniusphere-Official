@@ -238,29 +238,29 @@ export function generateClassifierDataset(seed = 42): ClassifierDataPoint[] {
   const points: ClassifierDataPoint[] = [];
 
   // Cluster A: Legitimate emails (Cyan cluster, concentrated in lower-left / mid-left)
-  for (let i = 0; i < 90; i++) {
-    const angle = (i / 90) * Math.PI * 2;
-    const r = ((Math.sin(seed + i * 3.1) + 1) / 2) * 24;
-    const cx = 36 + Math.cos(angle) * r * 1.3 + ((Math.cos(seed + i * 5.7) + 1) / 2) * 12;
-    const cy = 40 + Math.sin(angle) * r * 0.9 + ((Math.sin(seed + i * 4.3) + 1) / 2) * 10;
+  for (let i = 0; i < 32; i++) {
+    const angle = (i / 32) * Math.PI * 2;
+    const r = ((Math.sin(seed + i * 3.1) + 1) / 2) * 22;
+    const cx = 35 + Math.cos(angle) * r * 1.2 + ((Math.cos(seed + i * 5.7) + 1) / 2) * 10;
+    const cy = 40 + Math.sin(angle) * r * 0.9 + ((Math.sin(seed + i * 4.3) + 1) / 2) * 8;
     points.push({
       id: i + 1,
-      x: Math.round(Math.min(95, Math.max(5, cx))),
-      y: Math.round(Math.min(95, Math.max(5, cy))),
+      x: Math.round(Math.min(95, Math.max(8, cx))),
+      y: Math.round(Math.min(95, Math.max(8, cy))),
       label: 'legitimate',
     });
   }
 
   // Cluster B: Malicious / Spam emails (Emerald cluster, concentrated in upper-right / mid-right)
-  for (let i = 0; i < 90; i++) {
-    const angle = (i / 90) * Math.PI * 2;
-    const r = ((Math.cos(seed + i * 2.9) + 1) / 2) * 24;
-    const cx = 72 + Math.cos(angle) * r * 1.3 + ((Math.sin(seed + (i + 50) * 3.3) + 1) / 2) * 10;
-    const cy = 68 + Math.sin(angle) * r * 0.9 + ((Math.cos(seed + (i + 50) * 4.1) + 1) / 2) * 12;
+  for (let i = 0; i < 32; i++) {
+    const angle = (i / 32) * Math.PI * 2;
+    const r = ((Math.cos(seed + i * 2.9) + 1) / 2) * 22;
+    const cx = 72 + Math.cos(angle) * r * 1.2 + ((Math.sin(seed + (i + 20) * 3.3) + 1) / 2) * 8;
+    const cy = 68 + Math.sin(angle) * r * 0.9 + ((Math.cos(seed + (i + 20) * 4.1) + 1) / 2) * 10;
     points.push({
-      id: i + 91,
-      x: Math.round(Math.min(95, Math.max(5, cx))),
-      y: Math.round(Math.min(95, Math.max(5, cy))),
+      id: i + 33,
+      x: Math.round(Math.min(95, Math.max(8, cx))),
+      y: Math.round(Math.min(95, Math.max(8, cy))),
       label: 'malicious',
     });
   }
