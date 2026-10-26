@@ -324,7 +324,7 @@ export const SoftwareAuthScreen: React.FC<SoftwareAuthScreenProps> = ({ onLogin,
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Enter your name (e.g. Pavan Kumar)"
+                placeholder="Enter your full name"
                 style={{
                   width: '100%',
                   padding: '11px 14px',
