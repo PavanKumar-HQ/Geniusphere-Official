@@ -205,6 +205,108 @@ export class ApiClient {
     });
   }
 
+  // --- Marketplace & Institutional Training API Endpoints ---
+  public async getTrainingRequests(): Promise<any[]> {
+    return this.request('/api/marketplace/requests');
+  }
+
+  public async createTrainingRequest(data: {
+    title: string;
+    domain: string;
+    targetGradeRange: string;
+    approxCohortSize: number;
+    learningObjectives: string;
+    preferredFormat: string;
+    preferredStartDate: string;
+    preferredEndDate: string;
+    locationAddress: string;
+    budgetMaxPaise: number;
+  }): Promise<any> {
+    return this.request('/api/marketplace/requests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async createTrainingQuote(requestId: string, data: {
+    grossAmountPaise: number;
+    trainerFeePaise: number;
+    platformFeePaise?: number;
+    taxAmountPaise?: number;
+    termsMarkdown: string;
+    validDays?: number;
+  }): Promise<any> {
+    return this.request(`/api/marketplace/requests/${requestId}/quote`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async acceptTrainingQuote(quoteId: string): Promise<any> {
+    return this.request(`/api/marketplace/quotes/${quoteId}/accept`, {
+      method: 'POST',
+    });
+  }
+
+  public async getTrainingSessions(): Promise<any[]> {
+    return this.request('/api/marketplace/sessions');
+  }
+
+  public async logSessionDelivery(sessionId: string, attendanceCount: number, notes?: string): Promise<any> {
+    return this.request(`/api/marketplace/sessions/${sessionId}/deliver`, {
+      method: 'POST',
+      body: JSON.stringify({ attendanceCount, notes }),
+    });
+  }
+
+  public async verifySessionAttendance(sessionId: string): Promise<any> {
+    return this.request(`/api/marketplace/sessions/${sessionId}/verify`, {
+      method: 'POST',
+    });
+  }
+
+  public async getInvoices(): Promise<any[]> {
+    return this.request('/api/marketplace/invoices');
+  }
+
+  public async payInvoice(invoiceId: string): Promise<any> {
+    return this.request(`/api/marketplace/invoices/${invoiceId}/pay`, {
+      method: 'POST',
+    });
+  }
+
+  public async getPayouts(): Promise<any[]> {
+    return this.request('/api/marketplace/payouts');
+  }
+
+  public async approvePayout(payoutId: string): Promise<any> {
+    return this.request(`/api/marketplace/payouts/${payoutId}/approve`, {
+      method: 'POST',
+    });
+  }
+
+  public async settlePayout(payoutId: string): Promise<any> {
+    return this.request(`/api/marketplace/payouts/${payoutId}/settle`, {
+      method: 'POST',
+    });
+  }
+
+  public async reportSafeguarding(data: {
+    category: string;
+    severity: string;
+    description: string;
+    subjectUserId?: string;
+  }): Promise<any> {
+    return this.request('/api/safeguarding/reports', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async getSafeguardingReports(): Promise<any[]> {
+    return this.request('/api/safeguarding/reports');
+  }
+
   /**
    * Initializes real-time authenticated WebSocket connection
    */
