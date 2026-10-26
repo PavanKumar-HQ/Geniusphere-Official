@@ -243,20 +243,6 @@ export const MultiLanguageCodeSandbox: React.FC<MultiLanguageCodeSandboxProps> =
               <h2 style={{ fontSize: '1.35rem', margin: 0, fontWeight: 800, color: 'var(--text-primary)' }}>
                 Multi-Language Coding Sandbox
               </h2>
-              <span
-                style={{
-                  backgroundColor: 'var(--bg-surface-subdued)',
-                  color: 'var(--brand-primary)',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  padding: '2px 8px',
-                  borderRadius: '100px',
-                  textTransform: 'uppercase',
-                  border: '1px solid var(--border-subtle)',
-                }}
-              >
-                In-Browser Engine
-              </span>
             </div>
             <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.86rem' }}>
               Write, compile, and execute real <strong>Python</strong>, <strong>JavaScript</strong>, <strong>TypeScript</strong>, <strong>C++</strong>, <strong>Java</strong>, <strong>C</strong>, and <strong>SQL</strong> code.
