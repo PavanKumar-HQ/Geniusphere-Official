@@ -97,6 +97,21 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
 
   const firstLessonId = course.modules[0]?.lessons[0]?.id;
 
+  const getDomainColor = (d: string) => {
+    switch (d) {
+      case 'technology':
+        return '#0D9488';
+      case 'finance':
+        return '#059669';
+      case 'professional':
+        return '#2563EB';
+      default:
+        return 'var(--brand-primary)';
+    }
+  };
+
+  const domainAccent = getDomainColor(course.domain);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Navigation Bar */}
@@ -112,10 +127,24 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
       </div>
 
       {/* Main Course Header Card */}
-      <div className="card-elevated" style={{ borderLeft: '5px solid var(--brand-primary)' }}>
+      <div className="card-elevated" style={{ borderLeft: `6px solid ${domainAccent}` }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <span className="badge badge-brand">{course.domain.toUpperCase()}</span>
+            <span
+              style={{
+                backgroundColor: `${domainAccent}1A`,
+                color: domainAccent,
+                border: `1.5px solid ${domainAccent}40`,
+                padding: '3px 10px',
+                borderRadius: '100px',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+              }}
+            >
+              {course.domain.toUpperCase()}
+            </span>
             <span className="badge badge-neutral">{course.level.toUpperCase()}</span>
             {course.availability_status === 'verified_functional' ? (
               <span className="badge badge-success">VERIFIED & USABLE</span>

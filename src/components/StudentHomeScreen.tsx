@@ -106,11 +106,18 @@ export const StudentHomeScreen: React.FC<StudentHomeScreenProps> = ({
     }
   };
 
-  // 3 visually distinct tracks for visual course recommendations
+  // 3 visually distinct tracks showcasing each domain (Technology, Finance, Professional)
   const visualRecommendedCourses = useMemo(() => {
-    return allCourses
-      .filter((c) => c.id !== primaryCourse?.id)
-      .slice(0, 3);
+    const techCourse = allCourses.find((c) => c.domain === 'technology' && c.id !== primaryCourse?.id);
+    const finCourse = allCourses.find((c) => c.domain === 'finance' && c.id !== primaryCourse?.id);
+    const profCourse = allCourses.find((c) => c.domain === 'professional' && c.id !== primaryCourse?.id);
+
+    const list = [techCourse, finCourse, profCourse].filter(Boolean) as typeof allCourses;
+    if (list.length < 3) {
+      const remaining = allCourses.filter((c) => c.id !== primaryCourse?.id && !list.includes(c));
+      return [...list, ...remaining].slice(0, 3);
+    }
+    return list;
   }, [allCourses, primaryCourse]);
 
   return (

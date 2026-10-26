@@ -176,14 +176,22 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
     })
     .filter((item) => item.course !== null);
 
-  // Fallback courses for discovery if not enrolled
+  // Fallback courses for discovery if not enrolled: Pick 1 from each domain (tech, finance, professional)
   const allCanonicalCourses = db.getCanonicalCourses();
   const highlightedCourses = enrolledCoursesWithDetails.length > 0
     ? enrolledCoursesWithDetails.slice(0, 3)
-    : allCanonicalCourses.slice(0, 3).map((c) => ({
-        course: c,
-        enrollment: { progress_percent: 0, completed_lessons: [] } as any,
-      }));
+    : (() => {
+        const tech = allCanonicalCourses.find((c) => c.domain === 'technology');
+        const fin = allCanonicalCourses.find((c) => c.domain === 'finance');
+        const prof = allCanonicalCourses.find((c) => c.domain === 'professional');
+        const selected = [tech, fin, prof].filter(Boolean) as typeof allCanonicalCourses;
+        const remaining = allCanonicalCourses.filter((c) => !selected.includes(c));
+        const list = selected.length >= 3 ? selected : [...selected, ...remaining].slice(0, 3);
+        return list.map((c) => ({
+          course: c,
+          enrollment: { progress_percent: 0, completed_lessons: [] } as any,
+        }));
+      })();
 
   // Primary Continue-Learning target course
   const primaryContinueItem = enrolledCoursesWithDetails.length > 0
