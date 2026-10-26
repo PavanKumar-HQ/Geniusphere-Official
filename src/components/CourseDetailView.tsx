@@ -503,32 +503,6 @@ export const CourseDetailView: React.FC<CourseDetailViewProps> = ({
       {/* TAB 1: SYLLABUS & LESSON MODULES */}
       {activeCourseTab === 'syllabus' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Grid: Objectives & Prerequisites */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-            <div className="card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-                <ListChecks size={20} color="var(--brand-primary)" />
-                <h3 style={{ fontSize: '1.15rem' }}>Learning Objectives</h3>
-              </div>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingLeft: '18px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                {course.learning_objectives.map((obj, i) => (
-                  <li key={i}>{obj}</li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="card">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-                <BookOpen size={20} color="var(--brand-primary)" />
-                <h3 style={{ fontSize: '1.15rem' }}>Prerequisites & Scope</h3>
-              </div>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingLeft: '18px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                {course.prerequisites.map((prereq, i) => (
-                  <li key={i}>{prereq}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
 
           {/* Master Course Blueprint Pack: Paired Lab, Capstone & Assessment Architecture */}
           {(course.paired_lab_concept || course.capstone_prompt || course.assessment_plan) && (

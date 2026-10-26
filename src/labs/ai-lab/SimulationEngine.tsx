@@ -806,7 +806,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                     {[45, 70, 95, 120, 145, 170].map((y, idx) => (
                       <g key={`in-node-${idx}`}>
                         <text x="35" y={y + 3} fontSize="9" fill="#94A3B8" textAnchor="middle" fontWeight="bold">{idx + 1}</text>
-                        <circle cx="60" cy={y} r="8" fill="#0B132B" stroke="#64748B" strokeWidth="1.5" />
+                        <circle cx="60" cy={y} r="8" fill="#1E293B" stroke="#64748B" strokeWidth="1.5" />
                       </g>
                     ))}
 
@@ -819,7 +819,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                           cx="210"
                           cy={y}
                           r="8"
-                          fill={isActive ? '#34D399' : '#0B132B'}
+                          fill={isActive ? '#34D399' : '#1E293B'}
                           stroke={isActive ? '#34D399' : '#475569'}
                           strokeWidth={isActive ? 2.5 : 1.5}
                           filter={isActive ? 'url(#node-glow)' : 'none'}
@@ -836,7 +836,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                           cx="360"
                           cy={y}
                           r="8"
-                          fill={isActive ? '#22D3EE' : '#0B132B'}
+                          fill={isActive ? '#22D3EE' : '#1E293B'}
                           stroke={isActive ? '#22D3EE' : '#475569'}
                           strokeWidth={isActive ? 2.5 : 1.5}
                           filter={isActive ? 'url(#node-glow)' : 'none'}
@@ -850,7 +850,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                       <text x="495" y="84" fontSize="10" fill="#F1F5F9" fontWeight="bold">Legitimate</text>
                     </g>
                     <g>
-                      <circle cx="475" cy="130" r="10" fill="#0B132B" stroke="#475569" strokeWidth="1.8" />
+                      <circle cx="475" cy="130" r="10" fill="#1E293B" stroke="#475569" strokeWidth="1.8" />
                       <text x="495" y="134" fontSize="10" fill="#94A3B8" fontWeight="bold">Spam</text>
                     </g>
 
@@ -1106,7 +1106,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Tab 2: Tokenization */}
       {activeTab === 'tokenization' && (
-        <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
+        <section className="bg-[#1E293B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1220,7 +1220,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Tab 2: Embeddings Visualization */}
       {activeTab === 'embeddings' && (
-        <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
+        <section className="bg-[#1E293B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1317,7 +1317,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Tab 3: Attention Mechanism */}
       {activeTab === 'attention' && (
-        <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
+        <section className="bg-[#1E293B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1465,7 +1465,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Tab 4: Neural-Network Forward Pass */}
       {activeTab === 'neural' && (
-        <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
+        <section className="bg-[#1E293B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1606,7 +1606,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Tab 5: Next-Token Probability & Temperature */}
       {activeTab === 'probability' && (
-        <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
+        <section className="bg-[#1E293B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -1722,7 +1722,7 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
       {/* Tab 6: Safety & Prompt Shield */}
       {activeTab === 'safety' && (
-        <section className="bg-[#0B132B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
+        <section className="bg-[#1E293B] border border-white/10 rounded-2xl p-5 md:p-6 flex flex-col gap-5 shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
