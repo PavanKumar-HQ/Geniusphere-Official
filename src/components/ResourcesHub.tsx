@@ -219,9 +219,9 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
           </div>
 
           {/* Search Box */}
-          <div style={{ position: 'relative', minWidth: '280px', flex: '1', maxWidth: '360px' }}>
+          <div style={{ position: 'relative', minWidth: '220px', flex: '1', maxWidth: '300px' }}>
             <Search
-              size={18}
+              size={16}
               style={{
                 position: 'absolute',
                 left: '12px',
@@ -236,7 +236,7 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="form-input"
-              style={{ paddingLeft: '38px', height: '42px' }}
+              style={{ paddingLeft: '34px', height: '38px', borderRadius: '100px', fontSize: '0.84rem' }}
               aria-label="Search resources"
             />
             {searchQuery && (
@@ -252,34 +252,14 @@ export const ResourcesHub: React.FC<ResourcesHubProps> = ({ db, onNavigate, curr
                   border: 'none',
                   color: 'var(--text-muted)',
                   cursor: 'pointer',
-                  padding: '4px',
+                  padding: '2px',
                   minHeight: 'auto',
                 }}
               >
-                <X size={16} />
+                <X size={14} />
               </button>
             )}
           </div>
-        </div>
-
-        {/* Category Filter Pills */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-          {[
-            { id: 'all', label: 'All' },
-            { id: 'technology', label: 'Technology' },
-            { id: 'coding', label: 'Coding' },
-            { id: 'finance', label: 'Finance' },
-            { id: 'professional', label: 'Personal Growth' },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`filter-pill ${selectedCategory === cat.id ? 'active' : ''}`}
-            >
-              {cat.label}
-            </button>
-          ))}
         </div>
       </div>
 
