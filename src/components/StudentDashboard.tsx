@@ -339,16 +339,17 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
       {primaryContinueItem.course && (
         <div
           style={{
-            background: 'linear-gradient(135deg, #0F172A 0%, #064E3B 55%, #047857 100%)',
+            background: 'var(--hero-card-bg)',
             borderRadius: '24px',
             padding: '28px 32px',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
             gap: '24px',
-            boxShadow: '0 16px 36px -6px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(16, 185, 129, 0.2)',
+            border: '1px solid var(--hero-card-border)',
+            boxShadow: 'var(--hero-card-shadow)',
             position: 'relative',
             overflow: 'hidden',
           }}
@@ -362,7 +363,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               width: '280px',
               height: '280px',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
               pointerEvents: 'none',
             }}
           />
@@ -371,21 +372,20 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <span
                 style={{
-                  backgroundColor: 'rgba(16, 185, 129, 0.18)',
-                  color: '#34D399',
-                  border: '1px solid rgba(52, 211, 153, 0.25)',
+                  backgroundColor: 'var(--hero-card-pill-bg)',
+                  color: 'var(--hero-card-pill-text)',
+                  border: '1px solid var(--hero-card-border)',
                   padding: '3px 10px',
                   borderRadius: '100px',
                   fontSize: '0.72rem',
                   fontWeight: 800,
                   textTransform: 'uppercase',
                   letterSpacing: '0.04em',
-                  backdropFilter: 'blur(4px)',
                 }}
               >
                 {enrolledCoursesWithDetails.length > 0 ? 'PICK UP WHERE YOU LEFT OFF' : 'RECOMMENDED STARTING TRACK'}
               </span>
-              <span style={{ fontSize: '0.75rem', color: '#6EE7B7', fontWeight: 600 }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                 {primaryContinueItem.course.domain.toUpperCase()}
               </span>
             </div>
@@ -394,7 +394,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               style={{
                 fontSize: 'clamp(1.4rem, 2.5vw, 1.85rem)',
                 fontWeight: 800,
-                color: '#FFFFFF',
+                color: 'var(--hero-card-title)',
                 margin: '0 0 8px',
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.02em',
@@ -404,25 +404,24 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
               {primaryContinueItem.course.title}
             </h2>
 
-            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: '#CBD5E1', lineHeight: 1.5, maxWidth: '540px' }}>
+            <p style={{ margin: '0 0 16px', fontSize: '0.9rem', color: 'var(--hero-card-desc)', lineHeight: 1.5, maxWidth: '540px' }}>
               {primaryContinueItem.course.summary}
             </p>
 
             {/* Real Progress Bar */}
             {primaryContinueItem.enrollment.progress_percent > 0 && (
               <div style={{ maxWidth: '380px', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: '6px', color: '#94A3B8' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
                   <span>Course Progress</span>
-                  <span style={{ color: '#34D399', fontWeight: 800 }}>{primaryContinueItem.enrollment.progress_percent}% Complete</span>
+                  <span style={{ color: 'var(--brand-primary)', fontWeight: 800 }}>{primaryContinueItem.enrollment.progress_percent}% Complete</span>
                 </div>
-                <div style={{ height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '100px', overflow: 'hidden' }}>
+                <div style={{ height: '8px', backgroundColor: 'var(--border-subtle)', borderRadius: '100px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: `${primaryContinueItem.enrollment.progress_percent}%`,
                       height: '100%',
-                      background: 'linear-gradient(90deg, #10B981, #34D399)',
+                      background: 'var(--grad-brand)',
                       borderRadius: '100px',
-                      boxShadow: '0 0 10px rgba(52, 211, 153, 0.6)',
                       transition: 'width 0.3s ease',
                     }}
                   />

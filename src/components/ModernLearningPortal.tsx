@@ -290,12 +290,12 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
       {/* ================================================================ */}
       <div
         style={{
-          background: 'linear-gradient(135deg, #090D16 0%, #0F172A 50%, #064E3B 100%)',
+          background: 'var(--hero-card-bg)',
           borderRadius: '20px',
           padding: '28px 32px',
-          color: '#FFFFFF',
-          border: '1px solid rgba(16, 185, 129, 0.25)',
-          boxShadow: '0 12px 36px -6px rgba(0, 0, 0, 0.35)',
+          color: 'var(--text-primary)',
+          border: '1px solid var(--hero-card-border)',
+          boxShadow: 'var(--hero-card-shadow)',
           position: 'relative',
           overflow: 'hidden',
           display: 'flex',
@@ -313,7 +313,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
             right: '-40px',
             width: '320px',
             height: '320px',
-            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
@@ -322,20 +322,20 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
             <span
               style={{
-                backgroundColor: 'rgba(16, 185, 129, 0.18)',
-                color: '#34D399',
+                backgroundColor: 'var(--hero-card-pill-bg)',
+                color: 'var(--hero-card-pill-text)',
                 padding: '4px 12px',
                 borderRadius: '100px',
                 fontSize: '0.72rem',
                 fontWeight: 800,
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                border: '1px solid rgba(52, 211, 153, 0.3)',
+                border: '1px solid var(--hero-card-border)',
               }}
             >
               CONTINUE LEARNING
             </span>
-            <span style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>
               {primaryCourse?.domain?.toUpperCase()} • {primaryCourse?.subject}
             </span>
           </div>
@@ -345,7 +345,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
               fontSize: 'clamp(1.35rem, 2.5vw, 1.85rem)',
               fontWeight: 900,
               margin: '0 0 8px',
-              color: '#FFFFFF',
+              color: 'var(--hero-card-title)',
               lineHeight: 1.25,
               letterSpacing: '-0.02em',
             }}
@@ -353,10 +353,10 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
             {primaryCourse?.title}
           </h2>
 
-          <p style={{ margin: '0 0 18px', fontSize: '0.9rem', color: '#CBD5E1', maxWidth: '640px', lineHeight: 1.5 }}>
+          <p style={{ margin: '0 0 18px', fontSize: '0.9rem', color: 'var(--hero-card-desc)', maxWidth: '640px', lineHeight: 1.5 }}>
             {nextLesson?.lesson ? (
               <span>
-                Up next: <strong style={{ color: '#F8FAFC' }}>{nextLesson.lesson.title}</strong> ({nextLesson.lesson.duration_minutes} min • Interactive Assessment)
+                Up next: <strong style={{ color: 'var(--hero-card-title)' }}>{nextLesson.lesson.title}</strong> ({nextLesson.lesson.duration_minutes} min • Interactive Assessment)
               </span>
             ) : (
               primaryCourse?.summary
@@ -365,19 +365,18 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
 
           {/* Genuine Persisted Progress Bar */}
           <div style={{ maxWidth: '460px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: '#94A3B8' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
               <span>{completedCount} of {totalLessonsCount} lessons mastered</span>
-              <span style={{ fontWeight: 800, color: '#34D399' }}>{progressPercent}% Complete</span>
+              <span style={{ fontWeight: 800, color: 'var(--brand-primary)' }}>{progressPercent}% Complete</span>
             </div>
-            <div style={{ height: '8px', backgroundColor: 'rgba(255, 255, 255, 0.12)', borderRadius: '100px', overflow: 'hidden' }}>
+            <div style={{ height: '8px', backgroundColor: 'var(--border-subtle)', borderRadius: '100px', overflow: 'hidden' }}>
               <div
                 style={{
                   width: `${Math.max(6, progressPercent)}%`,
                   height: '100%',
-                  background: 'linear-gradient(90deg, #10B981, #34D399)',
+                  background: 'var(--grad-brand)',
                   borderRadius: '100px',
                   transition: 'width 0.4s ease',
-                  boxShadow: '0 0 10px rgba(52, 211, 153, 0.5)',
                 }}
               />
             </div>
@@ -390,7 +389,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
             type="button"
             onClick={handleResumePrimaryLesson}
             style={{
-              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              background: 'var(--grad-brand)',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: '12px',
@@ -401,7 +400,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              boxShadow: '0 8px 24px -4px rgba(16, 185, 129, 0.5)',
+              boxShadow: '0 8px 24px -4px rgba(16, 185, 129, 0.4)',
               transition: 'transform 0.15s ease',
             }}
           >
@@ -415,9 +414,9 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
               type="button"
               onClick={() => onLaunchLab(primaryCourse.slug)}
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                color: '#FFFFFF',
-                border: '1px solid rgba(255, 255, 255, 0.16)',
+                backgroundColor: 'var(--bg-surface)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
                 borderRadius: '12px',
                 padding: '14px 20px',
                 fontWeight: 700,
@@ -426,11 +425,11 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backdropFilter: 'blur(8px)',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)',
                 transition: 'background 0.15s ease',
               }}
             >
-              <FlaskConical size={16} color="#34D399" />
+              <FlaskConical size={16} color="var(--brand-primary)" />
               <span>Launch Lab Studio</span>
             </button>
           )}

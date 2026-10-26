@@ -44,32 +44,32 @@ export const CourseCardIllustrated: React.FC<CourseCardIllustratedProps> = ({
     switch (domain) {
       case 'finance':
         return {
-          gradient: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #047857 100%)',
-          accent: '#10B981',
-          badgeBg: 'rgba(16, 185, 129, 0.22)',
-          badgeColor: '#ECFDF5',
-          icon: <Coins size={22} color="#10B981" />,
+          gradient: 'linear-gradient(135deg, #059669 0%, #10B981 60%, #34D399 100%)',
+          accent: '#059669',
+          badgeBg: 'rgba(255, 255, 255, 0.22)',
+          badgeColor: '#FFFFFF',
+          icon: <Coins size={22} color="#FFFFFF" />,
           label: 'Finance & Markets',
           svgType: 'finance',
         };
       case 'professional':
         return {
-          gradient: 'linear-gradient(135deg, #0F172A 0%, #1E293B 55%, #2563EB 100%)',
-          accent: '#60A5FA',
-          badgeBg: 'rgba(96, 165, 250, 0.22)',
-          badgeColor: '#EFF6FF',
-          icon: <Users size={22} color="#60A5FA" />,
+          gradient: 'linear-gradient(135deg, #2563EB 0%, #3B82F6 60%, #60A5FA 100%)',
+          accent: '#2563EB',
+          badgeBg: 'rgba(255, 255, 255, 0.22)',
+          badgeColor: '#FFFFFF',
+          icon: <Users size={22} color="#FFFFFF" />,
           label: 'Professional Skills',
           svgType: 'professional',
         };
       case 'technology':
       default:
         return {
-          gradient: 'linear-gradient(135deg, #0F172A 0%, #064E3B 55%, #047857 100%)',
-          accent: '#34D399',
-          badgeBg: 'rgba(52, 211, 153, 0.22)',
-          badgeColor: '#ECFDF5',
-          icon: <Cpu size={22} color="#34D399" />,
+          gradient: 'linear-gradient(135deg, #0D9488 0%, #14B8A6 60%, #2DD4BF 100%)',
+          accent: '#0D9488',
+          badgeBg: 'rgba(255, 255, 255, 0.22)',
+          badgeColor: '#FFFFFF',
+          icon: <Cpu size={22} color="#FFFFFF" />,
           label: 'Technology & AI',
           svgType: 'technology',
         };
