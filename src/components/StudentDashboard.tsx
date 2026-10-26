@@ -319,23 +319,24 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
-              padding: '10px 18px',
+              gap: '6px',
+              padding: '8px 16px',
               borderRadius: '100px',
               backgroundColor: isCurrentSlotClaimed ? 'var(--bg-surface-subdued)' : 'var(--brand-quest, #F59E0B)',
               color: isCurrentSlotClaimed ? 'var(--text-primary)' : '#FFFFFF',
               border: '1px solid var(--border-subtle)',
               cursor: isCurrentSlotClaimed ? 'default' : 'pointer',
               fontWeight: 800,
-              fontSize: '0.84rem',
+              fontSize: '0.82rem',
               boxShadow: isCurrentSlotClaimed ? 'none' : '0 2px 8px rgba(245, 158, 11, 0.25)',
               transition: 'all 0.15s ease',
+              whiteSpace: 'nowrap',
             }}
             title={isCurrentSlotClaimed ? `${claimsToday}/2 daily sessions claimed` : `Claim ${currentSlot} session streak check-in`}
           >
-            <Flame size={18} color={isCurrentSlotClaimed ? 'var(--brand-primary)' : '#FFFFFF'} />
+            <Flame size={16} color={isCurrentSlotClaimed ? 'var(--brand-primary)' : '#FFFFFF'} />
             <span>
-              {streakDays} Day Streak {isCurrentSlotClaimed ? (claimsToday >= 2 ? '(2/2 Claimed ✓)' : `(${claimsToday}/2 ✓)`) : `(Claim ${currentSlot === 'morning' ? 'Morning' : 'Evening'} +25 XP)`}
+              {streakDays} Day Streak {isCurrentSlotClaimed ? '✓' : `(+25 XP)`}
             </span>
           </button>
         </div>

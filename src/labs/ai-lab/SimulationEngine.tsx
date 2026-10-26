@@ -229,22 +229,22 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
   }, [tokenProbs]);
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-[#020617] text-slate-100 relative overflow-y-auto custom-scrollbar p-4 md:p-6 gap-6">
+    <div className="flex-1 flex flex-col min-w-0 bg-slate-900 text-slate-100 relative overflow-y-auto custom-scrollbar p-4 md:p-6 gap-6">
       {/* Compact Educational Model Header & Disclaimers */}
-      <div className="bg-[#0B132B] border border-cyan-500/30 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3">
+      <div className="bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-xl flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-400">
+          <div className="p-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
             <Zap size={20} />
           </div>
           <div>
             <h2 className="text-lg md:text-xl font-black text-white tracking-tight flex items-center gap-2">
-              Interactive AI Simulator
-              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-bold uppercase tracking-wider">
-                Deterministic Engine
+              Interactive AI Explorer
+              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold uppercase tracking-wider">
+                Hands-On Simulator
               </span>
             </h2>
             <p className="text-xs text-slate-300 font-medium mt-0.5">
-              Module: <span className="text-cyan-400 font-bold">{module.title}</span> • Inspect each step from raw data to neural inference
+              Module: <span className="text-emerald-400 font-bold">{module.title}</span> • Explore how AI models process data step-by-step
             </p>
           </div>
         </div>

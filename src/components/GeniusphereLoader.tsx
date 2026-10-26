@@ -16,8 +16,8 @@ export interface GeniusphereLoaderProps {
 }
 
 export const GeniusphereLoader: React.FC<GeniusphereLoaderProps> = ({
-  message = 'Loading Geniusphere Platform...',
-  submessage = 'Syncing local sovereign database & verified runtime...',
+  message = 'Welcome to Geniusphere!',
+  submessage = 'Getting your interactive classroom ready...',
   size = 'md',
   overlay = false,
   fullscreen = false,

@@ -577,9 +577,9 @@ export const App: React.FC = () => {
     return (
       <GeniusphereLoader
         fullscreen
-        size="lg"
-        message="Geniusphere 2.0 Sovereign Platform"
-        submessage="Hydrating offline database, real-time IPC broker, and verified curriculum..."
+        size="md"
+        message="Welcome to Geniusphere!"
+        submessage="Getting your skills, courses, and interactive labs ready..."
       />
     );
   }
@@ -2480,7 +2480,7 @@ export const App: React.FC = () => {
                         Platform Ops
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', lineHeight: 1.25 }}>
-                        Tamper-proof node synced. Zero critical alerts.
+                        All systems running smoothly
                       </div>
                     </div>
                   )}

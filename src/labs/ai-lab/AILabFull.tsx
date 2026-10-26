@@ -34,19 +34,19 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
         minHeight: '680px',
         width: '100%',
         flex: 1,
-        backgroundColor: '#020617',
-        color: '#E2E8F0',
+        backgroundColor: '#0F172A',
+        color: '#F1F5F9',
         fontFamily: 'var(--font-body, Inter, sans-serif)',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Scanline grid overlay */}
+      {/* Soft subtle grid overlay */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'linear-gradient(rgba(34,211,238,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.03) 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(rgba(148,163,184,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
           pointerEvents: 'none',
           zIndex: 0,
@@ -60,9 +60,8 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '10px 20px',
-          borderBottom: '1px solid rgba(34,211,238,0.15)',
-          background: 'rgba(2,6,23,0.95)',
-          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: '#1E293B',
           position: 'relative',
           zIndex: 10,
           flexShrink: 0,
@@ -209,7 +208,7 @@ const AILabFull: React.FC<AILabFullProps> = ({ onExit, onClose }) => {
             minWidth: 0,
             width: '100%',
             height: '100%',
-            backgroundColor: '#020617',
+            backgroundColor: '#0F172A',
           }}
         >
           <SimulationEngine
