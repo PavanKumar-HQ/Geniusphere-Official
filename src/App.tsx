@@ -730,6 +730,22 @@ export const App: React.FC = () => {
                     <GraduationCap size={14} />
                     <span>My Learning</span>
                   </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('institution-workspace')}
+                  >
+                    <School size={14} />
+                    <span>School Needs</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('trainer-workspace')}
+                  >
+                    <Award size={14} />
+                    <span>Trainer Earnings</span>
+                  </button>
                 </>
               )}
 
@@ -1385,6 +1401,56 @@ export const App: React.FC = () => {
                       >
                         <Flame size={18} color="#D97706" />
                         <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Streak Calendar</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          handleNavigate('institution-workspace');
+                        }}
+                        style={{
+                          padding: '12px 10px',
+                          borderRadius: '12px',
+                          border: '1.5px solid rgba(5, 150, 105, 0.25)',
+                          backgroundColor: 'var(--brand-surface)',
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                          gap: '6px',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <School size={18} color="var(--brand-primary)" />
+                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>School Needs</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          handleNavigate('trainer-workspace');
+                        }}
+                        style={{
+                          padding: '12px 10px',
+                          borderRadius: '12px',
+                          border: '1.5px solid rgba(5, 150, 105, 0.25)',
+                          backgroundColor: 'var(--brand-surface)',
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'flex-start',
+                          gap: '6px',
+                          textAlign: 'left',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Award size={18} color="var(--brand-primary)" />
+                        <span style={{ fontWeight: 800, fontSize: '0.8rem', lineHeight: 1.25 }}>Trainer Earnings</span>
                       </button>
                     </div>
 
