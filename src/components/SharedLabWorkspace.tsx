@@ -1425,7 +1425,63 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
             minWidth: 0,
           }}
         >
+          {/* Quick Mission Checklist Banner in Focus Mode */}
+          {workspaceMode === 'focus' && (
+            <div
+              style={{
+                padding: '14px 18px',
+                borderRadius: '12px',
+                backgroundColor: 'var(--bg-surface)',
+                border: '1.5px solid var(--border-subtle)',
+                boxShadow: '0 2px 0 var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 10px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--brand-surface)',
+                    color: 'var(--brand-primary)',
+                    fontWeight: 800,
+                    fontSize: '0.78rem',
+                  }}
+                >
+                  <Award size={14} />
+                  <span>TASKS: {checkedCriteria.filter(Boolean).length} / {lab.validation_criteria.length} COMPLETED</span>
+                </span>
+                <span style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                  Complete the steps to unlock +100 XP
+                </span>
+              </div>
 
+              <button
+                type="button"
+                onClick={handleSubmitAttempt}
+                className="neo-btn-primary"
+                style={{
+                  height: '34px',
+                  padding: '0 16px',
+                  fontSize: '0.82rem',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <CheckCircle2 size={15} />
+                <span>Submit &amp; Claim XP</span>
+              </button>
+            </div>
+          )}
 
           {/* REAL STANDALONE INTERACTIVE LAB EMBEDDED DIRECTLY IN THE WORKSPACE */}
           {standaloneLabMeta && centerLabViewMode === 'interactive-suite' ? (
@@ -1456,9 +1512,19 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
               {/* LAB ENGINE 1: AI CLASSIFICATION PLAYGROUND               */}
           {/* -------------------------------------------------------- */}
           {lab.id === 'lab-t1-ai-classifier' && (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                Neural Network Classifier & Bounded Decision Weights
+            <div className="card neo-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>🤖 Train Your AI Robot Spam Shield</span>
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    Slide the controls below to teach the AI robot how to catch sneaky phishing emails!
+                  </div>
+                </div>
+                <div className="neo-badge">
+                  Level 1: AI Trainer
+                </div>
               </div>
 
               {/* Real-time SVG Neural Network Architecture */}
@@ -1472,9 +1538,9 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Spam Keyword Density</span>
-                    <span style={{ color: 'var(--brand-primary)', fontWeight: 700 }}>{aiKeywordDensity}%</span>
+                  <label style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>🚨 Spam Words Found</span>
+                    <span style={{ color: 'var(--brand-primary)', fontWeight: 800 }}>{aiKeywordDensity}%</span>
                   </label>
                   <input
                     type="range"
@@ -1484,12 +1550,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     onChange={(e) => setAiKeywordDensity(Number(e.target.value))}
                     style={{ accentColor: 'var(--brand-primary)' }}
                   />
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                    Words like &quot;WINNER&quot;, &quot;CLAIM NOW&quot;, &quot;FREE PRIZE&quot;
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Urgency & Pressure Score</span>
-                    <span style={{ color: 'var(--warning)', fontWeight: 700 }}>{aiUrgencyScore}/100</span>
+                  <label style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>⏱️ Panic &amp; Urgency</span>
+                    <span style={{ color: 'var(--warning)', fontWeight: 800 }}>{aiUrgencyScore}/100</span>
                   </label>
                   <input
                     type="range"
@@ -1499,12 +1568,15 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     onChange={(e) => setAiUrgencyScore(Number(e.target.value))}
                     style={{ accentColor: 'var(--warning)' }}
                   />
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                    Panic lines like &quot;ACCOUNT DELETION IN 10 MINUTES!&quot;
+                  </div>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Sender Domain Reputation</span>
-                    <span style={{ color: 'var(--success)', fontWeight: 700 }}>{aiSenderReputation}/100</span>
+                  <label style={{ fontSize: '0.84rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>🛡️ Sender Trust Score</span>
+                    <span style={{ color: 'var(--success)', fontWeight: 800 }}>{aiSenderReputation}/100</span>
                   </label>
                   <input
                     type="range"
@@ -1514,6 +1586,9 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
                     onChange={(e) => setAiSenderReputation(Number(e.target.value))}
                     style={{ accentColor: 'var(--success)' }}
                   />
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                    High = verified school or company email
+                  </div>
                 </div>
               </div>
 
@@ -1577,29 +1652,35 @@ export const SharedLabWorkspace: React.FC<SharedLabWorkspaceProps> = ({
           {/* LAB ENGINE 2: BLOCKCHAIN BLOCK BUILDER                   */}
           {/* -------------------------------------------------------- */}
           {lab.id === 'lab-t2-blockchain-builder' && (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="card neo-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                  Chained Cryptographic Blocks (SHA-256)
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>🔗 Digital Chain: Catch the Hack!</span>
+                  </div>
+                  <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                    Each block locks together like puzzle pieces. Try to break a block or mine a new puzzle key!
+                  </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => setActiveFullLab('blockchain-lab')}
-                    className="btn-outline"
-                    style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px', color: 'var(--brand-primary)', borderColor: 'rgba(0, 245, 160, 0.4)' }}
+                    onClick={handleTamperBlock1}
+                    className="btn-danger"
+                    style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px', fontWeight: 700 }}
                   >
-                    <ShieldCheck size={14} color="var(--brand-primary)" />
-                    <span>Open 19-Module TrustLink Suite</span>
+                    <AlertTriangle size={14} />
+                    <span>⚠️ Try to Hack Block 1</span>
                   </button>
                   <button
                     type="button"
-                    onClick={handleTamperBlock1}
-                    className="btn-danger"
-                    style={{ height: '34px', padding: '0 12px', fontSize: '0.8rem', gap: '6px' }}
+                    onClick={() => handleMineBlock(0)}
+                    disabled={isMining}
+                    className="neo-btn-primary"
+                    style={{ height: '34px', padding: '0 14px', fontSize: '0.8rem', gap: '6px', fontWeight: 800 }}
                   >
-                    <AlertTriangle size={14} />
-                    <span>Simulate Tamper on Block 1</span>
+                    <RotateCcw size={14} className={isMining ? 'animate-spin' : ''} />
+                    <span>{isMining ? 'Mining Puzzle...' : '⛏️ Re-Mine & Fix Chain'}</span>
                   </button>
                 </div>
               </div>

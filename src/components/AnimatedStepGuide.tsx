@@ -104,13 +104,14 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
         width: '100%',
       }}
     >
-      {/* 1. LEARNING OBJECTIVE (Spacious, modern card) */}
+      {/* 1. MISSION OBJECTIVE (Kid-friendly, colorful neo-card) */}
       <div
         style={{
           padding: '14px 16px',
           borderRadius: '12px',
-          backgroundColor: 'rgba(0, 245, 160, 0.05)',
-          border: '1px solid rgba(0, 245, 160, 0.25)',
+          backgroundColor: 'var(--brand-surface, rgba(0, 245, 160, 0.08))',
+          border: '2px solid var(--brand-primary, #00F5A0)',
+          boxShadow: '0 3px 0 var(--border-subtle, rgba(0,0,0,0.15))',
           display: 'flex',
           flexDirection: 'column',
           gap: '6px',
@@ -118,26 +119,26 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
       >
         <div
           style={{
-            fontSize: '0.72rem',
-            fontWeight: 800,
+            fontSize: '0.74rem',
+            fontWeight: 900,
             color: 'var(--brand-primary, #00F5A0)',
-            letterSpacing: '0.08em',
+            letterSpacing: '0.06em',
             textTransform: 'uppercase',
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
           }}
         >
-          <Target size={13} strokeWidth={2.5} />
-          <span>LEARNING OBJECTIVE</span>
+          <Target size={14} strokeWidth={2.5} />
+          <span>🎯 YOUR MISSION OBJECTIVE</span>
         </div>
         <p
           style={{
-            fontSize: '0.86rem',
-            color: 'var(--text-secondary, #94A3B8)',
-            lineHeight: 1.55,
+            fontSize: '0.88rem',
+            color: 'var(--text-primary)',
+            lineHeight: 1.5,
             margin: 0,
-            fontWeight: 500,
+            fontWeight: 600,
           }}
         >
           {learningObjective}
@@ -250,7 +251,7 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
       <div
         style={{
           display: 'flex',
-          gap: '6px',
+          gap: '8px',
           overflowX: 'auto',
           paddingBottom: '4px',
         }}
@@ -265,36 +266,36 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
               onClick={() => handleStepSelect(idx)}
               style={{
                 flex: '1 1 0',
-                minWidth: '36px',
-                height: '32px',
-                borderRadius: '8px',
+                minWidth: '40px',
+                height: '36px',
+                borderRadius: '10px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.75rem',
-                fontWeight: 800,
+                fontSize: '0.82rem',
+                fontWeight: 900,
                 cursor: 'pointer',
-                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 border: isActive
-                  ? '1.5px solid var(--brand-primary, #00F5A0)'
+                  ? '2px solid var(--brand-primary, #00F5A0)'
                   : isDone
-                  ? '1px solid rgba(0, 245, 160, 0.3)'
-                  : '1px solid rgba(255, 255, 255, 0.08)',
+                  ? '2px solid var(--success, #10B981)'
+                  : '1.5px solid var(--border-subtle, rgba(255, 255, 255, 0.12))',
                 backgroundColor: isActive
-                  ? 'rgba(0, 245, 160, 0.16)'
+                  ? 'var(--brand-surface, rgba(0, 245, 160, 0.18))'
                   : isDone
-                  ? 'rgba(0, 245, 160, 0.08)'
-                  : 'rgba(255, 255, 255, 0.03)',
+                  ? 'rgba(16, 185, 129, 0.15)'
+                  : 'var(--bg-surface-subdued, rgba(255, 255, 255, 0.04))',
                 color: isActive
                   ? 'var(--brand-primary, #00F5A0)'
                   : isDone
-                  ? '#00F5A0'
+                  ? 'var(--success, #10B981)'
                   : 'var(--text-muted, #94A3B8)',
-                boxShadow: isActive ? '0 0 12px rgba(0, 245, 160, 0.2)' : 'none',
+                boxShadow: isActive ? '0 2px 0 var(--brand-primary)' : 'none',
               }}
               title={`Step ${idx + 1}`}
             >
-              {isDone ? <Check size={14} strokeWidth={2.5} /> : idx + 1}
+              {isDone ? <Check size={16} strokeWidth={3} /> : `Step ${idx + 1}`}
             </button>
           );
         })}
@@ -305,20 +306,20 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -12, scale: 0.98 }}
-            transition={{ duration: 0.28, ease: 'easeOut' }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             style={{
-              padding: '18px',
-              borderRadius: '14px',
-              backgroundColor: 'var(--bg-surface-subdued, rgba(15, 23, 42, 0.65))',
+              padding: '20px',
+              borderRadius: '16px',
+              backgroundColor: 'var(--bg-surface)',
               border: isCurrentCompleted
-                ? '1px solid rgba(0, 245, 160, 0.4)'
-                : '1px solid rgba(255, 255, 255, 0.12)',
+                ? '2px solid var(--brand-primary, #00F5A0)'
+                : '2px solid var(--border-subtle, rgba(255, 255, 255, 0.15))',
               boxShadow: isCurrentCompleted
-                ? '0 4px 20px rgba(0, 245, 160, 0.1)'
-                : '0 4px 20px rgba(0, 0, 0, 0.2)',
+                ? '0 4px 16px rgba(0, 245, 160, 0.15), 0 3px 0 var(--brand-primary)'
+                : '0 4px 14px rgba(0, 0, 0, 0.12), 0 3px 0 var(--border-subtle)',
               display: 'flex',
               flexDirection: 'column',
               gap: '14px',
@@ -337,16 +338,16 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '3px 10px',
+                  padding: '4px 12px',
                   borderRadius: '100px',
-                  backgroundColor: 'rgba(0, 245, 160, 0.12)',
+                  backgroundColor: 'var(--brand-surface, rgba(0, 245, 160, 0.15))',
                   color: 'var(--brand-primary, #00F5A0)',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
+                  fontSize: '0.78rem',
+                  fontWeight: 900,
                   letterSpacing: '0.04em',
                 }}
               >
-                <span>STEP {currentIndex + 1} OF {totalSteps}</span>
+                <span>⚡ STEP {currentIndex + 1} OF {totalSteps}</span>
               </div>
 
               {isCurrentCompleted ? (
@@ -402,66 +403,58 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
             </div>
 
               {/* Streamlined Step Controls */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '8px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '10px' }}>
                 <button
                   type="button"
                   disabled={currentIndex === 0}
                   onClick={() => handleStepSelect(currentIndex - 1)}
                   style={{
-                    padding: '8px 12px',
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
-                    fontWeight: 600,
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
                     cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
                     opacity: currentIndex === 0 ? 0.35 : 1,
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: 'var(--text-secondary, #94A3B8)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <ChevronLeft size={14} />
-                  <span>Back</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  style={{
-                    padding: '8px 14px',
-                    borderRadius: '8px',
-                    fontSize: '0.82rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    backgroundColor: isCurrentCompleted && currentIndex === totalSteps - 1
-                      ? 'rgba(0, 245, 160, 0.18)'
-                      : 'var(--brand-primary, #00F5A0)',
-                    border: isCurrentCompleted && currentIndex === totalSteps - 1
-                      ? '1px solid rgba(0, 245, 160, 0.4)'
-                      : 'none',
-                    color: isCurrentCompleted && currentIndex === totalSteps - 1
-                      ? 'var(--brand-primary, #00F5A0)'
-                      : '#070B19',
+                    backgroundColor: 'var(--bg-surface-subdued, rgba(255, 255, 255, 0.05))',
+                    border: '1.5px solid var(--border-subtle, rgba(255, 255, 255, 0.15))',
+                    color: 'var(--text-secondary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '6px',
                     whiteSpace: 'nowrap',
-                    transition: 'all 0.2s ease',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <ChevronLeft size={16} />
+                  <span>Previous</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="neo-btn-primary"
+                  style={{
+                    padding: '10px 16px',
+                    borderRadius: '10px',
+                    fontSize: '0.86rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   <span>
                     {currentIndex < totalSteps - 1
-                      ? `Next: Step ${currentIndex + 2}`
+                      ? `Continue: Step ${currentIndex + 2}`
                       : isCurrentCompleted
-                      ? 'All Steps Complete ✓'
-                      : 'Complete Final Step ✓'}
+                      ? 'All Steps Done! 🎉'
+                      : 'Mark Step Done! ✨'}
                   </span>
-                  {currentIndex < totalSteps - 1 && <ChevronRight size={14} />}
+                  {currentIndex < totalSteps - 1 && <ChevronRight size={16} />}
                 </button>
               </div>
           </motion.div>
