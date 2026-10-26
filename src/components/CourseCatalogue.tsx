@@ -108,7 +108,10 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       const q = search.toLowerCase();
       return (
         course.title.toLowerCase().includes(q) ||
-        (course.description && course.description.toLowerCase().includes(q))
+        (course.summary && course.summary.toLowerCase().includes(q)) ||
+        (course.description && course.description.toLowerCase().includes(q)) ||
+        (course.subject && course.subject.toLowerCase().includes(q)) ||
+        (course.slug && course.slug.toLowerCase().includes(q))
       );
     }
     return true;

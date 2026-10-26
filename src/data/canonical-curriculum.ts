@@ -852,7 +852,7 @@ export const CANONICAL_COURSES: CanonicalCourseItem[] = [
   {
     id: "course-tech-digital-privacy",
     stream_id: "technology",
-    title: "Digital Footprint and Privacy",
+    title: "Digital Privacy and Footprint",
     slug: "digital-footprint-privacy",
     modules_count: 10,
     duration_hours: 3.7,
