@@ -241,322 +241,166 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
       </div>
 
       {/* ================================================================ */}
-      {/* INTERACTIVE NAVIGATION & FILTER HUB                              */}
-      {/* Always visible, clear, and spacious                              */}
+      {/* CLEAN, LOW-FRICTION FILTER & SEARCH BAR                          */}
       {/* ================================================================ */}
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
           backgroundColor: 'var(--bg-surface)',
-          padding: '20px 24px',
-          borderRadius: '20px',
+          padding: '12px 16px',
+          borderRadius: '16px',
           border: '1px solid var(--border-subtle)',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
         }}
       >
         {/* Stream Selector Navigation Tabs */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-            borderBottom: '1px solid var(--border-subtle)',
-            paddingBottom: '16px',
-          }}
-        >
-          <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
-            {/* All Courses Tab */}
-            <button
-              type="button"
-              onClick={() => setSelectedStream('all')}
-              style={{
-                padding: '9px 18px',
-                borderRadius: '100px',
-                border: 'none',
-                backgroundColor: selectedStream === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
-                color: selectedStream === 'all' ? '#FFFFFF' : 'var(--text-primary)',
-                fontWeight: 800,
-                fontSize: '0.88rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
-                transition: 'all 0.15s ease',
-                boxShadow: selectedStream === 'all' ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
-              }}
-            >
-              <GraduationCap size={16} />
-              <span>All Courses</span>
-              <span
-                style={{
-                  backgroundColor: selectedStream === 'all' ? 'rgba(255,255,255,0.25)' : 'var(--border-subtle)',
-                  padding: '2px 8px',
-                  borderRadius: '100px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                }}
-              >
-                {allCanonicalCourses.length}
-              </span>
-            </button>
-
-            {/* Stream Specific Tabs */}
-            {streams.map((s) => {
-              const isSelected = selectedStream === s.id;
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setSelectedStream(s.id)}
-                  style={{
-                    padding: '9px 18px',
-                    borderRadius: '100px',
-                    border: 'none',
-                    backgroundColor: isSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
-                    color: isSelected ? '#FFFFFF' : 'var(--text-primary)',
-                    fontWeight: 800,
-                    fontSize: '0.88rem',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
-                    transition: 'all 0.15s ease',
-                    boxShadow: isSelected ? '0 2px 8px rgba(0, 0, 0, 0.15)' : 'none',
-                  }}
-                >
-                  {getStreamIcon(s.id, 16)}
-                  <span>{s.title}</span>
-                  <span
-                    style={{
-                      backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : 'var(--border-subtle)',
-                      padding: '2px 8px',
-                      borderRadius: '100px',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                    }}
-                  >
-                    {s.courses.length}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* View Mode Switcher: Grid vs Grouped */}
-          {selectedStream === 'all' && !search.trim() && selectedLevel === 'all' && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                backgroundColor: 'var(--bg-surface-subdued)',
-                borderRadius: '100px',
-                padding: '3px',
-                border: '1px solid var(--border-subtle)',
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setViewMode('grid')}
-                title="Continuous Grid View"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '100px',
-                  border: 'none',
-                  backgroundColor: viewMode === 'grid' ? 'var(--bg-surface)' : 'transparent',
-                  color: viewMode === 'grid' ? 'var(--text-primary)' : 'var(--text-muted)',
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  boxShadow: viewMode === 'grid' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                }}
-              >
-                <Grid size={14} />
-                <span>Grid View</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setViewMode('grouped')}
-                title="Grouped by Stream Sections"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '100px',
-                  border: 'none',
-                  backgroundColor: viewMode === 'grouped' ? 'var(--bg-surface)' : 'transparent',
-                  color: viewMode === 'grouped' ? 'var(--text-primary)' : 'var(--text-muted)',
-                  fontWeight: 700,
-                  fontSize: '0.8rem',
-                  cursor: 'pointer',
-                  boxShadow: viewMode === 'grouped' ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                }}
-              >
-                <Layers size={14} />
-                <span>Stream Sections</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Search & Difficulty Filter Sub-bar */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '14px',
-          }}
-        >
-          {/* Real-time Search Box */}
-          <div
+        <div className="mobile-pill-strip" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {/* All Courses Tab */}
+          <button
+            type="button"
+            onClick={() => setSelectedStream('all')}
             style={{
-              position: 'relative',
-              flex: '1 1 320px',
-              maxWidth: '480px',
+              padding: '7px 16px',
+              borderRadius: '100px',
+              border: 'none',
+              backgroundColor: selectedStream === 'all' ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+              color: selectedStream === 'all' ? '#FFFFFF' : 'var(--text-primary)',
+              fontWeight: 700,
+              fontSize: '0.84rem',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.15s ease',
             }}
           >
-            <Search
-              size={16}
+            <GraduationCap size={15} />
+            <span>All Courses</span>
+            <span
               style={{
-                position: 'absolute',
-                left: '14px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'var(--text-muted)',
-              }}
-            />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search courses, skills, Python, UPI, AI, Resume..."
-              style={{
-                width: '100%',
-                padding: '10px 38px 10px 40px',
+                backgroundColor: selectedStream === 'all' ? 'rgba(255,255,255,0.25)' : 'var(--border-subtle)',
+                padding: '1px 6px',
                 borderRadius: '100px',
-                border: '1px solid var(--border-subtle)',
-                backgroundColor: 'var(--bg-canvas)',
-                fontSize: '0.88rem',
-                color: 'var(--text-primary)',
-                outline: 'none',
-                transition: 'border-color 0.15s ease, background-color 0.15s ease',
+                fontSize: '0.72rem',
+                fontWeight: 700,
               }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'var(--brand-primary)';
-                e.currentTarget.style.backgroundColor = 'var(--bg-surface)';
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
-                e.currentTarget.style.backgroundColor = 'var(--bg-canvas)';
-              }}
-            />
-            {search && (
-              <button
-                type="button"
-                onClick={() => setSearch('')}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'var(--text-muted)',
-                  padding: '2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
-
-          {/* Difficulty Level Pills */}
-          <div className="mobile-pill-strip" style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '4px' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              <Filter size={13} /> Level:
+            >
+              {allCanonicalCourses.length}
             </span>
-            {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((lvl) => {
-              const isLvlSelected = selectedLevel === lvl;
-              return (
-                <button
-                  key={lvl}
-                  type="button"
-                  onClick={() => setSelectedLevel(lvl)}
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '100px',
-                    border: '1px solid',
-                    borderColor: isLvlSelected ? 'var(--brand-primary)' : 'var(--border-subtle)',
-                    backgroundColor: isLvlSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
-                    color: isLvlSelected ? '#FFFFFF' : 'var(--text-secondary)',
-                    fontWeight: 700,
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                    textTransform: 'capitalize',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  {lvl === 'all' ? 'All Levels' : lvl}
-                </button>
-              );
-            })}
+          </button>
 
-            {hasActiveFilters && (
+          {/* Stream Specific Tabs */}
+          {streams.map((s) => {
+            const isSelected = selectedStream === s.id;
+            return (
               <button
+                key={s.id}
                 type="button"
-                onClick={resetFilters}
+                onClick={() => setSelectedStream(s.id)}
                 style={{
-                  background: 'none',
-                  border: '1px solid var(--border-subtle)',
+                  padding: '7px 16px',
                   borderRadius: '100px',
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
+                  border: 'none',
+                  backgroundColor: isSelected ? 'var(--brand-primary)' : 'var(--bg-surface-subdued)',
+                  color: isSelected ? '#FFFFFF' : 'var(--text-primary)',
                   fontWeight: 700,
-                  color: 'var(--text-muted)',
+                  fontSize: '0.84rem',
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  marginLeft: '4px',
+                  gap: '6px',
                   whiteSpace: 'nowrap',
-                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <X size={12} /> Clear
+                {getStreamIcon(s.id, 15)}
+                <span>{s.title}</span>
+                <span
+                  style={{
+                    backgroundColor: isSelected ? 'rgba(255,255,255,0.25)' : 'var(--border-subtle)',
+                    padding: '1px 6px',
+                    borderRadius: '100px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {s.courses.length}
+                </span>
               </button>
-            )}
-          </div>
+            );
+          })}
+        </div>
+
+        {/* Compact Real-time Search Box */}
+        <div
+          style={{
+            position: 'relative',
+            flex: '1 1 240px',
+            maxWidth: '340px',
+          }}
+        >
+          <Search
+            size={15}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--text-muted)',
+            }}
+          />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search courses..."
+            style={{
+              width: '100%',
+              padding: '8px 32px 8px 34px',
+              borderRadius: '100px',
+              border: '1px solid var(--border-subtle)',
+              backgroundColor: 'var(--bg-canvas)',
+              fontSize: '0.84rem',
+              color: 'var(--text-primary)',
+              outline: 'none',
+              boxSizing: 'border-box',
+            }}
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              style={{
+                position: 'absolute',
+                right: '10px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-muted)',
+                padding: '2px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <X size={13} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Course Count / Active Filter Feedback */}
+      {/* Course Count Feedback */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
-        <span style={{ fontSize: '0.94rem', color: '#556D5C' }}>
+        <span style={{ fontSize: '0.88rem', color: 'var(--text-secondary)' }}>
           Showing <strong>{filteredCourses.length}</strong> {filteredCourses.length === 1 ? 'course' : 'courses'}
           {selectedStream !== 'all' && (
             <span> in <strong>{streams.find((s) => s.id === selectedStream)?.title}</strong></span>
-          )}
-          {selectedLevel !== 'all' && (
-            <span> at <strong>{selectedLevel}</strong> level</span>
           )}
           {search.trim() && (
             <span> matching &ldquo;<strong>{search}</strong>&rdquo;</span>
@@ -570,14 +414,14 @@ export const CourseCatalogue: React.FC<CourseCatalogueProps> = ({
             style={{
               background: 'none',
               border: 'none',
-              color: '#43A85B',
+              color: 'var(--brand-primary)',
               fontWeight: 700,
-              fontSize: '0.86rem',
+              fontSize: '0.82rem',
               cursor: 'pointer',
               textDecoration: 'underline',
             }}
           >
-            Reset all filters
+            Reset filter
           </button>
         )}
       </div>
