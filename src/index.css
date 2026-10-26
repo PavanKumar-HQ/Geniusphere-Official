@@ -2817,7 +2817,64 @@ svg.w-12, .w-12 { width: 48px !important; height: 48px !important; min-width: 48
   .lg\:hidden { display: none !important; }
   .lg\:flex { display: flex !important; }
   .lg\:grid { display: grid !important; }
-  .lg\:block { display: block !important; }
+}
+
+/* Neo-Brutalism Playful Accent Classes (Colorful, Punchy & Clear for Learners) */
+.neo-card {
+  background-color: var(--bg-surface);
+  border: 2px solid #0F172A;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0px #0F172A;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.neo-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #0F172A;
+}
+
+.neo-btn-primary {
+  background-color: #10B981;
+  color: #064E3B;
+  border: 2px solid #064E3B;
+  border-radius: 10px;
+  box-shadow: 3px 3px 0px #064E3B;
+  font-weight: 800;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.neo-btn-primary:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #064E3B;
+}
+.neo-btn-primary:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #064E3B;
+}
+
+.neo-btn-amber {
+  background-color: #FBBF24;
+  color: #78350F;
+  border: 2px solid #78350F;
+  border-radius: 10px;
+  box-shadow: 3px 3px 0px #78350F;
+  font-weight: 800;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.neo-btn-amber:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #78350F;
+}
+
+.neo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #0F172A;
+  box-shadow: 2px 2px 0px #0F172A;
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-transform: uppercase;
 }
 
 
