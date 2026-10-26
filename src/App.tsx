@@ -2160,11 +2160,31 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
+                  onClick={() => handleNavigate('institution-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'institution-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "School Training Needs" : undefined}
+                >
+                  <School size={18} />
+                  {showSidebarText && <span className="sidebar-label">School Needs</span>}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('trainer-workspace')}
+                  className={`sidebar-nav-btn ${currentView === 'trainer-workspace' ? 'active' : ''}`}
+                  title={isSidebarCollapsed ? "Trainer Earnings & Availability" : undefined}
+                >
+                  <Award size={18} />
+                  {showSidebarText && <span className="sidebar-label">Trainer Earnings</span>}
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => handleNavigate('certificates')}
                   className={`sidebar-nav-btn ${currentView === 'certificates' ? 'active' : ''}`}
                   title={isSidebarCollapsed ? "Certificates" : undefined}
                 >
-                  <Award size={18} />
+                  <ShieldCheck size={18} />
                   {showSidebarText && <span className="sidebar-label">Certificates</span>}
                 </button>
 

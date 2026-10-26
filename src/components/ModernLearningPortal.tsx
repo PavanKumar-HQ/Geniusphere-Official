@@ -457,7 +457,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
               </h2>
             </div>
             <p style={{ margin: '3px 0 0', fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-              15 zero-install browser simulations across Cybersecurity, Blockchain, AI, and FinTech.
+              Interactive browser-based labs for hands-on practice.
             </p>
           </div>
 
