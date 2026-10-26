@@ -89,7 +89,14 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   }, [streakStorageKey, refreshSeed]);
 
   const lastActiveDate = userProgress.last_active_date || persistedClaim?.lastClaimedDate || '';
-  const isClaimedToday = lastActiveDate === todayDateStr || persistedClaim?.lastClaimedDate === todayDateStr;
+  const currentHour = now.getHours();
+  const currentSlot: 'morning' | 'evening' = currentHour < 14 ? 'morning' : 'evening';
+  const claimsToday = userProgress.last_streak_claim_date === todayDateStr
+    ? (userProgress.streak_claims_today || 0)
+    : 0;
+
+  const isCurrentSlotClaimed = claimsToday >= 2 || (claimsToday === 1 && userProgress.last_streak_claim_session === currentSlot);
+  const isClaimedToday = claimsToday >= 2;
 
   const realProgress = getLearnerProgress(currentUserId);
   const studyMetrics = backendEngine.tracker.getUserMetrics(currentUserId);
@@ -110,48 +117,23 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const streakDays = effectiveStreakDays;
 
   const handleClaimDailyStreak = () => {
-    if (isClaimedToday) return;
+    if (isCurrentSlotClaimed) return;
 
-    let nextStreak = 1;
-    if (lastActiveDate === yesterdayDateStr) {
-      nextStreak = (effectiveStreakDays || 0) + 1;
-    } else if (lastActiveDate === todayDateStr) {
-      nextStreak = effectiveStreakDays || 1;
-    } else {
-      nextStreak = 1;
-    }
-
-    userProgress.streak_days = nextStreak;
-    userProgress.last_active_date = todayDateStr;
-    db.awardXp(currentUserId, 50, 'Daily Streak Active Check-In');
-
-    try {
-      if (typeof window !== 'undefined' && window.localStorage) {
-        window.localStorage.setItem(
-          streakStorageKey,
-          JSON.stringify({
-            lastClaimedDate: todayDateStr,
-            streakCount: nextStreak,
-            claimedAt: new Date().toISOString(),
-          })
-        );
-      }
-    } catch (e) {
-      // ignore
-    }
+    const result = db.claimDailyStreak(currentUserId);
+    if (result.alreadyClaimedSlot) return;
 
     backendEngine.tracker.recordMilestone(
       currentUserId,
       'lesson_completed',
       'daily-streak-claim',
-      'Daily Active Streak Check-In',
+      `Daily Active Streak Check-In (${result.slot})`,
       300
     );
 
     backendEngine.notifications.dispatch(
       currentUserId,
-      `Daily Streak Maintained (${nextStreak} Days, +50 XP)!`,
-      `Great consistency! You maintained your daily study streak on ${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} and unlocked bonus XP.`,
+      `Daily Streak (${result.nextStreak} Days, +${result.awardedXp} XP)!`,
+      `Great consistency! Logged ${result.slot} session check-in on ${now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}.`,
       'high',
       'grade'
     );
@@ -325,27 +307,27 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           <button
             type="button"
             onClick={handleClaimDailyStreak}
-            disabled={isClaimedToday}
+            disabled={isCurrentSlotClaimed}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
               padding: '10px 18px',
               borderRadius: '100px',
-              backgroundColor: isClaimedToday ? 'var(--bg-surface-subdued)' : 'var(--brand-quest, #F59E0B)',
-              color: isClaimedToday ? 'var(--text-primary)' : '#FFFFFF',
+              backgroundColor: isCurrentSlotClaimed ? 'var(--bg-surface-subdued)' : 'var(--brand-quest, #F59E0B)',
+              color: isCurrentSlotClaimed ? 'var(--text-primary)' : '#FFFFFF',
               border: '1px solid var(--border-subtle)',
-              cursor: isClaimedToday ? 'default' : 'pointer',
+              cursor: isCurrentSlotClaimed ? 'default' : 'pointer',
               fontWeight: 800,
               fontSize: '0.84rem',
-              boxShadow: isClaimedToday ? 'none' : '0 2px 8px rgba(245, 158, 11, 0.25)',
+              boxShadow: isCurrentSlotClaimed ? 'none' : '0 2px 8px rgba(245, 158, 11, 0.25)',
               transition: 'all 0.15s ease',
             }}
-            title={isClaimedToday ? 'Daily streak already logged today' : 'Claim daily active check-in streak'}
+            title={isCurrentSlotClaimed ? `${claimsToday}/2 daily sessions claimed` : `Claim ${currentSlot} session streak check-in`}
           >
-            <Flame size={18} color={isClaimedToday ? 'var(--brand-primary)' : '#FFFFFF'} />
+            <Flame size={18} color={isCurrentSlotClaimed ? 'var(--brand-primary)' : '#FFFFFF'} />
             <span>
-              {streakDays} Day Streak {isClaimedToday ? '✓' : '(Claim +50 XP)'}
+              {streakDays} Day Streak {isCurrentSlotClaimed ? (claimsToday >= 2 ? '(2/2 Claimed ✓)' : `(${claimsToday}/2 ✓)`) : `(Claim ${currentSlot === 'morning' ? 'Morning' : 'Evening'} +25 XP)`}
             </span>
           </button>
         </div>
@@ -1057,6 +1039,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         isOpen={isStreakModalOpen}
         onClose={() => setIsStreakModalOpen(false)}
         userProgress={userProgress}
+        onClaimDailyStreak={handleClaimDailyStreak}
       />
 
       {/* Curriculum Lab Runner Modal */}

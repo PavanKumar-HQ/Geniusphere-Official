@@ -2832,16 +2832,15 @@ export const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Column 4: Institution & Trust */}
+            {/* Column 4: Support & Guidelines */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <strong style={{ fontSize: '0.88rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Trust & Verification
+                Community & Support
               </strong>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
-                <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>About Geniusphere Mission</button>
-                <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Institutional Contact & Support</button>
+                <button type="button" onClick={() => handleNavigate('about')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>About Geniusphere</button>
+                <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Contact & Help Center</button>
                 <button type="button" onClick={() => handleNavigate('community')} style={{ background: 'none', border: 'none', color: 'inherit', textAlign: 'left', cursor: 'pointer', padding: 0 }}>Student Community Guidelines</button>
-                <span style={{ color: 'var(--text-muted)' }}>PES University CIE Incubated</span>
                 <span style={{ color: 'var(--text-muted)' }}>Bengaluru, Karnataka, India</span>
               </div>
             </div>
@@ -2862,55 +2861,32 @@ export const App: React.FC = () => {
             }}
           >
             <div>
-              © {new Date().getFullYear()} Geniusphere. Evidence-Backed Education Platform. All rights reserved.
+              © {new Date().getFullYear()} Geniusphere. All rights reserved.
             </div>
             <div style={{ display: 'flex', gap: '8px 12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span className="badge badge-success" style={{ fontSize: '0.72rem', padding: '2px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>Active Pilot Deployment</span>
-              <span style={{ flexShrink: 0 }}>•</span>
               <button type="button" onClick={() => handleNavigate('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>Privacy Policy</button>
               <span style={{ flexShrink: 0 }}>•</span>
               <button type="button" onClick={() => handleNavigate('terms')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>Terms of Service</button>
               <span style={{ flexShrink: 0 }}>•</span>
               <button type="button" onClick={() => handleNavigate('contact')} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0, whiteSpace: 'nowrap', flexShrink: 0 }}>Contact</button>
               <span style={{ flexShrink: 0 }}>•</span>
-              <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>40 Canonical Courses • 3 Learning Streams • 10 Interactive Labs</span>
-              <span style={{ flexShrink: 0 }}>•</span>
-              <button
-                type="button"
-                onClick={() => setPilotModalOpen(true)}
-                style={{
-                  background: 'rgba(230, 81, 0, 0.08)',
-                  border: '1px solid rgba(230, 81, 0, 0.25)',
-                  borderRadius: '100px',
-                  padding: '3px 10px',
-                  color: '#e65100',
-                  fontSize: '0.72rem',
-                  cursor: 'pointer',
-                  fontWeight: 700,
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
-              >
-                <span>Institutional Pilot</span>
-              </button>
-              <span style={{ flexShrink: 0 }}>•</span>
               <button
                 type="button"
                 onClick={() => setBackupModalOpen(true)}
                 style={{
                   background: 'none',
-                  border: '1px solid #E5F0DF',
+                  border: '1px solid var(--border-subtle)',
                   borderRadius: '100px',
                   padding: '3px 10px',
-                  color: '#43A85B',
+                  color: 'var(--text-secondary)',
                   fontSize: '0.72rem',
                   cursor: 'pointer',
-                  fontWeight: 700,
+                  fontWeight: 600,
                   whiteSpace: 'nowrap',
                   flexShrink: 0,
                 }}
               >
-                <span>Sovereign Data Backup</span>
+                <span>Export Progress Backup</span>
               </button>
             </div>
           </div>
@@ -3212,6 +3188,10 @@ export const App: React.FC = () => {
         onClose={() => setStreakModalOpen(false)}
         userProgress={userProgress}
         userName={currentUser.name}
+        onClaimDailyStreak={() => {
+          const result = db.claimDailyStreak(currentUser.id);
+          setRefreshTrigger((prev) => prev + 1);
+        }}
       />
 
       {/* Authenticated Student Profile & Record Verification Modal */}

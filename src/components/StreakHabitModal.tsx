@@ -15,6 +15,7 @@ interface StreakHabitModalProps {
   onClose: () => void;
   userProgress: UserProgressState;
   userName?: string;
+  onClaimDailyStreak?: () => void;
 }
 
 export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
@@ -22,14 +23,28 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
   onClose,
   userProgress,
   userName = 'Learner',
+  onClaimDailyStreak,
 }) => {
   if (!isOpen) return null;
 
   const streakDays = userProgress.streak_days || 0;
   const currentXp = userProgress.xp || 0;
 
-  // Calculate real active days of the week based on streak and current date & time
   const now = new Date();
+  const currentHour = now.getHours();
+  const currentSlot: 'morning' | 'evening' = currentHour < 14 ? 'morning' : 'evening';
+  const todayDateStr = now.toISOString().split('T')[0];
+
+  const claimsToday = userProgress.last_streak_claim_date === todayDateStr
+    ? (userProgress.streak_claims_today || 0)
+    : 0;
+
+  const isMorningClaimed = claimsToday >= 2 || (claimsToday === 1 && userProgress.last_streak_claim_session === 'morning');
+  const isEveningClaimed = claimsToday >= 2 || (claimsToday === 1 && userProgress.last_streak_claim_session === 'evening');
+
+  const canClaimNow = claimsToday < 2 && !(claimsToday === 1 && userProgress.last_streak_claim_session === currentSlot);
+
+  // Calculate real active days of the week based on streak and current date & time
   const currentDayIndex = (now.getDay() + 6) % 7; // 0 = Mon, 1 = Tue, ..., 6 = Sun
   const mondayOfWeek = new Date(now);
   mondayOfWeek.setDate(now.getDate() - currentDayIndex);
@@ -65,6 +80,7 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
 
   const nextMilestone = streakDays < 7 ? 7 : streakDays < 14 ? 14 : streakDays < 30 ? 30 : streakDays + 7;
   const progressToMilestone = streakDays > 0 ? Math.min(100, Math.round((streakDays / nextMilestone) * 100)) : 0;
+  const dailyCheckinProgress = Math.round((claimsToday / 2) * 100);
 
   return (
     <div
@@ -89,11 +105,11 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
           backgroundColor: 'var(--bg-surface)',
           borderRadius: '24px',
           border: '1.5px solid var(--border-subtle)',
-          padding: '32px',
+          padding: '28px',
           boxShadow: '0 24px 60px rgba(0, 0, 0, 0.35)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '24px',
+          gap: '18px',
           position: 'relative',
           animation: 'fadeInUp 0.25s ease-out',
         }}
@@ -124,12 +140,12 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
         </button>
 
         {/* Modal Header: Fire & Streak Counter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div
             style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '20px',
+              width: '58px',
+              height: '58px',
+              borderRadius: '18px',
               backgroundColor: 'rgba(245, 158, 11, 0.15)',
               border: '2px solid rgba(245, 158, 11, 0.3)',
               display: 'flex',
@@ -139,7 +155,7 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
               flexShrink: 0,
             }}
           >
-            <Flame size={36} color="#F59E0B" fill="#F59E0B" />
+            <Flame size={32} color="#F59E0B" fill="#F59E0B" />
           </div>
 
           <div>
@@ -159,17 +175,121 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                 HABIT TRACKER
               </span>
               <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                Consistent Daily Practice
+                2 Daily Check-ins (Morning & Evening)
               </span>
             </div>
 
-            <h2 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span>{streakDays}-Day Active Streak!</span>
-              <Flame size={24} color="#EA580C" className="animate-flame" />
+            <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>{streakDays}-Day Learning Streak</span>
+              <Flame size={20} color="#EA580C" />
             </h2>
-            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Way to go, {userName}! You have practiced every day this week.
+            <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              Check in twice daily to maintain consistency and double your bonus XP.
             </p>
+          </div>
+        </div>
+
+        {/* 2-Times Daily Check-in Slots with Progress Bar */}
+        <div
+          style={{
+            backgroundColor: 'var(--bg-canvas)',
+            borderRadius: '16px',
+            border: '1px solid var(--border-subtle)',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+              Today's Check-in Progress ({claimsToday}/2 completed)
+            </span>
+            <span style={{ fontSize: '0.76rem', fontWeight: 800, color: claimsToday === 2 ? '#10B981' : '#F59E0B' }}>
+              {dailyCheckinProgress}%
+            </span>
+          </div>
+
+          {/* Daily Progress Bar */}
+          <div
+            style={{
+              width: '100%',
+              height: '8px',
+              borderRadius: '4px',
+              backgroundColor: 'var(--bg-surface-subdued)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                height: '100%',
+                width: `${dailyCheckinProgress}%`,
+                backgroundColor: claimsToday === 2 ? '#10B981' : '#F59E0B',
+                borderRadius: '4px',
+                transition: 'width 0.3s ease',
+              }}
+            />
+          </div>
+
+          {/* 2 Check-in Slots */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '2px' }}>
+            {/* Slot 1: Morning Check-in */}
+            <div
+              style={{
+                padding: '12px',
+                borderRadius: '12px',
+                backgroundColor: isMorningClaimed ? 'rgba(16, 185, 129, 0.08)' : 'var(--bg-surface)',
+                border: isMorningClaimed ? '1.5px solid #10B981' : '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  Morning Slot
+                </div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                  Before 2:00 PM • +25 XP
+                </div>
+              </div>
+              {isMorningClaimed ? (
+                <CheckCircle2 size={18} color="#10B981" />
+              ) : (
+                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                  {currentSlot === 'morning' ? 'Open' : 'Pending'}
+                </span>
+              )}
+            </div>
+
+            {/* Slot 2: Evening Check-in */}
+            <div
+              style={{
+                padding: '12px',
+                borderRadius: '12px',
+                backgroundColor: isEveningClaimed ? 'rgba(16, 185, 129, 0.08)' : 'var(--bg-surface)',
+                border: isEveningClaimed ? '1.5px solid #10B981' : '1px solid var(--border-subtle)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  Evening Slot
+                </div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                  After 2:00 PM • +25 XP
+                </div>
+              </div>
+              {isEveningClaimed ? (
+                <CheckCircle2 size={18} color="#10B981" />
+              ) : (
+                <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)' }}>
+                  {currentSlot === 'evening' ? 'Open' : 'Pending'}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -177,25 +297,25 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
         <div
           style={{
             backgroundColor: 'var(--bg-canvas)',
-            borderRadius: '18px',
+            borderRadius: '16px',
             border: '1px solid var(--border-subtle)',
-            padding: '20px',
+            padding: '16px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '14px',
+            gap: '12px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Calendar size={14} color="var(--brand-primary)" /> Weekly Learning Calendar
             </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--brand-primary)', fontWeight: 700 }}>
-              {streakDays} of 7 Days Active
+            <span style={{ fontSize: '0.74rem', color: 'var(--brand-primary)', fontWeight: 700 }}>
+              {streakDays} Days Active
             </span>
           </div>
 
           {/* Mon - Sun Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
             {daysOfWeek.map((d, idx) => (
               <div
                 key={idx}
@@ -203,44 +323,39 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '8px',
-                  padding: '10px 4px',
-                  borderRadius: '12px',
+                  gap: '6px',
+                  padding: '8px 2px',
+                  borderRadius: '10px',
                   backgroundColor: d.active
                     ? 'var(--brand-surface)'
                     : 'var(--bg-surface)',
                   border: d.active
                     ? '1.5px solid var(--brand-primary)'
                     : '1px solid var(--border-subtle)',
-                  boxShadow: d.active ? '0 0 12px rgba(16, 185, 129, 0.25)' : 'none',
                 }}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1 }}>
-                  <span
-                    style={{
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      color: d.active || d.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
-                    }}
-                  >
-                    {d.day}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.62rem',
-                      fontWeight: 600,
-                      color: d.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
-                      marginTop: '3px',
-                    }}
-                  >
-                    {d.dateNum}
-                  </span>
-                </div>
-
+                <span
+                  style={{
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    color: d.active || d.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
+                  }}
+                >
+                  {d.day}
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.62rem',
+                    fontWeight: 600,
+                    color: d.isToday ? 'var(--brand-primary)' : 'var(--text-muted)',
+                  }}
+                >
+                  {d.dateNum}
+                </span>
                 <div
                   style={{
-                    width: '28px',
-                    height: '28px',
+                    width: '24px',
+                    height: '24px',
                     borderRadius: '50%',
                     backgroundColor: d.active
                       ? 'var(--brand-primary)'
@@ -251,59 +366,39 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                     justifyContent: 'center',
                   }}
                 >
-                  {d.active ? (
-                    <CheckCircle2 size={16} strokeWidth={2.5} />
-                  ) : d.shielded ? (
-                    <Shield size={14} color="#F59E0B" />
-                  ) : (
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>•</span>
-                  )}
+                  {d.active ? <CheckCircle2 size={14} /> : <span style={{ fontSize: '0.62rem' }}>•</span>}
                 </div>
-
-                {d.isToday && (
-                  <span
-                    style={{
-                      fontSize: '0.52rem',
-                      fontWeight: 800,
-                      backgroundColor: 'var(--brand-primary)',
-                      color: '#FFFFFF',
-                      padding: '1px 5px',
-                      borderRadius: '4px',
-                      lineHeight: 1,
-                    }}
-                  >
-                    TODAY
-                  </span>
-                )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Milestone Progress & Streak Shield Info */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+        {/* Milestone & Shield Status with Progress Bars */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
           {/* Milestone Card */}
           <div
             style={{
               backgroundColor: 'var(--bg-canvas)',
-              borderRadius: '16px',
+              borderRadius: '14px',
               border: '1px solid var(--border-subtle)',
-              padding: '16px',
+              padding: '12px 14px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
+              gap: '6px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Award size={16} color="#F59E0B" />
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                Next: {nextMilestone} Days
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Award size={15} color="#F59E0B" />
+                <span style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  Milestone
+                </span>
+              </div>
+              <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#F59E0B' }}>
+                {nextMilestone} Days
               </span>
             </div>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-              Reach {nextMilestone} days for +100 XP & Streak Badge
-            </div>
-            {/* Mini Progress */}
+            {/* Progress Bar */}
             <div
               style={{
                 width: '100%',
@@ -311,7 +406,6 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                 borderRadius: '3px',
                 backgroundColor: 'var(--bg-surface-subdued)',
                 overflow: 'hidden',
-                marginTop: '4px',
               }}
             >
               <div
@@ -323,57 +417,91 @@ export const StreakHabitModal: React.FC<StreakHabitModalProps> = ({
                 }}
               />
             </div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+              {streakDays}/{nextMilestone} days ({progressToMilestone}%)
+            </div>
           </div>
 
           {/* Shield Status Card */}
           <div
             style={{
               backgroundColor: 'var(--bg-canvas)',
-              borderRadius: '16px',
+              borderRadius: '14px',
               border: '1px solid var(--border-subtle)',
-              padding: '16px',
+              padding: '12px 14px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '8px',
+              gap: '6px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Shield size={16} color="var(--brand-primary)" />
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                Streak Shield Active
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Shield size={15} color="var(--brand-primary)" />
+              <span style={{ fontSize: '0.76rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                Streak Shield
               </span>
             </div>
-            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
-              1 Missed-day protection enabled automatically.
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-              <Zap size={14} color="var(--brand-primary)" />
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Zap size={13} color="var(--brand-primary)" />
+              <span style={{ fontSize: '0.74rem', fontWeight: 800, color: 'var(--brand-primary)' }}>
                 {currentXp} Total XP
               </span>
+            </div>
+            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+              Missed-day protection active
             </div>
           </div>
         </div>
 
-        {/* Action Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="btn-primary"
-          style={{
-            height: '46px',
-            borderRadius: '12px',
-            fontWeight: 800,
-            fontSize: '0.92rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-          }}
-        >
-          <Zap size={16} />
-          <span>Keep the Momentum Going</span>
-        </button>
+        {/* Action Button: Check In / Claim Now */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {onClaimDailyStreak && canClaimNow ? (
+            <button
+              type="button"
+              onClick={() => {
+                onClaimDailyStreak();
+              }}
+              className="btn-primary"
+              style={{
+                flex: 1,
+                height: '44px',
+                borderRadius: '12px',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                backgroundColor: '#F59E0B',
+                color: '#FFFFFF',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <Flame size={16} fill="#FFFFFF" />
+              <span>Claim {currentSlot === 'morning' ? 'Morning' : 'Evening'} Check-In (+25 XP)</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-primary"
+              style={{
+                flex: 1,
+                height: '44px',
+                borderRadius: '12px',
+                fontWeight: 800,
+                fontSize: '0.88rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
+            >
+              <CheckCircle2 size={16} />
+              <span>{claimsToday >= 2 ? 'Both Sessions Claimed Today!' : 'Close & Continue Learning'}</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -65,13 +65,13 @@ export const CertificatesView: React.FC<CertificatesViewProps> = ({
             }}
           >
             <ShieldCheck size={14} color="var(--brand-primary)" />
-            <span>Cryptographic Credential Registry</span>
+            <span>Course Credentials & Certificates</span>
           </div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 10px 0' }}>
-            Verified Certificates & Mastery
+            Earned Certificates & Course Records
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', margin: 0, lineHeight: 1.5 }}>
-            Each credential issued in Geniusphere includes an immutable SHA-256 integrity hash, verifiable syllabus skills, and high-resolution printable diplomas for academic and career advancement.
+            Credentials earned in Geniusphere include verified syllabus skills, completion dates, and printable certificates for your learning portfolio.
           </p>
         </div>
 

@@ -1850,6 +1850,77 @@ export class InMemoryDatabase {
     return prog;
   }
 
+  claimDailyStreak(userId: string): {
+    progress: UserProgressState;
+    slot: 'morning' | 'evening';
+    alreadyClaimedSlot: boolean;
+    claimsToday: number;
+    awardedXp: number;
+    nextStreak: number;
+  } {
+    const prog = this.getUserProgress(userId);
+    const today = new Date().toISOString().split('T')[0];
+    const currentHour = new Date().getHours();
+    const currentSlot: 'morning' | 'evening' = currentHour < 14 ? 'morning' : 'evening';
+
+    // Reset daily claims counter if it's a new day
+    if (prog.last_streak_claim_date !== today) {
+      prog.streak_claims_today = 0;
+      prog.last_streak_claim_date = today;
+    }
+
+    const claimsToday = prog.streak_claims_today || 0;
+
+    // Check if current slot was already claimed
+    if (claimsToday >= 2 || (claimsToday === 1 && prog.last_streak_claim_session === currentSlot)) {
+      return {
+        progress: prog,
+        slot: currentSlot,
+        alreadyClaimedSlot: true,
+        claimsToday,
+        awardedXp: 0,
+        nextStreak: prog.streak_days || 0,
+      };
+    }
+
+    // Advance daily streak if first check-in of the day
+    if (claimsToday === 0) {
+      if (prog.last_active_date) {
+        const lastDate = new Date(prog.last_active_date);
+        const currentDate = new Date(today);
+        const diffDays = Math.round((currentDate.getTime() - lastDate.getTime()) / (1000 * 3600 * 24));
+        if (diffDays === 1) {
+          prog.streak_days = (prog.streak_days || 0) + 1;
+        } else if (diffDays > 1) {
+          prog.streak_days = 1;
+        } else if (diffDays === 0 && (prog.streak_days || 0) === 0) {
+          prog.streak_days = 1;
+        }
+      } else {
+        prog.streak_days = 1;
+      }
+      prog.last_active_date = today;
+    }
+
+    const awardedXp = currentSlot === 'morning' ? 25 : 25; // 25 XP each session = 50 XP/day total
+    prog.xp = (prog.xp || 0) + awardedXp;
+    prog.streak_claims_today = claimsToday + 1;
+    prog.last_streak_claim_session = currentSlot;
+    prog.last_streak_claim_date = today;
+
+    this.userProgress.set(userId, prog);
+    this.persistState();
+
+    return {
+      progress: prog,
+      slot: currentSlot,
+      alreadyClaimedSlot: false,
+      claimsToday: prog.streak_claims_today,
+      awardedXp,
+      nextStreak: prog.streak_days,
+    };
+  }
+
   awardXp(userId: string, xpAmount: number, _reason?: string): UserProgressState {
     const prog = this.getUserProgress(userId);
     prog.xp += xpAmount;

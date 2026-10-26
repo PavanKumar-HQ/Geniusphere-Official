@@ -152,6 +152,9 @@ export interface UserProgressState {
   completed_lessons: string[];
   completed_courses: string[];
   certificates: Certificate[];
+  streak_claims_today?: number;
+  last_streak_claim_date?: string;
+  last_streak_claim_session?: 'morning' | 'evening';
 }
 
 export interface CourseModule {

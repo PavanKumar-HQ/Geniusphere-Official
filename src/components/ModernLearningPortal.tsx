@@ -826,10 +826,10 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
           </div>
           <div>
             <div style={{ fontWeight: 800, fontSize: '0.94rem', color: 'var(--text-primary)' }}>
-              Cryptographic Credential Registry
+              Course Certificates & Credentials
             </div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-              Every completed track issues an immutable SHA-256 integrity hash for college admissions and career portfolios.
+              Completed tracks issue verified certificates with direct digital verification codes for your portfolio.
             </div>
           </div>
         </div>
