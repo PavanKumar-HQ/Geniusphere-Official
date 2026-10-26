@@ -307,6 +307,83 @@ export class ApiClient {
     return this.request('/api/safeguarding/reports');
   }
 
+  // --- REVENUE MARKETPLACE & LEDGER CLIENT METHODS ---
+  public async getMarketplacePackages(): Promise<any[]> {
+    return this.request('/api/marketplace/packages');
+  }
+
+  public async createMarketplacePackage(data: any): Promise<any> {
+    return this.request('/api/marketplace/packages', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async getMarketplaceMaterials(): Promise<any[]> {
+    return this.request('/api/marketplace/materials');
+  }
+
+  public async createMarketplaceMaterial(data: any): Promise<any> {
+    return this.request('/api/marketplace/materials', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async submitTrainerProposal(requestId: string, data: { proposedDailyRatePaise: number; coverNote: string; availabilityDates: string[] }): Promise<any> {
+    return this.request(`/api/marketplace/requests/${requestId}/proposals`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async getProposalsForRequest(requestId: string): Promise<any[]> {
+    return this.request(`/api/marketplace/requests/${requestId}/proposals`);
+  }
+
+  public async createBookingFromQuote(quoteId: string, selectedMaterials: any[] = []): Promise<any> {
+    return this.request(`/api/marketplace/quotes/${quoteId}/book`, {
+      method: 'POST',
+      body: JSON.stringify({ selectedMaterials }),
+    });
+  }
+
+  public async getBookings(): Promise<any[]> {
+    return this.request('/api/marketplace/bookings');
+  }
+
+  public async recordPaymentReceipt(data: any): Promise<any> {
+    return this.request('/api/finance/payments', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public async getRecordedPayments(): Promise<any[]> {
+    return this.request('/api/finance/payments');
+  }
+
+  public async allocatePayment(paymentId: string, invoiceId: string, amountPaise: number): Promise<any> {
+    return this.request(`/api/finance/payments/${paymentId}/allocate`, {
+      method: 'POST',
+      body: JSON.stringify({ invoiceId, amountPaise }),
+    });
+  }
+
+  public async reconcilePayment(paymentId: string): Promise<any> {
+    return this.request(`/api/finance/payments/${paymentId}/reconcile`, {
+      method: 'POST',
+    });
+  }
+
+  public async getFinancialLedger(): Promise<any[]> {
+    return this.request('/api/finance/ledger');
+  }
+
+  public async getRevenueMetricsSummary(): Promise<any> {
+    return this.request('/api/finance/revenue-metrics');
+  }
+
   /**
    * Initializes real-time authenticated WebSocket connection
    */

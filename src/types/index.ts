@@ -551,3 +551,169 @@ export interface SafeguardingReport {
   resolution_notes?: string | null;
 }
 
+// ====================================================================
+// Geniusphere Revenue Model & Marketplace Types
+// ====================================================================
+
+export interface MarketplacePackage {
+  id: string;
+  title: string;
+  slug: string;
+  domain: DomainType;
+  target_grade_range: string;
+  session_count: number;
+  duration_hours_per_session: number;
+  max_cohort_size: number;
+  delivery_mode: 'in_person' | 'online' | 'hybrid';
+  base_price_paise: number;
+  trainer_allocation_paise: number;
+  platform_fee_paise: number;
+  learning_outcomes: string[];
+  included_services: string[];
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MarketplaceMaterial {
+  id: string;
+  name: string;
+  sku: string;
+  description: string;
+  unit_price_paise: number;
+  unit_cost_paise: number;
+  unit_type: 'kit' | 'book' | 'license' | 'hardware';
+  supplier_name: string;
+  is_available: boolean;
+  stock_quantity: number;
+  delivery_terms: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrainerProposal {
+  id: string;
+  request_id: string;
+  trainer_id: string;
+  trainer_name?: string;
+  proposed_daily_rate_paise: number;
+  cover_note: string;
+  availability_dates: string[];
+  status: 'submitted' | 'shortlisted' | 'accepted' | 'declined' | 'withdrawn';
+  created_at: string;
+  updated_at: string;
+}
+
+export type BookingStatus =
+  | 'requested'
+  | 'quoted'
+  | 'awaiting_school_approval'
+  | 'confirmed'
+  | 'scheduled'
+  | 'in_progress'
+  | 'delivered'
+  | 'accepted'
+  | 'completed'
+  | 'disputed'
+  | 'cancelled';
+
+export interface BookingSelectedMaterial {
+  material_id: string;
+  name: string;
+  quantity: number;
+  unit_price_paise: number;
+  total_price_paise: number;
+}
+
+export interface TrainingBooking {
+  id: string;
+  request_id: string;
+  quote_id?: string | null;
+  organization_id: string;
+  organization_name?: string;
+  package_id?: string | null;
+  booking_number: string;
+  status: BookingStatus;
+  training_fee_paise: number;
+  materials_fee_paise: number;
+  platform_fee_paise: number;
+  trainer_compensation_paise: number;
+  tax_paise: number;
+  gross_total_paise: number;
+  terms_markdown: string;
+  materials?: BookingSelectedMaterial[];
+  confirmed_at?: string | null;
+  school_accepted_at?: string | null;
+  cancellation_reason?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type PaymentMethod = 'bank_transfer' | 'cheque' | 'neft_rtgs' | 'manual_cash' | 'provider_gateway_contract';
+export type PaymentStatus = 'recorded' | 'reconciled' | 'disputed' | 'reversed';
+
+export interface RecordedPayment {
+  id: string;
+  organization_id: string;
+  organization_name?: string;
+  amount_paise: number;
+  payment_method: PaymentMethod;
+  transaction_reference: string;
+  bank_name?: string | null;
+  notes?: string | null;
+  evidence_url?: string | null;
+  payment_date: string;
+  recorded_by: string;
+  recorded_by_name?: string;
+  reconciled_by?: string | null;
+  reconciled_at?: string | null;
+  status: PaymentStatus;
+  idempotency_key: string;
+  created_at: string;
+}
+
+export interface PaymentAllocation {
+  id: string;
+  payment_id: string;
+  invoice_id: string;
+  allocated_amount_paise: number;
+  allocated_by: string;
+  created_at: string;
+}
+
+export type LedgerAccountType =
+  | 'accounts_receivable'
+  | 'bank_cash'
+  | 'trainer_payable'
+  | 'platform_revenue'
+  | 'tax_payable'
+  | 'materials_cogs';
+
+export interface FinancialLedgerEntry {
+  id: string;
+  entry_number: number;
+  booking_id?: string | null;
+  invoice_id?: string | null;
+  payment_id?: string | null;
+  payout_id?: string | null;
+  account_type: LedgerAccountType;
+  entry_type: 'debit' | 'credit';
+  amount_paise: number;
+  currency: string;
+  description: string;
+  actor_id?: string | null;
+  created_at: string;
+}
+
+export interface RevenueMetricsSummary {
+  grossBookingValuePaise: number;
+  earnedPlatformRevenuePaise: number;
+  outstandingReceivablesPaise: number;
+  trainerPayablesPaise: number;
+  actualPaymentsReceivedPaise: number;
+  actualPayoutsCompletedPaise: number;
+  activeBookingsCount: number;
+  completedBookingsCount: number;
+}
+
+

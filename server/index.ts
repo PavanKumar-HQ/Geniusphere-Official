@@ -643,6 +643,155 @@ export async function createServer() {
     }
   });
 
+  // --- REVENUE MARKETPLACE: PACKAGES & MATERIALS ---
+  fastify.get('/api/marketplace/packages', async (request) => {
+    const isSuperadmin = (request as any).user?.isSuperadmin || false;
+    return domainService.getMarketplacePackages(isSuperadmin);
+  });
+
+  fastify.post('/api/marketplace/packages', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    try {
+      const pkg = await domainService.createMarketplacePackage(request.user!.userId, request.body);
+      return reply.status(201).send(pkg);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/materials', async () => {
+    return domainService.getMarketplaceMaterials();
+  });
+
+  fastify.post('/api/marketplace/materials', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires platform superadmin privilege' });
+    }
+    try {
+      const mat = await domainService.createMarketplaceMaterial(request.user!.userId, request.body);
+      return reply.status(201).send(mat);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  // --- REVENUE MARKETPLACE: PROPOSALS & BOOKINGS ---
+  fastify.post('/api/marketplace/requests/:id/proposals', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      const prop = await domainService.submitTrainerProposal(request.user!.userId, id, request.body);
+      return reply.status(201).send(prop);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/requests/:id/proposals', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.getProposalsForRequest(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(403).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/marketplace/quotes/:id/book', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const { selectedMaterials } = (request.body as any) || {};
+    try {
+      const bk = await domainService.createBookingFromQuote(request.user!.userId, id, selectedMaterials || []);
+      return reply.status(201).send(bk);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/marketplace/bookings', { preHandler: [authenticateRequest] }, async (request) => {
+    const user = request.user!;
+    return domainService.getBookings(user.orgId, user.isSuperadmin);
+  });
+
+  // --- REVENUE MARKETPLACE: PAYMENTS & FINANCIAL LEDGER ---
+  fastify.post('/api/finance/payments', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires finance admin privilege' });
+    }
+    try {
+      const payment = await domainService.recordPaymentReceipt(request.user!.userId, request.body);
+      return reply.status(201).send(payment);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/finance/payments', { preHandler: [authenticateRequest] }, async (request) => {
+    const user = request.user!;
+    return domainService.getRecordedPayments(user.orgId, user.isSuperadmin);
+  });
+
+  fastify.post('/api/finance/payments/:id/allocate', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires finance admin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    const { invoiceId, amountPaise } = (request.body as any) || {};
+    try {
+      const alloc = await domainService.allocatePayment(request.user!.userId, id, invoiceId, amountPaise);
+      return reply.status(201).send(alloc);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.post('/api/finance/payments/:id/reconcile', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires finance admin privilege' });
+    }
+    const { id } = request.params as { id: string };
+    try {
+      return await domainService.reconcilePayment(request.user!.userId, id);
+    } catch (err: any) {
+      return reply.status(400).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/finance/ledger', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires finance admin privilege' });
+    }
+    try {
+      return await domainService.getFinancialLedger(true);
+    } catch (err: any) {
+      return reply.status(403).send({ error: err.message });
+    }
+  });
+
+  fastify.get('/api/finance/revenue-metrics', { preHandler: [authenticateRequest] }, async (request, reply) => {
+    if (!request.user!.isSuperadmin) {
+      return reply.status(403).send({ error: 'Requires finance admin privilege' });
+    }
+    try {
+      return await domainService.getRevenueMetricsSummary(true);
+    } catch (err: any) {
+      return reply.status(403).send({ error: err.message });
+    }
+  });
+
+  // Contract-Ready Gateway Webhook Boundary (Manual mode active, gateway contract specified)
+  fastify.post('/api/v1/payments/webhook', async (request, reply) => {
+    const signature = request.headers['x-provider-signature'];
+    if (!signature) {
+      return reply.status(400).send({
+        status: 'unconfigured',
+        mode: 'manual_settlement_only',
+        message: 'Payment gateway webhooks are contract-ready but intentionally unconfigured until production payment credentials are provided.',
+      });
+    }
+    return reply.status(200).send({ received: true });
+  });
+
   // 10. Hybrid AI Gateway Endpoints
   fastify.get('/api/ai/status', async () => {
     return aiGateway.getStatus();

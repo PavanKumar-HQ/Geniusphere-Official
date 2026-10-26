@@ -112,9 +112,9 @@ export const InstitutionAdminWorkspace: React.FC<InstitutionAdminWorkspaceProps>
 
   const handleAcceptQuote = (quoteId: string) => {
     try {
-      db.acceptTrainingQuote(currentUserId, quoteId);
+      db.createBookingFromQuote(currentUserId, quoteId);
       setVersion((v) => v + 1);
-      setActionMsg({ text: 'Commercial quote accepted! Engagement confirmed and invoice issued.', type: 'success' });
+      setActionMsg({ text: 'Commercial quote accepted! Engagement booked, contract snapshot sealed, and invoice issued.', type: 'success' });
     } catch (err: any) {
       setActionMsg({ text: err.message, type: 'error' });
     }

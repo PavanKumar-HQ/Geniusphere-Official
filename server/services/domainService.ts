@@ -1356,6 +1356,421 @@ export class DomainService {
       return res.rows[0];
     }, superadminUserId);
   }
+
+  // --- REVENUE MARKETPLACE: PACKAGES & MATERIALS ---
+  public async getMarketplacePackages(isSuperadmin: boolean = false) {
+    const res = await query(
+      isSuperadmin
+        ? `SELECT * FROM public.marketplace_packages ORDER BY created_at DESC`
+        : `SELECT * FROM public.marketplace_packages WHERE is_published = TRUE ORDER BY created_at DESC`
+    );
+    return res.rows;
+  }
+
+  public async createMarketplacePackage(superadminUserId: string, data: any) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.marketplace_packages (
+           title, slug, domain, target_grade_range, session_count,
+           duration_hours_per_session, max_cohort_size, delivery_mode,
+           base_price_paise, trainer_allocation_paise, platform_fee_paise,
+           learning_outcomes, included_services, is_published
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+         RETURNING *`,
+        [
+          data.title,
+          data.slug || `pkg-${Date.now()}`,
+          data.domain,
+          data.targetGradeRange,
+          data.sessionCount,
+          data.durationHoursPerSession || 1.5,
+          data.maxCohortSize || 40,
+          data.deliveryMode || 'in_person',
+          data.basePricePaise,
+          data.trainerAllocationPaise,
+          data.platformFeePaise,
+          JSON.stringify(data.learningOutcomes || []),
+          JSON.stringify(data.includedServices || []),
+          data.isPublished !== undefined ? data.isPublished : true,
+        ]
+      );
+      return res.rows[0];
+    }, superadminUserId);
+  }
+
+  public async getMarketplaceMaterials() {
+    const res = await query(`SELECT * FROM public.marketplace_materials ORDER BY name ASC`);
+    return res.rows;
+  }
+
+  public async createMarketplaceMaterial(superadminUserId: string, data: any) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.marketplace_materials (
+           name, sku, description, unit_price_paise, unit_cost_paise,
+           unit_type, supplier_name, is_available, stock_quantity, delivery_terms
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         RETURNING *`,
+        [
+          data.name,
+          data.sku,
+          data.description,
+          data.unitPricePaise,
+          data.unitCostPaise || 0,
+          data.unitType || 'kit',
+          data.supplierName || 'Geniusphere Labs',
+          data.isAvailable !== undefined ? data.isAvailable : true,
+          data.stockQuantity || 100,
+          data.deliveryTerms || 'Dispatched via certified carrier within 48h',
+        ]
+      );
+      return res.rows[0];
+    }, superadminUserId);
+  }
+
+  // --- REVENUE MARKETPLACE: TRAINER PROPOSALS ---
+  public async submitTrainerProposal(trainerUserId: string, requestId: string, data: any) {
+    return withTransaction(async (client) => {
+      const trainerRes = await client.query(`SELECT id, verification_status FROM public.trainers WHERE user_id = $1`, [trainerUserId]);
+      if (trainerRes.rowCount === 0) throw new Error('Trainer profile not found');
+      const trainer = trainerRes.rows[0];
+      if (trainer.verification_status !== 'verified') {
+        throw new Error('Unverified trainers cannot submit proposals for institutional engagements');
+      }
+
+      const res = await client.query(
+        `INSERT INTO public.trainer_proposals (
+           request_id, trainer_id, proposed_daily_rate_paise, cover_note, availability_dates
+         ) VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (request_id, trainer_id) DO UPDATE SET
+           proposed_daily_rate_paise = EXCLUDED.proposed_daily_rate_paise,
+           cover_note = EXCLUDED.cover_note,
+           availability_dates = EXCLUDED.availability_dates,
+           updated_at = NOW()
+         RETURNING *`,
+        [
+          requestId,
+          trainer.id,
+          data.proposedDailyRatePaise,
+          data.coverNote,
+          JSON.stringify(data.availabilityDates || []),
+        ]
+      );
+      return res.rows[0];
+    }, trainerUserId);
+  }
+
+  public async getProposalsForRequest(callerUserId: string, requestId: string) {
+    const res = await query(
+      `SELECT p.*, t.headline, u.full_name as trainer_name
+       FROM public.trainer_proposals p
+       JOIN public.trainers t ON t.id = p.trainer_id
+       JOIN public.users u ON u.id = t.user_id
+       WHERE p.request_id = $1
+       ORDER BY p.created_at DESC`,
+      [requestId]
+    );
+    return res.rows;
+  }
+
+  // --- REVENUE MARKETPLACE: BOOKINGS & INVOICES ---
+  public async createBookingFromQuote(callerUserId: string, quoteId: string, selectedMaterialIds: any[] = []) {
+    return withTransaction(async (client) => {
+      const qRes = await client.query(`SELECT * FROM public.training_quotes WHERE id = $1`, [quoteId]);
+      if (qRes.rowCount === 0) throw new Error('Quote not found');
+      const quote = qRes.rows[0];
+
+      // Verify no duplicate active booking
+      const existingBk = await client.query(
+        `SELECT id FROM public.training_bookings WHERE request_id = $1 AND status != 'cancelled'`,
+        [quote.request_id]
+      );
+      if (existingBk.rowCount && existingBk.rowCount > 0) throw new Error('An active booking already exists for this requirement');
+
+      let materialsFeePaise = 0;
+      const materialsToInsert: any[] = [];
+      for (const item of selectedMaterialIds) {
+        const matRes = await client.query(`SELECT * FROM public.marketplace_materials WHERE id = $1`, [item.materialId]);
+        if (matRes.rowCount && matRes.rowCount > 0) {
+          const mat = matRes.rows[0];
+          const total = mat.unit_price_paise * item.quantity;
+          materialsFeePaise += total;
+          materialsToInsert.push({
+            material_id: mat.id,
+            quantity: item.quantity,
+            unit_price_paise: mat.unit_price_paise,
+            total_price_paise: total,
+          });
+        }
+      }
+
+      const trainingFee = quote.trainer_fee_paise;
+      const platformFee = quote.platform_fee_paise;
+      const trainerComp = quote.trainer_fee_paise;
+      const subtotal = trainingFee + platformFee + materialsFeePaise;
+      const taxPaise = Math.round(subtotal * 0.18);
+      const grossTotal = subtotal + taxPaise;
+      const bookingNumber = `GS-BK-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const bkRes = await client.query(
+        `INSERT INTO public.training_bookings (
+           request_id, quote_id, organization_id, booking_number, status,
+           training_fee_paise, materials_fee_paise, platform_fee_paise,
+           trainer_compensation_paise, tax_paise, gross_total_paise, terms_markdown, confirmed_at
+         ) VALUES ($1, $2, $3, $4, 'confirmed', $5, $6, $7, $8, $9, $10, $11, NOW())
+         RETURNING *`,
+        [
+          quote.request_id,
+          quote.id,
+          quote.organization_id,
+          bookingNumber,
+          trainingFee,
+          materialsFeePaise,
+          platformFee,
+          trainerComp,
+          taxPaise,
+          grossTotal,
+          quote.terms_markdown,
+        ]
+      );
+      const booking = bkRes.rows[0];
+
+      // Insert materials if any
+      for (const m of materialsToInsert) {
+        await client.query(
+          `INSERT INTO public.booking_materials (booking_id, material_id, quantity, unit_price_paise, total_price_paise)
+           VALUES ($1, $2, $3, $4, $5)`,
+          [booking.id, m.material_id, m.quantity, m.unit_price_paise, m.total_price_paise]
+        );
+      }
+
+      // Automatically generate real invoice
+      const invoiceNumber = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const invRes = await client.query(
+        `INSERT INTO public.training_invoices (
+           organization_id, request_id, invoice_number, subtotal_paise, tax_paise, total_paise, status, due_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, 'issued', NOW() + INTERVAL '15 days')
+         RETURNING *`,
+        [quote.organization_id, quote.request_id, invoiceNumber, subtotal, taxPaise, grossTotal]
+      );
+      const invoice = invRes.rows[0];
+
+      // Update quote & request
+      await client.query(`UPDATE public.training_quotes SET status = 'accepted' WHERE id = $1`, [quote.id]);
+      await client.query(`UPDATE public.training_requests SET status = 'confirmed' WHERE id = $1`, [quote.request_id]);
+
+      // Add double-entry ledger entries
+      await client.query(
+        `INSERT INTO public.financial_ledger (booking_id, invoice_id, account_type, entry_type, amount_paise, description, actor_id)
+         VALUES ($1, $2, 'accounts_receivable', 'debit', $3, $4, $5),
+                ($1, $2, 'platform_revenue', 'credit', $6, $7, $5),
+                ($1, $2, 'trainer_payable', 'credit', $8, $9, $5),
+                ($1, $2, 'tax_payable', 'credit', $10, $11, $5)`,
+        [
+          booking.id,
+          invoice.id,
+          grossTotal,
+          `Invoice ${invoiceNumber} issued for booking ${bookingNumber}`,
+          callerUserId,
+          platformFee,
+          `Platform fee earned on booking ${bookingNumber}`,
+          trainerComp,
+          `Trainer compensation liability for booking ${bookingNumber}`,
+          taxPaise,
+          `GST 18% liability for booking ${bookingNumber}`,
+        ]
+      );
+
+      return booking;
+    }, callerUserId);
+  }
+
+  public async getBookings(orgId?: string, isSuperadmin: boolean = false) {
+    if (isSuperadmin) {
+      const res = await query(
+        `SELECT b.*, o.name as organization_name, r.title as request_title
+         FROM public.training_bookings b
+         JOIN public.organizations o ON o.id = b.organization_id
+         JOIN public.training_requests r ON r.id = b.request_id
+         ORDER BY b.created_at DESC`
+      );
+      return res.rows;
+    }
+    if (!orgId) return [];
+    const res = await query(
+      `SELECT b.*, o.name as organization_name, r.title as request_title
+       FROM public.training_bookings b
+       JOIN public.organizations o ON o.id = b.organization_id
+       JOIN public.training_requests r ON r.id = b.request_id
+       WHERE b.organization_id = $1
+       ORDER BY b.created_at DESC`,
+      [orgId]
+    );
+    return res.rows;
+  }
+
+  // --- REVENUE MARKETPLACE: MANUAL PAYMENTS & ALLOCATIONS ---
+  public async recordPaymentReceipt(financeAdminUserId: string, data: any) {
+    return withTransaction(async (client) => {
+      const idemKey = data.idempotencyKey || `pay-${data.transactionReference.trim()}`;
+      const existing = await client.query(`SELECT * FROM public.recorded_payments WHERE idempotency_key = $1`, [idemKey]);
+      if (existing.rowCount && existing.rowCount > 0) return existing.rows[0];
+
+      const res = await client.query(
+        `INSERT INTO public.recorded_payments (
+           organization_id, amount_paise, payment_method, transaction_reference,
+           bank_name, notes, evidence_url, payment_date, recorded_by, idempotency_key
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+         RETURNING *`,
+        [
+          data.organizationId,
+          data.amountPaise,
+          data.paymentMethod || 'bank_transfer',
+          data.transactionReference.trim(),
+          data.bankName || null,
+          data.notes || null,
+          data.evidenceUrl || null,
+          data.paymentDate || new Date().toISOString().split('T')[0],
+          financeAdminUserId,
+          idemKey,
+        ]
+      );
+      const payment = res.rows[0];
+
+      // Debit Bank Cash in ledger
+      await client.query(
+        `INSERT INTO public.financial_ledger (payment_id, account_type, entry_type, amount_paise, description, actor_id)
+         VALUES ($1, 'bank_cash', 'debit', $2, $3, $4)`,
+        [
+          payment.id,
+          data.amountPaise,
+          `Payment ${payment.transaction_reference} recorded into ${payment.bank_name || 'Bank'}`,
+          financeAdminUserId,
+        ]
+      );
+
+      return payment;
+    }, financeAdminUserId);
+  }
+
+  public async allocatePayment(financeAdminUserId: string, paymentId: string, invoiceId: string, amountPaise: number) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `INSERT INTO public.payment_allocations (payment_id, invoice_id, allocated_amount_paise, allocated_by)
+         VALUES ($1, $2, $3, $4)
+         RETURNING *`,
+        [paymentId, invoiceId, amountPaise, financeAdminUserId]
+      );
+      const alloc = res.rows[0];
+
+      // Check invoice total allocation
+      const sumRes = await client.query(
+        `SELECT SUM(allocated_amount_paise) as total_alloc FROM public.payment_allocations WHERE invoice_id = $1`,
+        [invoiceId]
+      );
+      const totalAlloc = parseInt(sumRes.rows[0]?.total_alloc || '0', 10);
+      const invRes = await client.query(`SELECT total_paise FROM public.training_invoices WHERE id = $1`, [invoiceId]);
+      if (invRes.rowCount && invRes.rowCount > 0 && totalAlloc >= invRes.rows[0].total_paise) {
+        await client.query(`UPDATE public.training_invoices SET status = 'paid', paid_at = NOW() WHERE id = $1`, [invoiceId]);
+      }
+
+      // Credit Accounts Receivable in ledger
+      await client.query(
+        `INSERT INTO public.financial_ledger (payment_id, invoice_id, account_type, entry_type, amount_paise, description, actor_id)
+         VALUES ($1, $2, 'accounts_receivable', 'credit', $3, $4, $5)`,
+        [paymentId, invoiceId, amountPaise, `Allocation of payment to Invoice`, financeAdminUserId]
+      );
+
+      return alloc;
+    }, financeAdminUserId);
+  }
+
+  public async reconcilePayment(financeAdminUserId: string, paymentId: string) {
+    return withTransaction(async (client) => {
+      const res = await client.query(
+        `UPDATE public.recorded_payments
+         SET status = 'reconciled', reconciled_by = $1, reconciled_at = NOW()
+         WHERE id = $2
+         RETURNING *`,
+        [financeAdminUserId, paymentId]
+      );
+      if (res.rowCount === 0) throw new Error('Payment not found');
+      return res.rows[0];
+    }, financeAdminUserId);
+  }
+
+  public async getRecordedPayments(orgId?: string, isSuperadmin: boolean = false) {
+    if (isSuperadmin) {
+      const res = await query(
+        `SELECT p.*, o.name as organization_name, u.full_name as recorded_by_name
+         FROM public.recorded_payments p
+         JOIN public.organizations o ON o.id = p.organization_id
+         JOIN public.users u ON u.id = p.recorded_by
+         ORDER BY p.created_at DESC`
+      );
+      return res.rows;
+    }
+    if (!orgId) return [];
+    const res = await query(
+      `SELECT p.*, o.name as organization_name, u.full_name as recorded_by_name
+       FROM public.recorded_payments p
+       JOIN public.organizations o ON o.id = p.organization_id
+       JOIN public.users u ON u.id = p.recorded_by
+       WHERE p.organization_id = $1
+       ORDER BY p.created_at DESC`,
+      [orgId]
+    );
+    return res.rows;
+  }
+
+  public async getFinancialLedger(isSuperadmin: boolean = false) {
+    if (!isSuperadmin) throw new Error('Forbidden: Only finance administrators can view the general ledger');
+    const res = await query(`SELECT * FROM public.financial_ledger ORDER BY entry_number DESC LIMIT 200`);
+    return res.rows;
+  }
+
+  public async getRevenueMetricsSummary(isSuperadmin: boolean = false) {
+    if (!isSuperadmin) throw new Error('Forbidden');
+    const bRes = await query(`
+      SELECT 
+        COALESCE(SUM(gross_total_paise), 0) as gross_booking_value,
+        COALESCE(SUM(platform_fee_paise), 0) as platform_revenue,
+        COALESCE(SUM(trainer_compensation_paise), 0) as trainer_payables,
+        COUNT(*) FILTER (WHERE status NOT IN ('cancelled', 'completed', 'accepted')) as active_bookings,
+        COUNT(*) FILTER (WHERE status IN ('completed', 'accepted')) as completed_bookings
+      FROM public.training_bookings
+    `);
+
+    const pRes = await query(`
+      SELECT COALESCE(SUM(amount_paise), 0) as actual_payments_received
+      FROM public.recorded_payments
+      WHERE status IN ('recorded', 'reconciled')
+    `);
+
+    const poRes = await query(`
+      SELECT COALESCE(SUM(amount_paise), 0) as actual_payouts_completed
+      FROM public.trainer_payouts
+      WHERE status = 'settled'
+    `);
+
+    const invRes = await query(`
+      SELECT 
+        COALESCE(SUM(total_paise) FILTER (WHERE status != 'paid'), 0) as outstanding_receivables
+      FROM public.training_invoices
+    `);
+
+    const b = bRes.rows[0];
+    return {
+      grossBookingValuePaise: parseInt(b.gross_booking_value || '0', 10),
+      earnedPlatformRevenuePaise: parseInt(b.platform_revenue || '0', 10),
+      outstandingReceivablesPaise: parseInt(invRes.rows[0]?.outstanding_receivables || '0', 10),
+      trainerPayablesPaise: parseInt(b.trainer_payables || '0', 10),
+      actualPaymentsReceivedPaise: parseInt(pRes.rows[0]?.actual_payments_received || '0', 10),
+      actualPayoutsCompletedPaise: parseInt(poRes.rows[0]?.actual_payouts_completed || '0', 10),
+      activeBookingsCount: parseInt(b.active_bookings || '0', 10),
+      completedBookingsCount: parseInt(b.completed_bookings || '0', 10),
+    };
+  }
 }
 
 export const domainService = new DomainService();

@@ -106,4 +106,45 @@ describe('Database Migrations (PostgreSQL Engine Verification)', () => {
       `);
     }).toThrow();
   });
+
+  it('executes Migration 009 and Migration 010 cleanly in pg-mem', () => {
+    const memDb = newDb();
+    memDb.public.registerFunction({
+      name: 'gen_random_uuid',
+      implementation: () => crypto.randomUUID(),
+    });
+
+    // 1. Core Schema 001
+    const sql001 = fs.readFileSync(path.resolve(__dirname, '../supabase/migrations/20261017000001_initial_schema.sql'), 'utf-8');
+    const ddl001 = sql001.split('\n').filter((l) => !l.trim().startsWith('REVOKE') && !l.trim().startsWith('GRANT')).join('\n');
+    memDb.public.none(ddl001);
+
+    // 2. Migration 009 (Marketplace and School Training)
+    const sql009 = fs.readFileSync(path.resolve(__dirname, '../supabase/migrations/20261025000009_marketplace_and_school_training.sql'), 'utf-8');
+    memDb.public.none(sql009);
+
+    // 3. Migration 010 (Revenue Marketplace, Packages, Bookings, Ledger)
+    const sql010 = fs.readFileSync(path.resolve(__dirname, '../supabase/migrations/20261026000010_revenue_marketplace_and_ledger.sql'), 'utf-8');
+    memDb.public.none(sql010);
+
+    const tables = memDb.public.many(`
+      SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';
+    `);
+    const tableNames = tables.map((t: any) => t.table_name);
+
+    expect(tableNames).toContain('trainers');
+    expect(tableNames).toContain('training_requests');
+    expect(tableNames).toContain('training_quotes');
+    expect(tableNames).toContain('training_assignments');
+    expect(tableNames).toContain('training_sessions');
+    expect(tableNames).toContain('training_invoices');
+    expect(tableNames).toContain('trainer_payouts');
+    expect(tableNames).toContain('marketplace_packages');
+    expect(tableNames).toContain('marketplace_materials');
+    expect(tableNames).toContain('trainer_proposals');
+    expect(tableNames).toContain('training_bookings');
+    expect(tableNames).toContain('recorded_payments');
+    expect(tableNames).toContain('payment_allocations');
+    expect(tableNames).toContain('financial_ledger');
+  });
 });

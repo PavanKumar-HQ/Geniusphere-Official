@@ -39,6 +39,14 @@ import {
   TrainingInvoice,
   TrainerPayout,
   SafeguardingReport,
+  MarketplacePackage,
+  MarketplaceMaterial,
+  TrainerProposal,
+  TrainingBooking,
+  RecordedPayment,
+  PaymentAllocation,
+  FinancialLedgerEntry,
+  RevenueMetricsSummary,
 } from '../types';
 import {
   ALL_COURSES,
@@ -100,6 +108,13 @@ export class InMemoryDatabase {
   trainingInvoices: Map<string, TrainingInvoice> = new Map();
   trainerPayouts: Map<string, TrainerPayout> = new Map();
   safeguardingReports: Map<string, SafeguardingReport> = new Map();
+  marketplacePackages: Map<string, MarketplacePackage> = new Map();
+  marketplaceMaterials: Map<string, MarketplaceMaterial> = new Map();
+  trainerProposals: Map<string, TrainerProposal> = new Map();
+  trainingBookings: Map<string, TrainingBooking> = new Map();
+  recordedPayments: Map<string, RecordedPayment> = new Map();
+  paymentAllocations: Map<string, PaymentAllocation> = new Map();
+  financialLedger: Map<string, FinancialLedgerEntry> = new Map();
   private lastAuditRowHash = '0000000000000000000000000000000000000000000000000000000000000000';
 
   constructor() {
@@ -149,6 +164,13 @@ export class InMemoryDatabase {
     this.trainingInvoices.clear();
     this.trainerPayouts.clear();
     this.safeguardingReports.clear();
+    this.marketplacePackages.clear();
+    this.marketplaceMaterials.clear();
+    this.trainerProposals.clear();
+    this.trainingBookings.clear();
+    this.recordedPayments.clear();
+    this.paymentAllocations.clear();
+    this.financialLedger.clear();
 
     APPROVED_LABS.forEach((l) => this.labDefinitions.set(l.id, { ...l }));
     INITIAL_VIDEO_LESSONS.forEach((v) => this.videoLessons.set(v.id, { ...v }));
@@ -2986,6 +3008,491 @@ export class InMemoryDatabase {
     });
 
     return report;
+  }
+
+  // ====================================================================
+  // REVENUE MARKETPLACE: PACKAGES & MATERIALS
+  // ====================================================================
+
+  getMarketplacePackages(isSuperadmin: boolean = false): MarketplacePackage[] {
+    const pkgs = Array.from(this.marketplacePackages.values());
+    if (isSuperadmin) return pkgs;
+    return pkgs.filter((p) => p.is_published);
+  }
+
+  createMarketplacePackage(
+    adminUserId: string,
+    data: Omit<MarketplacePackage, 'id' | 'created_at' | 'updated_at'>
+  ): MarketplacePackage {
+    if (!this.isPlatformSuperadmin(adminUserId)) {
+      throw new DatabaseError('Only platform superadmins can create course packages', '42501', 403);
+    }
+    const id = `pkg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const pkg: MarketplacePackage = {
+      ...data,
+      id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.marketplacePackages.set(pkg.id, pkg);
+    return pkg;
+  }
+
+  getMarketplaceMaterials(): MarketplaceMaterial[] {
+    return Array.from(this.marketplaceMaterials.values());
+  }
+
+  createMarketplaceMaterial(
+    adminUserId: string,
+    data: Omit<MarketplaceMaterial, 'id' | 'created_at' | 'updated_at'>
+  ): MarketplaceMaterial {
+    if (!this.isPlatformSuperadmin(adminUserId)) {
+      throw new DatabaseError('Only platform superadmins can manage materials catalog', '42501', 403);
+    }
+    const id = `mat-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const mat: MarketplaceMaterial = {
+      ...data,
+      id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.marketplaceMaterials.set(mat.id, mat);
+    return mat;
+  }
+
+  // ====================================================================
+  // REVENUE MARKETPLACE: TRAINER PROPOSALS
+  // ====================================================================
+
+  submitTrainerProposal(
+    trainerUserId: string,
+    requestId: string,
+    data: { proposedDailyRatePaise: number; coverNote: string; availabilityDates: string[] }
+  ): TrainerProposal {
+    const trainer = this.getTrainerByUserId(trainerUserId);
+    if (!trainer) {
+      throw new DatabaseError('Trainer profile not found', '23503', 404);
+    }
+    if (trainer.verification_status !== 'verified') {
+      throw new DatabaseError('Unverified trainers cannot submit proposals for institutional engagements', '42501', 403);
+    }
+
+    const req = this.trainingRequests.get(requestId);
+    if (!req) {
+      throw new DatabaseError('Training request not found', '23503', 404);
+    }
+
+    // Check unique proposal
+    for (const p of this.trainerProposals.values()) {
+      if (p.request_id === requestId && p.trainer_id === trainer.id && p.status !== 'withdrawn') {
+        throw new DatabaseError('Proposal already submitted for this training requirement', '23505', 409);
+      }
+    }
+
+    const proposalId = `prop-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const proposal: TrainerProposal = {
+      id: proposalId,
+      request_id: requestId,
+      trainer_id: trainer.id,
+      trainer_name: this.users.get(trainer.user_id)?.full_name || 'Verified Trainer',
+      proposed_daily_rate_paise: data.proposedDailyRatePaise,
+      cover_note: data.coverNote.trim(),
+      availability_dates: data.availabilityDates,
+      status: 'submitted',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.trainerProposals.set(proposal.id, proposal);
+    return proposal;
+  }
+
+  getProposalsForRequest(callerUserId: string, requestId: string): TrainerProposal[] {
+    const req = this.trainingRequests.get(requestId);
+    if (!req) return [];
+    const isSuper = this.isPlatformSuperadmin(callerUserId);
+    const isOrgAdmin = this.hasOrgRole(callerUserId, req.organization_id, 'institution_admin');
+    if (!isSuper && !isOrgAdmin) {
+      throw new DatabaseError('Forbidden: Only institution admins or superadmins can review proposals', '42501', 403);
+    }
+    return Array.from(this.trainerProposals.values()).filter((p) => p.request_id === requestId);
+  }
+
+  // ====================================================================
+  // REVENUE MARKETPLACE: COMMERCIAL BOOKINGS
+  // ====================================================================
+
+  createBookingFromQuote(
+    callerUserId: string,
+    quoteId: string,
+    selectedMaterialIds: { materialId: string; quantity: number }[] = []
+  ): TrainingBooking {
+    const quote = this.trainingQuotes.get(quoteId);
+    if (!quote) {
+      throw new DatabaseError('Commercial quote not found', '23503', 404);
+    }
+    if (!this.hasOrgRole(callerUserId, quote.organization_id, 'institution_admin') && !this.isPlatformSuperadmin(callerUserId)) {
+      throw new DatabaseError('Forbidden: Only institution administrators can book engagements', '42501', 403);
+    }
+
+    // Idempotency: verify no existing confirmed booking for this request
+    for (const b of this.trainingBookings.values()) {
+      if (b.request_id === quote.request_id && b.status !== 'cancelled') {
+        throw new DatabaseError('An active booking already exists for this training requirement', '23505', 409);
+      }
+    }
+
+    // Calculate materials cost accurately
+    let materialsFeePaise = 0;
+    const selectedMaterials: { material_id: string; name: string; quantity: number; unit_price_paise: number; total_price_paise: number }[] = [];
+    for (const item of selectedMaterialIds) {
+      const mat = this.marketplaceMaterials.get(item.materialId);
+      if (mat) {
+        const itemTotal = mat.unit_price_paise * item.quantity;
+        materialsFeePaise += itemTotal;
+        selectedMaterials.push({
+          material_id: mat.id,
+          name: mat.name,
+          quantity: item.quantity,
+          unit_price_paise: mat.unit_price_paise,
+          total_price_paise: itemTotal,
+        });
+      }
+    }
+
+    const trainingFeePaise = quote.trainer_fee_paise;
+    const platformFeePaise = quote.platform_fee_paise;
+    const trainerCompPaise = quote.trainer_fee_paise;
+    const subtotal = trainingFeePaise + platformFeePaise + materialsFeePaise;
+    const taxPaise = Math.round(subtotal * 0.18);
+    const grossTotalPaise = subtotal + taxPaise;
+
+    const bookingId = `bk-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const bookingNumber = `GS-BK-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const booking: TrainingBooking = {
+      id: bookingId,
+      request_id: quote.request_id,
+      quote_id: quote.id,
+      organization_id: quote.organization_id,
+      organization_name: this.organizations.get(quote.organization_id)?.name,
+      booking_number: bookingNumber,
+      status: 'confirmed',
+      training_fee_paise: trainingFeePaise,
+      materials_fee_paise: materialsFeePaise,
+      platform_fee_paise: platformFeePaise,
+      trainer_compensation_paise: trainerCompPaise,
+      tax_paise: taxPaise,
+      gross_total_paise: grossTotalPaise,
+      terms_markdown: quote.terms_markdown,
+      materials: selectedMaterials,
+      confirmed_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    this.trainingBookings.set(booking.id, booking);
+
+    // Update request state
+    const req = this.trainingRequests.get(quote.request_id);
+    if (req) {
+      req.status = 'confirmed';
+      req.updated_at = new Date().toISOString();
+    }
+    quote.status = 'accepted';
+
+    // Issue invoice automatically
+    const invoiceNumber = `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const invoice: TrainingInvoice = {
+      id: `inv-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      organization_id: quote.organization_id,
+      request_id: quote.request_id,
+      invoice_number: invoiceNumber,
+      subtotal_paise: subtotal,
+      tax_paise: taxPaise,
+      total_paise: grossTotalPaise,
+      status: 'issued',
+      issued_at: new Date().toISOString(),
+      due_at: new Date(Date.now() + 15 * 86400000).toISOString(),
+    };
+    this.trainingInvoices.set(invoice.id, invoice);
+
+    // Record initial Accounts Receivable & Revenue in double-entry ledger
+    this.addLedgerEntry({
+      booking_id: booking.id,
+      invoice_id: invoice.id,
+      account_type: 'accounts_receivable',
+      entry_type: 'debit',
+      amount_paise: grossTotalPaise,
+      description: `Invoice ${invoiceNumber} issued for booking ${bookingNumber}`,
+      actor_id: callerUserId,
+    });
+    this.addLedgerEntry({
+      booking_id: booking.id,
+      invoice_id: invoice.id,
+      account_type: 'platform_revenue',
+      entry_type: 'credit',
+      amount_paise: platformFeePaise,
+      description: `Platform fee earned on booking ${bookingNumber}`,
+      actor_id: callerUserId,
+    });
+    this.addLedgerEntry({
+      booking_id: booking.id,
+      invoice_id: invoice.id,
+      account_type: 'trainer_payable',
+      entry_type: 'credit',
+      amount_paise: trainerCompPaise,
+      description: `Trainer compensation liability for booking ${bookingNumber}`,
+      actor_id: callerUserId,
+    });
+    this.addLedgerEntry({
+      booking_id: booking.id,
+      invoice_id: invoice.id,
+      account_type: 'tax_payable',
+      entry_type: 'credit',
+      amount_paise: taxPaise,
+      description: `GST 18% liability for booking ${bookingNumber}`,
+      actor_id: callerUserId,
+    });
+
+    return booking;
+  }
+
+  getBookings(callerOrgId?: string, isSuperadmin: boolean = false): TrainingBooking[] {
+    const list = Array.from(this.trainingBookings.values());
+    if (isSuperadmin) return list;
+    if (!callerOrgId) return [];
+    return list.filter((b) => b.organization_id === callerOrgId);
+  }
+
+  // ====================================================================
+  // REVENUE MARKETPLACE: PAYMENTS, ALLOCATIONS & RECONCILIATION
+  // ====================================================================
+
+  recordPaymentReceipt(
+    financeAdminUserId: string,
+    data: {
+      organizationId: string;
+      amountPaise: number;
+      paymentMethod: 'bank_transfer' | 'cheque' | 'neft_rtgs' | 'manual_cash' | 'provider_gateway_contract';
+      transactionReference: string;
+      bankName?: string;
+      notes?: string;
+      evidenceUrl?: string;
+      paymentDate?: string;
+      idempotencyKey?: string;
+    }
+  ): RecordedPayment {
+    if (!this.isPlatformSuperadmin(financeAdminUserId)) {
+      throw new DatabaseError('Only authorized finance administrators can record payments', '42501', 403);
+    }
+    if (data.amountPaise <= 0) {
+      throw new DatabaseError('Payment amount must be greater than zero', '23514', 400);
+    }
+
+    const idemKey = data.idempotencyKey || `pay-${data.transactionReference.trim()}`;
+    for (const p of this.recordedPayments.values()) {
+      if (p.idempotency_key === idemKey) {
+        return p; // Return existing idempotent record
+      }
+    }
+
+    const paymentId = `pay-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const payment: RecordedPayment = {
+      id: paymentId,
+      organization_id: data.organizationId,
+      organization_name: this.organizations.get(data.organizationId)?.name,
+      amount_paise: data.amountPaise,
+      payment_method: data.paymentMethod,
+      transaction_reference: data.transactionReference.trim(),
+      bank_name: data.bankName?.trim() || null,
+      notes: data.notes?.trim() || null,
+      evidence_url: data.evidenceUrl || null,
+      payment_date: data.paymentDate || new Date().toISOString().split('T')[0],
+      recorded_by: financeAdminUserId,
+      recorded_by_name: this.users.get(financeAdminUserId)?.full_name || 'Finance Administrator',
+      status: 'recorded',
+      idempotency_key: idemKey,
+      created_at: new Date().toISOString(),
+    };
+
+    this.recordedPayments.set(payment.id, payment);
+
+    // Ledger: Bank Cash debited, Accounts Receivable credited
+    this.addLedgerEntry({
+      payment_id: payment.id,
+      account_type: 'bank_cash',
+      entry_type: 'debit',
+      amount_paise: data.amountPaise,
+      description: `Payment ${payment.transaction_reference} recorded into ${payment.bank_name || 'Main Bank'}`,
+      actor_id: financeAdminUserId,
+    });
+
+    return payment;
+  }
+
+  allocatePaymentToInvoice(
+    financeAdminUserId: string,
+    paymentId: string,
+    invoiceId: string,
+    allocatedAmountPaise: number
+  ): PaymentAllocation {
+    if (!this.isPlatformSuperadmin(financeAdminUserId)) {
+      throw new DatabaseError('Only finance administrators can allocate payments', '42501', 403);
+    }
+    const payment = this.recordedPayments.get(paymentId);
+    if (!payment) {
+      throw new DatabaseError('Payment not found', '23503', 404);
+    }
+    const invoice = this.trainingInvoices.get(invoiceId);
+    if (!invoice) {
+      throw new DatabaseError('Invoice not found', '23503', 404);
+    }
+    if (allocatedAmountPaise <= 0 || allocatedAmountPaise > payment.amount_paise) {
+      throw new DatabaseError('Invalid allocation amount', '23514', 400);
+    }
+
+    const allocId = `alloc-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const alloc: PaymentAllocation = {
+      id: allocId,
+      payment_id: paymentId,
+      invoice_id: invoiceId,
+      allocated_amount_paise: allocatedAmountPaise,
+      allocated_by: financeAdminUserId,
+      created_at: new Date().toISOString(),
+    };
+    this.paymentAllocations.set(alloc.id, alloc);
+
+    // Check total allocations for this invoice
+    let totalAlloc = 0;
+    for (const a of this.paymentAllocations.values()) {
+      if (a.invoice_id === invoiceId) totalAlloc += a.allocated_amount_paise;
+    }
+
+    if (totalAlloc >= invoice.total_paise) {
+      invoice.status = 'paid';
+      invoice.paid_at = new Date().toISOString();
+    }
+
+    // Ledger: Credit Accounts Receivable
+    this.addLedgerEntry({
+      payment_id: payment.id,
+      invoice_id: invoice.id,
+      account_type: 'accounts_receivable',
+      entry_type: 'credit',
+      amount_paise: allocatedAmountPaise,
+      description: `Payment ${payment.transaction_reference} allocated to Invoice ${invoice.invoice_number}`,
+      actor_id: financeAdminUserId,
+    });
+
+    return alloc;
+  }
+
+  reconcilePayment(
+    financeAdminUserId: string,
+    paymentId: string
+  ): RecordedPayment {
+    if (!this.isPlatformSuperadmin(financeAdminUserId)) {
+      throw new DatabaseError('Only finance administrators can reconcile payments', '42501', 403);
+    }
+    const payment = this.recordedPayments.get(paymentId);
+    if (!payment) {
+      throw new DatabaseError('Payment not found', '23503', 404);
+    }
+    payment.status = 'reconciled';
+    payment.reconciled_by = financeAdminUserId;
+    payment.reconciled_at = new Date().toISOString();
+    return payment;
+  }
+
+  getRecordedPayments(callerOrgId?: string, isSuperadmin: boolean = false): RecordedPayment[] {
+    const list = Array.from(this.recordedPayments.values());
+    if (isSuperadmin) return list;
+    if (!callerOrgId) return [];
+    return list.filter((p) => p.organization_id === callerOrgId);
+  }
+
+  // ====================================================================
+  // REVENUE MARKETPLACE: FINANCIAL LEDGER & AUDITED METRICS
+  // ====================================================================
+
+  addLedgerEntry(entry: Omit<FinancialLedgerEntry, 'id' | 'entry_number' | 'created_at' | 'currency'>): FinancialLedgerEntry {
+    const id = `ledg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const entryNumber = this.financialLedger.size + 1;
+    const ledgerEntry: FinancialLedgerEntry = {
+      ...entry,
+      id,
+      entry_number: entryNumber,
+      currency: 'INR',
+      created_at: new Date().toISOString(),
+    };
+    this.financialLedger.set(ledgerEntry.id, ledgerEntry);
+    return ledgerEntry;
+  }
+
+  getFinancialLedger(isSuperadmin: boolean = false): FinancialLedgerEntry[] {
+    if (!isSuperadmin) {
+      throw new DatabaseError('Forbidden: Only finance administrators can view the general ledger', '42501', 403);
+    }
+    return Array.from(this.financialLedger.values()).sort((a, b) => b.entry_number - a.entry_number);
+  }
+
+  getRevenueMetricsSummary(isSuperadmin: boolean = false): RevenueMetricsSummary {
+    if (!isSuperadmin) {
+      throw new DatabaseError('Forbidden: Only authorized personnel can inspect revenue metrics', '42501', 403);
+    }
+
+    let grossBookingValuePaise = 0;
+    let earnedPlatformRevenuePaise = 0;
+    let trainerPayablesPaise = 0;
+    let actualPaymentsReceivedPaise = 0;
+    let actualPayoutsCompletedPaise = 0;
+    let activeBookingsCount = 0;
+    let completedBookingsCount = 0;
+
+    for (const b of this.trainingBookings.values()) {
+      grossBookingValuePaise += b.gross_total_paise;
+      earnedPlatformRevenuePaise += b.platform_fee_paise;
+      trainerPayablesPaise += b.trainer_compensation_paise;
+      if (b.status === 'completed' || b.status === 'accepted') {
+        completedBookingsCount++;
+      } else if (b.status !== 'cancelled') {
+        activeBookingsCount++;
+      }
+    }
+
+    for (const p of this.recordedPayments.values()) {
+      if (p.status === 'recorded' || p.status === 'reconciled') {
+        actualPaymentsReceivedPaise += p.amount_paise;
+      }
+    }
+
+    for (const po of this.trainerPayouts.values()) {
+      if (po.status === 'settled') {
+        actualPayoutsCompletedPaise += po.amount_paise;
+      }
+    }
+
+    let totalInvoicedPaise = 0;
+    let totalPaidInvoicesPaise = 0;
+    for (const inv of this.trainingInvoices.values()) {
+      totalInvoicedPaise += inv.total_paise;
+      if (inv.status === 'paid') {
+        totalPaidInvoicesPaise += inv.total_paise;
+      }
+    }
+    const outstandingReceivablesPaise = Math.max(0, totalInvoicedPaise - totalPaidInvoicesPaise);
+
+    return {
+      grossBookingValuePaise,
+      earnedPlatformRevenuePaise,
+      outstandingReceivablesPaise,
+      trainerPayablesPaise,
+      actualPaymentsReceivedPaise,
+      actualPayoutsCompletedPaise,
+      activeBookingsCount,
+      completedBookingsCount,
+    };
   }
 }
 

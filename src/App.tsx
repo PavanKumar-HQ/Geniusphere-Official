@@ -18,6 +18,7 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { InstitutionAdminWorkspace } from './components/InstitutionAdminWorkspace';
 import { PlatformAdminWorkspace } from './components/PlatformAdminWorkspace';
 import { TrainerWorkspace } from './components/TrainerWorkspace';
+import { FinanceWorkspace } from './components/FinanceWorkspace';
 import { LabCatalogue } from './components/LabCatalogue';
 import { SharedLabWorkspace } from './components/SharedLabWorkspace';
 import { ScamDefenseJourney } from './components/ScamDefenseJourney';
@@ -80,6 +81,7 @@ import {
   Flame,
   Zap,
   User,
+  DollarSign,
 } from 'lucide-react';
 
 export type AppView =
@@ -101,6 +103,7 @@ export type AppView =
   | 'institution-workspace'
   | 'platform-workspace'
   | 'trainer-workspace'
+  | 'finance-workspace'
   | 'resume-builder'
   | 'schoolkit'
   | 'parent'
@@ -843,6 +846,27 @@ export const App: React.FC = () => {
                   </button>
                 </>
               )}
+
+              {isSuperadmin && (
+                <>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'platform-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('platform-workspace')}
+                  >
+                    <ShieldCheck size={14} />
+                    <span>Operations Hub</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`nav-tab-btn ${currentView === 'finance-workspace' ? 'active' : ''}`}
+                    onClick={() => handleNavigate('finance-workspace')}
+                  >
+                    <DollarSign size={14} />
+                    <span>Finance &amp; Ledger</span>
+                  </button>
+                </>
+              )}
             </nav>
           </div>
 
@@ -1442,7 +1466,7 @@ export const App: React.FC = () => {
                           }}
                         >
                           <School size={15} color="var(--brand-primary)" />
-                          <span>School Admin</span>
+                          <span>School</span>
                         </button>
 
                         <button
@@ -1468,6 +1492,60 @@ export const App: React.FC = () => {
                         >
                           <Award size={15} color="var(--brand-primary)" />
                           <span>Trainer</span>
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', marginTop: '6px' }}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            handleAuthenticate('user-superadmin-1', 'superadmin');
+                            handleNavigate('platform-workspace');
+                          }}
+                          style={{
+                            padding: '8px 4px',
+                            borderRadius: '10px',
+                            border: isSuperadmin && currentView === 'platform-workspace' ? '1.5px solid #DC2626' : '1px solid var(--border-subtle)',
+                            backgroundColor: isSuperadmin && currentView === 'platform-workspace' ? 'rgba(220, 38, 38, 0.08)' : 'var(--bg-canvas)',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <ShieldCheck size={14} color="#DC2626" />
+                          <span>Operations</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setUserMenuOpen(false);
+                            handleAuthenticate('user-superadmin-1', 'superadmin');
+                            handleNavigate('finance-workspace');
+                          }}
+                          style={{
+                            padding: '8px 4px',
+                            borderRadius: '10px',
+                            border: isSuperadmin && currentView === 'finance-workspace' ? '1.5px solid #10B981' : '1px solid var(--border-subtle)',
+                            backgroundColor: isSuperadmin && currentView === 'finance-workspace' ? 'rgba(16, 185, 129, 0.08)' : 'var(--bg-canvas)',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.72rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <DollarSign size={14} color="#10B981" />
+                          <span>Finance</span>
                         </button>
                       </div>
                     </div>
@@ -2713,6 +2791,14 @@ export const App: React.FC = () => {
         {currentView === 'trainer-workspace' && (
           <TrainerWorkspace
             key={`trainer-${currentUserId}-${refreshTrigger}`}
+            db={db}
+            currentUserId={currentUserId}
+          />
+        )}
+
+        {currentView === 'finance-workspace' && (
+          <FinanceWorkspace
+            key={`finance-${currentUserId}-${refreshTrigger}`}
             db={db}
             currentUserId={currentUserId}
           />
