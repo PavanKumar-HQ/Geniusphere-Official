@@ -85,11 +85,15 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
   const [featureSuspiciousAttachment, setFeatureSuspiciousAttachment] = useState<boolean>(true);
   const [featureHeaderAnomaly, setFeatureHeaderAnomaly] = useState<boolean>(true);
   const [selectedPointId, setSelectedPointId] = useState<number | null>(null);
+  const [customPoints, setCustomPoints] = useState<ClassifierDataPoint[]>([]);
+  const [scatterMode, setScatterMode] = useState<'interactive-2d' | 'hyperplanes'>('interactive-2d');
 
-  const datasetPoints = useMemo(() => generateClassifierDataset(42), []);
+  const initialPoints = useMemo(() => generateClassifierDataset(42), []);
+  const allDatasetPoints = useMemo(() => [...initialPoints, ...customPoints], [initialPoints, customPoints]);
+
   const classifierMetrics: ClassifierSimulationMetrics = useMemo(() => {
-    return evaluateClassifierBoundary(datasetPoints, keywordWeight, urgencyWeight, senderReputation);
-  }, [datasetPoints, keywordWeight, urgencyWeight, senderReputation]);
+    return evaluateClassifierBoundary(allDatasetPoints, keywordWeight, urgencyWeight, senderReputation);
+  }, [allDatasetPoints, keywordWeight, urgencyWeight, senderReputation]);
 
   // Stage A: Tokenization Input
   const [inputText, setInputText] = useState<string>('Artificial intelligence learns from patterns in data.');
@@ -561,29 +565,69 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                     2D Neural Decision Boundary Scatter Plot
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                    <button
+                      type="button"
+                      onClick={() => setScatterMode('interactive-2d')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                        scatterMode === 'interactive-2d'
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(34,211,238,0.2)]'
+                          : 'bg-slate-800 text-slate-400 border border-slate-700'
+                      }`}
+                    >
                       Interactive 2D
-                    </span>
-                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-900 text-slate-400 border border-slate-800">
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScatterMode('hyperplanes')}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                        scatterMode === 'hyperplanes'
+                          ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40 shadow-[0_0_10px_rgba(59,130,246,0.2)]'
+                          : 'bg-slate-900 text-slate-400 border border-slate-800'
+                      }`}
+                    >
                       Decision Hyperplanes
-                    </span>
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-[11px] font-semibold text-slate-300">
-                  <span className="flex items-center gap-1.5 text-cyan-300">
-                    <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#22D3EE]"></span>
-                    Legitimate (Cyan)
-                  </span>
-                  <span className="flex items-center gap-1.5 text-emerald-400">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#34D399]"></span>
-                    Spam/Malicious (Emerald)
+                <div className="flex items-center justify-between text-[11px] font-semibold text-slate-300 flex-wrap gap-2">
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1.5 text-cyan-300">
+                      <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block shadow-[0_0_8px_#22D3EE]"></span>
+                      Legitimate (Cyan)
+                    </span>
+                    <span className="flex items-center gap-1.5 text-emerald-400">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#34D399]"></span>
+                      Spam/Malicious (Emerald)
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 italic font-mono">
+                    💡 Click anywhere on plot to test-classify a new email
                   </span>
                 </div>
 
-                {/* SVG 2D Scatter Canvas with Dense Organic Point Clouds */}
-                <div className="relative w-full aspect-[16/9] bg-[#070D1B] rounded-xl border border-slate-800/80 overflow-hidden flex items-center justify-center shadow-inner">
-                  <svg viewBox="0 0 500 280" className="w-full h-full select-none">
+                {/* SVG 2D Scatter Canvas with Click-to-Classify Test Sample Feature */}
+                <div className="relative w-full aspect-[16/9] bg-[#070D1B] rounded-xl border border-slate-800/80 overflow-hidden flex items-center justify-center shadow-inner cursor-crosshair">
+                  <svg
+                    viewBox="0 0 500 280"
+                    className="w-full h-full select-none"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const clickX = e.clientX - rect.left;
+                      const clickY = e.clientY - rect.top;
+                      const normX = Math.round(Math.min(95, Math.max(5, (clickX / rect.width) * 100)));
+                      const normY = Math.round(Math.min(95, Math.max(5, (1 - clickY / rect.height) * 100)));
+                      const isSpam = (keywordWeight / 100) * (normX / 100) * 0.6 +
+                                     (urgencyWeight / 100) * (normY / 100) * 0.5 -
+                                     ((senderReputation / 100) * 0.25) >= 0.55;
+                      const newId = Date.now();
+                      setCustomPoints((prev) => [
+                        ...prev.slice(-15),
+                        { id: newId, x: normX, y: normY, label: isSpam ? 'malicious' : 'legitimate' },
+                      ]);
+                      setSelectedPointId(newId);
+                    }}
+                  >
                     <defs>
                       <linearGradient id="hyperplaneLine" x1="0%" y1="100%" x2="100%" y2="0%">
                         <stop offset="0%" stopColor="#38BDF8" />
@@ -616,6 +660,32 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
 
                       return (
                         <g>
+                          {/* If in hyperplanes mode, draw parallel dashed margin lines */}
+                          {scatterMode === 'hyperplanes' && (
+                            <>
+                              <line
+                                x1={x1 - 25}
+                                y1={Math.min(250, Math.max(20, y1 + 18))}
+                                x2={x2 - 25}
+                                y2={Math.min(250, Math.max(20, y2 + 18))}
+                                stroke="#38BDF8"
+                                strokeWidth="1.5"
+                                strokeDasharray="4 4"
+                                strokeOpacity="0.7"
+                              />
+                              <line
+                                x1={x1 + 25}
+                                y1={Math.min(250, Math.max(20, y1 - 18))}
+                                x2={x2 + 25}
+                                y2={Math.min(250, Math.max(20, y2 - 18))}
+                                stroke="#38BDF8"
+                                strokeWidth="1.5"
+                                strokeDasharray="4 4"
+                                strokeOpacity="0.7"
+                              />
+                            </>
+                          )}
+
                           <line
                             x1={x1}
                             y1={y1}
@@ -639,9 +709,8 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                     })()}
 
                     {/* Dense Scatter Points */}
-                    {datasetPoints.map((pt) => {
+                    {allDatasetPoints.map((pt) => {
                       const isLegit = pt.label === 'legitimate';
-                      // Scale into svg [35, 470] and [25, 245]
                       const svgX = 35 + (pt.x / 100) * 435;
                       const svgY = 250 - (pt.y / 100) * 225;
                       const isSelected = selectedPointId === pt.id;
@@ -650,18 +719,23 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                         <g
                           key={pt.id}
                           className="cursor-pointer"
-                          onClick={() => setSelectedPointId(pt.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPointId(pt.id);
+                          }}
                         >
                           <circle
                             cx={svgX}
                             cy={svgY}
-                            r={isSelected ? 6 : isLegit ? 3.5 : 3.8}
+                            r={isSelected ? 6.5 : isLegit ? 3.5 : 3.8}
                             fill={isLegit ? '#22D3EE' : '#34D399'}
                             opacity={isSelected ? 1 : 0.85}
+                            stroke={isSelected ? '#FFFFFF' : 'none'}
+                            strokeWidth={isSelected ? 2 : 0}
                             filter={isLegit ? 'url(#glow-cyan)' : 'url(#glow-emerald)'}
                           />
                           {/* Inner initial indicator (L for legit, S for spam) on larger dots */}
-                          {pt.id % 5 === 0 && (
+                          {(pt.id % 5 === 0 || isSelected) && (
                             <text
                               x={svgX}
                               y={svgY + 2.5}
@@ -678,6 +752,25 @@ export const SimulationEngine: React.FC<SimulationEngineProps> = ({
                       );
                     })}
                   </svg>
+
+                  {/* Selected point popup card */}
+                  {selectedPointId && (
+                    <div className="absolute top-3 left-3 bg-slate-900/95 border border-cyan-500/50 px-3.5 py-2 rounded-xl text-xs font-mono shadow-2xl backdrop-blur-md flex items-center gap-3">
+                      <div>
+                        <div className="text-cyan-300 font-bold">Email Sample #{selectedPointId}</div>
+                        <div className="text-slate-300 text-[11px]">
+                          Result: {allDatasetPoints.find(p => p.id === selectedPointId)?.label.toUpperCase()}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPointId(null)}
+                        className="text-slate-400 hover:text-white text-xs font-bold px-1"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
