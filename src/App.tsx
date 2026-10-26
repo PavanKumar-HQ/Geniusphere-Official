@@ -1685,6 +1685,9 @@ export const App: React.FC = () => {
         <aside
           className={`platform-sidebar ${sidebarOpen ? 'open' : ''} ${isSidebarCollapsed && !sidebarOpen ? 'collapsed' : ''}`}
           style={{
+            width: isSidebarCollapsed && !sidebarOpen ? '72px' : undefined,
+            minWidth: isSidebarCollapsed && !sidebarOpen ? '72px' : undefined,
+            maxWidth: isSidebarCollapsed && !sidebarOpen ? '72px' : undefined,
             overflowX: 'hidden',
           }}
         >

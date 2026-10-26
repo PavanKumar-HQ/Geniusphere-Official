@@ -209,8 +209,8 @@ export class InMemoryDatabase {
       updated_at: new Date().toISOString(),
     };
     const savedLearnerName = typeof window !== 'undefined'
-      ? (localStorage.getItem('geniusphere_user_name') || 'Student Learner')
-      : 'Student Learner';
+      ? (localStorage.getItem('geniusphere_user_name') || 'Aarav Patel')
+      : 'Aarav Patel';
 
     const student1: User = {
       id: 'user-student-1',
