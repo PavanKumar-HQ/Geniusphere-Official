@@ -65,13 +65,30 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
           next.delete(idx);
         } else {
           next.add(idx);
-          // Automatically advance to next step if completing
-          if (idx + 1 < totalSteps) {
-            handleStepSelect(idx + 1);
-          }
         }
         return next;
       });
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < totalSteps - 1) {
+      // Auto-mark current step as completed if not yet marked
+      if (!completedSet.has(currentIndex)) {
+        if (onToggleCompleteStep) {
+          onToggleCompleteStep(currentIndex);
+        } else {
+          setInternalCompletedSteps((prev) => new Set([...prev, currentIndex]));
+        }
+      }
+      handleStepSelect(currentIndex + 1);
+    } else if (currentIndex === totalSteps - 1 && !completedSet.has(currentIndex)) {
+      // Mark final step completed
+      if (onToggleCompleteStep) {
+        onToggleCompleteStep(currentIndex);
+      } else {
+        setInternalCompletedSteps((prev) => new Set([...prev, currentIndex]));
+      }
     }
   };
 
@@ -384,56 +401,16 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
               {currentStepText}
             </div>
 
-            {/* Step Controls (Mark Complete & Nav) */}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-                paddingTop: '10px',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => handleToggleComplete(currentIndex)}
-                style={{
-                  width: '100%',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  border: isCurrentCompleted
-                    ? '1px solid rgba(0, 245, 160, 0.35)'
-                    : '1px solid var(--border-subtle, rgba(255, 255, 255, 0.12))',
-                  backgroundColor: isCurrentCompleted
-                    ? 'rgba(0, 245, 160, 0.15)'
-                    : 'rgba(255, 255, 255, 0.05)',
-                  color: isCurrentCompleted
-                    ? 'var(--brand-primary, #00F5A0)'
-                    : 'var(--text-secondary, #94A3B8)',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                <CheckCircle2 size={14} />
-                <span>{isCurrentCompleted ? 'Completed ✓' : 'Mark Step Complete'}</span>
-              </button>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {/* Streamlined Step Controls */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '8px' }}>
                 <button
                   type="button"
                   disabled={currentIndex === 0}
                   onClick={() => handleStepSelect(currentIndex - 1)}
                   style={{
-                    padding: '7px 12px',
+                    padding: '8px 12px',
                     borderRadius: '8px',
-                    fontSize: '0.78rem',
+                    fontSize: '0.8rem',
                     fontWeight: 600,
                     cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
                     opacity: currentIndex === 0 ? 0.35 : 1,
@@ -453,30 +430,40 @@ export const AnimatedStepGuide: React.FC<AnimatedStepGuideProps> = ({
 
                 <button
                   type="button"
-                  disabled={currentIndex >= totalSteps - 1}
-                  onClick={() => handleStepSelect(currentIndex + 1)}
+                  onClick={handleNext}
                   style={{
-                    padding: '7px 12px',
+                    padding: '8px 14px',
                     borderRadius: '8px',
-                    fontSize: '0.78rem',
+                    fontSize: '0.82rem',
                     fontWeight: 700,
-                    cursor: currentIndex >= totalSteps - 1 ? 'not-allowed' : 'pointer',
-                    opacity: currentIndex >= totalSteps - 1 ? 0.35 : 1,
-                    backgroundColor: 'var(--brand-primary, #00F5A0)',
-                    border: 'none',
-                    color: '#070B19',
+                    cursor: 'pointer',
+                    backgroundColor: isCurrentCompleted && currentIndex === totalSteps - 1
+                      ? 'rgba(0, 245, 160, 0.18)'
+                      : 'var(--brand-primary, #00F5A0)',
+                    border: isCurrentCompleted && currentIndex === totalSteps - 1
+                      ? '1px solid rgba(0, 245, 160, 0.4)'
+                      : 'none',
+                    color: isCurrentCompleted && currentIndex === totalSteps - 1
+                      ? 'var(--brand-primary, #00F5A0)'
+                      : '#070B19',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '4px',
+                    gap: '6px',
                     whiteSpace: 'nowrap',
+                    transition: 'all 0.2s ease',
                   }}
                 >
-                  <span>Next</span>
-                  <ChevronRight size={14} />
+                  <span>
+                    {currentIndex < totalSteps - 1
+                      ? `Next: Step ${currentIndex + 2}`
+                      : isCurrentCompleted
+                      ? 'All Steps Complete ✓'
+                      : 'Complete Final Step ✓'}
+                  </span>
+                  {currentIndex < totalSteps - 1 && <ChevronRight size={14} />}
                 </button>
               </div>
-            </div>
           </motion.div>
         </AnimatePresence>
       )}

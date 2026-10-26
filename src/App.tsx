@@ -2798,7 +2798,7 @@ export const App: React.FC = () => {
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: 'var(--success)', fontWeight: 600 }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--success)', display: 'inline-block' }} />
-                <span>Zero Fabricated Data • DPDP Act 2023 Compliant</span>
+                <span>Privacy-First • Local Progress Storage</span>
               </div>
             </div>
 

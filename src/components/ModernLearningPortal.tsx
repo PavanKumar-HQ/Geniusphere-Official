@@ -790,7 +790,7 @@ export const ModernLearningPortal: React.FC<ModernLearningPortalProps> = ({
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
                     <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                       <Award size={13} color="var(--brand-primary)" />
-                      Verified Diploma
+                      Course Certificate
                     </span>
 
                     <button
