@@ -147,47 +147,114 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 2000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+        backdropFilter: 'blur(6px)',
+      }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div 
-        className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '680px',
+          maxHeight: '90vh',
+          backgroundColor: 'var(--bg-surface)',
+          border: '1.5px solid var(--border-subtle)',
+          borderRadius: '24px',
+          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.25)',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          color: 'var(--text-primary)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-800/80 bg-slate-900/60">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <User className="w-5 h-5" />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '18px 24px',
+            borderBottom: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-surface)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '12px',
+                backgroundColor: 'var(--brand-surface)',
+                border: '1px solid var(--brand-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--brand-primary)',
+              }}
+            >
+              <User size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white tracking-tight">Verified Student Profile</h2>
-              <p className="text-xs text-slate-400">Authoritative records & persistent credentials</p>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                Verified Student Profile
+              </h2>
+              <p style={{ margin: '2px 0 0', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                Authoritative records &amp; persistent credentials
+              </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
+            className="btn-icon-circle"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X size={16} />
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 overflow-y-auto space-y-6">
+        <div style={{ padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {loading ? (
-            <div className="py-16 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
-              <p className="text-sm">Fetching verified records from secure storage...</p>
+            <div style={{ padding: '48px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px', color: 'var(--text-muted)' }}>
+              <RefreshCw size={28} className="animate-spin" color="var(--brand-primary)" />
+              <p style={{ fontSize: '0.88rem', margin: 0 }}>Fetching verified records from secure storage...</p>
             </div>
           ) : error && !profileData ? (
-            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3 text-rose-300">
-              <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+            <div
+              style={{
+                padding: '16px',
+                borderRadius: '14px',
+                backgroundColor: 'var(--danger-bg)',
+                border: '1px solid var(--danger-border)',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                color: 'var(--danger)',
+              }}
+            >
+              <AlertCircle size={20} style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
-                <p className="font-semibold text-sm">Failed to Load Profile</p>
-                <p className="text-xs text-rose-400 mt-1">{error}</p>
+                <p style={{ fontWeight: 700, fontSize: '0.88rem', margin: '0 0 4px' }}>Failed to Load Profile</p>
+                <p style={{ fontSize: '0.8rem', margin: 0 }}>{error}</p>
                 <button
+                  type="button"
                   onClick={fetchProfile}
-                  className="mt-3 text-xs bg-rose-600/30 hover:bg-rose-600/40 text-rose-200 px-3 py-1.5 rounded-lg border border-rose-500/30 transition-colors"
+                  className="btn-secondary"
+                  style={{ marginTop: '10px', height: '28px', padding: '0 10px', fontSize: '0.74rem' }}
                 >
                   Retry Retrieval
                 </button>
@@ -197,78 +264,167 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
             <>
               {/* Notification Alerts */}
               {successMessage && (
-                <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 text-emerald-300 text-sm">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    backgroundColor: 'var(--success-bg)',
+                    border: '1px solid var(--success-border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    color: 'var(--success)',
+                    fontSize: '0.84rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  <CheckCircle2 size={16} color="var(--success)" style={{ flexShrink: 0 }} />
                   <span>{successMessage}</span>
                 </div>
               )}
               {error && (
-                <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-3 text-rose-300 text-sm">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '12px',
+                    backgroundColor: 'var(--danger-bg)',
+                    border: '1px solid var(--danger-border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    color: 'var(--danger)',
+                    fontSize: '0.84rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  <AlertCircle size={16} color="var(--danger)" style={{ flexShrink: 0 }} />
                   <span>{error}</span>
                 </div>
               )}
 
               {/* Top Profile Summary Card */}
-              <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/20 flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-indigo-500/20 shrink-0">
-                  {profileData.personalInfo.fullName.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 text-center sm:text-left">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                    <h3 className="text-xl font-bold text-white tracking-tight">
-                      {profileData.personalInfo.fullName}
-                    </h3>
-                    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 capitalize">
-                      {profileData.personalInfo.role}
-                    </span>
-                    {profileData.personalInfo.isMinor && (
-                      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        DPDP Minor Protected
+              <div
+                style={{
+                  padding: '20px',
+                  borderRadius: '16px',
+                  backgroundColor: 'var(--bg-surface-subdued)',
+                  border: '1.5px solid var(--border-subtle)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  <div
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '16px',
+                      background: 'var(--grad-brand)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#FFFFFF',
+                      fontSize: '1.5rem',
+                      fontWeight: 900,
+                      flexShrink: 0,
+                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)',
+                    }}
+                  >
+                    {profileData.personalInfo.fullName.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>
+                        {profileData.personalInfo.fullName}
+                      </h3>
+                      <span
+                        style={{
+                          padding: '2px 8px',
+                          borderRadius: '100px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          backgroundColor: 'var(--brand-surface)',
+                          color: 'var(--brand-primary)',
+                          border: '1px solid var(--brand-border)',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {profileData.personalInfo.role}
                       </span>
+                      {profileData.personalInfo.isMinor && (
+                        <span
+                          style={{
+                            padding: '2px 8px',
+                            borderRadius: '100px',
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                            backgroundColor: 'var(--warning-bg)',
+                            color: 'var(--warning)',
+                            border: '1px solid var(--warning-border)',
+                          }}
+                        >
+                          DPDP Minor Protected
+                        </span>
+                      )}
+                    </div>
+                    <p style={{ margin: '4px 0 0', fontSize: '0.84rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Mail size={13} color="var(--text-muted)" />
+                      <span>{profileData.personalInfo.email}</span>
+                    </p>
+                    {profileData.personalInfo.organization && (
+                      <p style={{ margin: '2px 0 0', fontSize: '0.76rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Building2 size={13} color="var(--text-muted)" />
+                        <span>{profileData.personalInfo.organization.name}</span>
+                      </p>
                     )}
                   </div>
-                  <p className="text-sm text-slate-400 mt-1 flex items-center justify-center sm:justify-start gap-1.5">
-                    <Mail className="w-3.5 h-3.5 text-slate-500" />
-                    {profileData.personalInfo.email}
-                  </p>
-                  {profileData.personalInfo.organization && (
-                    <p className="text-xs text-slate-400 mt-1 flex items-center justify-center sm:justify-start gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-slate-500" />
-                      {profileData.personalInfo.organization.name}
-                    </p>
-                  )}
                 </div>
+
                 {!isEditing && (
                   <button
+                    type="button"
                     onClick={() => {
                       setIsEditing(true);
                       setEditFullName(profileData.personalInfo.fullName);
                     }}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700/80 text-slate-200 border border-slate-700 transition-colors"
+                    className="btn-secondary"
+                    style={{ height: '34px', padding: '0 14px', fontSize: '0.78rem', borderRadius: '10px', gap: '6px' }}
                   >
-                    <Edit3 className="w-3.5 h-3.5 text-indigo-400" />
-                    Edit Profile
+                    <Edit3 size={13} />
+                    <span>Edit Profile</span>
                   </button>
                 )}
               </div>
 
               {/* Editable Personal Information Section */}
-              <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-indigo-400" />
-                    Personal Information
+              <div
+                style={{
+                  padding: '20px',
+                  borderRadius: '16px',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1.5px solid var(--border-subtle)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <h4 style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Shield size={16} color="var(--brand-primary)" />
+                    <span>Personal Information</span>
                   </h4>
-                  <span className="text-xs text-slate-500">
+                  <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>
                     {isEditing ? 'Editing Personal Details' : 'Server Authenticated'}
                   </span>
                 </div>
 
                 {isEditing ? (
-                  <form onSubmit={handleSaveProfile} className="space-y-4">
+                  <form onSubmit={handleSaveProfile} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-400 mb-1.5">
+                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>
                         Full Name (Editable)
                       </label>
                       <input
@@ -276,18 +432,27 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                         value={editFullName}
                         onChange={(e) => setEditFullName(e.target.value)}
                         placeholder="Enter full legal name"
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                        style={{
+                          width: '100%',
+                          padding: '10px 14px',
+                          borderRadius: '10px',
+                          border: '1.5px solid var(--border-strong)',
+                          backgroundColor: 'var(--bg-canvas)',
+                          color: 'var(--text-primary)',
+                          fontSize: '0.88rem',
+                          outline: 'none',
+                        }}
                         disabled={saving}
                       />
                       {validationError && (
-                        <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
-                          <AlertCircle className="w-3.5 h-3.5" />
-                          {validationError}
+                        <p style={{ fontSize: '0.76rem', color: 'var(--danger)', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <AlertCircle size={14} />
+                          <span>{validationError}</span>
                         </p>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-2">
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', paddingTop: '6px' }}>
                       <button
                         type="button"
                         onClick={() => {
@@ -295,7 +460,8 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                           setEditFullName(profileData.personalInfo.fullName);
                           setValidationError(null);
                         }}
-                        className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                        className="btn-secondary"
+                        style={{ height: '34px', padding: '0 14px', fontSize: '0.8rem' }}
                         disabled={saving}
                       >
                         Cancel
@@ -303,46 +469,47 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
                       <button
                         type="submit"
                         disabled={saving}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+                        className="btn-primary"
+                        style={{ height: '34px', padding: '0 16px', fontSize: '0.8rem', gap: '6px' }}
                       >
                         {saving ? (
                           <>
-                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                            Persisting...
+                            <RefreshCw size={14} className="animate-spin" />
+                            <span>Persisting...</span>
                           </>
                         ) : (
                           <>
-                            <Save className="w-3.5 h-3.5" />
-                            Save Changes
+                            <Save size={14} />
+                            <span>Save Changes</span>
                           </>
                         )}
                       </button>
                     </div>
                   </form>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', fontSize: '0.82rem' }}>
                     <div>
-                      <span className="text-slate-500 block">Student ID</span>
-                      <span className="text-slate-300 font-mono mt-0.5 block truncate">
+                      <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px', fontSize: '0.74rem' }}>Student ID</span>
+                      <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                         {profileData.personalInfo.id}
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Date of Birth</span>
-                      <span className="text-slate-300 mt-0.5 block flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                        {profileData.personalInfo.dateOfBirth}
+                      <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px', fontSize: '0.74rem' }}>Date of Birth</span>
+                      <span style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                        <Calendar size={13} color="var(--text-muted)" />
+                        <span>{profileData.personalInfo.dateOfBirth}</span>
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Account Status</span>
-                      <span className="text-emerald-400 capitalize mt-0.5 block font-medium">
+                      <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px', fontSize: '0.74rem' }}>Account Status</span>
+                      <span style={{ color: 'var(--success)', textTransform: 'capitalize', fontWeight: 700 }}>
                         ● {profileData.personalInfo.accountStatus}
                       </span>
                     </div>
                     <div>
-                      <span className="text-slate-500 block">Registered Since</span>
-                      <span className="text-slate-400 mt-0.5 block">
+                      <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '2px', fontSize: '0.74rem' }}>Registered Since</span>
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>
                         {new Date(profileData.personalInfo.createdAt).toLocaleDateString()}
                       </span>
                     </div>
@@ -351,70 +518,80 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
               </div>
 
               {/* Calculated Learning Information Section */}
-              <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-                    <Award className="w-4 h-4 text-amber-400" />
-                    Authoritative Learning Statistics
+              <div
+                style={{
+                  padding: '20px',
+                  borderRadius: '16px',
+                  backgroundColor: 'var(--bg-surface)',
+                  border: '1.5px solid var(--border-subtle)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <h4 style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.04em', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Award size={16} color="var(--brand-primary)" />
+                    <span>Authoritative Learning Statistics</span>
                   </h4>
-                  <span className="text-xs text-slate-500">Calculated from verified events</span>
+                  <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Calculated from verified events</span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '10px' }}>
                   {/* XP */}
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                    <div className="flex items-center justify-center text-amber-400 mb-1">
-                      <Award className="w-4 h-4" />
+                  <div style={{ padding: '12px 8px', borderRadius: '12px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#D97706', marginBottom: '4px' }}>
+                      <Award size={16} />
                     </div>
-                    <div className="text-lg font-black text-white">
+                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                       {profileData.learningStats.xp}
                     </div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
                       Total XP
                     </div>
                   </div>
 
                   {/* Streak */}
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                    <div className="flex items-center justify-center text-orange-400 mb-1">
-                      <Flame className="w-4 h-4" />
+                  <div style={{ padding: '12px 8px', borderRadius: '12px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EA580C', marginBottom: '4px' }}>
+                      <Flame size={16} />
                     </div>
-                    <div className="text-lg font-black text-white">
+                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                       {profileData.learningStats.currentStreak}
                     </div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
                       Day Streak
                     </div>
                   </div>
 
                   {/* Completed Lessons */}
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                    <div className="flex items-center justify-center text-emerald-400 mb-1">
-                      <BookOpen className="w-4 h-4" />
+                  <div style={{ padding: '12px 8px', borderRadius: '12px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-primary)', marginBottom: '4px' }}>
+                      <BookOpen size={16} />
                     </div>
-                    <div className="text-lg font-black text-white">
+                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                       {profileData.learningStats.completedLessonsCount}
                     </div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
                       Completed
                     </div>
                   </div>
 
                   {/* Lab Attempts */}
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                    <div className="flex items-center justify-center text-cyan-400 mb-1">
-                      <FlaskConical className="w-4 h-4" />
+                  <div style={{ padding: '12px 8px', borderRadius: '12px', backgroundColor: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0284C7', marginBottom: '4px' }}>
+                      <FlaskConical size={16} />
                     </div>
-                    <div className="text-lg font-black text-white">
+                    <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                       {profileData.learningStats.labAttemptsCount}
                     </div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+                    <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>
                       Labs Run
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[11px] text-slate-500 text-center pt-1">
+                <p style={{ margin: 0, fontSize: '0.74rem', color: 'var(--text-muted)', textAlign: 'center' }}>
                   Learning statistics reflect your saved course activity and lab submissions.
                 </p>
               </div>
@@ -423,11 +600,24 @@ export const StudentProfileModal: React.FC<StudentProfileModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-800/80 bg-slate-900/60 flex items-center justify-between text-xs text-slate-500">
+        <div
+          style={{
+            padding: '14px 24px',
+            borderTop: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-surface)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: '0.78rem',
+            color: 'var(--text-muted)',
+          }}
+        >
           <span>Connected as {currentUser.email}</span>
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition-colors"
+            className="btn-secondary"
+            style={{ height: '32px', padding: '0 16px', fontSize: '0.8rem', borderRadius: '10px' }}
           >
             Close
           </button>
